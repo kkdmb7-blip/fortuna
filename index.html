@@ -7,455 +7,77 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
-    --deep: #0a0612;
     --void: #06030f;
     --gold: #c9a84c;
     --gold-light: #e8cc7a;
-    --purple: #2d1f4e;
-    --purple-mid: #1a1030;
     --text: #e8e0f0;
     --text-dim: #9b8fb0;
     --border: rgba(201,168,76,0.25);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--void);
-    color: var(--text);
-    font-family: 'Noto Serif KR', serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* 별 배경 */
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: white;
-    animation: twinkle var(--d, 3s) ease-in-out infinite;
-    opacity: var(--o, 0.4);
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: var(--o, 0.4); transform: scale(1); }
-    50% { opacity: calc(var(--o, 0.4) * 0.3); transform: scale(0.7); }
-  }
-
-  .nebula {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 30%, rgba(45,31,78,0.6) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 60% at 80% 70%, rgba(15,8,35,0.8) 0%, transparent 70%),
-      radial-gradient(ellipse 80% 50% at 50% 50%, rgba(10,6,18,0.9) 0%, transparent 100%);
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-
-  /* 헤더 */
-  .header {
-    text-align: center;
-    margin-bottom: 48px;
-  }
-
-  .brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: 0.4em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.2s;
-  }
-
-  .title {
-    font-size: 28px;
-    font-weight: 300;
-    line-height: 1.5;
-    color: var(--text);
-    margin-bottom: 12px;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.4s;
-  }
-
-  .subtitle {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.8;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.6s;
-  }
-
-  .divider {
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 24px auto;
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards 0.5s;
-  }
-
-  /* 카드 */
-  .card {
-    background: linear-gradient(135deg, rgba(45,31,78,0.4) 0%, rgba(10,6,18,0.6) 100%);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 32px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(10px);
-    opacity: 0;
-    animation: fadeUp 0.8s ease forwards;
-  }
-  .card:nth-child(1) { animation-delay: 0.7s; }
-  .card:nth-child(2) { animation-delay: 0.9s; }
-  .card:nth-child(3) { animation-delay: 1.1s; }
-
-  .card-title {
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  /* 폼 */
-  .field {
-    margin-bottom: 18px;
-  }
-
-  label {
-    display: block;
-    font-size: 12px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    margin-bottom: 8px;
-  }
-
-  label span.req {
-    color: var(--gold);
-    margin-left: 3px;
-  }
-
-  input, select, textarea {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 8px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'Noto Serif KR', serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.3s, background 0.3s;
-    -webkit-appearance: none;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--gold);
-    background: rgba(201,168,76,0.05);
-  }
-
-  select option {
-    background: #1a1030;
-    color: var(--text);
-  }
-
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .hint {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 6px;
-    line-height: 1.6;
-  }
-
-  /* 계좌 안내 */
-  .account-box {
-    background: rgba(201,168,76,0.06);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 8px;
-  }
-
-  .account-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    font-size: 14px;
-  }
-
-  .account-label {
-    color: var(--text-dim);
-    font-size: 12px;
-  }
-
-  .account-value {
-    color: var(--text);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-
-  .amount {
-    font-size: 22px;
-    color: var(--gold);
-    font-family: 'Cormorant Garamond', serif;
-  }
-
-  .copy-btn {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 10px;
-    color: var(--gold);
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: 'Noto Serif KR', serif;
-  }
-  .copy-btn:hover {
-    background: rgba(201,168,76,0.1);
-  }
-
-  /* 제출 버튼 */
-  .submit-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #c9a84c 0%, #e8cc7a 50%, #c9a84c 100%);
-    background-size: 200% 200%;
-    border: none;
-    border-radius: 12px;
-    padding: 18px;
-    color: #0a0612;
-    font-family: 'Noto Serif KR', serif;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    cursor: pointer;
-    transition: all 0.3s;
-    animation: shimmer 3s ease infinite;
-    margin-top: 8px;
-  }
-
-  .submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(201,168,76,0.4);
-  }
-
-  .submit-btn:active {
-    transform: translateY(0);
-  }
-
-  @keyframes shimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  /* 주의사항 */
-  .notice {
-    font-size: 11px;
-    color: var(--text-dim);
-    line-height: 1.9;
-    text-align: center;
-    margin-top: 16px;
-  }
-
-  /* 성공 화면 */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 60px 20px;
-  }
-
-  .success-icon {
-    font-size: 48px;
-    margin-bottom: 24px;
-    animation: pulse 2s ease infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-
-  .success-title {
-    font-size: 22px;
-    font-weight: 300;
-    margin-bottom: 12px;
-    color: var(--gold);
-  }
-
-  .success-text {
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 2;
-  }
-
-  /* 관리자 패널 */
-  .admin-panel {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 100;
-  }
-
-  .admin-toggle {
-    background: rgba(45,31,78,0.9);
-    border: 1px solid var(--border);
-    border-radius: 50px;
-    padding: 10px 20px;
-    color: var(--gold);
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'Noto Serif KR', serif;
-    backdrop-filter: blur(10px);
-  }
-
-  .admin-drawer {
-    display: none;
-    background: rgba(10,6,18,0.95);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 12px;
-    backdrop-filter: blur(20px);
-    max-width: 320px;
-    width: 90vw;
-  }
-
-  .admin-title {
-    font-size: 12px;
-    letter-spacing: 0.2em;
-    color: var(--gold);
-    margin-bottom: 16px;
-    text-transform: uppercase;
-  }
-
-  .order-item {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 10px;
-    font-size: 12px;
-    line-height: 1.8;
-  }
-
-  .order-name {
-    font-size: 14px;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
-
-  .order-info {
-    color: var(--text-dim);
-  }
-
-  .confirm-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #c9a84c, #e8cc7a);
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    color: #0a0612;
-    font-family: 'Noto Serif KR', serif;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: all 0.2s;
-  }
-
-  .confirm-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-  }
-
-  .confirm-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  .no-orders {
-    color: var(--text-dim);
-    font-size: 13px;
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* 토스트 */
-  .toast {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-80px);
-    background: rgba(201,168,76,0.15);
-    border: 1px solid var(--gold);
-    border-radius: 50px;
-    padding: 12px 24px;
-    color: var(--gold);
-    font-size: 13px;
-    z-index: 999;
-    transition: transform 0.3s ease;
-    backdrop-filter: blur(10px);
-    white-space: nowrap;
-  }
-  .toast.show {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  .loading {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(10,6,18,0.3);
-    border-top-color: #0a0612;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  body { background: var(--void); color: var(--text); font-family: 'Noto Serif KR', serif; min-height: 100vh; overflow-x: hidden; }
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d, 3s) ease-in-out infinite; opacity: var(--o, 0.4); }
+  @keyframes twinkle { 0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:calc(var(--o,0.4)*0.3);transform:scale(0.7)} }
+  .nebula { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.6) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(15,8,35,0.8) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%); }
+  .container { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 40px 24px 80px; }
+  .header { text-align: center; margin-bottom: 48px; }
+  .brand { font-family: 'Cormorant Garamond',serif; font-size: 13px; font-weight: 300; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; opacity:0; animation: fadeUp 0.8s ease forwards 0.2s; }
+  .title { font-size: 28px; font-weight: 300; line-height: 1.5; margin-bottom: 12px; opacity:0; animation: fadeUp 0.8s ease forwards 0.4s; }
+  .subtitle { font-size: 13px; color: var(--text-dim); line-height: 1.8; opacity:0; animation: fadeUp 0.8s ease forwards 0.6s; }
+  .divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--gold),transparent); margin: 24px auto; opacity:0; animation: fadeUp 0.8s ease forwards 0.5s; }
+  .card { background: linear-gradient(135deg,rgba(45,31,78,0.4) 0%,rgba(10,6,18,0.6) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 20px; backdrop-filter: blur(10px); opacity:0; animation: fadeUp 0.8s ease forwards; }
+  .card:nth-child(1){animation-delay:0.7s}.card:nth-child(2){animation-delay:0.9s}.card:nth-child(3){animation-delay:1.1s}
+  .card-title { font-size: 11px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
+  .field { margin-bottom: 18px; }
+  label { display: block; font-size: 12px; color: var(--text-dim); letter-spacing: 0.1em; margin-bottom: 8px; }
+  label span.req { color: var(--gold); margin-left: 3px; }
+  input,select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 12px 16px; color: var(--text); font-family: 'Noto Serif KR',serif; font-size: 14px; outline: none; transition: border-color 0.3s,background 0.3s; -webkit-appearance:none; }
+  input:focus,select:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  select option { background: #1a1030; color: var(--text); }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .hint { font-size: 11px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
+  .account-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 8px; }
+  .account-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
+  .account-label { color: var(--text-dim); font-size: 12px; }
+  .account-value { color: var(--text); font-weight: 600; }
+  .amount { font-size: 22px; color: var(--gold); font-family: 'Cormorant Garamond',serif; }
+  .copy-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--gold); font-size: 11px; cursor: pointer; transition: all 0.2s; font-family: 'Noto Serif KR',serif; }
+  .copy-btn:hover { background: rgba(201,168,76,0.1); }
+  .submit-btn { width: 100%; background: linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); background-size: 200% 200%; border: none; border-radius: 12px; padding: 18px; color: #0a0612; font-family: 'Noto Serif KR',serif; font-size: 15px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; animation: shimmer 3s ease infinite; margin-top: 8px; }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  @keyframes shimmer { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
+  .notice { font-size: 11px; color: var(--text-dim); line-height: 1.9; text-align: center; margin-top: 16px; }
+  .success-screen { display: none; text-align: center; padding: 60px 20px; }
+  .success-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 2s ease infinite; }
+  @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.1)} }
+  .success-title { font-size: 22px; font-weight: 300; margin-bottom: 12px; color: var(--gold); }
+  .success-text { font-size: 13px; color: var(--text-dim); line-height: 2; }
+  .admin-panel { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100; }
+  .admin-toggle { background: rgba(45,31,78,0.9); border: 1px solid var(--border); border-radius: 50px; padding: 10px 20px; color: var(--gold); font-size: 12px; cursor: pointer; font-family: 'Noto Serif KR',serif; backdrop-filter: blur(10px); }
+  .admin-drawer { display: none; background: rgba(10,6,18,0.95); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 12px; backdrop-filter: blur(20px); max-width: 340px; width: 90vw; max-height: 70vh; overflow-y: auto; }
+  .admin-title { font-size: 12px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
+  .order-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; font-size: 12px; line-height: 1.8; }
+  .order-name { font-size: 14px; color: var(--text); margin-bottom: 4px; }
+  .order-info { color: var(--text-dim); }
+  .confirm-btn { width: 100%; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 8px; padding: 10px; color: #0a0612; font-family: 'Noto Serif KR',serif; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+  .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #444; color: #888; }
+  .no-orders { color: var(--text-dim); font-size: 13px; text-align: center; padding: 20px 0; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 50px; padding: 12px 24px; color: var(--gold); font-size: 13px; z-index: 999; transition: transform 0.3s ease; backdrop-filter: blur(10px); white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(10,6,18,0.3); border-top-color: #0a0612; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 </style>
 </head>
 <body>
-
-<!-- 별 배경 -->
 <div class="nebula"></div>
 <div class="stars" id="stars"></div>
-
-<!-- 토스트 -->
 <div class="toast" id="toast"></div>
 
 <div class="container" id="mainForm">
-
   <div class="header">
     <div class="brand">明解苑 · Myeonghaewon</div>
     <h1 class="title">내 인생 흐름 분석<br>점성 라이트 리포트</h1>
@@ -463,15 +85,12 @@
     <p class="subtitle">생년월일을 바탕으로 성향, 반복되는 패턴,<br>앞으로의 흐름을 24시간 내에 전달드립니다.</p>
   </div>
 
-  <!-- 정보 입력 -->
   <div class="card">
     <div class="card-title">✦ 기본 정보</div>
-
     <div class="field">
       <label>이름<span class="req">*</span></label>
       <input type="text" id="name" placeholder="홍길동">
     </div>
-
     <div class="field">
       <label>성별<span class="req">*</span></label>
       <select id="gender">
@@ -480,7 +99,6 @@
         <option value="남성">남성</option>
       </select>
     </div>
-
     <div class="field">
       <label>생년월일<span class="req">*</span></label>
       <div class="field-row">
@@ -491,28 +109,25 @@
         </select>
       </div>
     </div>
-
     <div class="field">
       <label>출생 시간</label>
-      <input type="text" id="birthtime" placeholder="예: 오전 7시 30분 (모르면 비워두세요)">
-      <p class="hint">모르셔도 분석 가능합니다</p>
+      <input type="text" id="birthtime" placeholder="예: 07:30 (모르면 비워두세요)">
+      <p class="hint">모르셔도 분석 가능합니다 · 비워두면 00:00으로 처리됩니다</p>
     </div>
-
     <div class="field">
       <label>태어난 지역<span class="req">*</span></label>
-      <input type="text" id="birthplace" placeholder="예: 서울, 부산, 대구">
+      <input type="text" id="birthplace" placeholder="예: 서울, 부산, 대구" list="cityList">
+      <datalist id="cityList"></datalist>
+      <p class="hint" id="coordHint"></p>
     </div>
-
     <div class="field">
       <label>리포트 받을 이메일<span class="req">*</span></label>
       <input type="email" id="email" placeholder="example@email.com">
     </div>
   </div>
 
-  <!-- 입금 안내 -->
   <div class="card">
     <div class="card-title">✦ 입금 안내</div>
-
     <div class="account-box">
       <div class="account-row">
         <span class="account-label">금액</span>
@@ -525,7 +140,7 @@
       <div class="account-row">
         <span class="account-label">계좌번호</span>
         <div style="display:flex;align-items:center;gap:8px;">
-          <span class="account-value" id="accountNum">013-21-0780-866</span>
+          <span class="account-value">013-21-0780-866</span>
           <button class="copy-btn" onclick="copyAccount()">복사</button>
         </div>
       </div>
@@ -534,39 +149,25 @@
         <span class="account-value">오주영</span>
       </div>
     </div>
-
-    <p class="hint" style="text-align:center; margin-top:12px;">
+    <p class="hint" style="text-align:center;margin-top:12px;">
       입금 후 아래 버튼을 눌러 신청을 완료해주세요<br>
       입금자명을 <strong style="color:var(--gold)">본인 이름</strong>으로 해주세요
     </p>
   </div>
 
-  <!-- 제출 -->
   <div class="card">
     <div class="card-title">✦ 신청 완료</div>
-    <button class="submit-btn" onclick="submitOrder()">
-      입금 완료 · 리포트 신청하기
-    </button>
-    <p class="notice">
-      개인 맞춤 제작 상품으로 환불이 어렵습니다<br>
-      입금 확인 후 24시간 내 이메일로 발송됩니다
-    </p>
+    <button class="submit-btn" onclick="submitOrder()">입금 완료 · 리포트 신청하기</button>
+    <p class="notice">개인 맞춤 제작 상품으로 환불이 어렵습니다<br>입금 확인 후 24시간 내 이메일로 발송됩니다</p>
   </div>
-
 </div>
 
-<!-- 성공 화면 -->
 <div class="container success-screen" id="successScreen">
   <div class="success-icon">🌙</div>
   <div class="success-title">신청이 완료되었습니다</div>
-  <p class="success-text">
-    입금 확인 후 24시간 내에<br>
-    입력하신 이메일로 리포트를 보내드립니다<br><br>
-    <span style="color:var(--gold)">감사합니다 ✦</span>
-  </p>
+  <p class="success-text">입금 확인 후 24시간 내에<br>입력하신 이메일로 리포트를 보내드립니다<br><br><span style="color:var(--gold)">감사합니다 ✦</span></p>
 </div>
 
-<!-- 관리자 패널 -->
 <div class="admin-panel" id="adminPanel">
   <div class="admin-drawer" id="adminDrawer">
     <div class="admin-title">✦ 주문 관리</div>
@@ -576,158 +177,240 @@
 </div>
 
 <script>
-// 별 생성
+// 별
 const starsEl = document.getElementById('stars');
-for (let i = 0; i < 120; i++) {
-  const s = document.createElement('div');
-  s.className = 'star';
-  const size = Math.random() * 2.5 + 0.5;
-  s.style.cssText = `
-    width:${size}px; height:${size}px;
-    left:${Math.random()*100}%;
-    top:${Math.random()*100}%;
-    --d:${2+Math.random()*4}s;
-    --o:${0.2+Math.random()*0.6};
-    animation-delay:${Math.random()*4}s;
-  `;
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const size=Math.random()*2.5+0.5;
+  s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s;`;
   starsEl.appendChild(s);
 }
 
-// 관리자 패널 - URL에 ?admin 있으면 표시
-if (location.search.includes('admin')) {
-  document.getElementById('adminPanel').style.display = 'block';
-  loadOrders();
+// 도시 데이터
+const CITIES = {
+  "서울":{en:"Seoul",lat:37.5665,lon:126.9780},
+  "부산":{en:"Busan",lat:35.1796,lon:129.0756},
+  "인천":{en:"Incheon",lat:37.4563,lon:126.7052},
+  "대구":{en:"Daegu",lat:35.8714,lon:128.6014},
+  "대전":{en:"Daejeon",lat:36.3504,lon:127.3845},
+  "광주":{en:"Gwangju",lat:35.1595,lon:126.8526},
+  "울산":{en:"Ulsan",lat:35.5384,lon:129.3114},
+  "수원":{en:"Suwon",lat:37.2636,lon:127.0286},
+  "성남":{en:"Seongnam",lat:37.4449,lon:127.1388},
+  "고양":{en:"Goyang",lat:37.6584,lon:126.8320},
+  "용인":{en:"Yongin",lat:37.2411,lon:127.1776},
+  "창원":{en:"Changwon",lat:35.2284,lon:128.6811},
+  "청주":{en:"Cheongju",lat:36.6424,lon:127.4890},
+  "전주":{en:"Jeonju",lat:35.8242,lon:127.1480},
+  "천안":{en:"Cheonan",lat:36.8151,lon:127.1139},
+  "안산":{en:"Ansan",lat:37.3236,lon:126.8219},
+  "안양":{en:"Anyang",lat:37.3943,lon:126.9568},
+  "남양주":{en:"Namyangju",lat:37.6360,lon:127.2165},
+  "화성":{en:"Hwaseong",lat:37.1996,lon:126.8316},
+  "부천":{en:"Bucheon",lat:37.5035,lon:126.7660},
+  "김해":{en:"Gimhae",lat:35.2285,lon:128.8893},
+  "평택":{en:"Pyeongtaek",lat:36.9921,lon:127.1129},
+  "포항":{en:"Pohang",lat:36.0190,lon:129.3435},
+  "원주":{en:"Wonju",lat:37.3422,lon:127.9201},
+  "파주":{en:"Paju",lat:37.7601,lon:126.7800},
+  "광명":{en:"Gwangmyeong",lat:37.4784,lon:126.8648},
+  "의정부":{en:"Uijeongbu",lat:37.7381,lon:127.0337},
+  "하남":{en:"Hanam",lat:37.5392,lon:127.2148},
+  "경주":{en:"Gyeongju",lat:35.8562,lon:129.2247},
+  "진주":{en:"Jinju",lat:35.1799,lon:128.1076},
+  "구미":{en:"Gumi",lat:36.1197,lon:128.3446},
+  "군산":{en:"Gunsan",lat:35.9676,lon:126.7368},
+  "익산":{en:"Iksan",lat:35.9483,lon:126.9576},
+  "목포":{en:"Mokpo",lat:34.8118,lon:126.3922},
+  "여수":{en:"Yeosu",lat:34.7604,lon:127.6622},
+  "순천":{en:"Suncheon",lat:34.9506,lon:127.4872},
+  "제주":{en:"Jeju City",lat:33.4996,lon:126.5312},
+  "제주시":{en:"Jeju City",lat:33.4996,lon:126.5312},
+  "서귀포":{en:"Seogwipo",lat:33.2541,lon:126.5600},
+  "춘천":{en:"Chuncheon",lat:37.8813,lon:127.7300},
+  "강릉":{en:"Gangneung",lat:37.7519,lon:128.8761},
+  "속초":{en:"Sokcho",lat:38.2048,lon:128.5912},
+  "동해":{en:"Donghae",lat:37.5244,lon:129.1140},
+  "충주":{en:"Chungju",lat:36.9910,lon:127.9259},
+  "제천":{en:"Jecheon",lat:37.1326,lon:128.1909},
+  "당진":{en:"Dangjin",lat:36.8930,lon:126.6280},
+  "아산":{en:"Asan",lat:36.7898,lon:127.0015},
+  "공주":{en:"Gongju",lat:36.4465,lon:127.1192},
+  "논산":{en:"Nonsan",lat:36.1870,lon:127.0990},
+  "서산":{en:"Seosan",lat:36.7848,lon:126.4503},
+  "김천":{en:"Gimcheon",lat:36.1398,lon:128.1138},
+  "경산":{en:"Gyeongsan",lat:35.8253,lon:128.7414},
+  "안동":{en:"Andong",lat:36.5684,lon:128.7294},
+  "통영":{en:"Tongyeong",lat:34.8544,lon:128.4333},
+  "거제":{en:"Geoje",lat:34.8806,lon:128.6218},
+  "밀양":{en:"Miryang",lat:35.5035,lon:128.7460},
+  "양산":{en:"Yangsan",lat:35.3350,lon:129.0370},
+  "나주":{en:"Naju",lat:35.0160,lon:126.7108},
+  "광양":{en:"Gwangyang",lat:34.9407,lon:127.6960},
+  "정읍":{en:"Jeongeup",lat:35.5696,lon:126.8560},
+  "남원":{en:"Namwon",lat:35.4165,lon:127.3901},
+  "김포":{en:"Gimpo",lat:37.6152,lon:126.7156},
+  "이천":{en:"Icheon",lat:37.2722,lon:127.4349},
+  "오산":{en:"Osan",lat:37.1500,lon:127.0773},
+  "군포":{en:"Gunpo",lat:37.3616,lon:126.9352},
+  "구리":{en:"Guri",lat:37.5943,lon:127.1296},
+  "양주":{en:"Yangju",lat:37.7854,lon:127.0460},
+  "포천":{en:"Pocheon",lat:37.8949,lon:127.2003},
+  "양평":{en:"Yangpyeong",lat:37.4914,lon:127.4873},
+  "홍천":{en:"Hongcheon",lat:37.6973,lon:127.8886},
+  "태백":{en:"Taebaek",lat:37.1642,lon:128.9854},
+  "삼척":{en:"Samcheok",lat:37.4500,lon:129.1650},
+  "홍성":{en:"Hongseong",lat:36.6012,lon:126.6608},
+  "태안":{en:"Taean",lat:36.7453,lon:126.2981},
+  "하동":{en:"Hadong",lat:35.0671,lon:127.7518},
+  "함양":{en:"Hamyang",lat:35.5205,lon:127.7250},
+  "거창":{en:"Geochang",lat:35.6867,lon:127.9099},
+  "합천":{en:"Hapcheon",lat:35.5662,lon:128.1659},
+  "남해":{en:"Namhae",lat:34.8375,lon:127.8924},
+  "산청":{en:"Sancheong",lat:35.4157,lon:127.8735}
+};
+
+// 자동완성
+const datalist=document.getElementById('cityList');
+Object.keys(CITIES).forEach(c=>{const o=document.createElement('option');o.value=c;datalist.appendChild(o);});
+
+// 지역 힌트
+document.getElementById('birthplace').addEventListener('input',function(){
+  const city=CITIES[this.value.trim()];
+  const hint=document.getElementById('coordHint');
+  if(city){hint.textContent=`✓ ${city.en} (${city.lat}, ${city.lon})`;hint.style.color='var(--gold)';}
+  else{hint.textContent=this.value?'도시명을 정확히 입력해주세요':'';hint.style.color='var(--text-dim)';}
+});
+
+// 관리자
+if(location.search.includes('admin')){document.getElementById('adminPanel').style.display='block';loadOrders();}
+let adminOpen=false;
+function toggleAdmin(){adminOpen=!adminOpen;document.getElementById('adminDrawer').style.display=adminOpen?'block':'none';if(adminOpen)loadOrders();}
+
+function copyAccount(){navigator.clipboard.writeText('013210780866').then(()=>showToast('계좌번호가 복사되었습니다'));}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+function parseBirthdate(str){
+  const c=str.replace(/[^\d]/g,'');
+  if(c.length>=8)return{year:parseInt(c.substring(0,4)),month:parseInt(c.substring(4,6)),day:parseInt(c.substring(6,8))};
+  return null;
 }
 
-let adminOpen = false;
-function toggleAdmin() {
-  adminOpen = !adminOpen;
-  document.getElementById('adminDrawer').style.display = adminOpen ? 'block' : 'none';
-  if (adminOpen) loadOrders();
+function parseBirthtime(str){
+  if(!str||!str.trim())return{hour:0,min:0};
+  const parts=str.replace(/[^\d:]/g,'').split(':');
+  if(parts.length>=2)return{hour:parseInt(parts[0])||0,min:parseInt(parts[1])||0};
+  return{hour:0,min:0};
 }
 
-// 계좌번호 복사
-function copyAccount() {
-  navigator.clipboard.writeText('013210780866').then(() => showToast('계좌번호가 복사되었습니다'));
-}
+async function submitOrder(){
+  const name=document.getElementById('name').value.trim();
+  const gender=document.getElementById('gender').value;
+  const birthdate=document.getElementById('birthdate').value.trim();
+  const calendar=document.getElementById('calendar').value;
+  const birthtime=document.getElementById('birthtime').value.trim();
+  const birthplace=document.getElementById('birthplace').value.trim();
+  const email=document.getElementById('email').value.trim();
 
-// 토스트
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+  if(!name||!gender||!birthdate||!birthplace||!email){showToast('필수 항목을 모두 입력해주세요');return;}
+  if(!email.includes('@')){showToast('올바른 이메일 주소를 입력해주세요');return;}
 
-// 주문 제출
-async function submitOrder() {
-  const name = document.getElementById('name').value.trim();
-  const gender = document.getElementById('gender').value;
-  const birthdate = document.getElementById('birthdate').value.trim();
-  const calendar = document.getElementById('calendar').value;
-  const birthtime = document.getElementById('birthtime').value.trim() || '모름';
-  const birthplace = document.getElementById('birthplace').value.trim();
-  const email = document.getElementById('email').value.trim();
+  const city=CITIES[birthplace];
+  if(!city){showToast('태어난 지역을 정확히 입력해주세요 (예: 서울, 부산)');return;}
 
-  if (!name || !gender || !birthdate || !birthplace || !email) {
-    showToast('필수 항목을 모두 입력해주세요');
-    return;
-  }
+  const bd=parseBirthdate(birthdate);
+  if(!bd){showToast('생년월일 형식을 확인해주세요 (예: 1990.03.15)');return;}
 
-  if (!email.includes('@')) {
-    showToast('올바른 이메일 주소를 입력해주세요');
-    return;
-  }
+  const bt=parseBirthtime(birthtime);
+  const orderId='ORD-'+Date.now();
 
-  const btn = document.querySelector('.submit-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span>신청 중...';
+  const btn=document.querySelector('.submit-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading"></span>신청 중...';
 
-  const orderData = {
-    name, gender,
-    birthdate: `${birthdate} (${calendar})`,
-    birthtime, birthplace, email,
-    product: '점성 라이트 리포트',
-    price: '9900',
-    status: 'pending',
-    created_at: new Date().toLocaleString('ko-KR'),
-    order_id: 'ORD-' + Date.now()
+  const orderData={
+    order_id:orderId,name,gender,
+    birthdate_raw:birthdate,calendar,
+    birthtime_raw:birthtime||'모름',
+    birthplace,email,
+    year:bd.year,month:bd.month,day:bd.day,
+    hour:bt.hour,min:bt.min,
+    lat:city.lat,lon:city.lon,
+    place_en:city.en,tzone:9.0,
+    status:'pending',
+    created_at:new Date().toLocaleString('ko-KR')
   };
 
-  // 로컬 저장
-  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
   orders.push(orderData);
-  localStorage.setItem('orders', JSON.stringify(orders));
+  localStorage.setItem('orders',JSON.stringify(orders));
 
-  // 성공 화면
-  setTimeout(() => {
-    document.getElementById('mainForm').style.display = 'none';
-    document.getElementById('successScreen').style.display = 'block';
-  }, 800);
+  setTimeout(()=>{
+    document.getElementById('mainForm').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+  },800);
 }
 
-// 주문 목록 로드
-function loadOrders() {
-  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-  const list = document.getElementById('orderList');
-
-  if (orders.length === 0) {
-    list.innerHTML = '<div class="no-orders">주문이 없습니다</div>';
-    return;
-  }
-
-  list.innerHTML = orders.map((o, i) => `
-    <div class="order-item" id="order-${i}">
+function loadOrders(){
+  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
+  const list=document.getElementById('orderList');
+  if(orders.length===0){list.innerHTML='<div class="no-orders">주문이 없습니다</div>';return;}
+  list.innerHTML=[...orders].reverse().map((o,i)=>{
+    const realIndex=orders.length-1-i;
+    return `<div class="order-item" id="order-${realIndex}">
       <div class="order-name">${o.name} · ${o.gender}</div>
       <div class="order-info">
-        📅 ${o.birthdate}<br>
-        ⏰ ${o.birthtime}<br>
-        📍 ${o.birthplace}<br>
+        📅 ${o.birthdate_raw} (${o.calendar})<br>
+        ⏰ ${o.hour}시 ${o.min}분<br>
+        📍 ${o.birthplace} → ${o.place_en}<br>
         📧 ${o.email}<br>
         🕐 ${o.created_at}
       </div>
-      <button class="confirm-btn" onclick="confirmOrder(${i})" 
-        ${o.status === 'confirmed' ? 'disabled' : ''}>
-        ${o.status === 'confirmed' ? '✓ 입금확인 완료 · 리포트 발송됨' : '✦ 입금확인 · 리포트 발송'}
+      <button class="confirm-btn" onclick="confirmOrder(${realIndex})" ${o.status==='confirmed'?'disabled':''}>
+        ${o.status==='confirmed'?'✓ 발송 완료':'✦ 입금확인 · 리포트 발송'}
       </button>
-    </div>
-  `).reverse().join('');
+    </div>`;
+  }).join('');
 }
 
-// 입금 확인 및 Make 웹훅 전송
-async function confirmOrder(index) {
-  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-  const order = orders[index];
+async function confirmOrder(index){
+  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
+  const o=orders[index];
+  const btn=document.querySelector(`#order-${index} .confirm-btn`);
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading"></span>발송 중...';
 
-  const btn = document.querySelector(`#order-${index} .confirm-btn`);
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span>발송 중...';
+  const payload={
+    request_id:o.order_id,
+    client_name:o.name,
+    recipient_email:o.email,
+    birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
+    birth_place_text:o.birthplace,
+    place:o.place_en,
+    year:o.year,month:o.month,day:o.day,
+    hour:o.hour,min:o.min,
+    lat:o.lat,lon:o.lon,tzone:9.0,
+    report_type:"light",
+    doc_name:`명해원_${o.name}`,
+    status:"confirmed"
+  };
 
-  try {
-    const response = await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: order.name,
-        gender: order.gender,
-        birthdate: order.birthdate,
-        birthtime: order.birthtime,
-        birthplace: order.birthplace,
-        email: order.email,
-        product: order.product,
-        order_id: order.order_id
-      })
+  try{
+    await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
     });
-
-    orders[index].status = 'confirmed';
-    localStorage.setItem('orders', JSON.stringify(orders));
-    btn.textContent = '✓ 입금확인 완료 · 리포트 발송됨';
-    showToast(`${order.name}님 리포트 발송 완료!`);
-
-  } catch (err) {
-    btn.disabled = false;
-    btn.textContent = '✦ 입금확인 · 리포트 발송';
-    showToast('오류가 발생했습니다. 다시 시도해주세요');
+    orders[index].status='confirmed';
+    localStorage.setItem('orders',JSON.stringify(orders));
+    btn.textContent='✓ 발송 완료';
+    showToast(`${o.name}님 리포트 발송 완료!`);
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='✦ 입금확인 · 리포트 발송';
+    showToast('오류 발생. 다시 시도해주세요');
   }
 }
 </script>
