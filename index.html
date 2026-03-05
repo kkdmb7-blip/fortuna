@@ -468,7 +468,28 @@ async function submitOrder(){
 
   // Supabase 저장
   try {
-    await sb.from('orders').insert([orderData]);
+    const dbData = {
+      order_id: orderData.order_id,
+      name: orderData.name,
+      email: orderData.email,
+      gender: orderData.gender,
+      birthdate_raw: orderData.birthdate_raw,
+      calendar: orderData.calendar,
+      year: orderData.year,
+      month: orderData.month,
+      day: orderData.day,
+      hour: orderData.hour,
+      min: orderData.min,
+      birthplace: orderData.birthplace,
+      place_en: orderData.place_en,
+      lat: orderData.lat,
+      lon: orderData.lon,
+      tzone: orderData.tzone,
+      report_type: 'light',
+      status: 'pending'
+    };
+    const {error} = await sb.from('orders').insert([dbData]);
+    if(error) console.error('Supabase 오류:', error);
   } catch(e) {
     console.error('Supabase 저장 오류:', e);
   }
