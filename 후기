@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명해원 — 리포트 후기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #06030f;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --text: #e8e0f0;
+    --text-dim: #9b8fb0;
+    --border: rgba(201,168,76,0.25);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--void); color: var(--text); font-family: 'Noto Serif KR', serif; min-height: 100vh; overflow-x: hidden; }
+
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d,3s) ease-in-out infinite; opacity: var(--o,0.4); }
+  @keyframes twinkle { 0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:calc(var(--o,0.4)*0.3);transform:scale(0.7)} }
+  .nebula { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.6) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(15,8,35,0.8) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%); }
+
+  .container { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .header { text-align: center; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s; }
+  .brand { font-family: 'Cormorant Garamond',serif; font-size: 13px; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 16px; }
+  .title { font-size: 26px; font-weight: 300; line-height: 1.5; margin-bottom: 10px; }
+  .subtitle { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+  .divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--gold),transparent); margin: 20px auto; }
+
+  /* 통계 */
+  .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 32px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s; }
+  .stat-card { background: linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6)); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'Cormorant Garamond',serif; font-size: 28px; color: var(--gold); }
+  .stat-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; margin-top: 4px; }
+
+  /* 후기 카드 */
+  .reviews-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; }
+
+  .review-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 16px; padding: 24px; opacity: 0; animation: fadeUp 0.6s ease forwards; }
+
+  .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .review-meta { display: flex; flex-direction: column; gap: 4px; }
+  .review-name { font-size: 14px; color: var(--text); }
+  .review-badge { display: inline-block; font-size: 10px; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--gold); }
+  .review-badge.premium { border-color: rgba(232,204,122,0.4); background: rgba(201,168,76,0.1); }
+  .review-badge.light { border-color: rgba(201,168,76,0.2); }
+
+  .review-stars { display: flex; gap: 3px; }
+  .star-icon { color: var(--gold); font-size: 14px; }
+  .star-icon.empty { color: rgba(201,168,76,0.2); }
+
+  .review-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.5; }
+  .review-content { font-size: 13px; color: var(--text-dim); line-height: 1.9; }
+  .review-date { font-size: 11px; color: rgba(155,143,176,0.5); margin-top: 12px; text-align: right; }
+
+  /* 후기 작성 버튼 */
+  .write-btn-wrap { text-align: center; margin-bottom: 40px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.8s; }
+  .write-btn { display: inline-block; background: none; border: 1px solid var(--border); border-radius: 50px; padding: 12px 32px; color: var(--gold); font-family: 'Noto Serif KR',serif; font-size: 13px; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; text-decoration: none; }
+  .write-btn:hover { background: rgba(201,168,76,0.1); transform: translateY(-2px); }
+
+  /* 후기 작성 폼 */
+  .form-overlay { display: none; position: fixed; inset: 0; background: rgba(6,3,15,0.9); z-index: 200; backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 20px; }
+  .form-overlay.show { display: flex; }
+  .form-box { background: linear-gradient(135deg,rgba(45,31,78,0.9),rgba(10,6,18,0.95)); border: 1px solid var(--border); border-radius: 20px; padding: 32px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+  .form-title { font-size: 14px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 24px; }
+  .form-field { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+  .form-input, .form-textarea, .form-select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 12px 16px; color: var(--text); font-family: 'Noto Serif KR',serif; font-size: 14px; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
+  .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--gold); }
+  .form-textarea { resize: vertical; min-height: 100px; }
+  .form-select option { background: #1a1030; }
+
+  /* 별점 선택 */
+  .star-select { display: flex; gap: 8px; margin-top: 4px; }
+  .star-btn { font-size: 24px; cursor: pointer; color: rgba(201,168,76,0.2); transition: color 0.2s; background: none; border: none; padding: 0; }
+  .star-btn.active { color: var(--gold); }
+
+  .form-buttons { display: flex; gap: 12px; margin-top: 24px; }
+  .btn-submit { flex: 1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 10px; padding: 14px; color: #0a0612; font-family: 'Noto Serif KR',serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-cancel { flex: 0 0 auto; background: none; border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; color: var(--text-dim); font-family: 'Noto Serif KR',serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .btn-cancel:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* 관리자 */
+  .admin-panel { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100; }
+  .admin-toggle { background: rgba(45,31,78,0.9); border: 1px solid var(--border); border-radius: 50px; padding: 10px 20px; color: var(--gold); font-size: 12px; cursor: pointer; font-family: 'Noto Serif KR',serif; backdrop-filter: blur(10px); }
+  .admin-drawer { display: none; background: rgba(10,6,18,0.95); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 12px; max-width: 340px; width: 90vw; }
+  .admin-title { font-size: 12px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
+
+  /* 신청 페이지 링크 */
+  .back-link { text-align: center; margin-top: 40px; opacity: 0; animation: fadeUp 0.8s ease forwards 1s; }
+  .back-link a { font-size: 13px; color: var(--text-dim); text-decoration: none; letter-spacing: 0.1em; transition: color 0.2s; }
+  .back-link a:hover { color: var(--gold); }
+
+  .no-reviews { text-align: center; padding: 60px 20px; color: var(--text-dim); font-size: 14px; line-height: 2; }
+
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 50px; padding: 12px 24px; color: var(--gold); font-size: 13px; z-index: 999; transition: transform 0.3s ease; backdrop-filter: blur(10px); white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+
+  /* 후기 삭제 버튼 (관리자) */
+  .delete-btn { background: none; border: 1px solid rgba(255,100,100,0.3); border-radius: 6px; padding: 4px 10px; color: rgba(255,100,100,0.6); font-size: 11px; cursor: pointer; float: right; margin-top: 8px; font-family: 'Noto Serif KR',serif; transition: all 0.2s; }
+  .delete-btn:hover { border-color: rgba(255,100,100,0.7); color: rgba(255,100,100,0.9); }
+</style>
+</head>
+<body>
+<div class="nebula"></div>
+<div class="stars" id="stars"></div>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="brand">明解苑 · Myeonghaewon</div>
+    <h1 class="title">리포트를 받아보신 분들의<br>솔직한 이야기</h1>
+    <div class="divider"></div>
+    <p class="subtitle">실제 리포트를 받으신 분들의 후기입니다</p>
+  </div>
+
+  <div class="stats" id="statsArea">
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">총 후기</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statAvg">-</div>
+      <div class="stat-label">평균 별점</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statFive">0%</div>
+      <div class="stat-label">별점 5점</div>
+    </div>
+  </div>
+
+  <div class="reviews-grid" id="reviewsGrid"></div>
+
+  <div class="write-btn-wrap">
+    <button class="write-btn" onclick="openForm()">✦ 후기 작성하기</button>
+  </div>
+
+  <div class="back-link">
+    <a href="index.html">← 리포트 신청하러 가기</a>
+  </div>
+</div>
+
+<!-- 후기 작성 폼 -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-box">
+    <div class="form-title">✦ 후기 작성</div>
+
+    <div class="form-field">
+      <label class="form-label">별점<span style="color:var(--gold)">*</span></label>
+      <div class="star-select" id="starSelect">
+        <button class="star-btn" onclick="setStar(1)">★</button>
+        <button class="star-btn" onclick="setStar(2)">★</button>
+        <button class="star-btn" onclick="setStar(3)">★</button>
+        <button class="star-btn" onclick="setStar(4)">★</button>
+        <button class="star-btn" onclick="setStar(5)">★</button>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">닉네임<span style="color:var(--gold)">*</span></label>
+      <input type="text" class="form-input" id="fName" placeholder="예: 30대 직장인, 물고기자리">
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">리포트 종류<span style="color:var(--gold)">*</span></label>
+      <select class="form-select" id="fType">
+        <option value="">선택해주세요</option>
+        <option value="light">라이트 리포트</option>
+        <option value="premium">프리미엄 리포트</option>
+      </select>
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">한줄 제목<span style="color:var(--gold)">*</span></label>
+      <input type="text" class="form-input" id="fTitle" placeholder="예: 읽으면서 소름이 돋았어요">
+    </div>
+
+    <div class="form-field">
+      <label class="form-label">상세 후기<span style="color:var(--gold)">*</span></label>
+      <textarea class="form-textarea" id="fContent" placeholder="리포트를 받고 느낀 점을 자유롭게 적어주세요 😊"></textarea>
+    </div>
+
+    <div class="form-buttons">
+      <button class="btn-cancel" onclick="closeForm()">취소</button>
+      <button class="btn-submit" onclick="submitReview()">후기 등록하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 패널 -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-drawer" id="adminDrawer">
+    <div class="admin-title">✦ 후기 관리</div>
+    <button onclick="openAdminForm()" style="width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Noto Serif KR',serif;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:12px;">+ 후기 직접 입력</button>
+    <div style="font-size:11px;color:var(--text-dim);text-align:center;">고객 후기는 승인 후 표시됩니다</div>
+    <div id="pendingList" style="margin-top:12px;"></div>
+  </div>
+  <button class="admin-toggle" onclick="toggleAdmin()">관리자 ✦</button>
+</div>
+
+<script>
+// 별
+const starsEl=document.getElementById('stars');
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');s.className='star';
+  const size=Math.random()*2.5+0.5;
+  s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s;`;
+  starsEl.appendChild(s);
+}
+
+// 관리자
+if(location.search.includes('admin')) document.getElementById('adminPanel').style.display='block';
+let adminOpen=false;
+function toggleAdmin(){adminOpen=!adminOpen;document.getElementById('adminDrawer').style.display=adminOpen?'block':'none';if(adminOpen)loadPending();}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+// 별점
+let selectedStar=0;
+function setStar(n){
+  selectedStar=n;
+  document.querySelectorAll('.star-btn').forEach((b,i)=>{
+    b.classList.toggle('active',i<n);
+  });
+}
+
+// 폼
+function openForm(){document.getElementById('formOverlay').classList.add('show');}
+function closeForm(){document.getElementById('formOverlay').classList.remove('show');resetForm();}
+function resetForm(){
+  selectedStar=0;
+  document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fName').value='';
+  document.getElementById('fType').value='';
+  document.getElementById('fTitle').value='';
+  document.getElementById('fContent').value='';
+}
+
+function submitReview(){
+  const name=document.getElementById('fName').value.trim();
+  const type=document.getElementById('fType').value;
+  const title=document.getElementById('fTitle').value.trim();
+  const content=document.getElementById('fContent').value.trim();
+
+  if(!selectedStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
+
+  const review={
+    id:Date.now(),
+    name,type,title,content,
+    star:selectedStar,
+    date:new Date().toLocaleDateString('ko-KR'),
+    approved:false,
+    source:'customer'
+  };
+
+  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
+  pending.push(review);
+  localStorage.setItem('pending_reviews',JSON.stringify(pending));
+
+  closeForm();
+  showToast('후기가 등록되었습니다! 검토 후 게시됩니다 😊');
+}
+
+// 관리자 직접 입력
+function openAdminForm(){
+  // 폼 열고 즉시 승인 모드
+  document.getElementById('formOverlay').classList.add('show');
+  window._adminMode=true;
+}
+
+// 대기 후기 목록
+function loadPending(){
+  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
+  const list=document.getElementById('pendingList');
+  if(pending.length===0){list.innerHTML='<div style="font-size:12px;color:var(--text-dim);text-align:center;padding:10px;">대기 중인 후기 없음</div>';return;}
+  list.innerHTML=pending.map((r,i)=>`
+    <div style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;font-size:12px;">
+      <div style="color:var(--text);">${r.name} · ${'★'.repeat(r.star)}</div>
+      <div style="color:var(--text-dim);margin-top:4px;">${r.title}</div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button onclick="approveReview(${i})" style="flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:6px;padding:6px;color:#0a0612;font-family:'Noto Serif KR',serif;font-size:11px;font-weight:600;cursor:pointer;">승인</button>
+        <button onclick="rejectReview(${i})" style="flex:1;background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:6px;color:rgba(255,100,100,0.7);font-family:'Noto Serif KR',serif;font-size:11px;cursor:pointer;">거절</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function approveReview(i){
+  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
+  const review=pending.splice(i,1)[0];
+  review.approved=true;
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  reviews.unshift(review);
+  localStorage.setItem('reviews',JSON.stringify(reviews));
+  localStorage.setItem('pending_reviews',JSON.stringify(pending));
+  loadPending();
+  renderReviews();
+  showToast('후기가 승인되었습니다!');
+}
+
+function rejectReview(i){
+  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
+  pending.splice(i,1);
+  localStorage.setItem('pending_reviews',JSON.stringify(pending));
+  loadPending();
+  showToast('후기가 거절되었습니다');
+}
+
+function deleteReview(id){
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  const updated=reviews.filter(r=>r.id!==id);
+  localStorage.setItem('reviews',JSON.stringify(updated));
+  renderReviews();
+  showToast('후기가 삭제되었습니다');
+}
+
+// 후기 렌더링
+function renderReviews(){
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  const grid=document.getElementById('reviewsGrid');
+  const isAdmin=location.search.includes('admin');
+
+  if(reviews.length===0){
+    grid.innerHTML='<div class="no-reviews">✦<br><br>아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';
+    updateStats([]);
+    return;
+  }
+
+  grid.innerHTML=reviews.map((r,i)=>`
+    <div class="review-card" style="animation-delay:${0.1*i}s">
+      <div class="review-header">
+        <div class="review-meta">
+          <span class="review-name">${r.name}</span>
+          <span class="review-badge ${r.type==='premium'?'premium':'light'}">${r.type==='premium'?'프리미엄':'라이트'}</span>
+        </div>
+        <div class="review-stars">
+          ${[1,2,3,4,5].map(n=>`<span class="star-icon ${n<=r.star?'':'empty'}">★</span>`).join('')}
+        </div>
+      </div>
+      <div class="review-title">${r.title}</div>
+      <div class="review-content">${r.content}</div>
+      <div class="review-date">${r.date}${isAdmin?` <button class="delete-btn" onclick="deleteReview(${r.id})">삭제</button>`:''}</div>
+    </div>
+  `).join('');
+
+  updateStats(reviews);
+}
+
+function updateStats(reviews){
+  document.getElementById('statTotal').textContent=reviews.length;
+  if(reviews.length===0){
+    document.getElementById('statAvg').textContent='-';
+    document.getElementById('statFive').textContent='0%';
+    return;
+  }
+  const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
+  const fiveCount=reviews.filter(r=>r.star===5).length;
+  document.getElementById('statAvg').textContent=avg+'★';
+  document.getElementById('statFive').textContent=Math.round(fiveCount/reviews.length*100)+'%';
+}
+
+// 관리자 직접 입력 처리
+const origSubmit=submitReview;
+submitReview=function(){
+  if(window._adminMode){
+    const name=document.getElementById('fName').value.trim();
+    const type=document.getElementById('fType').value;
+    const title=document.getElementById('fTitle').value.trim();
+    const content=document.getElementById('fContent').value.trim();
+    if(!selectedStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
+    const review={id:Date.now(),name,type,title,content,star:selectedStar,date:new Date().toLocaleDateString('ko-KR'),approved:true,source:'admin'};
+    const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+    reviews.unshift(review);
+    localStorage.setItem('reviews',JSON.stringify(reviews));
+    closeForm();
+    window._adminMode=false;
+    renderReviews();
+    showToast('후기가 등록되었습니다!');
+  } else {
+    origSubmit();
+  }
+};
+
+renderReviews();
+</script>
+</body>
+</html>
