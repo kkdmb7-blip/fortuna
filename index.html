@@ -375,40 +375,164 @@ function loadOrders(){
   }).join('');
 }
 
+// 도미넌트 플래닛 계산
+function calcDominant(planets){
+  const scores={};
+  const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  
+  INNER.forEach(p=>{ scores[p]=0; });
+
+  const asc=planets.find(p=>p.name==='Ascendant');
+  const sun=planets.find(p=>p.name==='Sun');
+  const moon=planets.find(p=>p.name==='Moon');
+
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    // 1하우스
+    if(p.house===1) scores[p.name]+=5;
+    // 10하우스
+    if(p.house===10) scores[p.name]+=4;
+    // 역행
+    if(p.isRetro==='true') scores[p.name]-=1;
+  });
+
+  // 태양/달/ASC와 8도 이내 합
+  const anchors=[sun,moon,asc].filter(Boolean);
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    anchors.forEach(a=>{
+      if(a.name===p.name)return;
+      const diff=Math.abs(p.fullDegree-a.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      if(angle<=8) scores[p.name]+=3;
+    });
+  });
+
+  // 다른 행성 2개 이상과 8도 이내 합
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    let count=0;
+    planets.forEach(q=>{
+      if(q.name===p.name||!INNER.includes(q.name))return;
+      const diff=Math.abs(p.fullDegree-q.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      if(angle<=8) count++;
+    });
+    if(count>=2) scores[p.name]+=2;
+  });
+
+  // 가장 높은 점수
+  let dominant='Sun';
+  let maxScore=-999;
+  INNER.forEach(p=>{
+    if(scores[p]>maxScore){
+      maxScore=scores[p];
+      dominant=p;
+    }
+    // 동점이면 1하우스 우선
+    else if(scores[p]===maxScore){
+      const pData=planets.find(x=>x.name===p);
+      const dData=planets.find(x=>x.name===dominant);
+      if(pData&&pData.house===1) dominant=p;
+    }
+  });
+
+  return dominant;
+}
+
+// 주요 어스펙트 계산
+function calcAspects(planets){
+  const ASPECTS=[
+    {name:'합',angle:0,orb:8},
+    {name:'대립',angle:180,orb:8},
+    {name:'삼각',angle:120,orb:8},
+    {name:'사각',angle:90,orb:6},
+    {name:'육각',angle:60,orb:6},
+  ];
+  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  const results=[];
+
+  for(let i=0;i<PLANETS.length;i++){
+    for(let j=i+1;j<PLANETS.length;j++){
+      const p1=planets.find(p=>p.name===PLANETS[i]);
+      const p2=planets.find(p=>p.name===PLANETS[j]);
+      if(!p1||!p2)continue;
+      const diff=Math.abs(p1.fullDegree-p2.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      ASPECTS.forEach(asp=>{
+        if(Math.abs(angle-asp.angle)<=asp.orb){
+          results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);
+        }
+      });
+    }
+  }
+  return results.join(', ');
+}
+
 async function confirmOrder(index){
   const orders=JSON.parse(localStorage.getItem('orders')||'[]');
   const o=orders[index];
   const btn=document.querySelector(`#order-${index} .confirm-btn`);
   btn.disabled=true;
-  btn.innerHTML='<span class="loading"></span>발송 중...';
-
-  const payload={
-    request_id:o.order_id,
-    client_name:o.name,
-    recipient_email:o.email,
-    birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
-    birth_place_text:o.birthplace,
-    place:o.place_en,
-    year:o.year,month:o.month,day:o.day,
-    hour:o.hour,min:o.min,
-    lat:o.lat,lon:o.lon,tzone:9.0,
-    report_text:"네이탈 라이트 리포트",
-    report_type:"light",
-    doc_name:`명해원_${o.name}`,
-    status:"confirmed"
-  };
+  btn.innerHTML='<span class="loading"></span>차트 분석 중...';
 
   try{
+    // Astro API 호출
+    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Accept':'application/json',
+        'Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')
+      },
+      body:JSON.stringify({
+        day:o.day,month:o.month,year:o.year,
+        hour:o.hour,min:o.min,
+        lat:o.lat,lon:o.lon,tzone:9.0
+      })
+    });
+
+    const astroData=await astroRes.json();
+    const planets=astroData.output||astroData;
+
+    // 도미넌트 & 어스펙트 계산
+    const dominant=calcDominant(planets);
+    const aspects=calcAspects(planets);
+
+    btn.innerHTML='<span class="loading"></span>리포트 발송 중...';
+
+    const payload={
+      request_id:o.order_id,
+      client_name:o.name,
+      recipient_email:o.email,
+      birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
+      birth_place_text:o.birthplace,
+      place:o.place_en,
+      year:o.year,month:o.month,day:o.day,
+      hour:o.hour,min:o.min,
+      lat:o.lat,lon:o.lon,tzone:9.0,
+      report_text:"네이탈 라이트 리포트",
+      report_type:"light",
+      doc_name:`명해원_${o.name}`,
+      dominant_planet:dominant,
+      aspects_summary:aspects,
+      planets_json:JSON.stringify(planets),
+      status:"confirmed"
+    };
+
     await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(payload)
     });
+
     orders[index].status='confirmed';
     localStorage.setItem('orders',JSON.stringify(orders));
     btn.textContent='✓ 발송 완료';
     showToast(`${o.name}님 리포트 발송 완료!`);
+
   }catch(err){
+    console.error(err);
     btn.disabled=false;
     btn.textContent='✦ 입금확인 · 리포트 발송';
     showToast('오류 발생. 다시 시도해주세요');
