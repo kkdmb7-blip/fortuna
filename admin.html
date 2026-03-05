@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명해원 — 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #06030f;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --text: #e8e0f0;
+    --text-dim: #9b8fb0;
+    --border: rgba(201,168,76,0.25);
+    --light-color: rgba(100,180,255,0.15);
+    --premium-color: rgba(201,168,76,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background: var(--void); color: var(--text); font-family: 'Noto Serif KR', serif; min-height: 100vh; }
+
+  .nebula { position: fixed; inset:0; pointer-events:none; z-index:0; background: radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.5) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%); }
+
+  .container { position: relative; z-index:1; max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .header-left .brand { font-family: 'Cormorant Garamond',serif; font-size: 12px; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; }
+  .header-left .title { font-size: 22px; font-weight: 300; margin-top: 4px; }
+  .header-right { display: flex; gap: 10px; }
+  .nav-btn { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; color: var(--text-dim); font-family: 'Noto Serif KR',serif; font-size: 12px; cursor: pointer; text-decoration: none; transition: all 0.2s; display: inline-block; }
+  .nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* 탭 */
+  .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+  .tab { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 10px 20px; color: var(--text-dim); font-family: 'Noto Serif KR',serif; font-size: 13px; cursor: pointer; transition: all 0.2s; position: relative; }
+  .tab.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+  .tab .badge { position: absolute; top: -6px; right: -6px; background: var(--gold); color: #0a0612; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* 통계 */
+  .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { background: linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6)); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+  .stat-num { font-family: 'Cormorant Garamond',serif; font-size: 26px; color: var(--gold); }
+  .stat-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+  /* 필터 */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 16px; align-items: center; flex-wrap: wrap; }
+  .filter-btn { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 6px 14px; color: var(--text-dim); font-family: 'Noto Serif KR',serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+  .search-input { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 20px; padding: 6px 16px; color: var(--text); font-family: 'Noto Serif KR',serif; font-size: 12px; outline: none; width: 200px; }
+  .search-input:focus { border-color: var(--gold); }
+
+  /* 주문 카드 */
+  .order-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 12px; transition: border-color 0.2s; }
+  .order-card:hover { border-color: rgba(201,168,76,0.4); }
+  .order-card.light { border-left: 3px solid rgba(100,180,255,0.5); }
+  .order-card.premium { border-left: 3px solid var(--gold); }
+  .order-card.done { opacity: 0.6; }
+
+  .order-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .order-name { font-size: 16px; color: var(--text); }
+  .order-type { font-size: 10px; letter-spacing: 0.15em; padding: 3px 10px; border-radius: 20px; margin-left: 8px; }
+  .order-type.light { background: rgba(100,180,255,0.15); color: #64b4ff; border: 1px solid rgba(100,180,255,0.3); }
+  .order-type.premium { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--border); }
+  .order-id { font-size: 11px; color: var(--text-dim); margin-top: 3px; }
+
+  .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 13px; color: var(--text-dim); line-height: 1.8; margin-bottom: 14px; }
+  .order-info span { color: var(--text); }
+
+  .order-actions { display: flex; gap: 8px; }
+  .confirm-btn { flex: 1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 8px; padding: 10px; color: #0a0612; font-family: 'Noto Serif KR',serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .confirm-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; background: #444; color: #888; }
+  .delete-btn { background: none; border: 1px solid rgba(255,100,100,0.3); border-radius: 8px; padding: 10px 16px; color: rgba(255,100,100,0.6); font-family: 'Noto Serif KR',serif; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .delete-btn:hover { border-color: rgba(255,100,100,0.6); color: rgba(255,100,100,0.9); }
+
+  .done-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: rgba(100,220,100,0.7); padding: 6px 12px; border: 1px solid rgba(100,220,100,0.2); border-radius: 8px; }
+
+  /* 후기 카드 */
+  .review-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 12px; }
+  .rv-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .rv-name { font-size: 15px; }
+  .rv-stars { color: var(--gold); font-size: 14px; }
+  .rv-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--gold); margin-left: 8px; }
+  .rv-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .rv-content { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+  .rv-date { font-size: 11px; color: rgba(155,143,176,0.4); margin-top: 10px; }
+  .rv-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* 후기 작성 폼 */
+  .add-review-btn { width: 100%; background: none; border: 1px dashed var(--border); border-radius: 12px; padding: 16px; color: var(--gold); font-family: 'Noto Serif KR',serif; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-bottom: 16px; }
+  .add-review-btn:hover { background: rgba(201,168,76,0.05); }
+
+  .rv-form-box { background: rgba(45,31,78,0.3); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; display: none; }
+  .rv-form-box.show { display: block; }
+  .form-field { margin-bottom: 12px; }
+  .form-label { display: block; font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+  .form-input, .form-textarea, .form-select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: 'Noto Serif KR',serif; font-size: 13px; outline: none; -webkit-appearance: none; }
+  .form-input:focus,.form-textarea:focus,.form-select:focus { border-color: var(--gold); }
+  .form-select option { background: #1a1030; }
+  .form-textarea { min-height: 80px; resize: vertical; }
+  .star-row { display: flex; gap: 6px; margin-top: 4px; }
+  .star-btn { font-size: 20px; cursor: pointer; color: rgba(201,168,76,0.2); background: none; border: none; transition: color 0.15s; padding: 0; }
+  .star-btn.on { color: var(--gold); }
+  .form-btns { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-save { flex:1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 8px; padding: 12px; color: #0a0612; font-family: 'Noto Serif KR',serif; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-cancel-form { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; color: var(--text-dim); font-family: 'Noto Serif KR',serif; font-size: 12px; cursor: pointer; }
+
+  .empty-msg { text-align: center; padding: 40px; color: var(--text-dim); font-size: 13px; line-height: 2; }
+
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 50px; padding: 12px 24px; color: var(--gold); font-size: 13px; z-index: 999; transition: transform 0.3s ease; backdrop-filter: blur(10px); white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .loading { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(10,6,18,0.3); border-top-color: #0a0612; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  @media (max-width: 600px) {
+    .stats { grid-template-columns: repeat(2,1fr); }
+    .order-info { grid-template-columns: 1fr; }
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="nebula"></div>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <div class="brand">明解苑 · Admin</div>
+      <div class="title">명해원 관리자</div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="nav-btn">라이트 페이지</a>
+      <a href="premium.html" class="nav-btn">프리미엄 페이지</a>
+    </div>
+  </div>
+
+  <!-- 통계 -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">전체 주문</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statPending">0</div>
+      <div class="stat-label">입금 대기</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statDone">0</div>
+      <div class="stat-label">발송 완료</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statReviews">0</div>
+      <div class="stat-label">후기</div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('orders')" id="tab-orders">
+      주문 관리
+      <span class="badge" id="pendingBadge" style="display:none">0</span>
+    </button>
+    <button class="tab" onclick="switchTab('reviews')" id="tab-reviews">후기 관리</button>
+  </div>
+
+  <!-- 주문 탭 -->
+  <div class="tab-content active" id="content-orders">
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all')">전체</button>
+      <button class="filter-btn" onclick="setFilter('light')">라이트</button>
+      <button class="filter-btn" onclick="setFilter('premium')">프리미엄</button>
+      <button class="filter-btn" onclick="setFilter('pending')">입금대기</button>
+      <button class="filter-btn" onclick="setFilter('confirmed')">발송완료</button>
+      <input type="text" class="search-input" placeholder="이름 검색..." oninput="searchOrders(this.value)">
+    </div>
+    <div id="orderList"></div>
+  </div>
+
+  <!-- 후기 탭 -->
+  <div class="tab-content" id="content-reviews">
+    <button class="add-review-btn" onclick="toggleRvForm()">+ 후기 직접 등록하기</button>
+
+    <div class="rv-form-box" id="rvFormBox">
+      <div class="form-field">
+        <label class="form-label">별점 *</label>
+        <div class="star-row" id="starRow">
+          <button class="star-btn" onclick="setStar(1)">★</button>
+          <button class="star-btn" onclick="setStar(2)">★</button>
+          <button class="star-btn" onclick="setStar(3)">★</button>
+          <button class="star-btn" onclick="setStar(4)">★</button>
+          <button class="star-btn" onclick="setStar(5)">★</button>
+        </div>
+      </div>
+      <div class="form-field">
+        <label class="form-label">닉네임 *</label>
+        <input type="text" class="form-input" id="rvName" placeholder="예: 30대 직장인">
+      </div>
+      <div class="form-field">
+        <label class="form-label">리포트 종류 *</label>
+        <select class="form-select" id="rvType">
+          <option value="">선택</option>
+          <option value="light">라이트</option>
+          <option value="premium">프리미엄</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">한줄 제목 *</label>
+        <input type="text" class="form-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요">
+      </div>
+      <div class="form-field">
+        <label class="form-label">상세 내용 *</label>
+        <textarea class="form-textarea" id="rvContent" placeholder="후기 내용을 입력해주세요"></textarea>
+      </div>
+      <div class="form-btns">
+        <button class="btn-cancel-form" onclick="toggleRvForm()">취소</button>
+        <button class="btn-save" onclick="saveReview()">등록하기</button>
+      </div>
+    </div>
+
+    <div id="reviewList"></div>
+  </div>
+</div>
+
+<script>
+// 도시 데이터 (Astro API용)
+const CITIES={
+  "서울":{en:"Seoul",lat:37.5665,lon:126.9780},
+  "부산":{en:"Busan",lat:35.1796,lon:129.0756},
+  "인천":{en:"Incheon",lat:37.4563,lon:126.7052},
+  "대구":{en:"Daegu",lat:35.8714,lon:128.6014},
+  "대전":{en:"Daejeon",lat:36.3504,lon:127.3845},
+  "광주":{en:"Gwangju",lat:35.1595,lon:126.8526},
+  "울산":{en:"Ulsan",lat:35.5384,lon:129.3114},
+  "수원":{en:"Suwon",lat:37.2636,lon:127.0286},
+  "전주":{en:"Jeonju",lat:35.8242,lon:127.1480},
+  "창원":{en:"Changwon",lat:35.2284,lon:128.6811},
+  "청주":{en:"Cheongju",lat:36.6424,lon:127.4890},
+  "천안":{en:"Cheonan",lat:36.8151,lon:127.1139},
+  "김해":{en:"Gimhae",lat:35.2285,lon:128.8893},
+  "포항":{en:"Pohang",lat:36.0190,lon:129.3435},
+  "제주":{en:"Jeju City",lat:33.4996,lon:126.5312},
+  "춘천":{en:"Chuncheon",lat:37.8813,lon:127.7300},
+  "강릉":{en:"Gangneung",lat:37.7519,lon:128.8761}
+};
+
+let currentFilter='all';
+let searchTerm='';
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// 탭
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('content-'+tab).classList.add('active');
+  if(tab==='reviews') renderReviews();
+}
+
+// 필터
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderOrders();
+}
+
+function searchOrders(v){searchTerm=v;renderOrders();}
+
+// 통계 업데이트
+function updateStats(){
+  const light=JSON.parse(localStorage.getItem('orders')||'[]');
+  const premium=JSON.parse(localStorage.getItem('premium_orders')||'[]');
+  const all=[...light,...premium];
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  const pending=all.filter(o=>o.status==='pending').length;
+
+  document.getElementById('statTotal').textContent=all.length;
+  document.getElementById('statPending').textContent=pending;
+  document.getElementById('statDone').textContent=all.filter(o=>o.status==='confirmed').length;
+  document.getElementById('statReviews').textContent=reviews.length;
+
+  const badge=document.getElementById('pendingBadge');
+  if(pending>0){badge.style.display='flex';badge.textContent=pending;}
+  else{badge.style.display='none';}
+}
+
+// 주문 렌더링
+function renderOrders(){
+  const light=JSON.parse(localStorage.getItem('orders')||'[]').map(o=>({...o,_type:'light'}));
+  const premium=JSON.parse(localStorage.getItem('premium_orders')||'[]').map(o=>({...o,_type:'premium'}));
+  let all=[...light,...premium].sort((a,b)=>b.order_id?.localeCompare(a.order_id||'')||0);
+
+  // 필터
+  if(currentFilter==='light') all=all.filter(o=>o._type==='light');
+  else if(currentFilter==='premium') all=all.filter(o=>o._type==='premium');
+  else if(currentFilter==='pending') all=all.filter(o=>o.status==='pending');
+  else if(currentFilter==='confirmed') all=all.filter(o=>o.status==='confirmed');
+
+  // 검색
+  if(searchTerm) all=all.filter(o=>o.name?.includes(searchTerm)||o.email?.includes(searchTerm));
+
+  const list=document.getElementById('orderList');
+  if(all.length===0){list.innerHTML='<div class="empty-msg">주문이 없습니다</div>';return;}
+
+  list.innerHTML=all.map(o=>`
+    <div class="order-card ${o._type} ${o.status==='confirmed'?'done':''}" id="card-${o.order_id}">
+      <div class="order-top">
+        <div>
+          <span class="order-name">${o.name}</span>
+          <span class="order-type ${o._type}">${o._type==='premium'?'프리미엄':'라이트'}</span>
+          <div class="order-id">${o.order_id} · ${o.created_at}</div>
+        </div>
+      </div>
+      <div class="order-info">
+        <div>📅 생년월일<br><span>${o.birthdate_raw} (${o.calendar})</span></div>
+        <div>⏰ 출생시간<br><span>${o.hour}시 ${o.min}분</span></div>
+        <div>📍 지역<br><span>${o.birthplace} (${o.place_en})</span></div>
+        <div>📧 이메일<br><span>${o.email}</span></div>
+      </div>
+      <div class="order-actions">
+        ${o.status==='confirmed'
+          ? '<div class="done-badge">✓ 발송 완료</div>'
+          : `<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o._type}')">✦ 입금확인 · 리포트 발송</button>`
+        }
+        <button class="delete-btn" onclick="deleteOrder('${o.order_id}','${o._type}')">삭제</button>
+      </div>
+    </div>
+  `).join('');
+
+  updateStats();
+}
+
+// 도미넌트 계산
+function calcDominant(planets){
+  const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  const scores={};
+  INNER.forEach(p=>{scores[p]=0;});
+  const asc=planets.find(p=>p.name==='Ascendant');
+  const sun=planets.find(p=>p.name==='Sun');
+  const moon=planets.find(p=>p.name==='Moon');
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    if(p.house===1)scores[p.name]+=5;
+    if(p.house===10)scores[p.name]+=4;
+    if(p.isRetro==='true')scores[p.name]-=1;
+  });
+  const anchors=[sun,moon,asc].filter(Boolean);
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    anchors.forEach(a=>{
+      if(a.name===p.name)return;
+      const diff=Math.abs(p.fullDegree-a.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      if(angle<=8)scores[p.name]+=3;
+    });
+  });
+  planets.forEach(p=>{
+    if(!INNER.includes(p.name))return;
+    let cnt=0;
+    planets.forEach(q=>{
+      if(q.name===p.name||!INNER.includes(q.name))return;
+      const diff=Math.abs(p.fullDegree-q.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      if(angle<=8)cnt++;
+    });
+    if(cnt>=2)scores[p.name]+=2;
+  });
+  let dominant='Sun',maxScore=-999;
+  INNER.forEach(p=>{
+    if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}
+  });
+  return dominant;
+}
+
+function calcAspects(planets){
+  const ASPECTS=[{name:'합',angle:0,orb:8},{name:'대립',angle:180,orb:8},{name:'삼각',angle:120,orb:8},{name:'사각',angle:90,orb:6},{name:'육각',angle:60,orb:6}];
+  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  const results=[];
+  for(let i=0;i<PLANETS.length;i++){
+    for(let j=i+1;j<PLANETS.length;j++){
+      const p1=planets.find(p=>p.name===PLANETS[i]);
+      const p2=planets.find(p=>p.name===PLANETS[j]);
+      if(!p1||!p2)continue;
+      const diff=Math.abs(p1.fullDegree-p2.fullDegree);
+      const angle=diff>180?360-diff:diff;
+      ASPECTS.forEach(asp=>{
+        if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);
+      });
+    }
+  }
+  return results.join(', ');
+}
+
+// 입금확인 → 리포트 발송
+async function confirmOrder(orderId, type){
+  const key=type==='premium'?'premium_orders':'orders';
+  const webhook=type==='premium'
+    ?'https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu'
+    :'https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756';
+
+  const orders=JSON.parse(localStorage.getItem(key)||'[]');
+  const o=orders.find(x=>x.order_id===orderId);
+  if(!o)return;
+
+  const btn=document.getElementById('btn-'+orderId);
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading"></span>차트 분석 중...';
+
+  try{
+    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
+      body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})
+    });
+    const astroData=await astroRes.json();
+    const planets=astroData.output||astroData;
+    const dominant=calcDominant(planets);
+    const aspects=calcAspects(planets);
+
+    btn.innerHTML='<span class="loading"></span>발송 중...';
+
+    const payload={
+      request_id:o.order_id,
+      client_name:o.name,
+      recipient_email:o.email,
+      birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
+      birth_place_text:o.birthplace,
+      place:o.place_en,
+      year:o.year,month:o.month,day:o.day,
+      hour:o.hour,min:o.min,
+      lat:o.lat,lon:o.lon,tzone:9.0,
+      report_text:type==='premium'?'네이탈 프리미엄 리포트':'네이탈 라이트 리포트',
+      report_type:type,
+      doc_name:type==='premium'?`명해원_프리미엄_${o.name}`:`명해원_${o.name}`,
+      dominant_planet:dominant,
+      aspects_summary:aspects,
+      planets_json:JSON.stringify(planets),
+      status:'confirmed'
+    };
+
+    await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+
+    const idx=orders.findIndex(x=>x.order_id===orderId);
+    orders[idx].status='confirmed';
+    localStorage.setItem(key,JSON.stringify(orders));
+    renderOrders();
+    showToast(`${o.name}님 리포트 발송 완료! ✦`);
+
+  }catch(err){
+    console.error(err);
+    btn.disabled=false;
+    btn.textContent='✦ 입금확인 · 리포트 발송';
+    showToast('오류 발생. 다시 시도해주세요');
+  }
+}
+
+function deleteOrder(orderId, type){
+  if(!confirm('정말 삭제할까요?'))return;
+  const key=type==='premium'?'premium_orders':'orders';
+  const orders=JSON.parse(localStorage.getItem(key)||'[]').filter(o=>o.order_id!==orderId);
+  localStorage.setItem(key,JSON.stringify(orders));
+  renderOrders();
+  showToast('삭제되었습니다');
+}
+
+// 후기
+let rvStar=0;
+function toggleRvForm(){document.getElementById('rvFormBox').classList.toggle('show');}
+function setStar(n){
+  rvStar=n;
+  document.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i<n));
+}
+
+function saveReview(){
+  const name=document.getElementById('rvName').value.trim();
+  const type=document.getElementById('rvType').value;
+  const title=document.getElementById('rvTitle').value.trim();
+  const content=document.getElementById('rvContent').value.trim();
+  if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
+  const review={id:Date.now(),name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),approved:true,source:'admin'};
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  reviews.unshift(review);
+  localStorage.setItem('reviews',JSON.stringify(reviews));
+  rvStar=0;
+  document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('on'));
+  ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rvType').value='';
+  document.getElementById('rvFormBox').classList.remove('show');
+  renderReviews();
+  showToast('후기가 등록되었습니다!');
+}
+
+function deleteReview(id){
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]').filter(r=>r.id!==id);
+  localStorage.setItem('reviews',JSON.stringify(reviews));
+  renderReviews();
+  updateStats();
+  showToast('후기가 삭제되었습니다');
+}
+
+function renderReviews(){
+  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
+  const list=document.getElementById('reviewList');
+  if(reviews.length===0){list.innerHTML='<div class="empty-msg">등록된 후기가 없습니다</div>';return;}
+  list.innerHTML=reviews.map(r=>`
+    <div class="review-card">
+      <div class="rv-header">
+        <div>
+          <span class="rv-name">${r.name}</span>
+          <span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span>
+        </div>
+        <div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
+      </div>
+      <div class="rv-title">${r.title}</div>
+      <div class="rv-content">${r.content}</div>
+      <div class="rv-date">${r.date} · ${r.source==='admin'?'관리자 등록':'고객 작성'}</div>
+      <div class="rv-actions">
+        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:6px 14px;color:rgba(255,100,100,0.6);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;">삭제</button>
+      </div>
+    </div>
+  `).join('');
+  updateStats();
+}
+
+// 초기화
+renderOrders();
+updateStats();
+</script>
+</body>
+</html>
