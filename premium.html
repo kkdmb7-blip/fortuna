@@ -460,9 +460,9 @@ async function submitOrder(){
     created_at:new Date().toLocaleString('ko-KR')
   };
 
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
+  const orders=JSON.parse(localStorage.getItem('premium_orders')||'[]');
   orders.push(orderData);
-  localStorage.setItem('orders',JSON.stringify(orders));
+  localStorage.setItem('premium_orders',JSON.stringify(orders));
 
   setTimeout(()=>{
     document.getElementById('mainForm').style.display='none';
@@ -471,7 +471,7 @@ async function submitOrder(){
 }
 
 function loadOrders(){
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
+  const orders=JSON.parse(localStorage.getItem('premium_orders')||'[]');
   const list=document.getElementById('orderList');
   if(orders.length===0){list.innerHTML='<div class="no-orders">주문이 없습니다</div>';return;}
   list.innerHTML=[...orders].reverse().map((o,i)=>{
@@ -587,7 +587,7 @@ function calcAspects(planets){
 }
 
 async function confirmOrder(index){
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
+  const orders=JSON.parse(localStorage.getItem('premium_orders')||'[]');
   const o=orders[index];
   const btn=document.querySelector(`#order-${index} .confirm-btn`);
   btn.disabled=true;
@@ -644,7 +644,7 @@ async function confirmOrder(index){
     });
 
     orders[index].status='confirmed';
-    localStorage.setItem('orders',JSON.stringify(orders));
+    localStorage.setItem('premium_orders',JSON.stringify(orders));
     btn.textContent='✓ 발송 완료';
     showToast(`${o.name}님 리포트 발송 완료!`);
 
