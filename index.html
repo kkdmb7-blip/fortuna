@@ -109,6 +109,14 @@
   .rv-submit { flex: 1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 10px; padding: 13px; color: #0a0612; font-family: "Noto Serif KR",serif; font-size: 13px; font-weight: 600; cursor: pointer; }
   .rv-cancel { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 13px 18px; color: var(--text-dim); font-family: "Noto Serif KR",serif; font-size: 12px; cursor: pointer; }
 </style>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
 </head>
 <body>
 <div class="nebula"></div>
@@ -420,7 +428,7 @@ function parseBirthtime(str){
   return{hour:0,min:0};
 }
 
-async function submitOrder(){
+async async function submitOrder(){
   const name=document.getElementById('name').value.trim();
   const gender=document.getElementById('gender').value;
   const birthdate=document.getElementById('birthdate').value.trim();
@@ -458,6 +466,12 @@ async function submitOrder(){
     created_at:new Date().toLocaleString('ko-KR')
   };
 
+  // Supabase 저장
+  try {
+    await sb.from('orders').insert([orderData]);
+  } catch(e) {
+    console.error('Supabase 저장 오류:', e);
+  }
   const orders=JSON.parse(localStorage.getItem('orders')||'[]');
   orders.push(orderData);
   localStorage.setItem('orders',JSON.stringify(orders));
