@@ -3,771 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포르투나 — 점성 라이트 리포트</title>
+<title>포르투나 — 점성 리포트</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
   :root {
-    --void: #06030f;
+    --void: #05020e;
     --gold: #c9a84c;
     --gold-light: #e8cc7a;
-    --text: #e8e0f0;
+    --gold-dim: rgba(201,168,76,0.3);
+    --text: #ede6f8;
     --text-dim: #9b8fb0;
-    --border: rgba(201,168,76,0.25);
+    --border: rgba(201,168,76,0.2);
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--void); color: var(--text); font-family: 'Pretendard', sans-serif; min-height: 100vh; overflow-x: hidden; }
-  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d, 3s) ease-in-out infinite; opacity: var(--o, 0.4); }
-  @keyframes twinkle { 0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:calc(var(--o,0.4)*0.3);transform:scale(0.7)} }
-  .nebula { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.6) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(15,8,35,0.8) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%); }
-  .container { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 40px 24px 80px; }
-  .header { text-align: center; margin-bottom: 48px; }
-  .brand { font-family: 'Pretendard', sans-serif; font-size: 13px; font-weight: 300; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; opacity:0; animation: fadeUp 0.8s ease forwards 0.2s; }
-  .title { font-size: 30px; font-weight: 300; line-height: 1.5; margin-bottom: 12px; opacity:0; animation: fadeUp 0.8s ease forwards 0.4s; }
-  .subtitle { font-size: 15px; color: var(--text-dim); line-height: 1.8; opacity:0; animation: fadeUp 0.8s ease forwards 0.6s; }
-  .divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--gold),transparent); margin: 24px auto; opacity:0; animation: fadeUp 0.8s ease forwards 0.5s; }
-  .card { background: linear-gradient(135deg,rgba(45,31,78,0.4) 0%,rgba(10,6,18,0.6) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 20px; backdrop-filter: blur(10px); opacity:0; animation: fadeUp 0.8s ease forwards; }
-  .card:nth-child(1){animation-delay:0.7s}.card:nth-child(2){animation-delay:0.9s}.card:nth-child(3){animation-delay:1.1s}
-  .card-title { font-size: 13px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
-  .field { margin-bottom: 18px; }
-  label { display: block; font-size: 14px; color: var(--text-dim); letter-spacing: 0.05em; margin-bottom: 8px; }
-  label span.req { color: var(--gold); margin-left: 3px; }
-  input,select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 13px 16px; color: var(--text); font-family: 'Pretendard', sans-serif; font-size: 15px; outline: none; transition: border-color 0.3s,background 0.3s; -webkit-appearance:none; }
-  input:focus,select:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
-  select option { background: #1a1030; color: var(--text); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .hint { font-size: 13px; color: var(--text-dim); margin-top: 6px; line-height: 1.6; }
-  .account-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 8px; }
-  .account-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
-  .account-label { color: var(--text-dim); font-size: 14px; }
-  .account-value { color: var(--text); font-weight: 600; font-size: 15px; }
-  .amount { font-size: 22px; color: var(--gold); font-family: 'Pretendard', sans-serif; }
-  .copy-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--gold); font-size: 11px; cursor: pointer; transition: all 0.2s; font-family: 'Pretendard', sans-serif; }
-  .copy-btn:hover { background: rgba(201,168,76,0.1); }
-  .submit-btn { width: 100%; background: linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); background-size: 200% 200%; border: none; border-radius: 12px; padding: 18px; color: #0a0612; font-family: 'Pretendard', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; animation: shimmer 3s ease infinite; margin-top: 8px; }
-  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-  @keyframes shimmer { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
-  .notice { font-size: 13px; color: var(--text-dim); line-height: 1.9; text-align: center; margin-top: 16px; }
-  .success-screen { display: none; text-align: center; padding: 60px 20px; }
-  .success-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 2s ease infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.1)} }
-  .success-title { font-size: 22px; font-weight: 300; margin-bottom: 12px; color: var(--gold); }
-  .success-text { font-size: 13px; color: var(--text-dim); line-height: 2; }
-  .admin-panel { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100; }
-  .admin-toggle { background: rgba(45,31,78,0.9); border: 1px solid var(--border); border-radius: 50px; padding: 10px 20px; color: var(--gold); font-size: 12px; cursor: pointer; font-family: 'Pretendard', sans-serif; backdrop-filter: blur(10px); }
-  .admin-drawer { display: none; background: rgba(10,6,18,0.95); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 12px; backdrop-filter: blur(20px); max-width: 340px; width: 90vw; max-height: 70vh; overflow-y: auto; }
-  .admin-title { font-size: 12px; letter-spacing: 0.2em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
-  .order-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; font-size: 12px; line-height: 1.8; }
-  .order-name { font-size: 14px; color: var(--text); margin-bottom: 4px; }
-  .order-info { color: var(--text-dim); }
-  .confirm-btn { width: 100%; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 8px; padding: 10px; color: #0a0612; font-family: 'Pretendard', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
-  .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-  .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #444; color: #888; }
-  .no-orders { color: var(--text-dim); font-size: 13px; text-align: center; padding: 20px 0; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 50px; padding: 12px 24px; color: var(--gold); font-size: 13px; z-index: 999; transition: transform 0.3s ease; backdrop-filter: blur(10px); white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(10,6,18,0.3); border-top-color: #0a0612; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
-  @keyframes spin { to{transform:rotate(360deg)} }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--void); color: var(--text); font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
+
+  /* 배경 */
+  .bg-fixed { position: fixed; inset:0; z-index:0; pointer-events:none; }
+  .nebula1 { position: absolute; width:70vw; height:70vw; top:-20%; left:-20%; background: radial-gradient(circle, rgba(40,20,80,0.6) 0%, transparent 65%); }
+  .nebula2 { position: absolute; width:60vw; height:60vw; bottom:-10%; right:-15%; background: radial-gradient(circle, rgba(20,8,50,0.7) 0%, transparent 65%); }
+  .nebula3 { position: absolute; width:40vw; height:40vw; top:40%; left:40%; background: radial-gradient(circle, rgba(60,20,100,0.2) 0%, transparent 65%); }
+  .stars-bg { position: absolute; inset:0; }
+
+  /* 네비 */
+  nav { position: fixed; top:0; left:0; right:0; z-index:100; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(201,168,76,0.08); }
+  .nav-brand { font-family: 'Pretendard', sans-serif; font-size: 18px; letter-spacing: 0.15em; color: var(--gold); }
+  .nav-links { display: flex; gap: 24px; align-items: center; }
+  .nav-link { font-size: 12px; letter-spacing: 0.15em; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .nav-link:hover { color: var(--gold); }
+  .nav-cta { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 8px 20px; color: var(--gold); font-family: 'Pretendard', sans-serif; font-size: 12px; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+  .nav-cta:hover { background: rgba(201,168,76,0.1); }
+
+  /* 히어로 */
+  .hero { position: relative; z-index:1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 24px 60px; }
+  .hero-eyebrow { font-family: 'Pretendard', sans-serif; font-size: 12px; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.3s; }
+  .hero-title { font-family: 'Pretendard', sans-serif; font-size: clamp(42px, 8vw, 88px); font-weight: 300; line-height: 1.1; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.5s; }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: clamp(14px, 2vw, 16px); color: var(--text-dim); line-height: 2; max-width: 480px; margin-bottom: 48px; opacity:0; animation: fadeUp 1s ease forwards 0.7s; }
+  .hero-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); margin: 0 auto 48px; opacity:0; animation: fadeUp 1s ease forwards 0.9s; }
+
+  /* 상품 카드 */
+  .products { position: relative; z-index:1; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 800px; margin: 0 auto; padding: 0 24px 100px; opacity:0; animation: fadeUp 1s ease forwards 1.1s; }
+
+  .product-card { border-radius: 24px; padding: 40px 32px; cursor: pointer; transition: all 0.4s ease; text-decoration: none; display: block; position: relative; overflow: hidden; }
+  .product-card::before { content:''; position:absolute; inset:0; opacity:0; transition: opacity 0.4s; }
+  .product-card:hover { transform: translateY(-6px); }
+  .product-card:hover::before { opacity:1; }
+
+  .card-light { background: linear-gradient(145deg, rgba(30,18,60,0.8), rgba(10,5,25,0.9)); border: 1px solid rgba(100,150,220,0.2); }
+  .card-light::before { background: linear-gradient(145deg, rgba(30,18,60,0.95), rgba(10,5,25,0.98)); border-radius: 24px; }
+  .card-light:hover { border-color: rgba(100,150,220,0.4); box-shadow: 0 20px 60px rgba(80,100,200,0.15); }
+
+  .card-premium { background: linear-gradient(145deg, rgba(50,30,15,0.8), rgba(20,10,5,0.9)); border: 1px solid var(--border); }
+  .card-premium::before { background: linear-gradient(145deg, rgba(50,30,15,0.95), rgba(20,10,5,0.98)); border-radius: 24px; }
+  .card-premium:hover { border-color: rgba(201,168,76,0.4); box-shadow: 0 20px 60px rgba(201,168,76,0.12); }
+
+  .card-inner { position: relative; z-index:1; }
+  .card-tag { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; display: inline-block; margin-bottom: 24px; }
+  .tag-light { background: rgba(100,150,220,0.12); color: #8ab4ff; border: 1px solid rgba(100,150,220,0.2); }
+  .tag-premium { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid var(--border); }
+
+  .card-symbol { font-size: 36px; margin-bottom: 20px; display: block; }
+  .card-name { font-family: 'Pretendard', sans-serif; font-size: 28px; font-weight: 400; margin-bottom: 12px; line-height: 1.2; }
+  .card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.9; margin-bottom: 28px; }
+
+  .card-features { list-style: none; margin-bottom: 32px; }
+  .card-features li { font-size: 12px; color: var(--text-dim); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; gap: 8px; }
+  .card-features li:last-child { border-bottom: none; }
+  .feat-dot-light { color: #8ab4ff; }
+  .feat-dot-premium { color: var(--gold); }
+
+  .card-price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px; }
+  .price-num { font-family: 'Pretendard', sans-serif; font-size: 32px; color: var(--text); }
+  .price-unit { font-size: 13px; color: var(--text-dim); }
+
+  .card-btn { width: 100%; border-radius: 12px; padding: 15px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.3s; border: none; }
+  .btn-light { background: rgba(100,150,220,0.15); color: #8ab4ff; border: 1px solid rgba(100,150,220,0.3); }
+  .btn-light:hover { background: rgba(100,150,220,0.25); }
+  .btn-premium { background: linear-gradient(135deg, #c9a84c, #e8cc7a); color: #0a0612; }
+  .btn-premium:hover { opacity:0.9; }
+
+  .card-time { font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 10px; letter-spacing: 0.05em; }
+
+  /* 비교 섹션 */
+  .compare { position: relative; z-index:1; max-width: 700px; margin: 0 auto; padding: 0 24px 100px; }
+  .section-title { text-align: center; margin-bottom: 40px; }
+  .section-eyebrow { font-size: 11px; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; }
+  .section-heading { font-family: 'Pretendard', sans-serif; font-size: 32px; font-weight: 300; }
+
+  .compare-table { width: 100%; border-collapse: collapse; }
+  .compare-table th { padding: 14px 20px; font-size: 12px; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 400; text-align: left; border-bottom: 1px solid var(--border); }
+  .compare-table th.col-light { color: #8ab4ff; text-align: center; }
+  .compare-table th.col-premium { color: var(--gold); text-align: center; }
+  .compare-table td { padding: 14px 20px; font-size: 13px; color: var(--text-dim); border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .compare-table td.center { text-align: center; }
+  .check { color: var(--gold); font-size: 16px; }
+  .check-light { color: #8ab4ff; font-size: 16px; }
+  .dash { color: rgba(255,255,255,0.15); }
 
   /* 후기 섹션 */
-  .reviews-section { max-width: 560px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
-  .reviews-header { text-align: center; margin-bottom: 32px; }
-  .reviews-title { font-size: 20px; font-weight: 300; color: var(--text); margin-bottom: 8px; }
-  .reviews-sub { font-size: 12px; color: var(--text-dim); }
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
-  .stat-card { background: linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6)); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
-  .stat-num { font-family: 'Pretendard', sans-serif; font-size: 24px; color: var(--gold); }
-  .stat-lbl { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
-  .review-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
-  .rv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .rv-name { font-size: 15px; color: var(--text); }
-  .rv-badge { font-size: 11px; letter-spacing: 0.1em; padding: 3px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--gold); display: inline-block; margin-top: 4px; }
-  .rv-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; }
-  .rv-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.5; }
-  .rv-content { font-size: 14px; color: var(--text-dim); line-height: 1.9; }
-  .rv-date { font-size: 12px; color: rgba(155,143,176,0.4); margin-top: 10px; text-align: right; }
-  .write-review-btn { width: 100%; background: none; border: 1px solid var(--border); border-radius: 50px; padding: 16px; color: var(--gold); font-family: 'Pretendard', sans-serif; font-size: 15px; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s; margin-top: 8px; }
-  .write-review-btn:hover { background: rgba(201,168,76,0.1); }
-  .no-reviews-msg { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; line-height: 2; }
-  /* 후기 폼 오버레이 */
-  .rv-overlay { display: none; position: fixed; inset: 0; background: rgba(6,3,15,0.92); z-index: 200; backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 20px; }
-  .rv-overlay.show { display: flex; }
-  .rv-form { background: linear-gradient(135deg,rgba(45,31,78,0.95),rgba(10,6,18,0.98)); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
-  .rv-form-title { font-size: 12px; letter-spacing: 0.3em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
-  .rv-field { margin-bottom: 14px; }
-  .rv-label { display: block; font-size: 11px; color: var(--text-dim); margin-bottom: 7px; }
-  .rv-input, .rv-textarea, .rv-select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 11px 14px; color: var(--text); font-family: 'Pretendard', sans-serif; font-size: 13px; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
-  .rv-input:focus,.rv-textarea:focus,.rv-select:focus { border-color: var(--gold); }
-  .rv-textarea { resize: vertical; min-height: 90px; }
-  .rv-select option { background: #1a1030; }
-  .star-row { display: flex; gap: 8px; margin-top: 4px; }
-  .star-pick { font-size: 22px; cursor: pointer; color: rgba(201,168,76,0.2); transition: color 0.15s; background: none; border: none; padding: 0; }
-  .star-pick.on { color: var(--gold); }
-  .rv-btns { display: flex; gap: 10px; margin-top: 20px; }
-  .rv-submit { flex: 1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 10px; padding: 13px; color: #0a0612; font-family: 'Pretendard', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; }
-  .rv-cancel { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 13px 18px; color: var(--text-dim); font-family: 'Pretendard', sans-serif; font-size: 12px; cursor: pointer; }
-</style>
+  .reviews-section { position: relative; z-index:1; max-width: 700px; margin: 0 auto; padding: 0 24px 100px; }
+  .reviews-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; }
+  .rv-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+  .rv-stars { color: var(--gold); font-size: 13px; margin-bottom: 10px; }
+  .rv-text { font-size: 13px; color: var(--text-dim); line-height: 1.8; margin-bottom: 12px; }
+  .rv-author { font-size: 12px; color: var(--text-dim); opacity: 0.6; }
+  .rv-badge-sm { font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); color: var(--gold); margin-left: 6px; }
 
-<!-- Supabase -->
+  /* 푸터 */
+  footer { position: relative; z-index:1; text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); }
+  .footer-brand { font-family: 'Pretendard', sans-serif; font-size: 20px; color: var(--gold); margin-bottom: 12px; }
+  .footer-text { font-size: 12px; color: var(--text-dim); line-height: 2; }
+  .footer-links { display: flex; gap: 20px; justify-content: center; margin-top: 16px; }
+  .footer-link { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .footer-link:hover { color: var(--gold); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)} }
+
+  @media (max-width: 640px) {
+    nav { padding: 16px 20px; }
+    .nav-links { gap: 12px; }
+    .products { grid-template-columns: 1fr; gap: 16px; padding: 0 16px 60px; }
+    .product-card { padding: 28px 24px; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .compare-table th, .compare-table td { padding: 10px 12px; font-size: 12px; }
+  }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = 'https://afktkixkbcirsknahbmx.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co', 'sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11');
 </script>
 </head>
 <body>
-<div class="nebula"></div>
-<div class="stars" id="stars"></div>
-<div class="toast" id="toast"></div>
 
-<div class="container" id="mainForm">
-  <div class="header">
-    <div class="brand">FORTUNA</div>
-    <h1 class="title">내 인생 흐름 분석<br>점성 라이트 리포트</h1>
-    <div class="divider"></div>
-    <p class="subtitle">생년월일을 바탕으로 성향, 반복되는 패턴,<br>앞으로의 흐름을 24시간 내에 전달드립니다.</p>
+<div class="bg-fixed">
+  <div class="nebula1"></div>
+  <div class="nebula2"></div>
+  <div class="nebula3"></div>
+  <div class="stars-bg" id="starsBg"></div>
+</div>
+
+<nav>
+  <div class="nav-brand">포르투나</div>
+  <div class="nav-links">
+    <a href="#products" class="nav-link">리포트</a>
+    <a href="#compare" class="nav-link">비교</a>
+    <a href="#reviews" class="nav-link">후기</a>
+    <a href="light.html" class="nav-cta">신청하기</a>
   </div>
+</nav>
 
+<!-- 히어로 -->
+<section class="hero">
+  <div class="hero-eyebrow">포르투나 · 점성 리포트</div>
+  <h1 class="hero-title">
+    당신의 별자리가<br>
+    <em>말하는 것들</em>
+  </h1>
+  <p class="hero-sub">
+    태어난 순간 하늘의 행성 배치를 읽어<br>
+    당신의 성향, 감정 구조, 삶의 방향을<br>
+    깊이 있게 풀어드립니다
+  </p>
+  <div class="hero-divider"></div>
 
-  <div style="background:linear-gradient(135deg,rgba(45,31,78,0.5),rgba(10,6,18,0.7));border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:24px;margin-bottom:32px;opacity:0;animation:fadeUp 0.8s ease forwards 0.7s;">
-    <div style="font-size:11px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;">✦ 라이트 리포트 구성</div>
-    <div style="font-size:14px;line-height:2.2;color:var(--text-dim);">
-      ✓ &nbsp;도미넌트 플래닛 — 나를 움직이는 핵심 에너지<br>
-      ✓ &nbsp;태양 · 달 · 상승점 해석<br>
-      ✓ &nbsp;수성 · 금성 · 화성 · 목성 · 토성 해석<br>
-      ✓ &nbsp;중천(MC) 사회적 방향성<br>
-      ✓ &nbsp;일상 활용 팁 + 주의 패턴
-    </div>
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(201,168,76,0.15);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:13px;color:var(--text-dim);">더 깊은 분석이 필요하다면?</span>
-      <a href="premium.html" style="font-size:12px;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:5px 14px;">프리미엄 보기 →</a>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✦ 기본 정보</div>
-    <div class="field">
-      <label>이름<span class="req">*</span></label>
-      <input type="text" id="name" placeholder="홍길동">
-    </div>
-    <div class="field">
-      <label>성별<span class="req">*</span></label>
-      <select id="gender">
-        <option value="">선택해주세요</option>
-        <option value="여성">여성</option>
-        <option value="남성">남성</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>생년월일<span class="req">*</span></label>
-      <div class="field-row">
-        <input type="text" id="birthdate" placeholder="예: 1990.03.15">
-        <select id="calendar">
-          <option value="양력">양력</option>
-          <option value="음력">음력</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label>출생 시간</label>
-      <input type="text" id="birthtime" placeholder="예: 07:30 (모르면 비워두세요)">
-      <p class="hint">모르셔도 분석 가능합니다 · 비워두면 00:00으로 처리됩니다</p>
-    </div>
-    <div class="field">
-      <label>태어난 지역<span class="req">*</span></label>
-      <input type="text" id="birthplace" placeholder="예: 서울, 부산, 대구" list="cityList">
-      <datalist id="cityList"></datalist>
-      <p class="hint" id="coordHint"></p>
-    </div>
-    <div class="field">
-      <label>리포트 받을 이메일<span class="req">*</span></label>
-      <input type="email" id="email" placeholder="example@email.com">
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✦ 입금 안내</div>
-    <div class="account-box">
-      <div class="account-row">
-        <span class="account-label">금액</span>
-        <span class="amount">9,900원</span>
-      </div>
-      <div class="account-row">
-        <span class="account-label">은행</span>
-        <span class="account-value">국민은행</span>
-      </div>
-      <div class="account-row">
-        <span class="account-label">계좌번호</span>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="account-value">013-21-0780-866</span>
-          <button class="copy-btn" onclick="copyAccount()">복사</button>
+  <!-- 상품 카드 -->
+  <div class="products" id="products">
+    <a href="light.html" class="product-card card-light">
+      <div class="card-inner">
+        <span class="card-tag tag-light">라이트</span>
+        <span class="card-symbol">🌙</span>
+        <div class="card-name">핵심 자아<br>리포트</div>
+        <p class="card-desc">나를 움직이는 핵심 에너지와<br>소통·관계·방향성을 한눈에</p>
+        <ul class="card-features">
+          <li><span class="feat-dot-light">✦</span> 도미넌트 플래닛 분석</li>
+          <li><span class="feat-dot-light">✦</span> 태양 · 달 · 상승점 해석</li>
+          <li><span class="feat-dot-light">✦</span> 수성 · 금성 · 화성 · 목성 · 토성</li>
+          <li><span class="feat-dot-light">✦</span> 중천(MC) 사회적 방향성</li>
+          <li><span class="feat-dot-light">✦</span> 일상 활용 팁 + 주의 패턴</li>
+        </ul>
+        <div class="card-price">
+          <span class="price-num">9,900</span>
+          <span class="price-unit">원</span>
         </div>
+        <button class="card-btn btn-light">라이트 신청하기</button>
+        <p class="card-time">24시간 내 이메일 발송</p>
       </div>
-      <div class="account-row">
-        <span class="account-label">예금주</span>
-        <span class="account-value">오주영</span>
+    </a>
+
+    <a href="premium.html" class="product-card card-premium">
+      <div class="card-inner">
+        <span class="card-tag tag-premium">프리미엄</span>
+        <span class="card-symbol">☀️</span>
+        <div class="card-name">정밀 분석<br>리포트</div>
+        <p class="card-desc">인생 구조와 생애 테마까지<br>가장 깊이 있는 점성 분석</p>
+        <ul class="card-features">
+          <li><span class="feat-dot-premium">✦</span> 라이트 전체 포함</li>
+          <li><span class="feat-dot-premium">✦</span> 행성간 어스펙트 통합 해석</li>
+          <li><span class="feat-dot-premium">✦</span> 생애 테마 4가지 심층 분석</li>
+          <li><span class="feat-dot-premium">✦</span> 강점 · 성장 포인트 요약</li>
+          <li><span class="feat-dot-premium">✦</span> Final Wrap — 나에게 건네는 말</li>
+        </ul>
+        <div class="card-price">
+          <span class="price-num">29,000</span>
+          <span class="price-unit">원</span>
+        </div>
+        <button class="card-btn btn-premium">프리미엄 신청하기</button>
+        <p class="card-time">48시간 내 이메일 발송</p>
       </div>
-    </div>
-    <p class="hint" style="text-align:center;margin-top:12px;">
-      입금 후 아래 버튼을 눌러 신청을 완료해주세요<br>
-      입금자명을 <strong style="color:var(--gold)">본인 이름</strong>으로 해주세요
-    </p>
+    </a>
   </div>
+</section>
 
-  <div class="card">
-    <div class="card-title">✦ 신청 완료</div>
-    <button class="submit-btn" onclick="submitOrder()">입금 완료 · 리포트 신청하기</button>
-    <p class="notice">개인 맞춤 제작 상품으로 환불이 어렵습니다<br>입금 확인 후 24시간 내 이메일로 발송됩니다</p>
+<!-- 비교 -->
+<section class="compare" id="compare">
+  <div class="section-title">
+    <div class="section-eyebrow">비교</div>
+    <h2 class="section-heading">어떤 리포트가 맞을까요</h2>
   </div>
-  <div style="text-align:center;margin-top:16px;">
-    <a href="reviews.html" style="font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;">✦ 리포트 후기 보기</a>
-    &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="premium.html" style="font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-dim)'">✦ 프리미엄 리포트 보기</a>
-  </div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th class="col-light">라이트</th>
+        <th class="col-premium">프리미엄</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>도미넌트 플래닛</td><td class="center"><span class="check-light">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>태양 · 달 · 상승점</td><td class="center"><span class="check-light">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>수성 · 금성 · 화성</td><td class="center"><span class="check-light">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>목성 · 토성</td><td class="center"><span class="check-light">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>행성간 어스펙트 해석</td><td class="center"><span class="dash">—</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>생애 테마 4가지</td><td class="center"><span class="dash">—</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>Final Wrap 마무리</td><td class="center"><span class="dash">—</span></td><td class="center"><span class="check">✓</span></td></tr>
+      <tr><td>분량</td><td class="center" style="color:var(--text-dim)">A4 5~6장</td><td class="center" style="color:var(--gold)">A4 15~20장</td></tr>
+      <tr><td>발송 시간</td><td class="center" style="color:var(--text-dim)">24시간</td><td class="center" style="color:var(--gold)">48시간</td></tr>
+      <tr><td>가격</td><td class="center" style="color:#8ab4ff;font-size:15px;">9,900원</td><td class="center" style="color:var(--gold);font-size:15px;">29,000원</td></tr>
+    </tbody>
+  </table>
+</section>
 
-<!-- 후기 섹션 -->
-<div class="reviews-section" id="reviewsSection">
-  <div class="reviews-header">
-    <div class="divider"></div>
-    <h2 class="reviews-title">리포트를 받아보신 분들의 이야기</h2>
-    <p class="reviews-sub">실제 리포트를 받으신 분들의 솔직한 후기입니다</p>
+<!-- 후기 -->
+<section class="reviews-section" id="reviews">
+  <div class="section-title">
+    <div class="section-eyebrow">후기</div>
+    <h2 class="section-heading">받아보신 분들의 이야기</h2>
   </div>
-  <div class="stats-row">
-    <div class="stat-card"><div class="stat-num" id="rvTotal">0</div><div class="stat-lbl">총 후기</div></div>
-    <div class="stat-card"><div class="stat-num" id="rvAvg">-</div><div class="stat-lbl">평균 별점</div></div>
-    <div class="stat-card"><div class="stat-num" id="rvFive">0%</div><div class="stat-lbl">별점 5점</div></div>
+  <div class="reviews-grid" id="reviewsGrid">
+    <div class="rv-card">
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">읽으면서 소름이 돋았어요. 제가 왜 이런 패턴을 반복하는지 처음으로 이해가 됐어요.</p>
+      <div class="rv-author">30대 직장인<span class="rv-badge-sm">프리미엄</span></div>
+    </div>
+    <div class="rv-card">
+      <div class="rv-stars">★★★★★</div>
+      <p class="rv-text">점성술을 몰라도 쉽게 읽혔어요. 내 강점과 주의점이 이렇게 명확하게 정리된 게 처음이에요.</p>
+      <div class="rv-author">20대 대학원생<span class="rv-badge-sm">라이트</span></div>
+    </div>
   </div>
-  <div id="rvGrid"></div>
-  <button class="write-review-btn" onclick="openRvForm()">✦ 후기 작성하기</button>
-</div>
+</section>
 
-<!-- 후기 작성 폼 -->
-<div class="rv-overlay" id="rvOverlay">
-  <div class="rv-form">
-    <div class="rv-form-title">✦ 후기 작성</div>
-    <div class="rv-field">
-      <label class="rv-label">별점 *</label>
-      <div class="star-row" id="rvStarRow">
-        <button class="star-pick" onclick="pickStar(1)">★</button>
-        <button class="star-pick" onclick="pickStar(2)">★</button>
-        <button class="star-pick" onclick="pickStar(3)">★</button>
-        <button class="star-pick" onclick="pickStar(4)">★</button>
-        <button class="star-pick" onclick="pickStar(5)">★</button>
-      </div>
-    </div>
-    <div class="rv-field">
-      <label class="rv-label">닉네임 *</label>
-      <input type="text" class="rv-input" id="rvName" placeholder="예: 30대 직장인, 물고기자리">
-    </div>
-    <div class="rv-field">
-      <label class="rv-label">리포트 종류 *</label>
-      <select class="rv-select" id="rvType">
-        <option value="">선택해주세요</option>
-        <option value="light">라이트 리포트</option>
-        <option value="premium">프리미엄 리포트</option>
-      </select>
-    </div>
-    <div class="rv-field">
-      <label class="rv-label">한줄 제목 *</label>
-      <input type="text" class="rv-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요">
-    </div>
-    <div class="rv-field">
-      <label class="rv-label">상세 후기 *</label>
-      <textarea class="rv-textarea" id="rvContent" placeholder="리포트를 받고 느낀 점을 자유롭게 적어주세요 😊"></textarea>
-    </div>
-    <div class="rv-btns">
-      <button class="rv-cancel" onclick="closeRvForm()">취소</button>
-      <button class="rv-submit" onclick="submitRv()">후기 등록하기</button>
-    </div>
+<footer>
+  <div class="footer-brand">포르투나</div>
+  <p class="footer-text">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>개인 맞춤 제작 · 계좌이체 후 이메일 발송</p>
+  <div class="footer-links">
+    <a href="light.html" class="footer-link">라이트 리포트</a>
+    <a href="premium.html" class="footer-link">프리미엄 리포트</a>
+    <a href="admin.html" class="footer-link" style="opacity:0.3;">관리자</a>
   </div>
-</div>
-
-<div class="container success-screen" id="successScreen">
-  <div class="success-icon">🌙</div>
-  <div class="success-title">신청이 완료되었습니다</div>
-  <p class="success-text">입금 확인 후 24시간 내에<br>입력하신 이메일로 리포트를 보내드립니다<br><br><span style="color:var(--gold)">감사합니다 ✦</span></p>
-</div>
-
-<div class="admin-panel" id="adminPanel">
-  <div class="admin-drawer" id="adminDrawer">
-    <div class="admin-title">✦ 주문 관리</div>
-    <div id="orderList"></div>
-  </div>
-  <button class="admin-toggle" onclick="toggleAdmin()">관리자 ✦</button>
-</div>
+</footer>
 
 <script>
 // 별
-const starsEl = document.getElementById('stars');
-for(let i=0;i<120;i++){
+const bg=document.getElementById('starsBg');
+for(let i=0;i<150;i++){
   const s=document.createElement('div');
-  s.className='star';
-  const size=Math.random()*2.5+0.5;
-  s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s;`;
-  starsEl.appendChild(s);
+  const size=Math.random()*2+0.5;
+  const opacity=0.2+Math.random()*0.6;
+  const dur=2+Math.random()*4;
+  s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${opacity};animation:twinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*4}s;`;
+  bg.appendChild(s);
 }
 
-// 도시 데이터
-const CITIES = {
-  "서울":{en:"Seoul",lat:37.5665,lon:126.9780},
-  "부산":{en:"Busan",lat:35.1796,lon:129.0756},
-  "인천":{en:"Incheon",lat:37.4563,lon:126.7052},
-  "대구":{en:"Daegu",lat:35.8714,lon:128.6014},
-  "대전":{en:"Daejeon",lat:36.3504,lon:127.3845},
-  "광주":{en:"Gwangju",lat:35.1595,lon:126.8526},
-  "울산":{en:"Ulsan",lat:35.5384,lon:129.3114},
-  "수원":{en:"Suwon",lat:37.2636,lon:127.0286},
-  "성남":{en:"Seongnam",lat:37.4449,lon:127.1388},
-  "고양":{en:"Goyang",lat:37.6584,lon:126.8320},
-  "용인":{en:"Yongin",lat:37.2411,lon:127.1776},
-  "창원":{en:"Changwon",lat:35.2284,lon:128.6811},
-  "청주":{en:"Cheongju",lat:36.6424,lon:127.4890},
-  "전주":{en:"Jeonju",lat:35.8242,lon:127.1480},
-  "천안":{en:"Cheonan",lat:36.8151,lon:127.1139},
-  "안산":{en:"Ansan",lat:37.3236,lon:126.8219},
-  "안양":{en:"Anyang",lat:37.3943,lon:126.9568},
-  "남양주":{en:"Namyangju",lat:37.6360,lon:127.2165},
-  "화성":{en:"Hwaseong",lat:37.1996,lon:126.8316},
-  "부천":{en:"Bucheon",lat:37.5035,lon:126.7660},
-  "김해":{en:"Gimhae",lat:35.2285,lon:128.8893},
-  "평택":{en:"Pyeongtaek",lat:36.9921,lon:127.1129},
-  "포항":{en:"Pohang",lat:36.0190,lon:129.3435},
-  "원주":{en:"Wonju",lat:37.3422,lon:127.9201},
-  "파주":{en:"Paju",lat:37.7601,lon:126.7800},
-  "광명":{en:"Gwangmyeong",lat:37.4784,lon:126.8648},
-  "의정부":{en:"Uijeongbu",lat:37.7381,lon:127.0337},
-  "하남":{en:"Hanam",lat:37.5392,lon:127.2148},
-  "경주":{en:"Gyeongju",lat:35.8562,lon:129.2247},
-  "진주":{en:"Jinju",lat:35.1799,lon:128.1076},
-  "구미":{en:"Gumi",lat:36.1197,lon:128.3446},
-  "군산":{en:"Gunsan",lat:35.9676,lon:126.7368},
-  "익산":{en:"Iksan",lat:35.9483,lon:126.9576},
-  "목포":{en:"Mokpo",lat:34.8118,lon:126.3922},
-  "여수":{en:"Yeosu",lat:34.7604,lon:127.6622},
-  "순천":{en:"Suncheon",lat:34.9506,lon:127.4872},
-  "제주":{en:"Jeju City",lat:33.4996,lon:126.5312},
-  "제주시":{en:"Jeju City",lat:33.4996,lon:126.5312},
-  "서귀포":{en:"Seogwipo",lat:33.2541,lon:126.5600},
-  "춘천":{en:"Chuncheon",lat:37.8813,lon:127.7300},
-  "강릉":{en:"Gangneung",lat:37.7519,lon:128.8761},
-  "속초":{en:"Sokcho",lat:38.2048,lon:128.5912},
-  "동해":{en:"Donghae",lat:37.5244,lon:129.1140},
-  "충주":{en:"Chungju",lat:36.9910,lon:127.9259},
-  "제천":{en:"Jecheon",lat:37.1326,lon:128.1909},
-  "당진":{en:"Dangjin",lat:36.8930,lon:126.6280},
-  "아산":{en:"Asan",lat:36.7898,lon:127.0015},
-  "공주":{en:"Gongju",lat:36.4465,lon:127.1192},
-  "논산":{en:"Nonsan",lat:36.1870,lon:127.0990},
-  "서산":{en:"Seosan",lat:36.7848,lon:126.4503},
-  "김천":{en:"Gimcheon",lat:36.1398,lon:128.1138},
-  "경산":{en:"Gyeongsan",lat:35.8253,lon:128.7414},
-  "안동":{en:"Andong",lat:36.5684,lon:128.7294},
-  "통영":{en:"Tongyeong",lat:34.8544,lon:128.4333},
-  "거제":{en:"Geoje",lat:34.8806,lon:128.6218},
-  "밀양":{en:"Miryang",lat:35.5035,lon:128.7460},
-  "양산":{en:"Yangsan",lat:35.3350,lon:129.0370},
-  "나주":{en:"Naju",lat:35.0160,lon:126.7108},
-  "광양":{en:"Gwangyang",lat:34.9407,lon:127.6960},
-  "정읍":{en:"Jeongeup",lat:35.5696,lon:126.8560},
-  "남원":{en:"Namwon",lat:35.4165,lon:127.3901},
-  "김포":{en:"Gimpo",lat:37.6152,lon:126.7156},
-  "이천":{en:"Icheon",lat:37.2722,lon:127.4349},
-  "오산":{en:"Osan",lat:37.1500,lon:127.0773},
-  "군포":{en:"Gunpo",lat:37.3616,lon:126.9352},
-  "구리":{en:"Guri",lat:37.5943,lon:127.1296},
-  "양주":{en:"Yangju",lat:37.7854,lon:127.0460},
-  "포천":{en:"Pocheon",lat:37.8949,lon:127.2003},
-  "양평":{en:"Yangpyeong",lat:37.4914,lon:127.4873},
-  "홍천":{en:"Hongcheon",lat:37.6973,lon:127.8886},
-  "태백":{en:"Taebaek",lat:37.1642,lon:128.9854},
-  "삼척":{en:"Samcheok",lat:37.4500,lon:129.1650},
-  "홍성":{en:"Hongseong",lat:36.6012,lon:126.6608},
-  "태안":{en:"Taean",lat:36.7453,lon:126.2981},
-  "하동":{en:"Hadong",lat:35.0671,lon:127.7518},
-  "함양":{en:"Hamyang",lat:35.5205,lon:127.7250},
-  "거창":{en:"Geochang",lat:35.6867,lon:127.9099},
-  "합천":{en:"Hapcheon",lat:35.5662,lon:128.1659},
-  "남해":{en:"Namhae",lat:34.8375,lon:127.8924},
-  "산청":{en:"Sancheong",lat:35.4157,lon:127.8735}
-};
-
-// 자동완성
-const datalist=document.getElementById('cityList');
-Object.keys(CITIES).forEach(c=>{const o=document.createElement('option');o.value=c;datalist.appendChild(o);});
-
-// 지역 힌트
-document.getElementById('birthplace').addEventListener('input',function(){
-  const city=CITIES[this.value.trim()];
-  const hint=document.getElementById('coordHint');
-  if(city){hint.textContent=`✓ ${city.en} (${city.lat}, ${city.lon})`;hint.style.color='var(--gold)';}
-  else{hint.textContent=this.value?'도시명을 정확히 입력해주세요':'';hint.style.color='var(--text-dim)';}
-});
-
-// 관리자
-if(location.search.includes('admin')){document.getElementById('adminPanel').style.display='block';loadOrders();}
-let adminOpen=false;
-function toggleAdmin(){adminOpen=!adminOpen;document.getElementById('adminDrawer').style.display=adminOpen?'block':'none';if(adminOpen)loadOrders();}
-
-function copyAccount(){navigator.clipboard.writeText('013210780866').then(()=>showToast('계좌번호가 복사되었습니다'));}
-
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
-
-function parseBirthdate(str){
-  const c=str.replace(/[^\d]/g,'');
-  if(c.length>=8)return{year:parseInt(c.substring(0,4)),month:parseInt(c.substring(4,6)),day:parseInt(c.substring(6,8))};
-  return null;
+// 후기 불러오기 (Supabase)
+async function loadReviews(){
+  const {data} = await sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(4);
+  if(!data||data.length===0) return;
+  const grid = document.getElementById('reviewsGrid');
+  grid.innerHTML = data.map(r=>`
+    <div class="rv-card">
+      <div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
+      <p class="rv-text">${r.content.length>80?r.content.slice(0,80)+'...':r.content}</p>
+      <div class="rv-author">${r.name}<span class="rv-badge-sm">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
+    </div>
+  `).join('');
 }
-
-function parseBirthtime(str){
-  if(!str||!str.trim())return{hour:0,min:0};
-  const parts=str.replace(/[^\d:]/g,'').split(':');
-  if(parts.length>=2)return{hour:parseInt(parts[0])||0,min:parseInt(parts[1])||0};
-  return{hour:0,min:0};
-}
-
-async function submitOrder(){
-  const name=document.getElementById('name').value.trim();
-  const gender=document.getElementById('gender').value;
-  const birthdate=document.getElementById('birthdate').value.trim();
-  const calendar=document.getElementById('calendar').value;
-  const birthtime=document.getElementById('birthtime').value.trim();
-  const birthplace=document.getElementById('birthplace').value.trim();
-  const email=document.getElementById('email').value.trim();
-
-  if(!name||!gender||!birthdate||!birthplace||!email){showToast('필수 항목을 모두 입력해주세요');return;}
-  if(!email.includes('@')){showToast('올바른 이메일 주소를 입력해주세요');return;}
-
-  const city=CITIES[birthplace];
-  if(!city){showToast('태어난 지역을 정확히 입력해주세요 (예: 서울, 부산)');return;}
-
-  const bd=parseBirthdate(birthdate);
-  if(!bd){showToast('생년월일 형식을 확인해주세요 (예: 1990.03.15)');return;}
-
-  const bt=parseBirthtime(birthtime);
-  const orderId='ORD-'+Date.now();
-
-  const btn=document.querySelector('.submit-btn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="loading"></span>신청 중...';
-
-  const orderData={
-    order_id:orderId,name,gender,
-    birthdate_raw:birthdate,calendar,
-    birthtime_raw:birthtime||'모름',
-    birthplace,email,
-    year:bd.year,month:bd.month,day:bd.day,
-    hour:bt.hour,min:bt.min,
-    lat:city.lat,lon:city.lon,
-    place_en:city.en,tzone:9.0,
-    status:'pending',
-    created_at:new Date().toLocaleString('ko-KR')
-  };
-
-  // Supabase 저장
-  try {
-    const dbData = {
-      order_id: orderData.order_id,
-      name: orderData.name,
-      email: orderData.email,
-      gender: orderData.gender,
-      birthdate_raw: orderData.birthdate_raw,
-      calendar: orderData.calendar,
-      year: orderData.year,
-      month: orderData.month,
-      day: orderData.day,
-      hour: orderData.hour,
-      min: orderData.min,
-      birthplace: orderData.birthplace,
-      place_en: orderData.place_en,
-      lat: orderData.lat,
-      lon: orderData.lon,
-      tzone: orderData.tzone,
-      report_type: 'light',
-      status: 'pending'
-    };
-    const {error} = await sb.from('orders').insert([dbData]);
-    if(error) console.error('Supabase 오류:', error);
-  } catch(e) {
-    console.error('Supabase 저장 오류:', e);
-  }
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
-  orders.push(orderData);
-  localStorage.setItem('orders',JSON.stringify(orders));
-
-  setTimeout(()=>{
-    document.getElementById('mainForm').style.display='none';
-    document.getElementById('successScreen').style.display='block';
-  },800);
-}
-
-function loadOrders(){
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
-  const list=document.getElementById('orderList');
-  if(orders.length===0){list.innerHTML='<div class="no-orders">주문이 없습니다</div>';return;}
-  list.innerHTML=[...orders].reverse().map((o,i)=>{
-    const realIndex=orders.length-1-i;
-    return `<div class="order-item" id="order-${realIndex}">
-      <div class="order-name">${o.name} · ${o.gender}</div>
-      <div class="order-info">
-        📅 ${o.birthdate_raw} (${o.calendar})<br>
-        ⏰ ${o.hour}시 ${o.min}분<br>
-        📍 ${o.birthplace} → ${o.place_en}<br>
-        📧 ${o.email}<br>
-        🕐 ${o.created_at}
-      </div>
-      <button class="confirm-btn" onclick="confirmOrder(${realIndex})" ${o.status==='confirmed'?'disabled':''}>
-        ${o.status==='confirmed'?'✓ 발송 완료':'✦ 입금확인 · 리포트 발송'}
-      </button>
-    </div>`;
-  }).join('');
-}
-
-// 도미넌트 플래닛 계산
-function calcDominant(planets){
-  const scores={};
-  const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  
-  INNER.forEach(p=>{ scores[p]=0; });
-
-  const asc=planets.find(p=>p.name==='Ascendant');
-  const sun=planets.find(p=>p.name==='Sun');
-  const moon=planets.find(p=>p.name==='Moon');
-
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    // 1하우스
-    if(p.house===1) scores[p.name]+=5;
-    // 10하우스
-    if(p.house===10) scores[p.name]+=4;
-    // 역행
-    if(p.isRetro==='true') scores[p.name]-=1;
-  });
-
-  // 태양/달/ASC와 8도 이내 합
-  const anchors=[sun,moon,asc].filter(Boolean);
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    anchors.forEach(a=>{
-      if(a.name===p.name)return;
-      const diff=Math.abs(p.fullDegree-a.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      if(angle<=8) scores[p.name]+=3;
-    });
-  });
-
-  // 다른 행성 2개 이상과 8도 이내 합
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    let count=0;
-    planets.forEach(q=>{
-      if(q.name===p.name||!INNER.includes(q.name))return;
-      const diff=Math.abs(p.fullDegree-q.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      if(angle<=8) count++;
-    });
-    if(count>=2) scores[p.name]+=2;
-  });
-
-  // 가장 높은 점수
-  let dominant='Sun';
-  let maxScore=-999;
-  INNER.forEach(p=>{
-    if(scores[p]>maxScore){
-      maxScore=scores[p];
-      dominant=p;
-    }
-    // 동점이면 1하우스 우선
-    else if(scores[p]===maxScore){
-      const pData=planets.find(x=>x.name===p);
-      const dData=planets.find(x=>x.name===dominant);
-      if(pData&&pData.house===1) dominant=p;
-    }
-  });
-
-  return dominant;
-}
-
-// 주요 어스펙트 계산
-function calcAspects(planets){
-  const ASPECTS=[
-    {name:'합',angle:0,orb:8},
-    {name:'대립',angle:180,orb:8},
-    {name:'삼각',angle:120,orb:8},
-    {name:'사각',angle:90,orb:6},
-    {name:'육각',angle:60,orb:6},
-  ];
-  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  const results=[];
-
-  for(let i=0;i<PLANETS.length;i++){
-    for(let j=i+1;j<PLANETS.length;j++){
-      const p1=planets.find(p=>p.name===PLANETS[i]);
-      const p2=planets.find(p=>p.name===PLANETS[j]);
-      if(!p1||!p2)continue;
-      const diff=Math.abs(p1.fullDegree-p2.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      ASPECTS.forEach(asp=>{
-        if(Math.abs(angle-asp.angle)<=asp.orb){
-          results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);
-        }
-      });
-    }
-  }
-  return results.join(', ');
-}
-
-async function confirmOrder(index){
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');
-  const o=orders[index];
-  const btn=document.querySelector(`#order-${index} .confirm-btn`);
-  btn.disabled=true;
-  btn.innerHTML='<span class="loading"></span>차트 분석 중...';
-
-  try{
-    // Astro API 호출
-    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Accept':'application/json',
-        'Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')
-      },
-      body:JSON.stringify({
-        day:o.day,month:o.month,year:o.year,
-        hour:o.hour,min:o.min,
-        lat:o.lat,lon:o.lon,tzone:9.0
-      })
-    });
-
-    const astroData=await astroRes.json();
-    const planets=astroData.output||astroData;
-
-    // 도미넌트 & 어스펙트 계산
-    const dominant=calcDominant(planets);
-    const aspects=calcAspects(planets);
-
-    btn.innerHTML='<span class="loading"></span>리포트 발송 중...';
-
-    const payload={
-      request_id:o.order_id,
-      client_name:o.name,
-      recipient_email:o.email,
-      birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
-      birth_place_text:o.birthplace,
-      place:o.place_en,
-      year:o.year,month:o.month,day:o.day,
-      hour:o.hour,min:o.min,
-      lat:o.lat,lon:o.lon,tzone:9.0,
-      report_text:"네이탈 라이트 리포트",
-      report_type:"light",
-      doc_name:`포르투나_${o.name}`,
-      dominant_planet:dominant,
-      aspects_summary:aspects,
-      planets_json:JSON.stringify(planets),
-      status:"confirmed"
-    };
-
-    await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(payload)
-    });
-
-    orders[index].status='confirmed';
-    localStorage.setItem('orders',JSON.stringify(orders));
-    btn.textContent='✓ 발송 완료';
-    showToast(`${o.name}님 리포트 발송 완료!`);
-
-  }catch(err){
-    console.error(err);
-    btn.disabled=false;
-    btn.textContent='✦ 입금확인 · 리포트 발송';
-    showToast('오류 발생. 다시 시도해주세요');
-  }
-}
-
-// ===== 후기 기능 =====
-let rvStar = 0;
-function pickStar(n){
-  rvStar=n;
-  document.querySelectorAll('.star-pick').forEach((b,i)=>b.classList.toggle('on',i<n));
-}
-function openRvForm(){ document.getElementById('rvOverlay').classList.add('show'); }
-function closeRvForm(){
-  document.getElementById('rvOverlay').classList.remove('show');
-  rvStar=0;
-  document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));
-  ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('rvType').value='';
-}
-
-function submitRv(){
-  const name=document.getElementById('rvName').value.trim();
-  const type=document.getElementById('rvType').value;
-  const title=document.getElementById('rvTitle').value.trim();
-  const content=document.getElementById('rvContent').value.trim();
-  if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
-  const review={id:Date.now(),name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),approved:true,source:'customer'};
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
-  reviews.unshift(review);
-  localStorage.setItem('reviews',JSON.stringify(reviews));
-  renderRv();
-  showToast('후기가 등록되었습니다! 감사합니다 ✦');
-  closeRvForm();
-}
-
-function renderRv(){
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
-  const grid=document.getElementById('rvGrid');
-  const isAdmin=location.search.includes('admin');
-  if(reviews.length===0){
-    grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';
-  } else {
-    grid.innerHTML=reviews.map(r=>{
-      const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
-      const badge=r.type==='premium'?'프리미엄':'라이트';
-      const del=isAdmin?'<button onclick="deleteRv('+r.id+')" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:4px;padding:2px 8px;color:rgba(255,100,100,0.6);font-size:10px;cursor:pointer;margin-left:8px;">삭제</button>':'';
-      return '<div class="review-card"><div class="rv-header"><div><div class="rv-name">'+r.name+'</div><span class="rv-badge">'+badge+'</span></div><div class="rv-stars">'+stars+'</div></div><div class="rv-title">'+r.title+'</div><div class="rv-content">'+r.content+'</div><div class="rv-date">'+r.date+del+'</div></div>';
-    }).join('');
-  }
-  document.getElementById('rvTotal').textContent=reviews.length;
-  if(reviews.length>0){
-    const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
-    const five=reviews.filter(r=>r.star===5).length;
-    document.getElementById('rvAvg').textContent=avg+'★';
-    document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
-  }
-}
-
-function deleteRv(id){
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]').filter(r=>r.id!==id);
-  localStorage.setItem('reviews',JSON.stringify(reviews));
-  renderRv();
-  showToast('후기가 삭제되었습니다');
-}
-
-function approveRv(i){
-  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
-  const r=pending.splice(i,1)[0];r.approved=true;
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');
-  reviews.unshift(r);
-  localStorage.setItem('reviews',JSON.stringify(reviews));
-  localStorage.setItem('pending_reviews',JSON.stringify(pending));
-  renderRv();loadOrders();showToast('후기 승인!');
-}
-
-function rejectRv(i){
-  const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');
-  pending.splice(i,1);
-  localStorage.setItem('pending_reviews',JSON.stringify(pending));
-  loadOrders();showToast('후기 거절');
-}
-
-renderRv();
-
+loadReviews();
 </script>
+<style>
+@keyframes twinkle{0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:0.1;transform:scale(0.6)}}
+</style>
 </body>
 </html>
