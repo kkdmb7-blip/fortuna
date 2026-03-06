@@ -483,12 +483,13 @@ async function renderRv(){
   try{
     const {data:reviews}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false});
     if(!reviews||reviews.length===0){grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';return;}
-    grid.innerHTML=reviews.map(r=>{
+    rvList = reviews;
+    grid.innerHTML=reviews.map((r,i)=>{
       const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
       const badge=r.type==='premium'?'프리미엄':'라이트';
       const photos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);
       const photoHtml=photos.length?`<div style="display:grid;grid-template-columns:repeat(${photos.length},1fr);gap:5px;margin:10px 0;border-radius:8px;overflow:hidden;">${photos.map(u=>`<img src="${u}" style="width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}</div>`:'';
-      return `<div class="review-card"><div class="rv-header"><div><div class="rv-name">${r.name}</div><span class="rv-badge">${badge}</span></div><div class="rv-stars">${stars}</div></div>${photoHtml}<div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div><div class="rv-date">${r.created_at?fmtDt(r.created_at):(r.date||'')}</div></div>`;
+      return `<div class="review-card" onclick="openRvModal(${i})" style="cursor:pointer;"><div class="rv-header"><div><div class="rv-name">${r.name}</div><span class="rv-badge">${badge}</span></div><div class="rv-stars">${stars}</div></div>${photoHtml}<div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div><div class="rv-date">${r.created_at?fmtDt(r.created_at):(r.date||'')}</div></div>`;
     }).join('');
     document.getElementById('rvTotal').textContent=reviews.length;
     const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;
@@ -496,8 +497,61 @@ async function renderRv(){
   }catch(e){grid.innerHTML='<div class="no-reviews-msg">후기를 불러오는 중...</div>';console.error(e);}
 }
 
+let rvList=[], rvSlideIdx=0, rvSlidePhotos=[];
+function openRvModal(i){
+  const r=rvList[i];
+  rvSlidePhotos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);
+  rvSlideIdx=0;
+  const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
+  const badge=r.type==='premium'?'프리미엄':'라이트';
+  document.getElementById('rvModalContent').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="color:#c9a84c;font-size:17px;letter-spacing:3px;">${stars}</div>
+      <span style="font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.2);color:#c9a84c;font-weight:600;">${badge}</span>
+    </div>
+    ${rvSlidePhotos.length?`
+    <div style="position:relative;margin-bottom:16px;border-radius:12px;overflow:hidden;background:#000;">
+      <div id="rvSlideTrack" style="display:flex;transition:transform .3s ease;">
+        ${rvSlidePhotos.map(u=>`<img src="${u}" style="min-width:100%;width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}
+      </div>
+      ${rvSlidePhotos.length>1?`
+      <button onclick="rvSlide(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:34px;height:34px;border-radius:50%;cursor:pointer;">‹</button>
+      <button onclick="rvSlide(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:34px;height:34px;border-radius:50%;cursor:pointer;">›</button>
+      <div id="rvSlideDots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;">
+        ${rvSlidePhotos.map((_,j)=>`<div onclick="rvGoSlide(${j})" style="width:6px;height:6px;border-radius:50%;background:${j===0?'white':'rgba(255,255,255,0.4)'};cursor:pointer;"></div>`).join('')}
+      </div>`:''}
+    </div>`:''}
+    ${r.title?`<div style="font-size:16px;font-weight:700;color:#ede6f8;margin-bottom:10px;line-height:1.4;">"${r.title}"</div>`:''}
+    <p style="font-size:13px;color:#9b8fb0;line-height:2;margin-bottom:16px;">${r.content}</p>
+    <div style="font-size:12px;color:rgba(155,143,176,0.5);">${r.name}</div>
+    ${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.3);margin-top:3px;">${fmtDt(r.created_at)}</div>`:''}
+  `;
+  const modal=document.getElementById('rvModal');
+  modal.style.cssText='display:flex;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;';
+  if(rvSlidePhotos.length>1){
+    const track=document.getElementById('rvSlideTrack');
+    let sx=0;
+    track.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;},{passive:true});
+    track.addEventListener('touchend',e=>{const d=sx-e.changedTouches[0].clientX;if(Math.abs(d)>40)rvSlide(d>0?1:-1);});
+  }
+}
+function rvSlide(dir){rvSlideIdx=(rvSlideIdx+dir+rvSlidePhotos.length)%rvSlidePhotos.length;rvGoSlide(rvSlideIdx);}
+function rvGoSlide(i){
+  rvSlideIdx=i;
+  const t=document.getElementById('rvSlideTrack');
+  if(t)t.style.transform=`translateX(-${i*100}%)`;
+  document.querySelectorAll('#rvSlideDots div').forEach((d,j)=>{d.style.background=j===i?'white':'rgba(255,255,255,0.4)';});
+}
+
 function rejectRv(i){const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');pending.splice(i,1);localStorage.setItem('pending_reviews',JSON.stringify(pending));loadOrders();showToast('후기 거절');}
 renderRv();
 </script>
+<!-- 후기 모달 -->
+<div id="rvModal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:#0d0820;border:1px solid rgba(201,168,76,0.25);border-radius:22px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;padding:28px 24px;position:relative;">
+    <button onclick="document.getElementById('rvModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#9b8fb0;font-size:22px;cursor:pointer;">✕</button>
+    <div id="rvModalContent"></div>
+  </div>
+</div>
 </body>
 </html>
