@@ -502,10 +502,13 @@ function fmtDate(iso){
   const d = new Date(iso);
   return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
+let slideIdx = 0;
+let slidePhotos = [];
+
 function openModal(r){
-  const photos = r.photos || [];
   const photoUrls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
-  const allPhotos = photos.length ? photos : photoUrls;
+  slidePhotos = r.photos && r.photos.length ? r.photos : photoUrls;
+  slideIdx = 0;
   const stars = '★'.repeat(r.star) + '☆'.repeat(5 - r.star);
   const badge = r.type === 'premium' ? '프리미엄' : '라이트';
   document.getElementById('rvModalContent').innerHTML = `
@@ -513,15 +516,51 @@ function openModal(r){
       <div style="color:var(--gold);font-size:18px;letter-spacing:3px;">${stars}</div>
       <span style="font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;">${badge}</span>
     </div>
-    ${allPhotos.length ? `<div style="display:grid;grid-template-columns:repeat(${allPhotos.length},1fr);gap:8px;margin-bottom:18px;">${allPhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:cover;aspect-ratio:1;cursor:pointer;" onclick="window.open('${u}','_blank')" loading="lazy">`).join('')}</div>` : ''}
+    ${slidePhotos.length ? `
+    <div style="position:relative;margin-bottom:18px;border-radius:14px;overflow:hidden;background:#000;">
+      <div id="slideTrack" style="display:flex;transition:transform .3s ease;">
+        ${slidePhotos.map(u=>`<img src="${u}" style="min-width:100%;width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}
+      </div>
+      ${slidePhotos.length > 1 ? `
+      <button onclick="slide(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
+      <button onclick="slide(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
+      <div id="slideDots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;">
+        ${slidePhotos.map((_,i)=>`<div onclick="goSlide(${i})" style="width:6px;height:6px;border-radius:50%;background:${i===0?'white':'rgba(255,255,255,0.4)'};cursor:pointer;transition:background .2s;"></div>`).join('')}
+      </div>` : ''}
+    </div>` : ''}
     ${r.title ? `<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>` : ''}
     <p style="font-size:14px;color:var(--dim);line-height:2;margin-bottom:18px;letter-spacing:0.02em;">${r.content}</p>
     <div style="font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;">${r.name}</div>
     ${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.35);margin-top:4px;letter-spacing:0.03em;">${fmtDate(r.created_at)}</div>`:''}
   `;
-  const modal = document.getElementById('rvModal');
-  modal.style.display = 'flex';
+  document.getElementById('rvModal').style.display = 'flex';
+
+  // 터치 스와이프
+  if(slidePhotos.length > 1){
+    const track = document.getElementById('slideTrack');
+    let startX = 0;
+    track.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
+    track.addEventListener('touchend', e=>{
+      const diff = startX - e.changedTouches[0].clientX;
+      if(Math.abs(diff) > 40) slide(diff > 0 ? 1 : -1);
+    });
+  }
 }
+
+function slide(dir){
+  slideIdx = (slideIdx + dir + slidePhotos.length) % slidePhotos.length;
+  goSlide(slideIdx);
+}
+
+function goSlide(i){
+  slideIdx = i;
+  const track = document.getElementById('slideTrack');
+  if(track) track.style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('#slideDots div').forEach((d,j)=>{
+    d.style.background = j===i ? 'white' : 'rgba(255,255,255,0.4)';
+  });
+}
+
 function closeModal(e){
   if(e.target === document.getElementById('rvModal'))
     document.getElementById('rvModal').style.display = 'none';
