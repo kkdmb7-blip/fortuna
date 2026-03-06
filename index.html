@@ -411,7 +411,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   </div>
 </section>
 
-<!-- ⑤ 후기 (사진 첨부 가능) -->
+<!-- ⑤ 후기 -->
 <section class="sec reveal" id="reviews">
   <div class="sec-hd">
     <span class="sec-eye">후기</span>
@@ -419,68 +419,21 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   </div>
   <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
   <div class="rv-grid" id="reviewsGrid">
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"관계 패턴 부분이 특히 정확했어요"</div><p class="rv-txt">내 성향 설명이 전반적으로 맞았고, 특히 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요. 친구한테도 추천했어요.</p><div class="rv-author">30대 직장인 · 물고기자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"생애 테마에서 멈춰서 읽었어요"</div><p class="rv-txt">라이트보다 깊이가 달랐어요. 특히 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요.</p><div class="rv-author">20대 프리랜서 · 전갈자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-txt">별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-txt">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
+    <div class="rv-card" onclick="openModal({star:5,type:'light',title:'관계 패턴 부분이 특히 정확했어요',content:'내 성향 설명이 전반적으로 맞았고, 특히 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요. 친구한테도 추천했어요.',name:'30대 직장인 · 물고기자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"관계 패턴 부분이 특히 정확했어요"</div><p class="rv-txt">내 성향 설명이 전반적으로 맞았고, 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요.</p><div class="rv-author">30대 직장인 · 물고기자리</div></div>
+    <div class="rv-card" onclick="openModal({star:5,type:'premium',title:'생애 테마에서 멈춰서 읽었어요',content:'라이트보다 깊이가 달랐어요. 특히 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요. 프리미엄 선택 잘했다고 생각했어요.',name:'20대 프리랜서 · 전갈자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"생애 테마에서 멈춰서 읽었어요"</div><p class="rv-txt">라이트보다 깊이가 달랐어요. 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요.</p><div class="rv-author">20대 프리랜서 · 전갈자리</div></div>
+    <div class="rv-card" onclick="openModal({star:5,type:'light',title:'막연하게 알던 걸 언어로 정리해준 느낌',content:'별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 훨씬 납득이 됐어요.',name:'30대 교사 · 처녀자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-txt">단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
+    <div class="rv-card" onclick="openModal({star:4,type:'premium',title:'Final Wrap이 제일 좋았어요',content:'리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다. 가격 대비 충분히 만족해요.',name:'40대 자영업자 · 사수자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-txt">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았어요.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
   </div>
-
-  <!-- 후기 작성 폼 (사진 첨부 포함) -->
-  <div class="rv-form-wrap" style="margin-top:32px;">
-    <div class="rv-form-title">✦ 후기 남기기</div>
-    <div class="form-row">
-      <div class="form-field">
-        <label class="form-label">이름 (닉네임 가능)</label>
-        <input class="form-input" id="rvName" type="text" placeholder="예: 물고기자리 직장인">
-      </div>
-      <div class="form-field">
-        <label class="form-label">리포트 종류</label>
-        <div class="type-select">
-          <button class="type-btn active-l" id="typeLight" onclick="selectType('light')">라이트</button>
-          <button class="type-btn" id="typePremium" onclick="selectType('premium')">프리미엄</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field full">
-        <label class="form-label">별점</label>
-        <div class="star-select" id="starSelect">
-          <button class="star-btn active" data-v="1" onclick="setStar(1)">★</button>
-          <button class="star-btn active" data-v="2" onclick="setStar(2)">★</button>
-          <button class="star-btn active" data-v="3" onclick="setStar(3)">★</button>
-          <button class="star-btn active" data-v="4" onclick="setStar(4)">★</button>
-          <button class="star-btn active" data-v="5" onclick="setStar(5)">★</button>
-        </div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field full">
-        <label class="form-label">제목 (한 줄 요약)</label>
-        <input class="form-input" id="rvTitle" type="text" placeholder="예: 관계 패턴 부분이 정확했어요">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field full">
-        <label class="form-label">후기 내용</label>
-        <textarea class="form-input form-textarea" id="rvContent" placeholder="리포트를 받아보신 솔직한 후기를 적어주세요"></textarea>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-field full">
-        <label class="form-label">사진 첨부 (선택)</label>
-        <label class="photo-upload" id="photoLabel">
-          <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
-          <div class="photo-upload-txt">📷 <span>사진을 클릭하여 첨부</span>하거나 드래그하세요<br><span style="font-size:10px;opacity:0.5;">JPG, PNG · 최대 5MB</span></div>
-          <img class="photo-preview" id="photoPreview" alt="미리보기">
-        </label>
-      </div>
-    </div>
-    <button class="submit-rv" onclick="submitReview()">후기 제출하기</button>
-    <div class="rv-result" id="rvResult"></div>
-  </div>
-
   <a href="light.html" class="rv-more">지금 신청하기 →</a>
 </section>
+
+<!-- 후기 모달 -->
+<div id="rvModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:20px;" onclick="closeModal(event)">
+  <div id="rvModalBox" style="background:#0d0820;border:1px solid rgba(201,168,76,0.25);border-radius:24px;max-width:500px;width:100%;max-height:88vh;overflow-y:auto;padding:32px 28px;position:relative;">
+    <button onclick="document.getElementById('rvModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1;padding:4px;">✕</button>
+    <div id="rvModalContent"></div>
+  </div>
+</div>
 
 <!-- ⑥ 무료 -->
 <section class="sec reveal">
@@ -543,91 +496,50 @@ const obs = new IntersectionObserver(entries=>{
 },{threshold:0.07});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// ── 별점 ──
-let curStar = 5;
-function setStar(n){
-  curStar = n;
-  document.querySelectorAll('.star-btn').forEach(b=>{
-    b.classList.toggle('active', parseInt(b.dataset.v) <= n);
-  });
+// ── 후기 모달 ──
+function openModal(r){
+  const photos = r.photos || [];
+  const photoUrls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
+  const allPhotos = photos.length ? photos : photoUrls;
+  const stars = '★'.repeat(r.star) + '☆'.repeat(5 - r.star);
+  const badge = r.type === 'premium' ? '프리미엄' : '라이트';
+  document.getElementById('rvModalContent').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="color:var(--gold);font-size:18px;letter-spacing:3px;">${stars}</div>
+      <span style="font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;">${badge}</span>
+    </div>
+    ${allPhotos.length ? `<div style="display:grid;grid-template-columns:repeat(${allPhotos.length},1fr);gap:8px;margin-bottom:18px;">${allPhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:cover;aspect-ratio:1;cursor:pointer;" onclick="window.open('${u}','_blank')" loading="lazy">`).join('')}</div>` : ''}
+    ${r.title ? `<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>` : ''}
+    <p style="font-size:14px;color:var(--dim);line-height:2;margin-bottom:18px;letter-spacing:0.02em;">${r.content}</p>
+    <div style="font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;">${r.name}</div>
+  `;
+  const modal = document.getElementById('rvModal');
+  modal.style.display = 'flex';
+}
+function closeModal(e){
+  if(e.target === document.getElementById('rvModal'))
+    document.getElementById('rvModal').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('rvModal').style.display='none'; });
+
+// ── 사진 썸네일 렌더 (카드용) ──
+function renderPhotoThumb(r){
+  const urls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
+  if(!urls.length) return '';
+  return `<div style="display:grid;grid-template-columns:repeat(${Math.min(urls.length,3)},1fr);gap:5px;margin-bottom:10px;border-radius:8px;overflow:hidden;">${urls.map(u=>`<img src="${u}" style="width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}</div>`;
 }
 
-// ── 리포트 타입 ──
-let curType = 'light';
-function selectType(t){
-  curType = t;
-  document.getElementById('typeLight').className = 'type-btn' + (t==='light'?' active-l':'');
-  document.getElementById('typePremium').className = 'type-btn' + (t==='premium'?' active-p':'');
-}
-
-// ── 사진 미리보기 ──
-function previewPhoto(input){
-  const file = input.files[0];
-  if(!file) return;
-  const prev = document.getElementById('photoPreview');
-  prev.src = URL.createObjectURL(file);
-  prev.style.display = 'block';
-  document.querySelector('.photo-upload-txt').style.display = 'none';
-}
-
-// ── 후기 제출 ──
-async function submitReview(){
-  const name = document.getElementById('rvName').value.trim();
-  const title = document.getElementById('rvTitle').value.trim();
-  const content = document.getElementById('rvContent').value.trim();
-  const result = document.getElementById('rvResult');
-  if(!name||!content){result.style.color='#ff7b7b';result.textContent='이름과 후기 내용을 입력해주세요.';return;}
-  result.style.color='var(--dim)';result.textContent='제출 중...';
-
-  // 사진: Storage 업로드 시도 (실패해도 후기 제출은 진행)
-  let photoUrl = null;
-  const photoFile = document.getElementById('photoInput').files[0];
-  if(photoFile){
-    try{
-      const ext = photoFile.name.split('.').pop();
-      const fileName = `review_${Date.now()}.${ext}`;
-      const { error: upErr } = await sb.storage.from('review-photos').upload(fileName, photoFile, {cacheControl:'3600',upsert:false});
-      if(!upErr){
-        const { data: urlData } = sb.storage.from('review-photos').getPublicUrl(fileName);
-        photoUrl = urlData.publicUrl;
-      }
-    }catch(e){ console.warn('사진 업로드 스킵:', e); }
-  }
-
-  // 기본 컬럼만 insert, photo_url은 컬럼 있을 때만 포함
-  const row = { name, title, content, star: curStar, type: curType, approved: false };
-  if(photoUrl) row.photo_url = photoUrl;
-
-  try{
-    const { error } = await sb.from('reviews').insert(row);
-    if(error) throw error;
-    result.style.color='var(--gold)';
-    result.textContent='감사합니다! 검토 후 게시됩니다 ✦';
-    document.getElementById('rvName').value='';
-    document.getElementById('rvTitle').value='';
-    document.getElementById('rvContent').value='';
-    document.getElementById('photoInput').value='';
-    document.getElementById('photoPreview').style.display='none';
-    document.querySelector('.photo-upload-txt').style.display='block';
-    setStar(5); selectType('light');
-  }catch(e){
-    result.style.color='#ff7b7b';
-    result.textContent='오류: ' + (e.message || '다시 시도해주세요.');
-    console.error(e);
-  }
-}
-
-// ── 후기 로드 (사진 있으면 표시) ──
+// ── 후기 로드 ──
 async function loadReviews(){
   try{
     const {data} = await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
     if(!data||data.length===0) return;
     document.getElementById('reviewsGrid').innerHTML = data.map(r=>`
-      <div class="rv-card">
+      <div class="rv-card" onclick='openModal(${JSON.stringify(r)})' style="cursor:pointer;">
         <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
-        ${r.photo_url?`<img class="rv-photo" src="${r.photo_url}" alt="후기 사진" loading="lazy">`:''}
+        ${renderPhotoThumb(r)}
         ${r.title?`<div class="rv-quote">"${r.title}"</div>`:''}
-        <p class="rv-txt">${r.content.length>110?r.content.slice(0,110)+'…':r.content}</p>
+        <p class="rv-txt">${r.content.length>90?r.content.slice(0,90)+'…':r.content}</p>
         <div class="rv-author">${r.name}</div>
       </div>`).join('');
   }catch(e){ console.error(e); }
