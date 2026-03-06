@@ -168,7 +168,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </div>
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(201,168,76,0.15);display:flex;justify-content:space-between;align-items:center;">
       <span style="font-family:var(--font-sans);font-size:13px;color:var(--text-dim);letter-spacing:0.02em;">라이트 리포트와 비교하면?</span>
-      <a href="/" style="font-family:var(--font-display);font-size:12px;letter-spacing:0.12em;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:5px 14px;">라이트 보기 →</a>
+      <a href="light.html" style="font-family:var(--font-display);font-size:12px;letter-spacing:0.12em;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:5px 14px;">라이트 보기 →</a>
     </div>
   </div>
 
@@ -250,7 +250,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   <div style="text-align:center;margin-top:16px;">
     <a href="reviews.html" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;">✦ 리포트 후기 보기</a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="/" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-dim)'">✦ 라이트 리포트 보기</a>
+    <a href="light.html" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-dim)'">✦ 라이트 리포트 보기</a>
   </div>
 
 <!-- 후기 섹션 -->
@@ -417,24 +417,25 @@ function pickStar(n){rvStar=n;document.querySelectorAll('.star-pick').forEach((b
 function openRvForm(){document.getElementById('rvOverlay').classList.add('show');}
 function closeRvForm(){document.getElementById('rvOverlay').classList.remove('show');rvStar=0;document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');document.getElementById('rvType').value='';}
 
-function submitRv(){
+async function submitRv(){
   const name=document.getElementById('rvName').value.trim();const type=document.getElementById('rvType').value;const title=document.getElementById('rvTitle').value.trim();const content=document.getElementById('rvContent').value.trim();
   if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
-  const review={id:Date.now(),name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),approved:true,source:'customer'};
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');reviews.unshift(review);localStorage.setItem('reviews',JSON.stringify(reviews));
-  renderRv();showToast('후기가 등록되었습니다! 감사합니다 ✦');closeRvForm();
+  await sb.from('reviews').insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'customer',approved:false}]);
+  await renderRv();showToast('후기가 등록되었습니다! 감사합니다 ✦');closeRvForm();
 }
 
-function renderRv(){
-  const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');const grid=document.getElementById('rvGrid');const isAdmin=location.search.includes('admin');
-  if(reviews.length===0){grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';}
-  else{grid.innerHTML=reviews.map(r=>{const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';const del=isAdmin?'<button onclick="deleteRv('+r.id+')" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:4px;padding:2px 8px;color:rgba(255,100,100,0.6);font-size:10px;cursor:pointer;margin-left:8px;">삭제</button>':'';return '<div class="review-card"><div class="rv-header"><div><div class="rv-name">'+r.name+'</div><span class="rv-badge">'+badge+'</span></div><div class="rv-stars">'+stars+'</div></div><div class="rv-title">'+r.title+'</div><div class="rv-content">'+r.content+'</div><div class="rv-date">'+r.date+del+'</div></div>';}).join('');}
-  document.getElementById('rvTotal').textContent=reviews.length;
-  if(reviews.length>0){const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;document.getElementById('rvAvg').textContent=avg+'★';document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';}
+async function renderRv(){
+  const grid=document.getElementById('rvGrid');
+  try{
+    const {data:reviews}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false});
+    if(!reviews||reviews.length===0){grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';return;}
+    grid.innerHTML=reviews.map(r=>{const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';return '<div class="review-card"><div class="rv-header"><div><div class="rv-name">'+r.name+'</div><span class="rv-badge">'+badge+'</span></div><div class="rv-stars">'+stars+'</div></div><div class="rv-title">'+r.title+'</div><div class="rv-content">'+r.content+'</div><div class="rv-date">'+r.date+'</div></div>';}).join('');
+    document.getElementById('rvTotal').textContent=reviews.length;
+    const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;
+    document.getElementById('rvAvg').textContent=avg+'★';document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
+  }catch(e){grid.innerHTML='<div class="no-reviews-msg">후기를 불러오는 중...</div>';console.error(e);}
 }
 
-function deleteRv(id){const reviews=JSON.parse(localStorage.getItem('reviews')||'[]').filter(r=>r.id!==id);localStorage.setItem('reviews',JSON.stringify(reviews));renderRv();showToast('후기가 삭제되었습니다');}
-function approveRv(i){const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');const r=pending.splice(i,1)[0];r.approved=true;const reviews=JSON.parse(localStorage.getItem('reviews')||'[]');reviews.unshift(r);localStorage.setItem('reviews',JSON.stringify(reviews));localStorage.setItem('pending_reviews',JSON.stringify(pending));renderRv();loadOrders();showToast('후기 승인!');}
 function rejectRv(i){const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');pending.splice(i,1);localStorage.setItem('pending_reviews',JSON.stringify(pending));loadOrders();showToast('후기 거절');}
 renderRv();
 </script>
