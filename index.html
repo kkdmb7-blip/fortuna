@@ -567,11 +567,12 @@ function closeModal(e){
 }
 document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('rvModal').style.display='none'; });
 
-// ── 사진 썸네일 렌더 (카드용) ──
+// ── 사진 썸네일 렌더 (카드용 - 첫 장만, 나머지는 모달에서) ──
 function renderPhotoThumb(r){
   const urls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
   if(!urls.length) return '';
-  return `<div style="display:grid;grid-template-columns:repeat(${Math.min(urls.length,3)},1fr);gap:5px;margin-bottom:10px;border-radius:8px;overflow:hidden;">${urls.map(u=>`<img src="${u}" style="width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}</div>`;
+  const more = urls.length > 1 ? `<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;">+${urls.length-1}</div>` : '';
+  return `<div style="position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden;"><img src="${urls[0]}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" loading="lazy">${more}</div>`;
 }
 
 // ── 후기 로드 ──
