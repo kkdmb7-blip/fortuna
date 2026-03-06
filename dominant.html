@@ -177,85 +177,68 @@ function parseTime(str){
 
 function calcDominantPlanet(planets){
   const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-
-  // 룰러십: 각 별자리의 지배행성 (전통+현대)
+  const SIGN_NAMES=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
   const SIGN_RULERS={
     'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon',
     'Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto',
     'Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'
   };
-  // ASC 별자리 룰러도 포함
-  const SIGN_NAMES=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-
-  // 내행성 vs 외행성 기본 가중치
-  const BASE_WEIGHT={Sun:1.5,Moon:1.5,Mercury:1.0,Venus:1.0,Mars:1.2,Jupiter:0.9,Saturn:0.9,Uranus:0.7,Neptune:0.7,Pluto:0.7};
+  // 내행성 가중치 높게, 외행성 낮게
+  const BASE_WEIGHT={Sun:2.0,Moon:2.0,Mercury:1.5,Venus:1.5,Mars:2.0,
+                     Jupiter:1.0,Saturn:0.8,Uranus:0.5,Neptune:0.5,Pluto:0.5};
+  const HOUSE_SCORES={1:6,10:5,7:4,4:5,2:2,5:2,8:2,11:2,3:1,6:1,9:1,12:1};
 
   const scores={};PLANETS.forEach(p=>{scores[p]=0;});
 
-  // 1. 하우스 점수: 앵글 하우스(1,4,7,10) 중요, 석세던트(2,5,8,11), 캐던트(3,6,9,12)
-  const HOUSE_SCORES={1:6,10:5,7:4,4:4,2:2,5:2,8:2,11:2,3:1,6:1,9:1,12:1};
+  // 1. 하우스 점수
   planets.forEach(p=>{
     if(!PLANETS.includes(p.name))return;
     const hs=HOUSE_SCORES[p.house]||0;
-    scores[p.name]+=hs*(BASE_WEIGHT[p.name]||1);
-    // 역행이면 약화
+    const w=BASE_WEIGHT[p.name]||1;
+    scores[p.name]+=hs*w;
     if(p.isRetro==='true')scores[p.name]-=1;
   });
 
-  // 2. 룰러십 점수: 자신이 지배하는 별자리에 행성이 있으면 보너스
+  // 2. 품위(Domicile): 자기 별자리에 있으면 큰 보너스
   planets.forEach(p=>{
     if(!PLANETS.includes(p.name))return;
-    // 이 행성이 지배하는 별자리 찾기
+    const signIdx=Math.floor(p.fullDegree/30);
+    const sign=SIGN_NAMES[signIdx];
+    if(SIGN_RULERS[sign]===p.name){
+      const w=BASE_WEIGHT[p.name]||1;
+      scores[p.name]+=6*w;
+    }
+  });
+
+  // 3. 룰러십: 자신이 지배하는 별자리에 다른 행성이 있으면
+  planets.forEach(p=>{
+    if(!PLANETS.includes(p.name))return;
     const ruledSigns=Object.entries(SIGN_RULERS).filter(([s,r])=>r===p.name).map(([s])=>s);
-    // 다른 행성이 그 별자리에 있으면 룰러 점수
     planets.forEach(other=>{
       if(!PLANETS.includes(other.name))return;
-      const signIdx=Math.floor(other.fullDegree/30);
-      const signName=SIGN_NAMES[signIdx];
-      if(ruledSigns.includes(signName)){
-        scores[p.name]+=2*(BASE_WEIGHT[other.name]||1);
+      const otherSign=SIGN_NAMES[Math.floor(other.fullDegree/30)];
+      if(ruledSigns.includes(otherSign)){
+        const w=BASE_WEIGHT[other.name]||1;
+        scores[p.name]+=2*w;
       }
     });
   });
 
-  // 3. 자신이 지배하는 별자리에 자신이 있으면 (품위, Domicile) 큰 보너스
-  planets.forEach(p=>{
-    if(!PLANETS.includes(p.name))return;
-    const signIdx=Math.floor(p.fullDegree/30);
-    const signName=SIGN_NAMES[signIdx];
-    if(SIGN_RULERS[signName]===p.name){
-      scores[p.name]+=5;
-    }
-  });
-
-  // 4. ASC/MC 룰러 보너스
+  // 4. ASC 룰러 보너스
   const asc=planets.find(p=>p.name==='Ascendant');
-  const mc=planets.find(p=>p.name==='MC'||p.name==='MidHeaven');
   if(asc){
-    const ascSignIdx=Math.floor(asc.fullDegree/30);
-    const ascSign=SIGN_NAMES[ascSignIdx];
+    const ascSign=SIGN_NAMES[Math.floor(asc.fullDegree/30)];
     const ascRuler=SIGN_RULERS[ascSign];
-    if(ascRuler&&scores[ascRuler]!==undefined)scores[ascRuler]+=4;
-  }
-  if(mc){
-    const mcSignIdx=Math.floor(mc.fullDegree/30);
-    const mcSign=SIGN_NAMES[mcSignIdx];
-    const mcRuler=SIGN_RULERS[mcSign];
-    if(mcRuler&&scores[mcRuler]!==undefined)scores[mcRuler]+=2;
+    if(ascRuler&&scores[ascRuler]!==undefined)scores[ascRuler]+=3;
   }
 
-  // 5. 핵심 행성(태양/달/ASC)과의 어스펙트
-  const keyPoints=[
-    planets.find(p=>p.name==='Sun'),
-    planets.find(p=>p.name==='Moon'),
-    asc
-  ].filter(Boolean);
+  // 5. 태양/달/ASC와의 어스펙트
+  const keyPoints=planets.filter(p=>['Sun','Moon','Ascendant'].includes(p.name));
   keyPoints.forEach(key=>{
     planets.forEach(p=>{
       if(!PLANETS.includes(p.name)||key.name===p.name)return;
       const diff=Math.abs(p.fullDegree-key.fullDegree);
       const angle=diff>180?360-diff:diff;
-      // 합(0), 삼각(120), 육각(60), 대립(180), 사각(90)
       const ASPECTS=[{a:0,orb:8,w:3},{a:120,orb:8,w:2.5},{a:60,orb:6,w:2},{a:180,orb:8,w:2},{a:90,orb:6,w:1.5}];
       for(const asp of ASPECTS){
         if(Math.abs(angle-asp.a)<=asp.orb){
@@ -270,6 +253,7 @@ function calcDominantPlanet(planets){
   PLANETS.forEach(p=>{if(scores[p]>max){max=scores[p];dominant=p;}});
   return dominant;
 }
+
 
 async function calcDominant(){
   const birth=document.getElementById('calcBirth').value.trim();
