@@ -131,6 +131,20 @@
   .upsell-text { font-size:14px; color:var(--text-dim); line-height:1.9; margin-bottom:20px; }
   .upsell-btn { display:inline-block; background:linear-gradient(135deg,#c9a84c,#e8cc7a); border-radius:50px; padding:14px 32px; color:#0a0612; font-family:'Pretendard',sans-serif; font-size:14px; font-weight:700; text-decoration:none; transition:all 0.3s; }
   .upsell-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(201,168,76,0.4); }
+
+  .score-circle { width:140px; height:140px; border-radius:50%; border:3px solid var(--gold); display:flex; flex-direction:column; justify-content:center; align-items:center; margin:0 auto 24px; background:rgba(201,168,76,0.05); }
+  .score-num { font-size:48px; font-weight:300; color:var(--gold); line-height:1; }
+  .score-label { font-size:12px; color:var(--text-dim); margin-top:4px; letter-spacing:0.1em; }
+  .score-title { font-size:18px; font-weight:300; color:var(--text); margin-bottom:8px; text-align:center; }
+  .score-subtitle { font-size:13px; color:var(--text-dim); text-align:center; margin-bottom:24px; line-height:1.8; }
+  .aspect-item { display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid rgba(201,168,76,0.1); font-size:13px; }
+  .aspect-item:last-child { border-bottom:none; }
+  .aspect-planets { color:var(--text); }
+  .aspect-type { color:var(--text-dim); font-size:12px; }
+  .aspect-good { color:#88cc88; }
+  .aspect-tense { color:#cc8888; }
+  .aspect-label { font-size:11px; letter-spacing:0.15em; color:var(--gold); margin-bottom:12px; }
+
   .calc-loading { display:inline-block; width:16px; height:16px; border:2px solid rgba(10,6,18,0.3); border-top-color:#0a0612; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px; }
   @keyframes spin { to{transform:rotate(360deg)} }
   @media(max-width:500px){ .calc-field-row{grid-template-columns:1fr;} }
@@ -175,7 +189,8 @@ const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co', 'sb
   <div class="nav-links">
     <a href="#products" class="nav-link">리포트</a>
     <a href="#compare" class="nav-link">비교</a>
-    <a href="#calculator" class="nav-link">무료계산기</a>
+    <a href="#calculator" class="nav-link">도미넌트</a>
+    <a href="#compatibility" class="nav-link">궁합</a>
     <a href="#reviews" class="nav-link">후기</a>
     <a href="light.html" class="nav-cta">신청하기</a>
   </div>
@@ -303,6 +318,60 @@ const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co', 'sb
     <div class="result-desc" id="resultDesc"></div>
     <div class="result-upsell">
       <p class="upsell-text">도미넌트 행성은 시작일 뿐이에요.<br>이 행성이 당신의 태양·달·상승점과 어떻게 얽혀있는지,<br>반복되는 패턴의 뿌리가 무엇인지 — 라이트 리포트에서 확인하세요.</p>
+      <a href="light.html" class="upsell-btn">✦ 라이트 리포트 9,900원</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- 궁합 계산기 -->
+<section class="calc-section" id="compatibility" style="padding-top:0;">
+  <div class="section-title">
+    <div class="section-eyebrow">무료 궁합 계산기</div>
+    <h2 class="section-heading">두 사람의 별자리 궁합은?</h2>
+    <p class="section-sub">행성 에너지로 계산하는 시너스트리 궁합 점수</p>
+  </div>
+  <div class="calc-box">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <p style="font-size:12px;letter-spacing:0.2em;color:var(--gold);margin-bottom:16px;text-align:center;">나 (A)</p>
+        <div class="calc-field">
+          <label class="calc-label">생년월일 *</label>
+          <input type="text" id="compBirthA" class="calc-input" placeholder="1990.03.15">
+        </div>
+        <div class="calc-field">
+          <label class="calc-label">출생시간</label>
+          <input type="text" id="compTimeA" class="calc-input" placeholder="14:30">
+        </div>
+        <div class="calc-field">
+          <label class="calc-label">태어난 지역 *</label>
+          <input type="text" id="compPlaceA" class="calc-input" placeholder="서울">
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px;letter-spacing:0.2em;color:var(--gold);margin-bottom:16px;text-align:center;">상대방 (B)</p>
+        <div class="calc-field">
+          <label class="calc-label">생년월일 *</label>
+          <input type="text" id="compBirthB" class="calc-input" placeholder="1992.07.22">
+        </div>
+        <div class="calc-field">
+          <label class="calc-label">출생시간</label>
+          <input type="text" id="compTimeB" class="calc-input" placeholder="09:15">
+        </div>
+        <div class="calc-field">
+          <label class="calc-label">태어난 지역 *</label>
+          <input type="text" id="compPlaceB" class="calc-input" placeholder="부산">
+        </div>
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcCompatibility()">✦ 궁합 점수 확인하기</button>
+  </div>
+
+  <div class="calc-result" id="compResult" style="display:none;">
+    <div id="compScoreWrap"></div>
+    <div id="compAnalysis" style="text-align:left;margin:24px 0;"></div>
+    <div class="result-upsell">
+      <p class="upsell-text">궁합은 표면적인 점수 그 이상이에요.<br>두 사람의 감정 구조, 갈등 패턴, 서로를 성장시키는 방식까지<br>라이트 리포트 두 장을 함께 보면 더 선명하게 보여요.</p>
       <a href="light.html" class="upsell-btn">✦ 라이트 리포트 9,900원</a>
     </div>
   </div>
@@ -489,6 +558,117 @@ function calcDominantPlanet(planets){
 }
 
 // 후기 불러오기 (Supabase)
+// 궁합 계산기
+const COMP_CITIES = {
+  '서울':{lat:37.5665,lon:126.9780},'부산':{lat:35.1796,lon:129.0756},
+  '인천':{lat:37.4563,lon:126.7052},'대구':{lat:35.8714,lon:128.6014},
+  '대전':{lat:36.3504,lon:127.3845},'광주':{lat:35.1595,lon:126.8526},
+  '울산':{lat:35.5384,lon:129.3114},'수원':{lat:37.2636,lon:127.0286},
+  '고양':{lat:37.6584,lon:126.8320},'창원':{lat:35.2280,lon:128.6811},
+  '성남':{lat:37.4386,lon:127.1378},'청주':{lat:36.6424,lon:127.4890},
+  '전주':{lat:35.8242,lon:127.1480},'제주':{lat:33.4996,lon:126.5312},
+};
+
+function getAspectInfo(angle){
+  const aspects=[
+    {name:'합',angle:0,orb:8,score:15,good:true,desc:'강한 연결'},
+    {name:'삼각',angle:120,orb:8,score:12,good:true,desc:'자연스러운 조화'},
+    {name:'육각',angle:60,orb:6,score:8,good:true,desc:'부드러운 시너지'},
+    {name:'대립',angle:180,orb:8,score:-8,good:false,desc:'긴장과 끌림'},
+    {name:'사각',angle:90,orb:6,score:-5,good:false,desc:'마찰과 성장'},
+  ];
+  for(const asp of aspects){
+    if(Math.abs(angle-asp.angle)<=asp.orb)return asp;
+  }
+  return null;
+}
+
+async function fetchPlanets(bd,bt,city){
+  const res=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
+    body:JSON.stringify({day:bd.day,month:bd.month,year:bd.year,hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,tzone:9.0})
+  });
+  const data=await res.json();
+  return data.output||data;
+}
+
+const SIGN_NAMES={0:'양자리',1:'황소자리',2:'쌍둥이자리',3:'게자리',4:'사자자리',5:'처녀자리',6:'천칭자리',7:'전갈자리',8:'사수자리',9:'염소자리',10:'물병자리',11:'물고기자리'};
+function getSign(deg){return SIGN_NAMES[Math.floor(((deg%360)+360)%360/30)]||'';}
+
+async function calcCompatibility(){
+  const bdA=parseBirthdateCalc(document.getElementById('compBirthA').value);
+  const bdB=parseBirthdateCalc(document.getElementById('compBirthB').value);
+  const placeA=document.getElementById('compPlaceA').value.trim();
+  const placeB=document.getElementById('compPlaceB').value.trim();
+  if(!bdA||!bdB){showToast('두 사람의 생년월일을 올바르게 입력해주세요');return;}
+  const cityA=COMP_CITIES[placeA];
+  const cityB=COMP_CITIES[placeB];
+  if(!cityA||!cityB){showToast('지역을 정확히 입력해주세요 (예: 서울, 부산)');return;}
+  const btA=parseTimeCalc(document.getElementById('compTimeA').value);
+  const btB=parseTimeCalc(document.getElementById('compTimeB').value);
+  const btn=document.querySelector('#compatibility .calc-btn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="calc-loading"></span>두 차트 분석 중...';
+  try{
+    const [planetsA,planetsB]=await Promise.all([fetchPlanets(bdA,btA,cityA),fetchPlanets(bdB,btB,cityB)]);
+    const KEY=['Sun','Moon','Venus','Mars'];
+    let totalScore=0;
+    const aspectResults=[];
+    KEY.forEach(pA=>{
+      const a=planetsA.find(p=>p.name===pA);
+      KEY.forEach(pB=>{
+        const b=planetsB.find(p=>p.name===pB);
+        if(!a||!b)return;
+        const diff=Math.abs(a.fullDegree-b.fullDegree);
+        const angle=diff>180?360-diff:diff;
+        const asp=getAspectInfo(angle);
+        if(asp){totalScore+=asp.score;aspectResults.push({pA,pB,asp});}
+      });
+    });
+    const maxP=15*16,minP=-8*16;
+    const score=Math.max(10,Math.min(99,Math.round(((totalScore-minP)/(maxP-minP))*100)));
+    let title,subtitle,color;
+    if(score>=80){title='강한 연결';subtitle='두 사람의 에너지가 자연스럽게 맞닿아 있어요. 함께 있을 때 편안하면서도 서로를 성장시키는 조합이에요.';color='#88cc88';}
+    else if(score>=65){title='좋은 궁합';subtitle='대체로 잘 맞는 에너지예요. 서로 다른 점이 있어도 그게 오히려 균형을 만들어줍니다.';color='var(--gold)';}
+    else if(score>=45){title='보통 궁합';subtitle='맞는 부분도, 긴장되는 부분도 함께 있어요. 서로를 이해하려는 노력이 관계를 더 깊게 만들어요.';color='#e8cc7a';}
+    else{title='도전적인 궁합';subtitle='에너지의 충돌이 많지만, 이런 관계가 오히려 서로를 가장 크게 성장시키기도 해요.';color='#cc8888';}
+    const sunA=planetsA.find(p=>p.name==='Sun');
+    const sunB=planetsB.find(p=>p.name==='Sun');
+    const signA=sunA?getSign(sunA.fullDegree):'';
+    const signB=sunB?getSign(sunB.fullDegree):'';
+    const PLANET_KR={Sun:'태양',Moon:'달',Venus:'금성',Mars:'화성'};
+    document.getElementById('compScoreWrap').innerHTML=`
+      <div style="font-size:12px;letter-spacing:0.2em;color:var(--text-dim);text-align:center;margin-bottom:20px;">${signA} × ${signB}</div>
+      <div class="score-circle" style="border-color:${color};">
+        <div class="score-num" style="color:${color};">${score}</div>
+        <div class="score-label">/ 100</div>
+      </div>
+      <div class="score-title" style="color:${color};">${title}</div>
+      <div class="score-subtitle">${subtitle}</div>`;
+    const good=aspectResults.filter(r=>r.asp.good).slice(0,4);
+    const tense=aspectResults.filter(r=>!r.asp.good).slice(0,3);
+    let html='';
+    if(good.length>0){
+      html+='<div class="aspect-label">✦ 잘 맞는 에너지</div>';
+      good.forEach(r=>{html+=`<div class="aspect-item"><span class="aspect-planets">${PLANET_KR[r.pA]} × ${PLANET_KR[r.pB]}</span><span class="aspect-good">${r.asp.name} · ${r.asp.desc}</span></div>`;});
+    }
+    if(tense.length>0){
+      html+='<div class="aspect-label" style="margin-top:20px;">⚡ 긴장되는 에너지</div>';
+      tense.forEach(r=>{html+=`<div class="aspect-item"><span class="aspect-planets">${PLANET_KR[r.pA]} × ${PLANET_KR[r.pB]}</span><span class="aspect-tense">${r.asp.name} · ${r.asp.desc}</span></div>`;});
+    }
+    if(!html)html='<p style="color:var(--text-dim);font-size:13px;text-align:center;">뚜렷한 어스펙트가 없어요. 두 사람이 서로에게 자유로운 관계예요.</p>';
+    document.getElementById('compAnalysis').innerHTML=html;
+    document.getElementById('compResult').style.display='block';
+    document.getElementById('compResult').scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){
+    showToast('계산 중 오류가 발생했어요. 다시 시도해주세요');
+    console.error(e);
+  }
+  btn.disabled=false;
+  btn.textContent='✦ 궁합 점수 확인하기';
+}
+
 async function loadReviews(){
   const {data} = await sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(4);
   if(!data||data.length===0) return;
