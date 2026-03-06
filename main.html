@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>명해원 — 점성 리포트</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
   :root {
     --void: #05020e;
@@ -17,7 +17,7 @@
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   html { scroll-behavior: smooth; }
-  body { background: var(--void); color: var(--text); font-family: 'Noto Serif KR', serif; overflow-x: hidden; }
+  body { background: var(--void); color: var(--text); font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
 
   /* 배경 */
   .bg-fixed { position: fixed; inset:0; z-index:0; pointer-events:none; }
@@ -28,17 +28,17 @@
 
   /* 네비 */
   nav { position: fixed; top:0; left:0; right:0; z-index:100; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(20px); border-bottom: 1px solid rgba(201,168,76,0.08); }
-  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 18px; letter-spacing: 0.15em; color: var(--gold); }
+  .nav-brand { font-family: 'Pretendard', sans-serif; font-size: 18px; letter-spacing: 0.15em; color: var(--gold); }
   .nav-links { display: flex; gap: 24px; align-items: center; }
   .nav-link { font-size: 12px; letter-spacing: 0.15em; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
   .nav-link:hover { color: var(--gold); }
-  .nav-cta { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 8px 20px; color: var(--gold); font-family: 'Noto Serif KR', serif; font-size: 12px; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+  .nav-cta { background: none; border: 1px solid var(--border); border-radius: 20px; padding: 8px 20px; color: var(--gold); font-family: 'Pretendard', sans-serif; font-size: 12px; cursor: pointer; text-decoration: none; transition: all 0.3s; }
   .nav-cta:hover { background: rgba(201,168,76,0.1); }
 
   /* 히어로 */
   .hero { position: relative; z-index:1; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 24px 60px; }
-  .hero-eyebrow { font-family: 'Cormorant Garamond', serif; font-size: 12px; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.3s; }
-  .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(42px, 8vw, 88px); font-weight: 300; line-height: 1.1; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.5s; }
+  .hero-eyebrow { font-family: 'Pretendard', sans-serif; font-size: 12px; letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.3s; }
+  .hero-title { font-family: 'Pretendard', sans-serif; font-size: clamp(42px, 8vw, 88px); font-weight: 300; line-height: 1.1; margin-bottom: 28px; opacity:0; animation: fadeUp 1s ease forwards 0.5s; }
   .hero-title em { font-style: italic; color: var(--gold); }
   .hero-sub { font-size: clamp(14px, 2vw, 16px); color: var(--text-dim); line-height: 2; max-width: 480px; margin-bottom: 48px; opacity:0; animation: fadeUp 1s ease forwards 0.7s; }
   .hero-divider { width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); margin: 0 auto 48px; opacity:0; animation: fadeUp 1s ease forwards 0.9s; }
@@ -65,7 +65,7 @@
   .tag-premium { background: rgba(201,168,76,0.1); color: var(--gold); border: 1px solid var(--border); }
 
   .card-symbol { font-size: 36px; margin-bottom: 20px; display: block; }
-  .card-name { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; margin-bottom: 12px; line-height: 1.2; }
+  .card-name { font-family: 'Pretendard', sans-serif; font-size: 28px; font-weight: 400; margin-bottom: 12px; line-height: 1.2; }
   .card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.9; margin-bottom: 28px; }
 
   .card-features { list-style: none; margin-bottom: 32px; }
@@ -75,10 +75,10 @@
   .feat-dot-premium { color: var(--gold); }
 
   .card-price { display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px; }
-  .price-num { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--text); }
+  .price-num { font-family: 'Pretendard', sans-serif; font-size: 32px; color: var(--text); }
   .price-unit { font-size: 13px; color: var(--text-dim); }
 
-  .card-btn { width: 100%; border-radius: 12px; padding: 15px; font-family: 'Noto Serif KR', serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.3s; border: none; }
+  .card-btn { width: 100%; border-radius: 12px; padding: 15px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; cursor: pointer; transition: all 0.3s; border: none; }
   .btn-light { background: rgba(100,150,220,0.15); color: #8ab4ff; border: 1px solid rgba(100,150,220,0.3); }
   .btn-light:hover { background: rgba(100,150,220,0.25); }
   .btn-premium { background: linear-gradient(135deg, #c9a84c, #e8cc7a); color: #0a0612; }
@@ -90,7 +90,7 @@
   .compare { position: relative; z-index:1; max-width: 700px; margin: 0 auto; padding: 0 24px 100px; }
   .section-title { text-align: center; margin-bottom: 40px; }
   .section-eyebrow { font-size: 11px; letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase; margin-bottom: 12px; }
-  .section-heading { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; }
+  .section-heading { font-family: 'Pretendard', sans-serif; font-size: 32px; font-weight: 300; }
 
   .compare-table { width: 100%; border-collapse: collapse; }
   .compare-table th { padding: 14px 20px; font-size: 12px; letter-spacing: 0.1em; color: var(--text-dim); font-weight: 400; text-align: left; border-bottom: 1px solid var(--border); }
@@ -113,7 +113,7 @@
 
   /* 푸터 */
   footer { position: relative; z-index:1; text-align: center; padding: 40px 24px; border-top: 1px solid var(--border); }
-  .footer-brand { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--gold); margin-bottom: 12px; }
+  .footer-brand { font-family: 'Pretendard', sans-serif; font-size: 20px; color: var(--gold); margin-bottom: 12px; }
   .footer-text { font-size: 12px; color: var(--text-dim); line-height: 2; }
   .footer-links { display: flex; gap: 20px; justify-content: center; margin-top: 16px; }
   .footer-link { font-size: 12px; color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
