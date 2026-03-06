@@ -434,7 +434,7 @@ async function saveReview(){
   const title=document.getElementById('rvTitle').value.trim();
   const content=document.getElementById('rvContent').value.trim();
   if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
-  await sb.from('reviews').insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'admin'}]);
+  await sb.from('reviews').insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'admin',approved:true}]);
   rvStar=0;document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('on'));
   ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('rvType').value='';
@@ -449,19 +449,33 @@ async function loadReviews(){
   const list=document.getElementById('reviewList');
   if(!data||data.length===0){list.innerHTML='<div class="empty-msg">등록된 후기가 없습니다</div>';return;}
   list.innerHTML=data.map(r=>`
-    <div class="rv-card">
+    <div class="rv-card" style="${r.approved?'':'border-color:rgba(255,200,0,0.3);'}">
       <div class="rv-header">
-        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
+        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span>${r.approved?'<span style="font-size:10px;color:#88cc88;margin-left:8px;">✅ 승인됨</span>':'<span style="font-size:10px;color:#e8cc7a;margin-left:8px;">⏳ 승인대기</span>'}</div>
         <div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
       </div>
       <div class="rv-title">${r.title}</div>
       <div class="rv-content">${r.content}</div>
       <div class="rv-date">${r.date} · ${r.source==='admin'?'관리자 등록':'고객 작성'}</div>
-      <div style="margin-top:10px;">
-        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard', sans-serif;font-size:11px;cursor:pointer;">삭제</button>
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        ${!r.approved?`<button onclick="approveReview(${r.id})" style="background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.3);border-radius:6px;padding:5px 12px;color:#88cc88;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">✅ 승인</button>`:''}
+        ${r.approved?`<button onclick="unapproveReview(${r.id})" style="background:none;border:1px solid rgba(255,200,0,0.3);border-radius:6px;padding:5px 12px;color:#e8cc7a;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">승인 취소</button>`:''}
+        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">삭제</button>
       </div>
     </div>
   `).join('');
+}
+
+async function approveReview(id){
+  await sb.from('reviews').update({approved:true}).eq('id',id);
+  await loadReviews();
+  showToast('후기가 승인되었습니다 ✅');
+}
+
+async function unapproveReview(id){
+  await sb.from('reviews').update({approved:false}).eq('id',id);
+  await loadReviews();
+  showToast('승인이 취소되었습니다');
 }
 
 async function deleteReview(id){
