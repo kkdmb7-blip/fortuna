@@ -11,263 +11,272 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>포르투나 — 점성 리포트</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co','sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11');
 </script>
 <style>
-:root {
-  --void: #05020e;
-  --gold: #c9a84c;
-  --gold-light: #e8cc7a;
-  --gold-dim: rgba(201,168,76,0.2);
-  --blue: #8ab4ff;
-  --text: #ede6f8;
-  --text-dim: #9b8fb0;
-  --border: rgba(201,168,76,0.18);
-  --fd: 'Cormorant Garamond', Georgia, serif;
-  --fs: 'DM Serif Display', Georgia, serif;
-  --fn: 'Pretendard', sans-serif;
+:root{
+  --void:#05020e;
+  --gold:#c9a84c;
+  --gold2:#e8cc7a;
+  --golddim:rgba(201,168,76,0.18);
+  --blue:#8ab4ff;
+  --text:#ede6f8;
+  --dim:#9b8fb0;
+  --fn:'Pretendard',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 body{background:var(--void);color:var(--text);font-family:var(--fn);overflow-x:hidden;}
 
-/* 배경 */
-.bg-fixed{position:fixed;inset:0;z-index:0;pointer-events:none;}
+/* ── 배경 ── */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .neb{position:absolute;border-radius:50%;filter:blur(90px);}
-.n1{width:75vw;height:75vw;max-width:680px;max-height:680px;top:-25%;left:-20%;background:radial-gradient(circle,rgba(48,18,95,0.55) 0%,transparent 65%);}
-.n2{width:60vw;height:60vw;max-width:580px;max-height:580px;bottom:-15%;right:-18%;background:radial-gradient(circle,rgba(18,6,55,0.7) 0%,transparent 65%);}
-.n3{width:45vw;height:45vw;max-width:450px;max-height:450px;top:42%;left:32%;background:radial-gradient(circle,rgba(70,25,110,0.18) 0%,transparent 65%);}
-#starsBg{position:absolute;inset:0;}
+.n1{width:72vw;height:72vw;max-width:660px;max-height:660px;top:-22%;left:-18%;background:radial-gradient(circle,rgba(48,18,95,0.52) 0%,transparent 65%);}
+.n2{width:58vw;height:58vw;max-width:560px;max-height:560px;bottom:-14%;right:-16%;background:radial-gradient(circle,rgba(18,6,55,0.68) 0%,transparent 65%);}
+.n3{width:44vw;height:44vw;max-width:440px;max-height:440px;top:44%;left:33%;background:radial-gradient(circle,rgba(70,25,110,0.16) 0%,transparent 65%);}
+#stars{position:absolute;inset:0;}
 
-/* 네비 */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,2,14,0.65);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
-.nav-brand{font-family:var(--fd);font-size:20px;font-weight:400;letter-spacing:0.2em;color:var(--gold);}
-.nav-links{display:flex;gap:24px;align-items:center;}
-.nav-link{font-size:11px;letter-spacing:0.16em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;text-transform:uppercase;}
+/* ── 네비 ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,2,14,0.6);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
+.nav-brand{font-size:18px;font-weight:700;letter-spacing:0.22em;color:var(--gold);}
+.nav-links{display:flex;gap:22px;align-items:center;}
+.nav-link{font-size:11px;letter-spacing:0.14em;color:var(--dim);text-decoration:none;transition:color 0.2s;text-transform:uppercase;}
 .nav-link:hover{color:var(--gold);}
-.nav-cta{font-family:var(--fd);background:none;border:1px solid var(--border);border-radius:20px;padding:8px 20px;color:var(--gold);font-size:13px;letter-spacing:0.1em;cursor:pointer;text-decoration:none;transition:all 0.3s;}
+.nav-cta{background:none;border:1px solid var(--golddim);border-radius:20px;padding:7px 18px;color:var(--gold);font-size:12px;font-family:var(--fn);letter-spacing:0.1em;cursor:pointer;text-decoration:none;transition:all 0.3s;}
 .nav-cta:hover{background:rgba(201,168,76,0.1);}
 
-/* ━━━ 히어로 ━━━ */
+/* ── 히어로 ── */
 .hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;}
-.hero-eyebrow{font-family:var(--fd);font-size:11px;letter-spacing:0.55em;color:var(--gold);text-transform:uppercase;margin-bottom:28px;opacity:0;animation:fadeUp 0.9s ease forwards 0.2s;}
-.hero-title{font-family:var(--fd);font-size:clamp(38px,7vw,82px);font-weight:300;line-height:1.1;margin-bottom:20px;opacity:0;animation:fadeUp 0.9s ease forwards 0.4s;letter-spacing:0.01em;}
-.hero-title em{font-style:italic;color:var(--gold);}
-.hero-tagline{font-family:var(--fn);font-size:clamp(13px,1.8vw,15px);color:var(--text-dim);line-height:1.8;margin-bottom:12px;letter-spacing:0.04em;opacity:0;animation:fadeUp 0.9s ease forwards 0.55s;}
-.hero-meta{font-family:var(--fn);font-size:12px;color:rgba(155,143,176,0.55);letter-spacing:0.1em;margin-bottom:44px;opacity:0;animation:fadeUp 0.9s ease forwards 0.65s;}
-.hero-meta span{color:var(--gold-dim);margin:0 8px;}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:56px;opacity:0;animation:fadeUp 0.9s ease forwards 0.8s;}
-.hero-btn-primary{font-family:var(--fd);background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;border-radius:50px;padding:16px 36px;color:#0a0612;font-size:15px;font-weight:500;letter-spacing:0.1em;cursor:pointer;text-decoration:none;animation:shimmer 3s ease infinite;transition:all 0.3s;display:inline-block;white-space:nowrap;}
-.hero-btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,168,76,0.38);}
-.hero-btn-secondary{font-family:var(--fd);background:none;border:1px solid var(--border);border-radius:50px;padding:16px 36px;color:var(--gold);font-size:15px;letter-spacing:0.1em;cursor:pointer;text-decoration:none;transition:all 0.3s;display:inline-block;white-space:nowrap;}
-.hero-btn-secondary:hover{background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.38);}
-.trust-bar{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp 0.9s ease forwards 1s;}
-.trust-item{font-size:12px;color:var(--text-dim);letter-spacing:0.05em;display:flex;align-items:center;gap:7px;}
-.trust-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.5;}
+.hero-eye{font-size:11px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:26px;opacity:0;animation:up .9s ease forwards .2s;}
+.hero-title{font-size:clamp(36px,6.5vw,76px);font-weight:700;line-height:1.1;margin-bottom:18px;opacity:0;animation:up .9s ease forwards .4s;letter-spacing:-0.01em;}
+.hero-title em{font-style:normal;color:var(--gold);}
+.hero-tag{font-size:clamp(13px,1.7vw,15px);color:var(--dim);line-height:1.8;margin-bottom:10px;letter-spacing:0.04em;opacity:0;animation:up .9s ease forwards .55s;}
+.hero-meta{font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.08em;margin-bottom:42px;opacity:0;animation:up .9s ease forwards .65s;}
+.hero-meta span{margin:0 8px;color:rgba(201,168,76,0.3);}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:52px;opacity:0;animation:up .9s ease forwards .8s;}
+.btn-gold{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;border:none;border-radius:50px;padding:15px 34px;color:#0a0612;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;text-decoration:none;animation:shimmer 3s ease infinite;transition:all .3s;display:inline-block;white-space:nowrap;font-family:var(--fn);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(201,168,76,0.38);}
+.btn-outline{background:none;border:1px solid var(--golddim);border-radius:50px;padding:15px 34px;color:var(--gold);font-size:14px;font-family:var(--fn);letter-spacing:0.08em;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-block;white-space:nowrap;}
+.btn-outline:hover{background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.36);}
+.trust-row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;opacity:0;animation:up .9s ease forwards 1s;}
+.trust-item{font-size:12px;color:var(--dim);letter-spacing:0.04em;display:flex;align-items:center;gap:6px;}
+.tdot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.45;}
 
-/* 섹션 공통 */
-.section-wrap{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:0 24px 100px;}
-.section-wrap-sm{position:relative;z-index:1;max-width:740px;margin:0 auto;padding:0 24px 100px;}
-.sec-header{text-align:center;margin-bottom:48px;}
-.sec-eye{font-family:var(--fd);font-size:11px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:block;}
-.sec-title{font-family:var(--fd);font-size:clamp(26px,4vw,42px);font-weight:300;line-height:1.2;letter-spacing:0.01em;}
-.sec-title em{font-style:italic;color:var(--gold);}
-.sec-sub{font-size:13px;color:var(--text-dim);margin-top:10px;letter-spacing:0.04em;}
-.divider-ornament{display:flex;align-items:center;gap:14px;max-width:180px;margin:0 auto 48px;}
-.dv-line{flex:1;height:1px;}
-.dv-l{background:linear-gradient(90deg,transparent,var(--gold-dim));}
-.dv-r{background:linear-gradient(90deg,var(--gold-dim),transparent);}
-.dv-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.45;}
+/* ── 공통 섹션 ── */
+.sec{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:0 24px 96px;}
+.sec-sm{position:relative;z-index:1;max-width:740px;margin:0 auto;padding:0 24px 96px;}
+.sec-hd{text-align:center;margin-bottom:44px;}
+.sec-eye{font-size:10px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:block;font-weight:600;}
+.sec-title{font-size:clamp(24px,3.8vw,38px);font-weight:700;line-height:1.2;letter-spacing:-0.01em;}
+.sec-title em{font-style:normal;color:var(--gold);}
+.sec-sub{font-size:13px;color:var(--dim);margin-top:9px;letter-spacing:0.03em;}
+.orn{display:flex;align-items:center;gap:12px;max-width:160px;margin:0 auto 44px;}
+.ol{flex:1;height:1px;}
+.ol-l{background:linear-gradient(90deg,transparent,var(--golddim));}
+.ol-r{background:linear-gradient(90deg,var(--golddim),transparent);}
+.od{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.4;}
 
-/* ━━━ 상품 카드 ━━━ */
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-.product-card{border-radius:26px;padding:34px 26px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all 0.4s;}
-.product-card:hover{transform:translateY(-6px);}
-.product-card::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent);transition:left 0.7s;pointer-events:none;}
-.product-card:hover::after{left:160%;}
-.card-light{background:linear-gradient(145deg,rgba(22,13,50,0.88),rgba(8,4,20,0.94));border:1px solid rgba(138,180,255,0.18);}
-.card-light:hover{border-color:rgba(138,180,255,0.42);box-shadow:0 20px 70px rgba(80,110,220,0.16);}
-.card-premium{background:linear-gradient(145deg,rgba(42,22,8,0.88),rgba(16,7,2,0.94));border:1px solid rgba(201,168,76,0.2);}
-.card-premium:hover{border-color:rgba(201,168,76,0.48);box-shadow:0 20px 70px rgba(201,168,76,0.14);}
-.card-inner{position:relative;z-index:1;}
-.card-badge{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
-.card-tag{font-family:var(--fd);font-size:10px;letter-spacing:0.35em;text-transform:uppercase;padding:5px 14px;border-radius:20px;}
-.tag-light{background:rgba(138,180,255,0.1);color:var(--blue);border:1px solid rgba(138,180,255,0.22);}
-.tag-premium{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--border);}
-.card-symbol{font-size:28px;}
-.card-target{font-family:var(--fn);font-size:11px;color:var(--text-dim);background:rgba(255,255,255,0.04);border-radius:20px;padding:4px 12px;margin-bottom:14px;display:inline-block;letter-spacing:0.03em;}
-.card-name{font-family:var(--fd);font-size:clamp(20px,2.8vw,26px);font-weight:300;margin-bottom:8px;line-height:1.2;}
-.card-one-line{font-size:12px;color:var(--text-dim);margin-bottom:18px;line-height:1.7;letter-spacing:0.02em;}
-.card-points{list-style:none;margin-bottom:20px;border-top:1px solid rgba(255,255,255,0.05);padding-top:14px;}
-.card-points li{font-size:12px;color:var(--text-dim);padding:6px 0;display:flex;align-items:flex-start;gap:8px;letter-spacing:0.02em;border-bottom:1px solid rgba(255,255,255,0.03);}
-.card-points li:last-child{border-bottom:none;}
-.pt-l{color:var(--blue);font-size:10px;margin-top:2px;flex-shrink:0;}
-.pt-p{color:var(--gold);font-size:10px;margin-top:2px;flex-shrink:0;}
-.card-more-toggle{font-size:11px;color:var(--text-dim);background:none;border:none;cursor:pointer;letter-spacing:0.08em;padding:0 0 16px 0;transition:color 0.2s;}
-.card-more-toggle:hover{color:var(--gold);}
-.card-more-list{display:none;list-style:none;margin-bottom:16px;}
-.card-more-list.open{display:block;}
-.card-more-list li{font-size:11px;color:rgba(155,143,176,0.65);padding:4px 0;display:flex;align-items:center;gap:8px;letter-spacing:0.02em;}
-.card-price{display:flex;align-items:baseline;gap:6px;margin-bottom:18px;}
-.price-num{font-family:var(--fs);font-size:clamp(26px,3.5vw,34px);color:var(--text);}
-.price-unit{font-size:13px;color:var(--text-dim);}
-.card-btn{width:100%;border-radius:12px;padding:15px;font-family:var(--fd);font-size:14px;font-weight:500;letter-spacing:0.1em;cursor:pointer;transition:all 0.3s;border:none;white-space:nowrap;}
-.btn-light{background:rgba(138,180,255,0.12);color:var(--blue);border:1px solid rgba(138,180,255,0.26);}
-.btn-light:hover{background:rgba(138,180,255,0.22);}
-.btn-premium{background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;color:#0a0612;animation:shimmer 3s ease infinite;}
-.btn-premium:hover{box-shadow:0 6px 28px rgba(201,168,76,0.35);}
-.card-time{font-size:11px;color:var(--text-dim);text-align:center;margin-top:8px;letter-spacing:0.05em;opacity:0.65;}
+/* ── 상품 카드 (짧게) ── */
+.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;}
+.pcard{border-radius:22px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all .35s;}
+.pcard:hover{transform:translateY(-5px);}
+.pcard::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent);transition:left .7s;pointer-events:none;}
+.pcard:hover::after{left:160%;}
+.pc-light{background:linear-gradient(145deg,rgba(20,12,48,0.9),rgba(7,3,19,0.95));border:1px solid rgba(138,180,255,0.18);}
+.pc-light:hover{border-color:rgba(138,180,255,0.44);box-shadow:0 18px 60px rgba(80,110,220,0.15);}
+.pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:1px solid rgba(201,168,76,0.2);}
+.pc-premium:hover{border-color:rgba(201,168,76,0.48);box-shadow:0 18px 60px rgba(201,168,76,0.13);}
+.pcard-in{position:relative;z-index:1;}
+.pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.pc-tag{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-weight:600;}
+.tag-l{background:rgba(138,180,255,0.1);color:var(--blue);border:1px solid rgba(138,180,255,0.22);}
+.tag-p{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--golddim);}
+.pc-emoji{font-size:26px;}
+.pc-for{font-size:11px;color:var(--dim);background:rgba(255,255,255,0.04);border-radius:20px;padding:4px 11px;display:inline-block;letter-spacing:0.02em;margin-bottom:12px;}
+.pc-name{font-size:clamp(18px,2.5vw,22px);font-weight:700;margin-bottom:6px;line-height:1.2;letter-spacing:-0.01em;}
+.pc-desc{font-size:12px;color:var(--dim);margin-bottom:20px;line-height:1.7;letter-spacing:0.02em;}
+.pc-price{display:flex;align-items:baseline;gap:4px;margin-bottom:16px;}
+.pc-num{font-size:clamp(24px,3.2vw,30px);font-weight:800;color:var(--text);}
+.pc-unit{font-size:13px;color:var(--dim);}
+.pc-btn{width:100%;border-radius:10px;padding:13px;font-size:13px;font-weight:700;letter-spacing:0.06em;cursor:pointer;transition:all .3s;border:none;font-family:var(--fn);}
+.pb-l{background:rgba(138,180,255,0.12);color:var(--blue);border:1px solid rgba(138,180,255,0.26);}
+.pb-l:hover{background:rgba(138,180,255,0.22);}
+.pb-p{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;color:#0a0612;animation:shimmer 3s ease infinite;}
+.pb-p:hover{box-shadow:0 6px 26px rgba(201,168,76,0.35);}
+.pc-time{font-size:11px;color:var(--dim);text-align:center;margin-top:7px;opacity:0.6;letter-spacing:0.04em;}
 
-/* ━━━ 신청 절차 ━━━ */
-.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;margin-top:0;}
-.process-steps::before{content:'';position:absolute;top:24px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dim),var(--gold-dim),transparent);}
-.step{text-align:center;padding:0 8px;position:relative;z-index:1;}
-.step-num{width:48px;height:48px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:var(--void);font-family:var(--fs);font-size:18px;color:var(--gold);}
-.step-title{font-family:var(--fd);font-size:13px;font-weight:500;color:var(--text);letter-spacing:0.06em;margin-bottom:6px;}
-.step-desc{font-size:11px;color:var(--text-dim);line-height:1.7;letter-spacing:0.02em;}
-.step-time{font-size:10px;color:var(--gold);margin-top:5px;letter-spacing:0.06em;opacity:0.8;}
-
-/* ━━━ 샘플 리포트 ━━━ */
-.sample-box{background:linear-gradient(135deg,rgba(40,25,70,0.35),rgba(8,4,20,0.65));border:1px solid var(--border);border-radius:28px;overflow:hidden;margin-top:0;}
-.sample-header{padding:22px 30px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;}
-.sample-label{font-family:var(--fd);font-size:11px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase;}
-.sample-badge{font-family:var(--fn);font-size:10px;background:rgba(201,168,76,0.1);border:1px solid var(--border);border-radius:20px;padding:4px 12px;color:var(--gold);letter-spacing:0.08em;}
-.sample-content{padding:30px;}
-.sample-chapter{margin-bottom:26px;}
-.chap-label{font-family:var(--fd);font-size:10px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;opacity:0.75;}
-.chap-title{font-family:var(--fd);font-size:18px;font-weight:400;color:var(--text);margin-bottom:9px;line-height:1.3;}
-.chap-text{font-size:13px;color:var(--text-dim);line-height:2.0;letter-spacing:0.03em;}
-.chap-text em{color:var(--text);font-style:normal;}
-.sample-blur{position:relative;margin-top:8px;}
-.blur-text{font-size:13px;color:var(--text-dim);line-height:2;letter-spacing:0.03em;filter:blur(4px);user-select:none;pointer-events:none;padding:16px 0;}
-.blur-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent 0%,rgba(8,4,20,0.94) 40%);}
-.blur-msg{font-family:var(--fd);font-size:14px;color:var(--text);margin-bottom:16px;letter-spacing:0.08em;}
-.blur-cta{font-family:var(--fd);background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:30px;padding:12px 28px;color:#0a0612;font-size:13px;font-weight:500;letter-spacing:0.1em;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.3s;}
-.blur-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,0.35);}
-
-/* ━━━ 후기 ━━━ */
-.reviews-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:0;}
-.rv-card{background:linear-gradient(135deg,rgba(38,23,66,0.32),rgba(8,4,20,0.58));border:1px solid var(--border);border-radius:20px;padding:26px;transition:all 0.3s;}
-.rv-card:hover{border-color:rgba(201,168,76,0.3);transform:translateY(-3px);}
-.rv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
-.rv-stars{color:var(--gold);font-size:12px;letter-spacing:2px;}
-.rv-badge{font-family:var(--fd);font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--border);color:var(--gold);}
-.rv-quote{font-family:var(--fd);font-size:15px;font-weight:400;color:var(--text);margin-bottom:9px;line-height:1.4;}
-.rv-text{font-size:13px;color:var(--text-dim);line-height:1.9;margin-bottom:12px;letter-spacing:0.02em;}
-.rv-author{font-size:11px;color:rgba(155,143,176,0.5);letter-spacing:0.05em;}
-.rv-more-btn{display:block;text-align:center;margin-top:26px;font-family:var(--fd);font-size:13px;letter-spacing:0.18em;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:30px;padding:12px 32px;width:fit-content;margin-left:auto;margin-right:auto;transition:all 0.3s;}
-.rv-more-btn:hover{background:rgba(201,168,76,0.08);}
-
-/* ━━━ 무료 체험 ━━━ */
-.free-main{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:0;}
-.free-card{background:linear-gradient(135deg,rgba(38,23,66,0.3),rgba(8,4,20,0.6));border:1px solid var(--border);border-radius:20px;padding:24px;text-decoration:none;transition:all 0.3s;display:block;}
-.free-card:hover{border-color:rgba(201,168,76,0.38);transform:translateY(-3px);}
-.free-emoji{font-size:26px;margin-bottom:10px;display:block;}
-.free-tag{font-family:var(--fd);font-size:10px;letter-spacing:0.32em;color:var(--gold);text-transform:uppercase;margin-bottom:8px;display:block;}
-.free-name{font-family:var(--fd);font-size:17px;font-weight:400;color:var(--text);margin-bottom:6px;line-height:1.3;}
-.free-desc{font-size:12px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;letter-spacing:0.02em;}
-.free-arrow{font-family:var(--fd);font-size:12px;color:var(--gold);letter-spacing:0.12em;border-bottom:1px solid rgba(201,168,76,0.3);padding-bottom:2px;}
-.free-more{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
-.free-more-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:30px;padding:10px 18px;text-decoration:none;font-size:12px;color:var(--text-dim);letter-spacing:0.05em;transition:all 0.25s;}
-.free-more-item:hover{border-color:rgba(201,168,76,0.3);color:var(--gold);}
-
-/* ━━━ 비교 ━━━ */
-.compare-wrap{background:linear-gradient(135deg,rgba(38,23,66,0.28),rgba(8,4,20,0.62));border:1px solid var(--border);border-radius:24px;overflow:hidden;margin-top:0;}
-.compare-table{width:100%;border-collapse:collapse;}
-.compare-table thead tr{border-bottom:1px solid rgba(201,168,76,0.1);}
-.compare-table th{padding:18px 22px;font-family:var(--fd);font-size:12px;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;}
-.col-feat{color:var(--text-dim);text-align:left;}
-.col-light{color:var(--blue);text-align:center;}
-.col-premium{color:var(--gold);text-align:center;}
-.compare-table td{padding:13px 22px;font-size:13px;color:var(--text-dim);border-bottom:1px solid rgba(255,255,255,0.035);letter-spacing:0.02em;}
-.compare-table tr:last-child td{border-bottom:none;}
-.compare-table tbody tr:hover td{background:rgba(201,168,76,0.02);}
+/* ── 비교 테이블 (카드 바로 아래) ── */
+.compare-wrap{background:linear-gradient(135deg,rgba(36,22,65,0.28),rgba(7,3,18,0.62));border:1px solid var(--golddim);border-radius:20px;overflow:hidden;margin-top:16px;}
+.ctable{width:100%;border-collapse:collapse;}
+.ctable thead tr{border-bottom:1px solid rgba(201,168,76,0.1);}
+.ctable th{padding:15px 20px;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;}
+.th-feat{color:var(--dim);text-align:left;}
+.th-l{color:var(--blue);text-align:center;}
+.th-p{color:var(--gold);text-align:center;}
+.ctable td{padding:11px 20px;font-size:12px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,0.03);letter-spacing:0.02em;}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable tbody tr:hover td{background:rgba(201,168,76,0.02);}
 .tc{text-align:center;}
-.ck{color:var(--gold);}
-.ck-l{color:var(--blue);}
-.dash{color:rgba(255,255,255,0.1);}
-.p-l{color:var(--blue);font-family:var(--fs);font-size:17px;}
-.p-p{color:var(--gold);font-family:var(--fs);font-size:17px;}
+.ck{color:var(--gold);font-size:14px;}
+.ck-l{color:var(--blue);font-size:14px;}
+.xd{color:rgba(255,255,255,0.1);}
+.pl{color:var(--blue);font-weight:800;font-size:15px;}
+.pp{color:var(--gold);font-weight:800;font-size:15px;}
 
-/* ━━━ CTA ━━━ */
-.cta-banner{background:linear-gradient(135deg,rgba(48,26,8,0.72),rgba(18,8,2,0.88));border:1px solid rgba(201,168,76,0.28);border-radius:32px;padding:60px 44px;text-align:center;position:relative;overflow:hidden;}
-.cta-banner::before{content:'';position:absolute;top:-60%;left:-20%;width:140%;height:220%;background:radial-gradient(ellipse at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 58%);pointer-events:none;}
-.cta-inner{position:relative;z-index:1;}
-.cta-eye{font-family:var(--fd);font-size:11px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;display:block;}
-.cta-title{font-family:var(--fd);font-size:clamp(30px,4.5vw,50px);font-weight:300;line-height:1.2;margin-bottom:16px;}
-.cta-title em{font-style:italic;color:var(--gold);}
-.cta-sub{font-size:14px;color:var(--text-dim);line-height:2;margin-bottom:36px;letter-spacing:0.04em;}
+/* ── 신청 절차 ── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.steps::before{content:'';position:absolute;top:23px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--golddim),var(--golddim),transparent);}
+.step{text-align:center;padding:0 8px;position:relative;z-index:1;}
+.step-n{width:46px;height:46px;border-radius:50%;border:1px solid var(--golddim);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;background:var(--void);font-size:17px;font-weight:800;color:var(--gold);}
+.step-t{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.04em;margin-bottom:5px;}
+.step-d{font-size:11px;color:var(--dim);line-height:1.7;letter-spacing:0.02em;}
+.step-time{font-size:10px;color:var(--gold);margin-top:4px;letter-spacing:0.05em;opacity:0.8;}
+
+/* ── 샘플 ── */
+.sample-box{background:linear-gradient(135deg,rgba(38,24,68,0.35),rgba(7,3,18,0.65));border:1px solid var(--golddim);border-radius:24px;overflow:hidden;}
+.sample-hd{padding:20px 28px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;}
+.sample-lbl{font-size:11px;letter-spacing:0.32em;color:var(--gold);text-transform:uppercase;font-weight:600;}
+.sample-badge{font-size:10px;background:rgba(201,168,76,0.08);border:1px solid var(--golddim);border-radius:20px;padding:3px 11px;color:var(--gold);letter-spacing:0.07em;}
+.sample-body{padding:28px;}
+.chap{margin-bottom:24px;}
+.chap-lbl{font-size:10px;letter-spacing:0.38em;color:var(--gold);text-transform:uppercase;margin-bottom:7px;opacity:0.75;font-weight:600;}
+.chap-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.3;}
+.chap-txt{font-size:13px;color:var(--dim);line-height:2.0;letter-spacing:0.02em;}
+.chap-txt strong{color:var(--text);font-weight:600;}
+.blur-wrap{position:relative;margin-top:6px;}
+.blur-txt{font-size:13px;color:var(--dim);line-height:2;letter-spacing:0.02em;filter:blur(4px);user-select:none;pointer-events:none;padding:14px 0;}
+.blur-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,rgba(7,3,18,0.95) 40%);}
+.blur-msg{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;letter-spacing:0.04em;}
+
+/* ── 후기 ── */
+.rv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rv-card{background:linear-gradient(135deg,rgba(36,22,63,0.32),rgba(7,3,18,0.58));border:1px solid var(--golddim);border-radius:18px;padding:24px;transition:all .3s;}
+.rv-card:hover{border-color:rgba(201,168,76,0.3);transform:translateY(-3px);}
+.rv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.rv-stars{color:var(--gold);font-size:12px;letter-spacing:2px;}
+.rv-badge{font-size:10px;letter-spacing:0.1em;padding:3px 9px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;}
+.rv-photo{width:100%;border-radius:10px;margin-bottom:12px;object-fit:cover;max-height:160px;display:block;}
+.rv-quote{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4;}
+.rv-txt{font-size:12px;color:var(--dim);line-height:1.9;margin-bottom:11px;letter-spacing:0.02em;}
+.rv-author{font-size:11px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;}
+.rv-more{display:block;text-align:center;margin-top:24px;font-size:13px;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-decoration:none;border:1px solid var(--golddim);border-radius:30px;padding:11px 30px;width:fit-content;margin-left:auto;margin-right:auto;transition:all .3s;}
+.rv-more:hover{background:rgba(201,168,76,0.08);}
+
+/* 후기 작성 폼 */
+.rv-form-wrap{background:linear-gradient(135deg,rgba(36,22,63,0.28),rgba(7,3,18,0.6));border:1px solid var(--golddim);border-radius:20px;padding:28px;margin-top:20px;}
+.rv-form-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:20px;letter-spacing:0.04em;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-field{display:flex;flex-direction:column;gap:6px;}
+.form-field.full{grid-column:1/-1;}
+.form-label{font-size:11px;color:var(--dim);letter-spacing:0.1em;font-weight:600;text-transform:uppercase;}
+.form-input{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;color:var(--text);font-size:13px;font-family:var(--fn);letter-spacing:0.02em;transition:border .2s;outline:none;}
+.form-input:focus{border-color:rgba(201,168,76,0.4);}
+.form-textarea{min-height:90px;resize:vertical;}
+.star-select{display:flex;gap:6px;margin-top:2px;}
+.star-btn{background:none;border:none;font-size:22px;cursor:pointer;opacity:0.25;transition:opacity .2s;padding:0;}
+.star-btn.active{opacity:1;}
+/* 사진 업로드 */
+.photo-upload{border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.02);}
+.photo-upload:hover{border-color:rgba(201,168,76,0.45);background:rgba(201,168,76,0.03);}
+.photo-upload input{display:none;}
+.photo-upload-txt{font-size:12px;color:var(--dim);letter-spacing:0.04em;}
+.photo-upload-txt span{color:var(--gold);}
+.photo-preview{width:100%;border-radius:8px;margin-top:10px;max-height:140px;object-fit:cover;display:none;}
+/* 리포트 타입 */
+.type-select{display:flex;gap:8px;margin-top:2px;}
+.type-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 16px;color:var(--dim);font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--fn);}
+.type-btn.active-l{border-color:rgba(138,180,255,0.4);color:var(--blue);background:rgba(138,180,255,0.08);}
+.type-btn.active-p{border-color:rgba(201,168,76,0.4);color:var(--gold);background:rgba(201,168,76,0.08);}
+.submit-rv{width:100%;margin-top:16px;border-radius:10px;padding:13px;font-size:13px;font-weight:700;letter-spacing:0.08em;cursor:pointer;border:none;font-family:var(--fn);background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;color:#0a0612;animation:shimmer 3s ease infinite;transition:all .3s;}
+.submit-rv:hover{box-shadow:0 6px 24px rgba(201,168,76,0.35);}
+.rv-result{font-size:13px;text-align:center;margin-top:12px;min-height:20px;color:var(--dim);}
+
+/* ── 무료 ── */
+.free-main{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.free-card{background:linear-gradient(135deg,rgba(36,22,63,0.3),rgba(7,3,18,0.6));border:1px solid var(--golddim);border-radius:18px;padding:22px;text-decoration:none;transition:all .3s;display:block;}
+.free-card:hover{border-color:rgba(201,168,76,0.38);transform:translateY(-3px);}
+.free-emoji{font-size:24px;margin-bottom:9px;display:block;}
+.free-tag{font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:7px;display:block;font-weight:600;}
+.free-name{font-size:16px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3;}
+.free-desc{font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:12px;letter-spacing:0.02em;}
+.free-arrow{font-size:12px;color:var(--gold);letter-spacing:0.1em;border-bottom:1px solid rgba(201,168,76,0.3);padding-bottom:2px;font-weight:600;}
+.free-more{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.free-tag-item{background:rgba(255,255,255,0.03);border:1px solid var(--golddim);border-radius:30px;padding:9px 16px;text-decoration:none;font-size:12px;color:var(--dim);letter-spacing:0.04em;transition:all .25s;}
+.free-tag-item:hover{border-color:rgba(201,168,76,0.3);color:var(--gold);}
+
+/* ── CTA 배너 ── */
+.cta-banner{background:linear-gradient(135deg,rgba(46,24,7,0.72),rgba(16,7,2,0.88));border:1px solid rgba(201,168,76,0.26);border-radius:28px;padding:56px 40px;text-align:center;position:relative;overflow:hidden;}
+.cta-banner::before{content:'';position:absolute;top:-55%;left:-18%;width:136%;height:210%;background:radial-gradient(ellipse at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 58%);pointer-events:none;}
+.cta-in{position:relative;z-index:1;}
+.cta-eye{font-size:10px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:block;font-weight:600;}
+.cta-title{font-size:clamp(28px,4.2vw,46px);font-weight:700;line-height:1.2;margin-bottom:14px;letter-spacing:-0.01em;}
+.cta-title em{font-style:normal;color:var(--gold);}
+.cta-sub{font-size:14px;color:var(--dim);line-height:2;margin-bottom:32px;letter-spacing:0.03em;}
 .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
-.cta-primary{font-family:var(--fd);background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;border-radius:50px;padding:17px 40px;color:#0a0612;font-size:15px;font-weight:500;letter-spacing:0.1em;cursor:pointer;text-decoration:none;animation:shimmer 3s ease infinite;transition:all 0.3s;display:inline-block;white-space:nowrap;}
-.cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,168,76,0.38);}
-.cta-secondary{font-family:var(--fd);background:none;border:1px solid var(--border);border-radius:50px;padding:17px 40px;color:var(--gold);font-size:15px;letter-spacing:0.1em;cursor:pointer;text-decoration:none;transition:all 0.3s;display:inline-block;white-space:nowrap;}
-.cta-secondary:hover{background:rgba(201,168,76,0.08);}
 
 /* 푸터 */
-footer{position:relative;z-index:1;text-align:center;padding:44px 24px;border-top:1px solid rgba(201,168,76,0.08);}
-.footer-brand{font-family:var(--fd);font-size:21px;letter-spacing:0.22em;color:var(--gold);margin-bottom:12px;}
-.footer-text{font-size:12px;color:var(--text-dim);line-height:2.2;letter-spacing:0.04em;}
-.footer-links{display:flex;gap:20px;justify-content:center;margin-top:18px;flex-wrap:wrap;}
-.footer-link{font-size:11px;letter-spacing:0.1em;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
+footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-top:1px solid rgba(201,168,76,0.07);}
+.footer-brand{font-size:20px;font-weight:700;letter-spacing:0.22em;color:var(--gold);margin-bottom:11px;}
+.footer-txt{font-size:12px;color:var(--dim);line-height:2.2;letter-spacing:0.04em;}
+.footer-links{display:flex;gap:18px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.footer-link{font-size:11px;letter-spacing:0.09em;color:var(--dim);text-decoration:none;transition:color .2s;}
 .footer-link:hover{color:var(--gold);}
 
-@keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
+/* 애니메이션 */
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-@keyframes twinkle{0%,100%{opacity:var(--o,.4);transform:scale(1)}50%{opacity:.05;transform:scale(.5)}}
-.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.75s ease,transform 0.75s ease;}
+@keyframes twinkle{0%,100%{opacity:var(--o,.4);transform:scale(1)}50%{opacity:.04;transform:scale(.5)}}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .72s ease,transform .72s ease;}
 .reveal.visible{opacity:1;transform:translateY(0);}
-.rd1{transition-delay:.08s}.rd2{transition-delay:.16s}.rd3{transition-delay:.24s}.rd4{transition-delay:.32s}
+.rd1{transition-delay:.07s}.rd2{transition-delay:.14s}.rd3{transition-delay:.21s}.rd4{transition-delay:.28s}
 
+/* 반응형 */
 @media(max-width:640px){
-  nav{padding:13px 16px;}
-  .nav-brand{font-size:16px;}
+  nav{padding:12px 16px;}
+  .nav-brand{font-size:15px;}
   .nav-links{gap:8px;}
-  .nav-link{font-size:10px;letter-spacing:0.06em;}
-  .nav-cta{font-size:10px;padding:6px 13px;}
-  .hero{padding:96px 20px 56px;}
+  .nav-link{font-size:9px;letter-spacing:0.05em;}
+  .nav-cta{font-size:10px;padding:6px 12px;}
+  .hero{padding:90px 18px 52px;}
   .hero-btns{flex-direction:column;align-items:stretch;}
-  .hero-btn-primary,.hero-btn-secondary{text-align:center;}
-  .trust-bar{gap:14px;}
-  .trust-item{font-size:11px;}
+  .btn-gold,.btn-outline{text-align:center;}
+  .trust-row{gap:12px;}
   .products-grid{grid-template-columns:1fr 1fr;gap:10px;}
-  .product-card{padding:16px 13px;border-radius:18px;}
-  .card-name{font-size:17px;}
-  .card-one-line{font-size:11px;}
-  .card-points li{font-size:10px;}
-  .price-num{font-size:22px;}
-  .card-btn{font-size:12px;padding:12px;letter-spacing:0.04em;}
-  .card-time{font-size:10px;}
-  .process-steps{grid-template-columns:1fr 1fr;gap:20px;}
-  .process-steps::before{display:none;}
-  .sample-content{padding:20px 18px;}
-  .reviews-grid{grid-template-columns:1fr;}
+  .pcard{padding:16px 13px;border-radius:16px;}
+  .pc-name{font-size:16px;}
+  .pc-desc{font-size:11px;margin-bottom:14px;}
+  .pc-num{font-size:22px;}
+  .pc-btn{font-size:11px;padding:11px;letter-spacing:0.02em;}
+  .ctable th,.ctable td{padding:10px 11px;font-size:10px;}
+  .steps{grid-template-columns:1fr 1fr;gap:18px;}
+  .steps::before{display:none;}
+  .rv-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
   .free-main{grid-template-columns:1fr 1fr;gap:10px;}
-  .free-card{padding:16px 12px;}
+  .free-card{padding:14px 11px;}
   .free-name{font-size:14px;}
   .free-desc{display:none;}
-  .compare-table th,.compare-table td{padding:11px 12px;font-size:11px;}
-  .cta-banner{padding:36px 20px;border-radius:22px;}
+  .cta-banner{padding:32px 18px;border-radius:22px;}
   .cta-btns{flex-direction:column;align-items:stretch;}
-  .cta-primary,.cta-secondary{text-align:center;}
+  .btn-gold,.btn-outline{text-align:center;}
 }
 @media(max-width:360px){
   .free-main{grid-template-columns:1fr;}
+  .products-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<div class="bg-fixed">
+<div class="bg">
   <div class="neb n1"></div><div class="neb n2"></div><div class="neb n3"></div>
-  <div id="starsBg"></div>
+  <div id="stars"></div>
 </div>
 
+<!-- 네비 -->
 <nav>
   <div class="nav-brand">FORTUNA</div>
   <div class="nav-links">
@@ -280,235 +289,228 @@ footer{position:relative;z-index:1;text-align:center;padding:44px 24px;border-to
 
 <!-- ① 히어로 -->
 <section class="hero">
-  <div class="hero-eyebrow">FORTUNA · 점성 리포트</div>
-  <h1 class="hero-title">
-    타고난 성향과<br>삶의 방향을 읽는<br><em>점성 리포트</em>
-  </h1>
-  <p class="hero-tagline">생년월일 기준 개인 맞춤 분석 · 이메일 PDF 발송</p>
-  <p class="hero-meta">
-    24~48시간 내 발송<span>·</span>입금 후 제작 시작<span>·</span>개인 맞춤 제작
-  </p>
+  <div class="hero-eye">FORTUNA · 점성 리포트</div>
+  <h1 class="hero-title">타고난 성향과<br>삶의 방향을 읽는<br><em>점성 리포트</em></h1>
+  <p class="hero-tag">생년월일 기준 개인 맞춤 분석 · 이메일 PDF 발송</p>
+  <p class="hero-meta">24~48시간 내 발송<span>·</span>입금 후 제작 시작<span>·</span>개인 맞춤 제작</p>
   <div class="hero-btns">
-    <a href="light.html" class="hero-btn-primary">라이트 리포트 보기 — 9,900원</a>
-    <a href="dominant.html" class="hero-btn-secondary">무료로 먼저 체험하기</a>
+    <a href="light.html" class="btn-gold">라이트 리포트 보기 — 9,900원</a>
+    <a href="dominant.html" class="btn-outline">무료로 먼저 체험하기</a>
   </div>
-  <div class="trust-bar">
-    <div class="trust-item"><div class="trust-dot"></div>생년월일만 있으면 OK</div>
-    <div class="trust-item"><div class="trust-dot"></div>PDF 이메일 발송</div>
-    <div class="trust-item"><div class="trust-dot"></div>개인 맞춤 제작</div>
+  <div class="trust-row">
+    <div class="trust-item"><div class="tdot"></div>생년월일만 있으면 OK</div>
+    <div class="trust-item"><div class="tdot"></div>PDF 이메일 발송</div>
+    <div class="trust-item"><div class="tdot"></div>개인 맞춤 제작</div>
   </div>
 </section>
 
-<!-- ② 상품 카드 -->
-<section class="section-wrap reveal" id="products">
-  <div class="sec-header">
+<!-- ② 상품 + 비교표 (붙어있게) -->
+<section class="sec reveal" id="products">
+  <div class="sec-hd">
     <span class="sec-eye">리포트 선택</span>
-    <h2 class="sec-title">나에게 맞는<br><em>리포트를 골라보세요</em></h2>
+    <h2 class="sec-title">나에게 맞는 <em>리포트</em>를 골라보세요</h2>
   </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+
   <div class="products-grid">
-    <a href="light.html" class="product-card card-light">
-      <div class="card-inner">
-        <div class="card-badge"><span class="card-tag tag-light">Light</span><span class="card-symbol">🌙</span></div>
-        <span class="card-target">처음 받아보는 분 · 핵심만 빠르게</span>
-        <div class="card-name">핵심 자아<br>리포트</div>
-        <p class="card-one-line">내 성향과 감정 패턴, 관계·소통 방식을<br>가장 빠르게 파악하고 싶은 분에게</p>
-        <ul class="card-points">
-          <li><span class="pt-l">✦</span>도미넌트 플래닛 — 나를 움직이는 핵심 에너지</li>
-          <li><span class="pt-l">✦</span>태양·달·상승점 해석</li>
-          <li><span class="pt-l">✦</span>수성·금성·화성·목성·토성 분석</li>
-        </ul>
-        <button class="card-more-toggle" onclick="toggleMore(event,'light-more')">+ 전체 구성 보기</button>
-        <ul class="card-more-list" id="light-more">
-          <li><span class="pt-l">·</span>중천(MC) 사회적 방향성</li>
-          <li><span class="pt-l">·</span>일상 활용 팁 + 주의 패턴</li>
-          <li><span class="pt-l">·</span>A4 5~6장 분량</li>
-        </ul>
-        <div class="card-price"><span class="price-num">9,900</span><span class="price-unit">원</span></div>
-        <button class="card-btn btn-light">라이트 신청하기</button>
-        <p class="card-time">24시간 내 이메일 발송</p>
+    <!-- 라이트 -->
+    <a href="light.html" class="pcard pc-light">
+      <div class="pcard-in">
+        <div class="pc-top"><span class="pc-tag tag-l">Light</span><span class="pc-emoji">🌙</span></div>
+        <span class="pc-for">처음 받아보는 분 · 핵심만 빠르게</span>
+        <div class="pc-name">핵심 자아 리포트</div>
+        <p class="pc-desc">성향·감정·관계 패턴을 한눈에.<br>A4 5~6장, 24시간 내 발송</p>
+        <div class="pc-price"><span class="pc-num">9,900</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn pb-l">라이트 신청하기</button>
+        <p class="pc-time">24시간 내 이메일 발송</p>
       </div>
     </a>
-    <a href="premium.html" class="product-card card-premium">
-      <div class="card-inner">
-        <div class="card-badge"><span class="card-tag tag-premium">Premium</span><span class="card-symbol">☀️</span></div>
-        <span class="card-target">인생 흐름까지 깊게 보고 싶은 분</span>
-        <div class="card-name">정밀 분석<br>리포트</div>
-        <p class="card-one-line">라이트 전체 + 인생 구조·생애 테마까지<br>가장 깊이 있는 통합 점성 분석</p>
-        <ul class="card-points">
-          <li><span class="pt-p">✦</span>라이트 전체 포함</li>
-          <li><span class="pt-p">✦</span>행성간 어스펙트 통합 해석</li>
-          <li><span class="pt-p">✦</span>생애 테마 4가지 + Final Wrap</li>
-        </ul>
-        <button class="card-more-toggle" onclick="toggleMore(event,'premium-more')">+ 전체 구성 보기</button>
-        <ul class="card-more-list" id="premium-more">
-          <li><span class="pt-p">·</span>강점·성장 포인트 요약</li>
-          <li><span class="pt-p">·</span>나에게 건네는 마지막 이야기</li>
-          <li><span class="pt-p">·</span>A4 15~20장 분량</li>
-        </ul>
-        <div class="card-price"><span class="price-num">29,000</span><span class="price-unit">원</span></div>
-        <button class="card-btn btn-premium">프리미엄 신청하기</button>
-        <p class="card-time">48시간 내 이메일 발송</p>
+    <!-- 프리미엄 -->
+    <a href="premium.html" class="pcard pc-premium">
+      <div class="pcard-in">
+        <div class="pc-top"><span class="pc-tag tag-p">Premium</span><span class="pc-emoji">☀️</span></div>
+        <span class="pc-for">인생 흐름까지 깊게 보고 싶은 분</span>
+        <div class="pc-name">정밀 분석 리포트</div>
+        <p class="pc-desc">어스펙트·생애 테마·Final Wrap 포함.<br>A4 15~20장, 48시간 내 발송</p>
+        <div class="pc-price"><span class="pc-num">29,000</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn pb-p">프리미엄 신청하기</button>
+        <p class="pc-time">48시간 내 이메일 발송</p>
       </div>
     </a>
   </div>
-</section>
 
-<!-- ③ 신청 절차 -->
-<section class="section-wrap-sm reveal">
-  <div class="sec-header">
-    <span class="sec-eye">신청 방법</span>
-    <h2 class="sec-title">이렇게<br><em>진행됩니다</em></h2>
-  </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
-  <div class="process-steps">
-    <div class="step reveal rd1">
-      <div class="step-num">1</div>
-      <div class="step-title">신청서 작성</div>
-      <div class="step-desc">이름·생년월일·출생지·이메일 입력</div>
-    </div>
-    <div class="step reveal rd2">
-      <div class="step-num">2</div>
-      <div class="step-title">계좌이체</div>
-      <div class="step-desc">국민은행 013-21-0780-866<br>예금주 오주영</div>
-    </div>
-    <div class="step reveal rd3">
-      <div class="step-num">3</div>
-      <div class="step-title">리포트 제작</div>
-      <div class="step-desc">점성 데이터 기반 개인 맞춤 제작</div>
-      <div class="step-time">라이트 24h · 프리미엄 48h</div>
-    </div>
-    <div class="step reveal rd4">
-      <div class="step-num">4</div>
-      <div class="step-title">이메일 발송</div>
-      <div class="step-desc">PDF 파일로 입력하신 이메일에 전송</div>
-    </div>
-  </div>
-</section>
-
-<!-- ④ 샘플 리포트 -->
-<section class="section-wrap-sm reveal" id="sample">
-  <div class="sec-header">
-    <span class="sec-eye">샘플 미리보기</span>
-    <h2 class="sec-title">실제 리포트는<br><em>이렇게 생겼어요</em></h2>
-    <p class="sec-sub">라이트 리포트 일부를 공개합니다</p>
-  </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
-  <div class="sample-box">
-    <div class="sample-header">
-      <div class="sample-label">✦ 샘플 — 핵심 자아 리포트</div>
-      <div class="sample-badge">라이트 리포트</div>
-    </div>
-    <div class="sample-content">
-      <div class="sample-chapter">
-        <div class="chap-label">01 · 도미넌트 플래닛</div>
-        <div class="chap-title">당신의 핵심 에너지 — 토성</div>
-        <p class="chap-text">당신을 움직이는 가장 강한 행성 에너지는 <em>토성</em>입니다. 토성이 도미넌트한 사람은 책임감과 구조에 대한 감각이 유달리 강합니다. 무언가를 시작할 때 "제대로 해야 한다"는 내면의 목소리가 먼저 들린다면, 그것이 바로 토성의 언어입니다.</p>
-      </div>
-      <div class="sample-chapter">
-        <div class="chap-label">02 · 태양 · 달 · 상승점</div>
-        <div class="chap-title">감정 구조와 겉모습 사이</div>
-        <p class="chap-text">태양 염소자리의 당신은 <em>내면에서 스스로를 매우 높은 기준으로 평가</em>합니다. 달 물고기자리는 그 반대편에서 부드럽고 감수성 깊은 내면을 만들어냅니다. 이 두 에너지의 간극이 때로 당신을 지치게 합니다 — "충분히 해냈는데 왜 이렇게 허전하지?"라는 감각이 바로 그것입니다.</p>
-      </div>
-      <div class="sample-blur">
-        <div class="blur-text">
-          03 · 수성 · 금성 · 화성<br><br>
-          당신의 소통 방식은 정확성을 중시합니다. 말을 내뱉기 전 머릿속에서 한 번 더 검토하는 습관이 있으며 이것이 때로는 신중함으로, 때로는 과묵함으로 보입니다. 금성 물병자리는 관계에서 일정 거리를 필요로 합니다.<br><br>
-          04 · 중천(MC) 사회적 방향성<br><br>
-          직업과 사회적 역할에서 당신은 전문성과 신뢰를 가장 중시합니다. 오랜 시간 쌓아올린 것에서 빛이 나는 유형입니다...
-        </div>
-        <div class="blur-overlay">
-          <div class="blur-msg">나머지 내용은 리포트에서 확인하세요</div>
-          <a href="light.html" class="blur-cta">라이트 리포트 신청 — 9,900원</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ⑤ 후기 -->
-<section class="section-wrap reveal" id="reviews">
-  <div class="sec-header">
-    <span class="sec-eye">후기</span>
-    <h2 class="sec-title">받아보신 분들의<br><em>이야기</em></h2>
-  </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
-  <div class="reviews-grid" id="reviewsGrid">
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"관계 패턴 부분이 특히 정확했어요"</div><p class="rv-text">내 성향 설명이 전반적으로 맞았고, 특히 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요. 친구한테도 추천했어요.</p><div class="rv-author">30대 직장인 · 물고기자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"생애 테마에서 멈춰서 읽었어요"</div><p class="rv-text">프리미엄 선택했는데 읽다 보니 술술 읽혔어요. 특히 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요.</p><div class="rv-author">20대 프리랜서 · 전갈자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-text">별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지 원인까지 설명해줘서 훨씬 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
-    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-text">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다. 가격 대비 충분히 만족해요.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
-  </div>
-  <a href="light.html" class="rv-more-btn">지금 신청하기 →</a>
-</section>
-
-<!-- ⑥ 무료 체험 -->
-<section class="section-wrap reveal">
-  <div class="sec-header">
-    <span class="sec-eye">무료 체험</span>
-    <h2 class="sec-title">먼저 <em>무료로</em> 확인해보세요</h2>
-    <p class="sec-sub">회원가입 없이 생년월일만으로 바로 사용 가능</p>
-  </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
-  <div class="free-main">
-    <a href="dominant.html" class="free-card reveal rd1">
-      <span class="free-emoji">✦</span>
-      <span class="free-tag">무료</span>
-      <div class="free-name">내 핵심 행성 찾기</div>
-      <p class="free-desc">나를 움직이는 도미넌트 행성이 무엇인지 바로 계산해드려요.</p>
-      <span class="free-arrow">지금 확인 →</span>
-    </a>
-    <a href="horoscope.html" class="free-card reveal rd2">
-      <span class="free-emoji">🌙</span>
-      <span class="free-tag">무료 · 매일 업데이트</span>
-      <div class="free-name">오늘의 운세</div>
-      <p class="free-desc">전체운·애정운·금전운·건강운을 개인 맞춤으로 드려요.</p>
-      <span class="free-arrow">오늘 운세 보기 →</span>
-    </a>
-  </div>
-  <div class="free-more">
-    <a href="compatibility.html" class="free-more-item">♾ 궁합 점수 보기</a>
-    <a href="dog.html" class="free-more-item">🐾 강아지 궁합</a>
-    <a href="cat.html" class="free-more-item">🐱 고양이 궁합</a>
-  </div>
-</section>
-
-<!-- 비교 -->
-<section class="section-wrap-sm reveal" id="compare">
-  <div class="sec-header">
-    <span class="sec-eye">비교</span>
-    <h2 class="sec-title">라이트 vs 프리미엄<br><em>무엇이 다를까요</em></h2>
-  </div>
-  <div class="divider-ornament"><div class="dv-line dv-l"></div><div class="dv-dot"></div><div class="dv-line dv-r"></div></div>
+  <!-- 비교표 바로 아래 -->
   <div class="compare-wrap">
-    <table class="compare-table">
-      <thead><tr><th class="col-feat">항목</th><th class="col-light">라이트</th><th class="col-premium">프리미엄</th></tr></thead>
+    <table class="ctable">
+      <thead><tr>
+        <th class="th-feat">항목</th>
+        <th class="th-l">라이트</th>
+        <th class="th-p">프리미엄</th>
+      </tr></thead>
       <tbody>
         <tr><td>도미넌트 플래닛</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
         <tr><td>태양·달·상승점</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>수성·금성·화성</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>목성·토성</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>행성간 어스펙트 해석</td><td class="tc"><span class="dash">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>생애 테마 4가지</td><td class="tc"><span class="dash">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>Final Wrap 마무리</td><td class="tc"><span class="dash">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>분량</td><td class="tc" style="color:var(--text-dim)">A4 5~6장</td><td class="tc" style="color:var(--gold)">A4 15~20장</td></tr>
-        <tr><td>발송 시간</td><td class="tc" style="color:var(--text-dim)">24시간</td><td class="tc" style="color:var(--gold)">48시간</td></tr>
-        <tr><td>가격</td><td class="tc"><span class="p-l">9,900원</span></td><td class="tc"><span class="p-p">29,000원</span></td></tr>
+        <tr><td>수성·금성·화성·목성·토성</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>행성간 어스펙트 해석</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>생애 테마 4가지</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>Final Wrap 마무리</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>분량</td><td class="tc" style="color:var(--dim)">A4 5~6장</td><td class="tc" style="color:var(--gold)">A4 15~20장</td></tr>
+        <tr><td>가격</td><td class="tc"><span class="pl">9,900원</span></td><td class="tc"><span class="pp">29,000원</span></td></tr>
       </tbody>
     </table>
   </div>
 </section>
 
+<!-- ③ 신청 절차 -->
+<section class="sec-sm reveal">
+  <div class="sec-hd">
+    <span class="sec-eye">신청 방법</span>
+    <h2 class="sec-title">이렇게 <em>진행됩니다</em></h2>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="steps">
+    <div class="step reveal rd1"><div class="step-n">1</div><div class="step-t">신청서 작성</div><div class="step-d">이름·생년월일·출생지·이메일 입력</div></div>
+    <div class="step reveal rd2"><div class="step-n">2</div><div class="step-t">계좌이체</div><div class="step-d">국민은행 013-21-0780-866<br>예금주 오주영</div></div>
+    <div class="step reveal rd3"><div class="step-n">3</div><div class="step-t">리포트 제작</div><div class="step-d">점성 데이터 기반 개인 맞춤 제작</div><div class="step-time">라이트 24h · 프리미엄 48h</div></div>
+    <div class="step reveal rd4"><div class="step-n">4</div><div class="step-t">이메일 발송</div><div class="step-d">PDF 파일로 입력하신 이메일로 전송</div></div>
+  </div>
+</section>
+
+<!-- ④ 샘플 -->
+<section class="sec-sm reveal" id="sample">
+  <div class="sec-hd">
+    <span class="sec-eye">샘플 미리보기</span>
+    <h2 class="sec-title">실제 리포트는 <em>이렇게 생겼어요</em></h2>
+    <p class="sec-sub">라이트 리포트 일부를 공개합니다</p>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="sample-box">
+    <div class="sample-hd">
+      <div class="sample-lbl">✦ 샘플 — 핵심 자아 리포트</div>
+      <div class="sample-badge">라이트 리포트</div>
+    </div>
+    <div class="sample-body">
+      <div class="chap">
+        <div class="chap-lbl">01 · 도미넌트 플래닛</div>
+        <div class="chap-title">당신의 핵심 에너지 — 토성</div>
+        <p class="chap-txt">당신을 움직이는 가장 강한 행성 에너지는 <strong>토성</strong>입니다. 토성이 도미넌트한 사람은 책임감과 구조에 대한 감각이 유달리 강합니다. 무언가를 시작할 때 "제대로 해야 한다"는 내면의 목소리가 먼저 들린다면, 그것이 바로 토성의 언어입니다.</p>
+      </div>
+      <div class="chap">
+        <div class="chap-lbl">02 · 태양 · 달 · 상승점</div>
+        <div class="chap-title">감정 구조와 겉모습 사이</div>
+        <p class="chap-txt">태양 염소자리의 당신은 <strong>내면에서 스스로를 매우 높은 기준으로 평가</strong>합니다. 달 물고기자리는 그 반대편에서 부드럽고 감수성 깊은 내면을 만들어냅니다. "충분히 해냈는데 왜 이렇게 허전하지?"라는 감각이 바로 그것입니다.</p>
+      </div>
+      <div class="blur-wrap">
+        <div class="blur-txt">03 · 수성 · 금성 · 화성<br><br>당신의 소통 방식은 정확성을 중시합니다. 말을 내뱉기 전 머릿속에서 한 번 더 검토하는 습관이 있으며, 이것이 때로는 신중함으로, 때로는 과묵함으로 보입니다. 금성 물병자리는 관계에서 일정 거리를 필요로 합니다.<br><br>04 · 중천(MC) 사회적 방향성<br><br>직업과 사회적 역할에서 당신은 전문성과 신뢰를 가장 중시합니다...</div>
+        <div class="blur-over">
+          <div class="blur-msg">나머지 내용은 리포트에서 확인하세요</div>
+          <a href="light.html" class="btn-gold" style="font-size:13px;padding:11px 26px;">라이트 리포트 신청 — 9,900원</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 후기 (사진 첨부 가능) -->
+<section class="sec reveal" id="reviews">
+  <div class="sec-hd">
+    <span class="sec-eye">후기</span>
+    <h2 class="sec-title">받아보신 분들의 <em>이야기</em></h2>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="rv-grid" id="reviewsGrid">
+    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"관계 패턴 부분이 특히 정확했어요"</div><p class="rv-txt">내 성향 설명이 전반적으로 맞았고, 특히 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요. 친구한테도 추천했어요.</p><div class="rv-author">30대 직장인 · 물고기자리</div></div>
+    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"생애 테마에서 멈춰서 읽었어요"</div><p class="rv-txt">라이트보다 깊이가 달랐어요. 특히 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요.</p><div class="rv-author">20대 프리랜서 · 전갈자리</div></div>
+    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-txt">별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
+    <div class="rv-card"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-txt">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
+  </div>
+
+  <!-- 후기 작성 폼 (사진 첨부 포함) -->
+  <div class="rv-form-wrap" style="margin-top:32px;">
+    <div class="rv-form-title">✦ 후기 남기기</div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">이름 (닉네임 가능)</label>
+        <input class="form-input" id="rvName" type="text" placeholder="예: 물고기자리 직장인">
+      </div>
+      <div class="form-field">
+        <label class="form-label">리포트 종류</label>
+        <div class="type-select">
+          <button class="type-btn active-l" id="typeLight" onclick="selectType('light')">라이트</button>
+          <button class="type-btn" id="typePremium" onclick="selectType('premium')">프리미엄</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field full">
+        <label class="form-label">별점</label>
+        <div class="star-select" id="starSelect">
+          <button class="star-btn active" data-v="1" onclick="setStar(1)">★</button>
+          <button class="star-btn active" data-v="2" onclick="setStar(2)">★</button>
+          <button class="star-btn active" data-v="3" onclick="setStar(3)">★</button>
+          <button class="star-btn active" data-v="4" onclick="setStar(4)">★</button>
+          <button class="star-btn active" data-v="5" onclick="setStar(5)">★</button>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field full">
+        <label class="form-label">제목 (한 줄 요약)</label>
+        <input class="form-input" id="rvTitle" type="text" placeholder="예: 관계 패턴 부분이 정확했어요">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field full">
+        <label class="form-label">후기 내용</label>
+        <textarea class="form-input form-textarea" id="rvContent" placeholder="리포트를 받아보신 솔직한 후기를 적어주세요"></textarea>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field full">
+        <label class="form-label">사진 첨부 (선택)</label>
+        <label class="photo-upload" id="photoLabel">
+          <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
+          <div class="photo-upload-txt">📷 <span>사진을 클릭하여 첨부</span>하거나 드래그하세요<br><span style="font-size:10px;opacity:0.5;">JPG, PNG · 최대 5MB</span></div>
+          <img class="photo-preview" id="photoPreview" alt="미리보기">
+        </label>
+      </div>
+    </div>
+    <button class="submit-rv" onclick="submitReview()">후기 제출하기</button>
+    <div class="rv-result" id="rvResult"></div>
+  </div>
+
+  <a href="light.html" class="rv-more">지금 신청하기 →</a>
+</section>
+
+<!-- ⑥ 무료 -->
+<section class="sec reveal">
+  <div class="sec-hd">
+    <span class="sec-eye">무료 체험</span>
+    <h2 class="sec-title">먼저 <em>무료로</em> 확인해보세요</h2>
+    <p class="sec-sub">회원가입 없이 생년월일만으로 바로 사용 가능</p>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="free-main">
+    <a href="dominant.html" class="free-card reveal rd1"><span class="free-emoji">✦</span><span class="free-tag">무료</span><div class="free-name">내 핵심 행성 찾기</div><p class="free-desc">나를 움직이는 도미넌트 행성이 무엇인지 바로 계산해드려요.</p><span class="free-arrow">지금 확인 →</span></a>
+    <a href="horoscope.html" class="free-card reveal rd2"><span class="free-emoji">🌙</span><span class="free-tag">무료 · 매일 업데이트</span><div class="free-name">오늘의 운세</div><p class="free-desc">전체운·애정운·금전운·건강운을 개인 맞춤으로 드려요.</p><span class="free-arrow">오늘 운세 보기 →</span></a>
+  </div>
+  <div class="free-more">
+    <a href="compatibility.html" class="free-tag-item">♾ 궁합 점수 보기</a>
+    <a href="dog.html" class="free-tag-item">🐾 강아지 궁합</a>
+    <a href="cat.html" class="free-tag-item">🐱 고양이 궁합</a>
+  </div>
+</section>
+
 <!-- CTA -->
-<section class="section-wrap reveal">
+<section class="sec reveal">
   <div class="cta-banner">
-    <div class="cta-inner">
+    <div class="cta-in">
       <span class="cta-eye">지금 시작하기</span>
       <h2 class="cta-title">당신의 별자리가<br><em>기다리고 있어요</em></h2>
       <p class="cta-sub">생년월일만으로 당신을 가장 깊이 이해하는<br>개인 맞춤 점성 리포트를 받아보세요</p>
       <div class="cta-btns">
-        <a href="light.html" class="cta-primary">라이트 신청 — 9,900원</a>
-        <a href="premium.html" class="cta-secondary">프리미엄 신청 — 29,000원</a>
+        <a href="light.html" class="btn-gold">라이트 신청 — 9,900원</a>
+        <a href="premium.html" class="btn-outline">프리미엄 신청 — 29,000원</a>
       </div>
     </div>
   </div>
@@ -516,21 +518,21 @@ footer{position:relative;z-index:1;text-align:center;padding:44px 24px;border-to
 
 <footer>
   <div class="footer-brand">FORTUNA</div>
-  <p class="footer-text">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>개인 맞춤 제작 · 계좌이체 후 이메일 발송</p>
+  <p class="footer-txt">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>개인 맞춤 제작 · 계좌이체 후 이메일 발송</p>
   <div class="footer-links">
     <a href="light.html" class="footer-link">라이트 리포트</a>
     <a href="premium.html" class="footer-link">프리미엄 리포트</a>
     <a href="dominant.html" class="footer-link">핵심 행성 찾기</a>
-    <a href="admin.html" class="footer-link" style="opacity:0.2;">관리자</a>
+    <a href="admin.html" class="footer-link" style="opacity:0.18;">관리자</a>
   </div>
 </footer>
 
 <script>
 // 별 생성
-const bg = document.getElementById('starsBg');
+const bg = document.getElementById('stars');
 for(let i=0;i<160;i++){
   const s=document.createElement('div');
-  const sz=Math.random()*2.2+0.3, op=0.12+Math.random()*0.6, dur=2+Math.random()*5;
+  const sz=Math.random()*2.1+0.3, op=0.1+Math.random()*0.6, dur=2+Math.random()*5;
   s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${op};animation:twinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*5}s;`;
   bg.appendChild(s);
 }
@@ -538,30 +540,93 @@ for(let i=0;i<160;i++){
 // 스크롤 reveal
 const obs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
-},{threshold:0.08});
+},{threshold:0.07});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// 더보기 토글
-function toggleMore(e, id){
-  e.preventDefault(); e.stopPropagation();
-  const el=document.getElementById(id), btn=e.target;
-  el.classList.toggle('open');
-  btn.textContent=el.classList.contains('open')?'− 접기':'+ 전체 구성 보기';
+// ── 별점 ──
+let curStar = 5;
+function setStar(n){
+  curStar = n;
+  document.querySelectorAll('.star-btn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.dataset.v) <= n);
+  });
 }
 
-// 후기 로드 (DB에 있으면 교체)
+// ── 리포트 타입 ──
+let curType = 'light';
+function selectType(t){
+  curType = t;
+  document.getElementById('typeLight').className = 'type-btn' + (t==='light'?' active-l':'');
+  document.getElementById('typePremium').className = 'type-btn' + (t==='premium'?' active-p':'');
+}
+
+// ── 사진 미리보기 ──
+function previewPhoto(input){
+  const file = input.files[0];
+  if(!file) return;
+  const prev = document.getElementById('photoPreview');
+  prev.src = URL.createObjectURL(file);
+  prev.style.display = 'block';
+  document.querySelector('.photo-upload-txt').style.display = 'none';
+}
+
+// ── 후기 제출 (사진 → Supabase Storage → URL 저장) ──
+async function submitReview(){
+  const name = document.getElementById('rvName').value.trim();
+  const title = document.getElementById('rvTitle').value.trim();
+  const content = document.getElementById('rvContent').value.trim();
+  const result = document.getElementById('rvResult');
+  if(!name||!content){result.style.color='#ff7b7b';result.textContent='이름과 후기 내용을 입력해주세요.';return;}
+  result.style.color='var(--dim)';result.textContent='제출 중...';
+  let photoUrl = null;
+  const photoFile = document.getElementById('photoInput').files[0];
+  if(photoFile){
+    try{
+      const ext = photoFile.name.split('.').pop();
+      const fileName = `review_${Date.now()}.${ext}`;
+      const { error: upErr } = await sb.storage.from('review-photos').upload(fileName, photoFile, {cacheControl:'3600',upsert:false});
+      if(!upErr){
+        const { data: urlData } = sb.storage.from('review-photos').getPublicUrl(fileName);
+        photoUrl = urlData.publicUrl;
+      }
+    }catch(e){ console.error('사진 업로드 실패:', e); }
+  }
+  try{
+    const { error } = await sb.from('reviews').insert({
+      name, title, content, star: curStar, type: curType,
+      photo_url: photoUrl, approved: false
+    });
+    if(error) throw error;
+    result.style.color='var(--gold)';
+    result.textContent='감사합니다! 검토 후 게시됩니다 ✦';
+    document.getElementById('rvName').value='';
+    document.getElementById('rvTitle').value='';
+    document.getElementById('rvContent').value='';
+    document.getElementById('photoInput').value='';
+    document.getElementById('photoPreview').style.display='none';
+    document.querySelector('.photo-upload-txt').style.display='block';
+    setStar(5); selectType('light');
+  }catch(e){
+    result.style.color='#ff7b7b';
+    result.textContent='오류가 발생했습니다. 다시 시도해주세요.';
+    console.error(e);
+  }
+}
+
+// ── 후기 로드 (사진 있으면 표시) ──
 async function loadReviews(){
   try{
-    const {data}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
+    const {data} = await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
     if(!data||data.length===0) return;
-    document.getElementById('reviewsGrid').innerHTML=data.map(r=>`
+    document.getElementById('reviewsGrid').innerHTML = data.map(r=>`
       <div class="rv-card">
         <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
+        ${r.photo_url?`<img class="rv-photo" src="${r.photo_url}" alt="후기 사진" loading="lazy">`:''}
         ${r.title?`<div class="rv-quote">"${r.title}"</div>`:''}
-        <p class="rv-text">${r.content.length>110?r.content.slice(0,110)+'…':r.content}</p>
+        <p class="rv-txt">${r.content.length>110?r.content.slice(0,110)+'…':r.content}</p>
         <div class="rv-author">${r.name}</div>
       </div>`).join('');
-  }catch(e){console.error(e);}
+  }catch(e){ console.error(e); }
 }
 loadReviews();
 </script>
