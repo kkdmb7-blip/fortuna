@@ -372,17 +372,32 @@ const PLANET_INFO = {
 };
 
 function parseBirthdateCalc(str){
-  const m=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
-  if(m.length<3)return null;
-  return{year:parseInt(m[0]),month:parseInt(m[1]),day:parseInt(m[2])};
+  let year,month,day;
+  const clean=str.replace(/[^0-9]/g,'');
+  if(clean.length===8){
+    year=parseInt(clean.slice(0,4));
+    month=parseInt(clean.slice(4,6));
+    day=parseInt(clean.slice(6,8));
+  } else {
+    const m=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
+    if(m.length<3)return null;
+    year=parseInt(m[0]);month=parseInt(m[1]);day=parseInt(m[2]);
+  }
+  if(isNaN(year)||isNaN(month)||isNaN(day))return null;
+  if(year<1900||year>2025)return null;
+  if(month<1||month>12)return null;
+  if(day<1||day>31)return null;
+  return{year,month,day};
 }
 function parseTimeCalc(str){
   if(!str||!str.trim())return{hour:12,min:0};
   const clean=str.replace(/[^0-9]/g,'');
-  if(clean.length===3)return{hour:parseInt(clean.slice(0,1)),min:parseInt(clean.slice(1))};
-  if(clean.length===4)return{hour:parseInt(clean.slice(0,2)),min:parseInt(clean.slice(2))};
-  const m=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
-  return{hour:parseInt(m[0])||12,min:parseInt(m[1])||0};
+  let hour,min;
+  if(clean.length===3){hour=parseInt(clean.slice(0,1));min=parseInt(clean.slice(1));}
+  else if(clean.length===4){hour=parseInt(clean.slice(0,2));min=parseInt(clean.slice(2));}
+  else{const m=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);hour=parseInt(m[0])||12;min=parseInt(m[1])||0;}
+  if(hour<0||hour>23||min<0||min>59)return{hour:12,min:0};
+  return{hour,min};
 }
 
 async function calcDominant(){
