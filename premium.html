@@ -52,15 +52,15 @@
 
   /* ── 입금 안내 ── */
   .account-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 8px; }
-  .account-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; }
-  .account-label { color: var(--text-dim); font-size: 13px; letter-spacing: 0.04em; }
-  .account-value { color: var(--text); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; }
+  .account-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; gap: 8px; }
+  .account-label { color: var(--text-dim); font-size: 13px; letter-spacing: 0.04em; white-space: nowrap; flex-shrink: 0; }
+  .account-value { color: var(--text); font-weight: 600; font-size: 14px; letter-spacing: 0.02em; word-break: keep-all; }
   .amount { font-family: var(--font-serif); font-size: 26px; color: var(--gold); font-weight: 400; letter-spacing: 0.02em; }
   .copy-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--gold); font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; }
   .copy-btn:hover { background: rgba(201,168,76,0.1); }
 
   /* ── 버튼 ── */
-  .submit-btn { width: 100%; background: linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); background-size: 200% 200%; border: none; border-radius: 12px; padding: 18px; color: #0a0612; font-family: var(--font-display); font-size: 16px; font-weight: 500; letter-spacing: 0.20em; cursor: pointer; transition: all 0.3s; animation: shimmer 3s ease infinite; margin-top: 8px; }
+  .submit-btn { width: 100%; background: linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); background-size: 200% 200%; border: none; border-radius: 12px; padding: 18px; color: #0a0612; font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 0.08em; cursor: pointer; transition: all 0.3s; animation: shimmer 3s ease infinite; margin-top: 8px; white-space: nowrap; }
   .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
   .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   @keyframes shimmer { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
