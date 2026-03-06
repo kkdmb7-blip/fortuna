@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>명해원 — 관리자 로그인</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --void: #05020e;
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --text: #ede6f8;
+    --text-dim: #9b8fb0;
+    --border: rgba(201,168,76,0.2);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'Pretendard', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  /* 배경 */
+  .bg { position: fixed; inset:0; z-index:0; }
+  .nebula1 { position:absolute; width:80vw; height:80vw; top:-30%; left:-30%; background: radial-gradient(circle, rgba(40,15,90,0.7) 0%, transparent 60%); animation: drift1 12s ease-in-out infinite alternate; }
+  .nebula2 { position:absolute; width:60vw; height:60vw; bottom:-20%; right:-20%; background: radial-gradient(circle, rgba(20,5,60,0.8) 0%, transparent 60%); animation: drift2 10s ease-in-out infinite alternate; }
+  .stars { position:absolute; inset:0; }
+
+  @keyframes drift1 { from{transform:translate(0,0)} to{transform:translate(30px,20px)} }
+  @keyframes drift2 { from{transform:translate(0,0)} to{transform:translate(-20px,30px)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  @keyframes pulse { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.05)} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* 로그인 박스 */
+  .wrap { position:relative; z-index:1; width:100%; max-width:400px; padding:24px; }
+
+  .login-box {
+    background: linear-gradient(145deg, rgba(25,12,55,0.95), rgba(8,4,20,0.98));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 40px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.05);
+    opacity:0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .symbol {
+    text-align: center;
+    margin-bottom: 8px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  .symbol-icon {
+    font-size: 36px;
+    display: block;
+  }
+
+  .brand {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    letter-spacing: 0.05em;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 0 auto 32px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .field-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: var(--text);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: all 0.3s;
+    letter-spacing: 0.1em;
+    text-align: center;
+  }
+  .field-input:focus {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.04);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+  }
+  .field-input::placeholder { color: rgba(155,143,176,0.4); letter-spacing: 0.05em; }
+
+  .login-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #c9a84c, #e8cc7a, #c9a84c);
+    background-size: 200% 200%;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    color: #06030f;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+    animation: shimmer 3s ease infinite;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.35); }
+  .login-btn:active { transform: translateY(0); }
+  .login-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .loading { display:inline-block; width:14px; height:14px; border:2px solid rgba(6,3,15,0.3); border-top-color:#06030f; border-radius:50%; animation:spin 0.8s linear infinite; vertical-align:middle; margin-right:6px; }
+
+  .error-msg {
+    text-align: center;
+    font-size: 12px;
+    color: rgba(255,120,120,0.8);
+    margin-top: 14px;
+    padding: 10px;
+    background: rgba(255,80,80,0.06);
+    border: 1px solid rgba(255,80,80,0.15);
+    border-radius: 8px;
+    display: none;
+  }
+
+  .footer-link {
+    display: block;
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .footer-link:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="nebula1"></div>
+  <div class="nebula2"></div>
+  <div class="stars" id="stars"></div>
+</div>
+
+<div class="wrap">
+  <div class="login-box">
+    <div class="symbol"><span class="symbol-icon">✦</span></div>
+    <div class="brand">Myeonghaewon</div>
+    <div class="title">관리자</div>
+    <p class="subtitle">Admin Dashboard</p>
+    <div class="divider"></div>
+
+    <div class="field">
+      <label class="field-label">비밀번호</label>
+      <input
+        type="password"
+        class="field-input"
+        id="pwInput"
+        placeholder="••••••••"
+        onkeydown="if(event.key==='Enter')doLogin()"
+        autofocus
+      >
+    </div>
+
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">
+      로그인
+    </button>
+
+    <div class="error-msg" id="errorMsg">
+      비밀번호가 올바르지 않습니다
+    </div>
+
+    <a href="main.html" class="footer-link">← 메인으로 돌아가기</a>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 이미 로그인 상태면 바로 이동
+if(sessionStorage.getItem('admin') === '1') {
+  location.href = 'admin.html';
+}
+
+// 별 생성
+const starsEl = document.getElementById('stars');
+for(let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  const size = Math.random() * 2 + 0.5;
+  const dur = 2 + Math.random() * 4;
+  s.style.cssText = `position:absolute;border-radius:50%;background:white;width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.2+Math.random()*0.5};animation:pulse ${dur}s ease-in-out infinite;animation-delay:${Math.random()*4}s;`;
+  starsEl.appendChild(s);
+}
+
+async function doLogin() {
+  const pw = document.getElementById('pwInput').value.trim();
+  if(!pw) return;
+
+  const btn = document.getElementById('loginBtn');
+  const errMsg = document.getElementById('errorMsg');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span>확인 중...';
+  errMsg.style.display = 'none';
+
+  try {
+    const { data } = await sb.from('admins').select('*').eq('password_hash', pw);
+    if(data && data.length > 0) {
+      sessionStorage.setItem('admin', '1');
+      btn.innerHTML = '✦ 로그인 성공';
+      setTimeout(() => { location.href = 'admin.html'; }, 600);
+    } else {
+      errMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = '로그인';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  } catch(e) {
+    console.error(e);
+    errMsg.textContent = '오류가 발생했습니다. 다시 시도해주세요';
+    errMsg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = '로그인';
+  }
+}
+</script>
+</body>
+</html>
