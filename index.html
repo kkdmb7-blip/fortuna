@@ -536,12 +536,14 @@ function renderPhotoThumb(r){
 }
 
 // ── 후기 로드 ──
+let rvData = [];
 async function loadReviews(){
   try{
     const {data} = await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
     if(!data||data.length===0) return;
-    document.getElementById('reviewsGrid').innerHTML = data.map(r=>`
-      <div class="rv-card" onclick='openModal(${JSON.stringify(r)})' style="cursor:pointer;">
+    rvData = data;
+    document.getElementById('reviewsGrid').innerHTML = data.map((r,i)=>`
+      <div class="rv-card" onclick="openModal(rvData[${i}])" style="cursor:pointer;">
         <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
         ${renderPhotoThumb(r)}
         ${r.title?`<div class="rv-quote">"${r.title}"</div>`:''}
