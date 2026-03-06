@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>명해원 — 점성 프리미엄 리포트</title>
+<title>포르투나 — 점성 프리미엄 리포트</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
   :root {
@@ -125,7 +125,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 <div class="container" id="mainForm">
   <div class="header">
-    <div class="brand">명해원</div>
+    <div class="brand">FORTUNA</div>
     <h1 class="title">나를 깊이 알고 싶다면<br>점성 프리미엄 리포트</h1>
     <div class="divider"></div>
     <p class="subtitle">성향부터 반복 패턴, 인생 구조까지<br>정밀하게 분석한 프리미엄 리포트입니다.</p>
@@ -665,7 +665,7 @@ async function confirmOrder(index){
       lat:o.lat,lon:o.lon,tzone:9.0,
       report_text:"네이탈 프리미엄 리포트",
       report_type:"premium",
-      doc_name:`명해원_프리미엄_${o.name}`,
+      doc_name:`포르투나_프리미엄_${o.name}`,
       dominant_planet:dominant,
       aspects_summary:aspects,
       planets_json:JSON.stringify(planets),
