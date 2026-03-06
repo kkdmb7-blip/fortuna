@@ -218,8 +218,9 @@ function getAspect(angle){
     {name:'합',a:0,orb:8,score:15,good:true,desc:'강한 연결'},
     {name:'삼각',a:120,orb:8,score:12,good:true,desc:'자연스러운 조화'},
     {name:'육각',a:60,orb:6,score:8,good:true,desc:'부드러운 시너지'},
-    {name:'대립',a:180,orb:8,score:-8,good:false,desc:'긴장과 끌림'},
-    {name:'사각',a:90,orb:6,score:-5,good:false,desc:'마찰과 성장'},
+    {name:'대립',a:180,orb:8,score:4,good:true,desc:'강렬한 끌림'},
+    {name:'사각',a:90,orb:6,score:-4,good:false,desc:'마찰과 성장'},
+    {name:'퀸컹스',a:150,orb:3,score:-2,good:false,desc:'조율이 필요한 관계'},
   ];
   for(const asp of list){if(Math.abs(angle-asp.a)<=asp.orb)return asp;}
   return null;
@@ -249,20 +250,34 @@ async function calcCompatibility(){
   btn.disabled=true;btn.innerHTML='<span class="loading"></span>두 차트 분석 중...';
   try{
     const [pAdata,pBdata]=await Promise.all([fetchPlanets(bdA,btA,cityA),fetchPlanets(bdB,btB,cityB)]);
-    const KEY=['Sun','Moon','Venus','Mars'];
+    // 행성별 가중치: 개인 행성일수록 높게
+    const KEY_WEIGHTS={Sun:2.0,Moon:2.0,Venus:1.8,Mars:1.6,Mercury:1.2,Ascendant:1.5};
+    const KEY=Object.keys(KEY_WEIGHTS);
     let total=0;const aspects=[];
+    let maxPossible=0,minPossible=0;
     KEY.forEach(kA=>{
-      const a=pAdata.find(p=>p.name===kA);
+      const wA=KEY_WEIGHTS[kA]||1;
       KEY.forEach(kB=>{
-        const b=pBdata.find(p=>p.name===kB);
+        const wB=KEY_WEIGHTS[kB]||1;
+        const w=wA*wB;
+        maxPossible+=15*w;
+        minPossible+=(-4)*w;
+      });
+    });
+    KEY.forEach(kA=>{
+      const a=pAdata.find(p=>p.name===kA)||(kA==='Ascendant'?pAdata.find(p=>p.name==='Ascendant'):null);
+      const wA=KEY_WEIGHTS[kA]||1;
+      KEY.forEach(kB=>{
+        const b=pBdata.find(p=>p.name===kB)||(kB==='Ascendant'?pBdata.find(p=>p.name==='Ascendant'):null);
         if(!a||!b)return;
+        const wB=KEY_WEIGHTS[kB]||1;
         const diff=Math.abs(a.fullDegree-b.fullDegree);
         const angle=diff>180?360-diff:diff;
         const asp=getAspect(angle);
-        if(asp){total+=asp.score;aspects.push({kA,kB,asp});}
+        if(asp){total+=asp.score*wA*wB;aspects.push({kA,kB,asp});}
       });
     });
-    const score=Math.max(10,Math.min(99,Math.round(((total-(-8*16))/(15*16-(-8*16)))*100)));
+    const score=Math.max(10,Math.min(99,Math.round(((total-minPossible)/(maxPossible-minPossible))*89+10)));
     let title,subtitle,color;
     if(score>=80){title='강한 연결';subtitle='두 사람의 에너지가 자연스럽게 맞닿아 있어요. 함께 있을 때 편안하면서도 서로를 성장시키는 조합이에요.';color='#88cc88';}
     else if(score>=65){title='좋은 궁합';subtitle='대체로 잘 맞는 에너지예요. 서로 다른 점이 있어도 그게 오히려 균형을 만들어줍니다.';color='var(--gold)';}
