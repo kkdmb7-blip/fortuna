@@ -517,16 +517,8 @@ function openModal(r){
       <span style="font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;">${badge}</span>
     </div>
     ${slidePhotos.length ? `
-    <div style="position:relative;margin-bottom:18px;border-radius:14px;overflow:hidden;background:#000;">
-      <div id="slideTrack" style="display:flex;transition:transform .3s ease;">
-        ${slidePhotos.map(u=>`<img src="${u}" style="min-width:100%;width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}
-      </div>
-      ${slidePhotos.length > 1 ? `
-      <button onclick="slide(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">‹</button>
-      <button onclick="slide(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:white;font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;">›</button>
-      <div id="slideDots" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;">
-        ${slidePhotos.map((_,i)=>`<div onclick="goSlide(${i})" style="width:6px;height:6px;border-radius:50%;background:${i===0?'white':'rgba(255,255,255,0.4)'};cursor:pointer;transition:background .2s;"></div>`).join('')}
-      </div>` : ''}
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+      ${slidePhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:contain;max-height:320px;background:#000;" loading="lazy">`).join('')}
     </div>` : ''}
     ${r.title ? `<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>` : ''}
     <p style="font-size:14px;color:var(--dim);line-height:2;margin-bottom:18px;letter-spacing:0.02em;">${r.content}</p>
