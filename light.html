@@ -302,6 +302,14 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       <label class="rv-label">상세 후기 *</label>
       <textarea class="rv-textarea" id="rvContent" placeholder="리포트를 받고 느낀 점을 자유롭게 적어주세요 😊"></textarea>
     </div>
+    <div class="rv-field">
+      <label class="rv-label">사진 첨부 (최대 3장, 선택)</label>
+      <label style="display:block;border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);transition:all .2s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.25)'">
+        <input type="file" id="rvPhotos" accept="image/*" multiple style="display:none;" onchange="previewRvPhotos(this)">
+        <span style="font-size:12px;color:var(--text-dim);">📷 <span style="color:var(--gold);">클릭하여 사진 선택</span> (JPG, PNG · 최대 3장)</span>
+      </label>
+      <div id="rvPhotoPreviewRow" style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;"></div>
+    </div>
     <div class="rv-btns">
       <button class="rv-cancel" onclick="closeRvForm()">취소</button>
       <button class="rv-submit" onclick="submitRv()">후기 등록하기</button>
@@ -435,13 +443,59 @@ async function confirmOrder(index){
 
 let rvStar=0;
 function pickStar(n){rvStar=n;document.querySelectorAll('.star-pick').forEach((b,i)=>b.classList.toggle('on',i<n));}
+function previewRvPhotos(input){
+  const row = document.getElementById('rvPhotoPreviewRow');
+  row.innerHTML = '';
+  const files = Array.from(input.files).slice(0,3);
+  files.forEach(f=>{
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(f);
+    img.style.cssText = 'width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,168,76,0.2);';
+    row.appendChild(img);
+  });
+  if(files.length < input.files.length) showToast('사진은 최대 3장까지 첨부 가능해요');
+}
+
 function openRvForm(){document.getElementById('rvOverlay').classList.add('show');}
-function closeRvForm(){document.getElementById('rvOverlay').classList.remove('show');rvStar=0;document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');document.getElementById('rvType').value='';}
+function closeRvForm(){
+  document.getElementById('rvOverlay').classList.remove('show');
+  rvStar=0;
+  document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));
+  ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rvType').value='';
+  document.getElementById('rvPhotos').value='';
+  document.getElementById('rvPhotoPreviewRow').innerHTML='';
+}
+
+async function uploadPhoto(file){
+  const ext = file.name.split('.').pop();
+  const fileName = `rv_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await sb.storage.from('review-photos').upload(fileName, file, {cacheControl:'3600',upsert:false});
+  if(error) return null;
+  return sb.storage.from('review-photos').getPublicUrl(fileName).data.publicUrl;
+}
 
 async function submitRv(){
-  const name=document.getElementById('rvName').value.trim();const type=document.getElementById('rvType').value;const title=document.getElementById('rvTitle').value.trim();const content=document.getElementById('rvContent').value.trim();
+  const name=document.getElementById('rvName').value.trim();
+  const type=document.getElementById('rvType').value;
+  const title=document.getElementById('rvTitle').value.trim();
+  const content=document.getElementById('rvContent').value.trim();
   if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
-  await sb.from('reviews').insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'customer',approved:false}]);
+
+  // 사진 업로드 (최대 3장, 실패해도 계속)
+  const photoFiles = Array.from(document.getElementById('rvPhotos').files).slice(0,3);
+  const photoUrls = [];
+  for(const f of photoFiles){
+    try{ const url = await uploadPhoto(f); if(url) photoUrls.push(url); }
+    catch(e){ console.warn('사진 업로드 스킵', e); }
+  }
+
+  const row = {name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'customer',approved:false};
+  if(photoUrls[0]) row.photo_url1 = photoUrls[0];
+  if(photoUrls[1]) row.photo_url2 = photoUrls[1];
+  if(photoUrls[2]) row.photo_url3 = photoUrls[2];
+
+  await sb.from('reviews').insert([row]);
   await renderRv();showToast('후기가 등록되었습니다! 감사합니다 ✦');closeRvForm();
 }
 
@@ -450,7 +504,13 @@ async function renderRv(){
   try{
     const {data:reviews}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false});
     if(!reviews||reviews.length===0){grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';return;}
-    grid.innerHTML=reviews.map(r=>{const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';return '<div class="review-card"><div class="rv-header"><div><div class="rv-name">'+r.name+'</div><span class="rv-badge">'+badge+'</span></div><div class="rv-stars">'+stars+'</div></div><div class="rv-title">'+r.title+'</div><div class="rv-content">'+r.content+'</div><div class="rv-date">'+r.date+'</div></div>';}).join('');
+    grid.innerHTML=reviews.map(r=>{
+      const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
+      const badge=r.type==='premium'?'프리미엄':'라이트';
+      const photos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);
+      const photoHtml=photos.length?`<div style="display:grid;grid-template-columns:repeat(${photos.length},1fr);gap:5px;margin:10px 0;border-radius:8px;overflow:hidden;">${photos.map(u=>`<img src="${u}" style="width:100%;aspect-ratio:1;object-fit:cover;" loading="lazy">`).join('')}</div>`:'';
+      return `<div class="review-card"><div class="rv-header"><div><div class="rv-name">${r.name}</div><span class="rv-badge">${badge}</span></div><div class="rv-stars">${stars}</div></div>${photoHtml}<div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div><div class="rv-date">${r.date}</div></div>`;
+    }).join('');
     document.getElementById('rvTotal').textContent=reviews.length;
     const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;
     document.getElementById('rvAvg').textContent=avg+'★';document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
