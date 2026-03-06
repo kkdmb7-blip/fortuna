@@ -4,43 +4,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>명해원 — 관리자</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{--void:#05020e;--gold:#c9a84c;--gold-light:#e8cc7a;--text:#ede6f8;--text-dim:#9b8fb0;--border:rgba(201,168,76,0.2);}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--void);color:var(--text);font-family:'Noto Serif KR',serif;min-height:100vh;}
+  body{background:var(--void);color:var(--text);font-family:'Pretendard', sans-serif;min-height:100vh;}
   .nebula{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.5) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%);}
 
   /* 로그인 */
   .login-wrap{position:relative;z-index:1;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
   .login-box{background:linear-gradient(135deg,rgba(45,31,78,0.9),rgba(10,6,18,0.95));border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:360px;text-align:center;}
-  .login-brand{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.4em;color:var(--gold);margin-bottom:8px;}
+  .login-brand{font-family:'Pretendard', sans-serif;font-size:12px;letter-spacing:0.4em;color:var(--gold);margin-bottom:8px;}
   .login-title{font-size:20px;font-weight:300;margin-bottom:32px;}
-  .login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Noto Serif KR',serif;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.1em;}
+  .login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Pretendard', sans-serif;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.1em;}
   .login-input:focus{border-color:var(--gold);}
-  .login-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:10px;padding:14px;color:#0a0612;font-family:'Noto Serif KR',serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
+  .login-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:10px;padding:14px;color:#0a0612;font-family:'Pretendard', sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.2s;}
   .login-btn:hover{opacity:0.9;}
   .login-error{font-size:12px;color:rgba(255,100,100,0.8);margin-top:10px;display:none;}
 
   /* 대시보드 */
   .dashboard{display:none;position:relative;z-index:1;max-width:960px;margin:0 auto;padding:32px 20px 80px;}
   .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
-  .header-left .brand{font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.4em;color:var(--gold);}
+  .header-left .brand{font-family:'Pretendard', sans-serif;font-size:12px;letter-spacing:0.4em;color:var(--gold);}
   .header-left .title{font-size:22px;font-weight:300;margin-top:4px;}
   .header-right{display:flex;gap:10px;align-items:center;}
-  .nav-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:8px 16px;color:var(--text-dim);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+  .nav-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:8px 16px;color:var(--text-dim);font-family:'Pretendard', sans-serif;font-size:12px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
   .nav-btn:hover{border-color:var(--gold);color:var(--gold);}
-  .logout-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:20px;padding:8px 16px;color:rgba(255,100,100,0.6);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
+  .logout-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:20px;padding:8px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard', sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
   .logout-btn:hover{border-color:rgba(255,100,100,0.6);color:rgba(255,100,100,0.9);}
 
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
   .stat{background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
-  .stat-num{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);}
+  .stat-num{font-family:'Pretendard', sans-serif;font-size:26px;color:var(--gold);}
   .stat-label{font-size:11px;color:var(--text-dim);margin-top:4px;}
 
   .tabs{display:flex;gap:8px;margin-bottom:24px;}
-  .tab{background:none;border:1px solid var(--border);border-radius:8px;padding:10px 20px;color:var(--text-dim);font-family:'Noto Serif KR',serif;font-size:13px;cursor:pointer;transition:all 0.2s;position:relative;}
+  .tab{background:none;border:1px solid var(--border);border-radius:8px;padding:10px 20px;color:var(--text-dim);font-family:'Pretendard', sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;position:relative;}
   .tab.active{background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold);}
   .tab .badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:#0a0612;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:600;display:none;align-items:center;justify-content:center;}
 
@@ -48,9 +48,9 @@
   .tab-content.active{display:block;}
 
   .filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-  .filter-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;color:var(--text-dim);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
+  .filter-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;color:var(--text-dim);font-family:'Pretendard', sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
   .filter-btn.active{background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold);}
-  .search-input{background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:20px;padding:6px 16px;color:var(--text);font-family:'Noto Serif KR',serif;font-size:12px;outline:none;width:180px;}
+  .search-input{background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:20px;padding:6px 16px;color:var(--text);font-family:'Pretendard', sans-serif;font-size:12px;outline:none;width:180px;}
   .search-input:focus{border-color:var(--gold);}
 
   .order-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;transition:border-color 0.2s;}
@@ -67,20 +67,20 @@
   .order-info{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;}
   .order-info span{color:var(--text);}
   .order-actions{display:flex;gap:8px;}
-  .confirm-btn{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Noto Serif KR',serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+  .confirm-btn{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Pretendard', sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;}
   .confirm-btn:hover{opacity:0.9;transform:translateY(-1px);}
   .confirm-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;background:#444;color:#888;}
-  .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
+  .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard', sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
   .del-btn:hover{border-color:rgba(255,100,100,0.6);color:rgba(255,100,100,0.9);}
   .done-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:rgba(100,220,100,0.7);padding:6px 12px;border:1px solid rgba(100,220,100,0.2);border-radius:8px;}
 
   .rv-form-box{background:rgba(45,31,78,0.3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:none;}
   .rv-form-box.show{display:block;}
-  .add-rv-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:12px;padding:14px;color:var(--gold);font-family:'Noto Serif KR',serif;font-size:13px;cursor:pointer;transition:all 0.2s;margin-bottom:16px;}
+  .add-rv-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:12px;padding:14px;color:var(--gold);font-family:'Pretendard', sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;margin-bottom:16px;}
   .add-rv-btn:hover{background:rgba(201,168,76,0.05);}
   .form-field{margin-bottom:12px;}
   .form-label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
-  .form-input,.form-textarea,.form-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Noto Serif KR',serif;font-size:13px;outline:none;-webkit-appearance:none;}
+  .form-input,.form-textarea,.form-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Pretendard', sans-serif;font-size:13px;outline:none;-webkit-appearance:none;}
   .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold);}
   .form-select option{background:#1a1030;}
   .form-textarea{min-height:80px;resize:vertical;}
@@ -88,8 +88,8 @@
   .star-btn{font-size:20px;cursor:pointer;color:rgba(201,168,76,0.2);background:none;border:none;padding:0;transition:color 0.15s;}
   .star-btn.on{color:var(--gold);}
   .form-btns{display:flex;gap:8px;margin-top:16px;}
-  .btn-save{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:12px;color:#0a0612;font-family:'Noto Serif KR',serif;font-size:13px;font-weight:600;cursor:pointer;}
-  .btn-cancel-form{background:none;border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text-dim);font-family:'Noto Serif KR',serif;font-size:12px;cursor:pointer;}
+  .btn-save{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:12px;color:#0a0612;font-family:'Pretendard', sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-cancel-form{background:none;border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text-dim);font-family:'Pretendard', sans-serif;font-size:12px;cursor:pointer;}
 
   .rv-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
   .rv-header{display:flex;justify-content:space-between;margin-bottom:8px;}
@@ -456,7 +456,7 @@ async function loadReviews(){
       <div class="rv-content">${r.content}</div>
       <div class="rv-date">${r.date} · ${r.source==='admin'?'관리자 등록':'고객 작성'}</div>
       <div style="margin-top:10px;">
-        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Noto Serif KR',serif;font-size:11px;cursor:pointer;">삭제</button>
+        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard', sans-serif;font-size:11px;cursor:pointer;">삭제</button>
       </div>
     </div>
   `).join('');
