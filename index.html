@@ -339,18 +339,7 @@ const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co', 'sb
     <div class="section-eyebrow">후기</div>
     <h2 class="section-heading">받아보신 분들의 이야기</h2>
   </div>
-  <div class="reviews-grid" id="reviewsGrid">
-    <div class="rv-card">
-      <div class="rv-stars">★★★★★</div>
-      <p class="rv-text">읽으면서 소름이 돋았어요. 제가 왜 이런 패턴을 반복하는지 처음으로 이해가 됐어요.</p>
-      <div class="rv-author">30대 직장인<span class="rv-badge-sm">프리미엄</span></div>
-    </div>
-    <div class="rv-card">
-      <div class="rv-stars">★★★★★</div>
-      <p class="rv-text">점성술을 몰라도 쉽게 읽혔어요. 내 강점과 주의점이 이렇게 명확하게 정리된 게 처음이에요.</p>
-      <div class="rv-author">20대 대학원생<span class="rv-badge-sm">라이트</span></div>
-    </div>
-  </div>
+  <div class="reviews-grid" id="reviewsGrid"></div>
 </section>
 
 <footer>
@@ -384,7 +373,7 @@ function showToast(msg){
 }
 
 async function loadReviews(){
-  const {data} = await sb.from('reviews').select('*').order('created_at',{ascending:false}).limit(4);
+  const {data} = await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
   if(!data||data.length===0) return;
   const grid = document.getElementById('reviewsGrid');
   grid.innerHTML = data.map(r=>`
