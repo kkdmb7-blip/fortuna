@@ -228,10 +228,12 @@ function doLogout(){
   location.reload();
 }
 
-// 자동 로그인 확인
+// 로그인 확인 → 없으면 login.html로
 if(sessionStorage.getItem('admin')==='1'){
   document.getElementById('loginWrap').style.display='none';
   document.getElementById('dashboard').style.display='block';
+} else {
+  location.href = 'login.html';
 }
 
 // 데이터 로드
