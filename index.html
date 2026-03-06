@@ -378,6 +378,9 @@ function parseBirthdateCalc(str){
 }
 function parseTimeCalc(str){
   if(!str||!str.trim())return{hour:12,min:0};
+  const clean=str.replace(/[^0-9]/g,'');
+  if(clean.length===3)return{hour:parseInt(clean.slice(0,1)),min:parseInt(clean.slice(1))};
+  if(clean.length===4)return{hour:parseInt(clean.slice(0,2)),min:parseInt(clean.slice(2))};
   const m=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
   return{hour:parseInt(m[0])||12,min:parseInt(m[1])||0};
 }
