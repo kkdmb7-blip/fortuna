@@ -211,7 +211,13 @@ async function doAuth(){
 function startChat(){
   document.getElementById('authWrap').style.display='none';
   document.getElementById('chatWrap').style.display='flex';
-  
+
+  // 남은 횟수 표시
+  const today=new Date().toDateString();
+  const key=`consult_count_${today}_${userData.email}`;
+  const used=parseInt(localStorage.getItem(key)||'0');
+  document.getElementById('creditsLeft').textContent=10-used;
+
   const o=userData;
   const isPet=o.source==='pet_orders';
   
@@ -303,6 +309,16 @@ async function sendMessage(){
   const input=document.getElementById('chatInput');
   const text=input.value.trim();
   if(!text)return;
+
+  // 1일 10회 제한
+  const today=new Date().toDateString();
+  const key=`consult_count_${today}_${userData.email}`;
+  const count=parseInt(localStorage.getItem(key)||'0');
+  if(count>=10){
+    showToast('오늘 상담 횟수(10회)를 모두 사용했어요 🌙 내일 다시 이용해주세요!');
+    return;
+  }
+
   input.value='';
   addMessage('user',text);
   isTyping=true;
@@ -312,7 +328,7 @@ async function sendMessage(){
   try{
     const o=userData;
     const isPet=o.source==='pet_orders';
-    
+
     const systemPrompt=isPet
       ?`당신은 FORTUNA AI, 반려동물 별자리 & 사주 전문 상담사입니다.
 아래는 상담 중인 반려동물 정보입니다:
@@ -341,18 +357,16 @@ ${o.planets_json?`- 행성 데이터: ${o.planets_json}`:''}
       {role:'user',content:text}
     ];
 
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('https://hook.us2.make.com/xt64drmpaqux3x58ddbdi0ja9ehifbgh',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:800,
-        system:systemPrompt,
-        messages
-      })
+      body:JSON.stringify({system_prompt:systemPrompt, messages})
     });
-    const data=await res.json();
-    const reply=data.content?.[0]?.text||'죄송해요, 잠시 후 다시 시도해주세요.';
+    const reply=await res.text();
+
+    // 횟수 저장
+    localStorage.setItem(key, count+1);
+    document.getElementById('creditsLeft').textContent=10-(count+1);
     hideTyping();
     addMessage('ai',reply);
   }catch(e){
