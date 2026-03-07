@@ -59,8 +59,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:52px;opacity:0;animation:up .9s ease forwards .8s;}
 .btn-gold{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;border:none;border-radius:50px;padding:15px 34px;color:#0a0612;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;text-decoration:none;animation:shimmer 3s ease infinite;transition:all .3s;display:inline-block;white-space:nowrap;font-family:var(--fn);}
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(201,168,76,0.38);}
-.btn-outline{background:none;border:1px solid var(--golddim);border-radius:50px;padding:15px 34px;color:var(--gold);font-size:14px;font-family:var(--fn);letter-spacing:0.08em;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-block;white-space:nowrap;}
-.btn-outline:hover{background:rgba(201,168,76,0.08);border-color:rgba(201,168,76,0.36);}
+.btn-outline{background:rgba(138,100,255,0.12);border:1px solid rgba(138,100,255,0.35);border-radius:50px;padding:15px 34px;color:#c4b0ff;font-size:14px;font-family:var(--fn);letter-spacing:0.08em;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-block;white-space:nowrap;}
+.btn-outline:hover{background:rgba(138,100,255,0.22);border-color:rgba(138,100,255,0.55);}
 .trust-row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;opacity:0;animation:up .9s ease forwards 1s;}
 .trust-item{font-size:12px;color:var(--dim);letter-spacing:0.04em;display:flex;align-items:center;gap:6px;}
 .tdot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.45;}
@@ -207,7 +207,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .free-tag-item{background:rgba(255,255,255,0.03);border:1px solid var(--golddim);border-radius:30px;padding:9px 16px;text-decoration:none;font-size:12px;color:var(--dim);letter-spacing:0.04em;transition:all .25s;}
 .free-tag-item:hover{border-color:rgba(201,168,76,0.3);color:var(--gold);}
 
-/* ── CTA 배너 ── */
+/* 툴팁 */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid rgba(155,143,176,0.3);color:rgba(155,143,176,0.5);font-size:9px;cursor:pointer;margin-left:5px;position:relative;vertical-align:middle;font-style:normal;}
+.tip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1a0f38;border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:7px 11px;font-size:11px;color:var(--dim);white-space:nowrap;z-index:99;line-height:1.6;letter-spacing:0.02em;pointer-events:none;max-width:200px;white-space:normal;text-align:left;}
 .cta-banner{background:linear-gradient(135deg,rgba(46,24,7,0.72),rgba(16,7,2,0.88));border:1px solid rgba(201,168,76,0.26);border-radius:28px;padding:56px 40px;text-align:center;position:relative;overflow:hidden;}
 .cta-banner::before{content:'';position:absolute;top:-55%;left:-18%;width:136%;height:210%;background:radial-gradient(ellipse at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 58%);pointer-events:none;}
 .cta-in{position:relative;z-index:1;}
@@ -292,7 +294,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   <div class="hero-eye">FORTUNA · 점성 리포트</div>
   <h1 class="hero-title">타고난 성향과<br>삶의 방향을 읽는<br><em>점성 리포트</em></h1>
   <p class="hero-tag">생년월일 기준 개인 맞춤 분석 · 이메일 PDF 발송</p>
-  <p class="hero-meta">24~48시간 내 발송<span>·</span>입금 후 제작 시작<span>·</span>개인 맞춤 제작</p>
+  <p class="hero-meta">AI가 찍어내는 결과물이 아닌, 당신만을 위해 직접 제작됩니다<span>·</span>입금 후 제작 시작<span>·</span>24~48시간 내 발송</p>
   <div class="hero-btns">
     <a href="light.html" class="btn-gold">라이트 리포트 보기 — 9,900원</a>
     <a href="dominant.html" class="btn-outline">무료로 먼저 체험하기</a>
@@ -367,12 +369,12 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
         <th class="th-p">프리미엄</th>
       </tr></thead>
       <tbody>
-        <tr><td>도미넌트 플래닛</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>태양·달·상승점</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>수성·금성·화성·목성·토성</td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>행성간 어스펙트 해석</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>생애 테마 4가지</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
-        <tr><td>Final Wrap 마무리</td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>도미넌트 플래닛<i class="tip" data-tip="내 차트에서 가장 강하게 작용하는 행성. 나를 움직이는 핵심 에너지예요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>태양·달·상승점<i class="tip" data-tip="태양=자아, 달=감정, 상승점=첫인상. 나를 이루는 세 가지 핵심축이에요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>수성·금성·화성·목성·토성<i class="tip" data-tip="사고방식·연애스타일·행동력·성장·시련을 각 행성이 담당해요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>행성간 어스펙트 해석<i class="tip" data-tip="행성들이 서로 어떤 각도로 영향을 주고받는지 분석. 성격의 갈등·시너지를 알 수 있어요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>생애 테마 4가지<i class="tip" data-tip="삶에서 반복되는 과제, 재능, 관계패턴, 성장 방향을 4가지 키워드로 정리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>Final Wrap 마무리<i class="tip" data-tip="모든 분석을 종합해 '당신에게 가장 중요한 메시지'를 한 편의 글로 마무리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
         <tr><td>분량</td><td class="tc" style="color:var(--dim)">A4 5~6장</td><td class="tc" style="color:var(--gold)">A4 15~20장</td></tr>
         <tr><td>가격</td><td class="tc"><span class="pl">9,900원</span></td><td class="tc"><span class="pp">29,000원</span></td></tr>
       </tbody>
