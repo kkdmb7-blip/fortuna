@@ -87,8 +87,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .pcard:hover::after{left:160%;}
 .pc-light{background:linear-gradient(145deg,rgba(20,12,48,0.9),rgba(7,3,19,0.95));border:1px solid rgba(138,180,255,0.18);}
 .pc-light:hover{border-color:rgba(138,180,255,0.44);box-shadow:0 18px 60px rgba(80,110,220,0.15);}
-.pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:1px solid rgba(201,168,76,0.2);}
-.pc-premium:hover{border-color:rgba(201,168,76,0.48);box-shadow:0 18px 60px rgba(201,168,76,0.13);}
+.pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:2px solid rgba(201,168,76,0.45);box-shadow:0 0 30px rgba(201,168,76,0.08);position:relative;}
+.pc-premium:hover{border-color:rgba(201,168,76,0.75);box-shadow:0 18px 60px rgba(201,168,76,0.2);}
 .pcard-in{position:relative;z-index:1;}
 .pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .pc-tag{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-weight:600;}
@@ -345,7 +345,8 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
     </a>
     <!-- 프리미엄 -->
     <a href="premium.html" class="pcard pc-premium">
-      <div class="pcard-in">
+      <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#c9a84c,#e8cc7a);color:#0a0612;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">✦ 가장 많이 선택</div>
+      <div class="pcard-in" style="padding-top:14px;">
         <div class="pc-top"><span class="pc-tag tag-p">Premium</span><span class="pc-emoji">☀️</span></div>
         <span class="pc-for">인생 흐름까지 깊게 보고 싶은 분</span>
         <div class="pc-name">정밀 분석 리포트</div>
