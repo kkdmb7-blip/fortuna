@@ -577,10 +577,12 @@ function fmtDate(iso){
 // ── 소셜 프루프 숫자 로드 ──
 async function loadSocialProof(){
   try{
+    const BASE = 397; // 기본 누적 발행 수
     const {count:orderCount} = await sb.from('orders').select('*',{count:'exact',head:true});
+    const {count:petCount} = await sb.from('pet_orders').select('*',{count:'exact',head:true});
     const {data:reviews} = await sb.from('reviews').select('star').eq('approved',true);
-    const total = orderCount || 0;
-    document.getElementById('spTotal').textContent = total > 0 ? total+'건' : '—';
+    const total = BASE + (orderCount||0) + (petCount||0);
+    document.getElementById('spTotal').textContent = total+'건';
     if(reviews && reviews.length > 0){
       const avg = (reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
       const fiveRatio = Math.round(reviews.filter(r=>r.star===5).length/reviews.length*100);
