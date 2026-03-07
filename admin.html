@@ -2,548 +2,684 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#06030f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FORTUNA">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포르투나 — 관리자</title>
+<title>포르투나 — 점성 리포트</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co','sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11');
+</script>
 <style>
-  :root{--void:#05020e;--gold:#c9a84c;--gold-light:#e8cc7a;--text:#ede6f8;--text-dim:#9b8fb0;--border:rgba(201,168,76,0.2);}
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--void);color:var(--text);font-family:'Pretendard', sans-serif;min-height:100vh;}
-  .nebula{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.5) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%);}
-  .login-wrap{position:relative;z-index:1;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
-  .login-box{background:linear-gradient(135deg,rgba(45,31,78,0.9),rgba(10,6,18,0.95));border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:360px;text-align:center;}
-  .login-brand{font-size:12px;letter-spacing:0.4em;color:var(--gold);margin-bottom:8px;}
-  .login-title{font-size:20px;font-weight:300;margin-bottom:32px;}
-  .login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.1em;}
-  .login-input:focus{border-color:var(--gold);}
-  .login-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:10px;padding:14px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
-  .login-error{font-size:12px;color:rgba(255,100,100,0.8);margin-top:10px;display:none;}
-  .dashboard{display:none;position:relative;z-index:1;max-width:960px;margin:0 auto;padding:32px 20px 80px;}
-  .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
-  .header-left .brand{font-size:12px;letter-spacing:0.4em;color:var(--gold);}
-  .header-left .title{font-size:22px;font-weight:300;margin-top:4px;}
-  .header-right{display:flex;gap:10px;align-items:center;}
-  .nav-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:8px 16px;color:var(--text-dim);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
-  .nav-btn:hover{border-color:var(--gold);color:var(--gold);}
-  .logout-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:20px;padding:8px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-  .stat{background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
-  .stat-num{font-size:26px;color:var(--gold);}
-  .stat-label{font-size:11px;color:var(--text-dim);margin-top:4px;}
-  .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
-  .tab{background:none;border:1px solid var(--border);border-radius:8px;padding:10px 20px;color:var(--text-dim);font-family:'Pretendard',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;position:relative;}
-  .tab.active{background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold);}
-  .tab .badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:#0a0612;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:600;display:none;align-items:center;justify-content:center;}
-  .tab-content{display:none;}
-  .tab-content.active{display:block;}
-  .filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-  .filter-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:6px 14px;color:var(--text-dim);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
-  .filter-btn.active{background:rgba(201,168,76,0.1);border-color:var(--gold);color:var(--gold);}
-  .search-input{background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:20px;padding:6px 16px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:12px;outline:none;width:180px;}
-  .search-input:focus{border-color:var(--gold);}
-  .order-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
-  .order-card.light{border-left:3px solid rgba(100,150,220,0.5);}
-  .order-card.premium{border-left:3px solid var(--gold);}
-  .order-card.pet{border-left:3px solid rgba(244,162,97,0.6);}
-  .order-card.done{opacity:0.6;}
-  .order-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
-  .order-name{font-size:16px;}
-  .order-type{font-size:10px;letter-spacing:0.15em;padding:3px 10px;border-radius:20px;margin-left:8px;}
-  .type-light{background:rgba(100,150,220,0.15);color:#8ab4ff;border:1px solid rgba(100,150,220,0.3);}
-  .type-premium{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid var(--border);}
-  .type-dog{background:rgba(244,162,97,0.15);color:#f4a261;border:1px solid rgba(244,162,97,0.3);}
-  .type-cat{background:rgba(180,130,255,0.15);color:#b482ff;border:1px solid rgba(180,130,255,0.3);}
-  .order-id{font-size:11px;color:var(--text-dim);margin-top:3px;}
-  .order-info{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;}
-  .order-info span{color:var(--text);}
-  .order-actions{display:flex;gap:8px;flex-wrap:wrap;}
-  .confirm-btn{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
-  .confirm-btn:disabled{opacity:0.4;cursor:not-allowed;background:#444;color:#888;}
-  .generate-btn{flex:1;background:rgba(138,180,255,0.12);border:1px solid rgba(138,180,255,0.3);border-radius:8px;padding:10px;color:#8ab4ff;font-family:'Pretendard',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
-  .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
-  .done-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:rgba(100,220,100,0.7);padding:6px 12px;border:1px solid rgba(100,220,100,0.2);border-radius:8px;}
-  .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
-  .rv-form-box{background:rgba(45,31,78,0.3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:none;}
-  .rv-form-box.show{display:block;}
-  .add-rv-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:12px;padding:14px;color:var(--gold);font-family:'Pretendard',sans-serif;font-size:13px;cursor:pointer;margin-bottom:16px;}
-  .form-field{margin-bottom:12px;}
-  .form-label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
-  .form-input,.form-textarea,.form-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:13px;outline:none;-webkit-appearance:none;}
-  .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold);}
-  .form-select option{background:#1a1030;}
-  .form-textarea{min-height:80px;resize:vertical;}
-  .star-row{display:flex;gap:6px;margin-top:4px;}
-  .star-btn{font-size:20px;cursor:pointer;color:rgba(201,168,76,0.2);background:none;border:none;padding:0;}
-  .star-btn.on{color:var(--gold);}
-  .form-btns{display:flex;gap:8px;margin-top:16px;}
-  .btn-save{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:12px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
-  .btn-cancel-form{background:none;border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text-dim);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
-  .rv-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
-  .rv-header{display:flex;justify-content:space-between;margin-bottom:8px;}
-  .rv-stars{color:var(--gold);font-size:14px;}
-  .rv-badge{font-size:10px;padding:2px 8px;border-radius:20px;border:1px solid var(--border);color:var(--gold);margin-left:8px;}
-  .rv-title{font-size:14px;font-weight:600;margin-bottom:6px;}
-  .rv-content{font-size:13px;color:var(--text-dim);line-height:1.8;}
-  .rv-date{font-size:11px;color:rgba(155,143,176,0.4);margin-top:8px;}
-  .empty-msg{text-align:center;padding:40px;color:var(--text-dim);font-size:13px;line-height:2;}
-  .loading-msg{text-align:center;padding:20px;color:var(--text-dim);font-size:13px;}
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-  .loading{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,6,18,0.3);border-top-color:#0a0612;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}.order-info{grid-template-columns:1fr;}.header{flex-direction:column;align-items:flex-start;gap:12px;}}
+:root{
+  --void:#05020e;
+  --gold:#c9a84c;
+  --gold2:#e8cc7a;
+  --golddim:rgba(201,168,76,0.18);
+  --blue:#8ab4ff;
+  --text:#ede6f8;
+  --dim:#9b8fb0;
+  --fn:'Pretendard',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--text);font-family:var(--fn);overflow-x:hidden;}
+
+/* ── 배경 ── */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.neb{position:absolute;border-radius:50%;filter:blur(90px);}
+.n1{width:72vw;height:72vw;max-width:660px;max-height:660px;top:-22%;left:-18%;background:radial-gradient(circle,rgba(48,18,95,0.52) 0%,transparent 65%);}
+.n2{width:58vw;height:58vw;max-width:560px;max-height:560px;bottom:-14%;right:-16%;background:radial-gradient(circle,rgba(18,6,55,0.68) 0%,transparent 65%);}
+.n3{width:44vw;height:44vw;max-width:440px;max-height:440px;top:44%;left:33%;background:radial-gradient(circle,rgba(70,25,110,0.16) 0%,transparent 65%);}
+#stars{position:absolute;inset:0;}
+
+/* ── 네비 ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,2,14,0.6);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
+.nav-brand{font-size:18px;font-weight:700;letter-spacing:0.22em;color:var(--gold);}
+.nav-links{display:flex;gap:22px;align-items:center;}
+.nav-link{font-size:11px;letter-spacing:0.14em;color:var(--dim);text-decoration:none;transition:color 0.2s;text-transform:uppercase;}
+.nav-link:hover{color:var(--gold);}
+.nav-cta{background:none;border:1px solid var(--golddim);border-radius:20px;padding:7px 18px;color:var(--gold);font-size:12px;font-family:var(--fn);letter-spacing:0.1em;cursor:pointer;text-decoration:none;transition:all 0.3s;}
+.nav-cta:hover{background:rgba(201,168,76,0.1);}
+
+/* ── 히어로 ── */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 80px;}
+.hero-eye{font-size:11px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:26px;opacity:0;animation:up .9s ease forwards .2s;}
+.hero-title{font-size:clamp(36px,6.5vw,76px);font-weight:700;line-height:1.1;margin-bottom:18px;opacity:0;animation:up .9s ease forwards .4s;letter-spacing:-0.01em;}
+.hero-title em{font-style:normal;color:var(--gold);}
+.hero-tag{font-size:clamp(13px,1.7vw,15px);color:var(--dim);line-height:1.8;margin-bottom:10px;letter-spacing:0.04em;opacity:0;animation:up .9s ease forwards .55s;}
+.hero-meta{font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.08em;margin-bottom:42px;opacity:0;animation:up .9s ease forwards .65s;}
+.hero-meta span{margin:0 8px;color:rgba(201,168,76,0.3);}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:52px;opacity:0;animation:up .9s ease forwards .8s;}
+.btn-gold{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;border:none;border-radius:50px;padding:15px 34px;color:#0a0612;font-size:14px;font-weight:700;letter-spacing:0.08em;cursor:pointer;text-decoration:none;animation:shimmer 3s ease infinite;transition:all .3s;display:inline-block;white-space:nowrap;font-family:var(--fn);}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 34px rgba(201,168,76,0.38);}
+.btn-outline{background:rgba(138,100,255,0.12);border:1px solid rgba(138,100,255,0.35);border-radius:50px;padding:15px 34px;color:#c4b0ff;font-size:14px;font-family:var(--fn);letter-spacing:0.08em;cursor:pointer;text-decoration:none;transition:all .3s;display:inline-block;white-space:nowrap;}
+.btn-outline:hover{background:rgba(138,100,255,0.22);border-color:rgba(138,100,255,0.55);}
+.trust-row{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;opacity:0;animation:up .9s ease forwards 1s;}
+.trust-item{font-size:12px;color:var(--dim);letter-spacing:0.04em;display:flex;align-items:center;gap:6px;}
+.tdot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.45;}
+
+/* ── 공통 섹션 ── */
+.sec{position:relative;z-index:1;max-width:840px;margin:0 auto;padding:0 24px 96px;}
+.sec-sm{position:relative;z-index:1;max-width:740px;margin:0 auto;padding:0 24px 96px;}
+.sec-hd{text-align:center;margin-bottom:44px;}
+.sec-eye{font-size:10px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:10px;display:block;font-weight:600;}
+.sec-title{font-size:clamp(24px,3.8vw,38px);font-weight:700;line-height:1.2;letter-spacing:-0.01em;}
+.sec-title em{font-style:normal;color:var(--gold);}
+.sec-sub{font-size:13px;color:var(--dim);margin-top:9px;letter-spacing:0.03em;}
+.orn{display:flex;align-items:center;gap:12px;max-width:160px;margin:0 auto 44px;}
+.ol{flex:1;height:1px;}
+.ol-l{background:linear-gradient(90deg,transparent,var(--golddim));}
+.ol-r{background:linear-gradient(90deg,var(--golddim),transparent);}
+.od{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.4;}
+
+/* ── 상품 카드 (짧게) ── */
+.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;}
+.pcard{border-radius:22px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all .35s;}
+.pcard:hover{transform:translateY(-5px);}
+.pcard::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent);transition:left .7s;pointer-events:none;}
+.pcard:hover::after{left:160%;}
+.pc-light{background:linear-gradient(145deg,rgba(20,12,48,0.9),rgba(7,3,19,0.95));border:1px solid rgba(138,180,255,0.18);}
+.pc-light:hover{border-color:rgba(138,180,255,0.44);box-shadow:0 18px 60px rgba(80,110,220,0.15);}
+.pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:2px solid rgba(201,168,76,0.45);box-shadow:0 0 30px rgba(201,168,76,0.08);position:relative;}
+.pc-premium:hover{border-color:rgba(201,168,76,0.75);box-shadow:0 18px 60px rgba(201,168,76,0.2);}
+.pcard-in{position:relative;z-index:1;}
+.pc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.pc-tag{font-size:10px;letter-spacing:0.3em;text-transform:uppercase;padding:4px 12px;border-radius:20px;font-weight:600;}
+.tag-l{background:rgba(138,180,255,0.1);color:var(--blue);border:1px solid rgba(138,180,255,0.22);}
+.tag-p{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--golddim);}
+.pc-emoji{font-size:26px;}
+.pc-for{font-size:11px;color:var(--dim);background:rgba(255,255,255,0.04);border-radius:20px;padding:4px 11px;display:inline-block;letter-spacing:0.02em;margin-bottom:12px;}
+.pc-name{font-size:clamp(18px,2.5vw,22px);font-weight:700;margin-bottom:6px;line-height:1.2;letter-spacing:-0.01em;}
+.pc-desc{font-size:12px;color:var(--dim);margin-bottom:20px;line-height:1.7;letter-spacing:0.02em;}
+.pc-price{display:flex;align-items:baseline;gap:4px;margin-bottom:16px;}
+.pc-num{font-size:clamp(24px,3.2vw,30px);font-weight:800;color:var(--text);}
+.pc-unit{font-size:13px;color:var(--dim);}
+.pc-btn{width:100%;border-radius:10px;padding:13px;font-size:13px;font-weight:700;letter-spacing:0.06em;cursor:pointer;transition:all .3s;border:none;font-family:var(--fn);}
+.pb-l{background:rgba(138,180,255,0.12);color:var(--blue);border:1px solid rgba(138,180,255,0.26);}
+.pb-l:hover{background:rgba(138,180,255,0.22);}
+.pb-p{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;color:#0a0612;animation:shimmer 3s ease infinite;}
+.pb-p:hover{box-shadow:0 6px 26px rgba(201,168,76,0.35);}
+.pc-time{font-size:11px;color:var(--dim);text-align:center;margin-top:7px;opacity:0.6;letter-spacing:0.04em;}
+
+/* ── 비교 테이블 (카드 바로 아래) ── */
+.compare-wrap{background:linear-gradient(135deg,rgba(36,22,65,0.28),rgba(7,3,18,0.62));border:1px solid var(--golddim);border-radius:20px;overflow:visible;margin-top:16px;}
+.ctable{width:100%;border-collapse:collapse;}
+.ctable thead tr{border-bottom:1px solid rgba(201,168,76,0.1);}
+.ctable th{padding:15px 20px;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;}
+.th-feat{color:var(--dim);text-align:left;}
+.th-l{color:var(--blue);text-align:center;}
+.th-p{color:var(--gold);text-align:center;}
+.ctable td{padding:11px 20px;font-size:12px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,0.03);letter-spacing:0.02em;}
+.ctable tr:last-child td{border-bottom:none;}
+.ctable tbody tr:hover td{background:rgba(201,168,76,0.02);}
+.tc{text-align:center;}
+.ck{color:var(--gold);font-size:14px;}
+.ck-l{color:var(--blue);font-size:14px;}
+.xd{color:rgba(255,255,255,0.1);}
+.pl{color:var(--blue);font-weight:800;font-size:15px;}
+.pp{color:var(--gold);font-weight:800;font-size:15px;}
+
+/* ── 신청 절차 ── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.steps::before{content:'';position:absolute;top:23px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--golddim),var(--golddim),transparent);}
+.step{text-align:center;padding:0 8px;position:relative;z-index:1;}
+.step-n{width:46px;height:46px;border-radius:50%;border:1px solid var(--golddim);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;background:var(--void);font-size:17px;font-weight:800;color:var(--gold);}
+.step-t{font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.04em;margin-bottom:5px;}
+.step-d{font-size:11px;color:var(--dim);line-height:1.7;letter-spacing:0.02em;}
+.step-time{font-size:10px;color:var(--gold);margin-top:4px;letter-spacing:0.05em;opacity:0.8;}
+
+/* ── 샘플 ── */
+.sample-box{background:linear-gradient(135deg,rgba(38,24,68,0.35),rgba(7,3,18,0.65));border:1px solid var(--golddim);border-radius:24px;overflow:hidden;}
+.sample-hd{padding:20px 28px;border-bottom:1px solid rgba(201,168,76,0.1);display:flex;align-items:center;justify-content:space-between;}
+.sample-lbl{font-size:11px;letter-spacing:0.32em;color:var(--gold);text-transform:uppercase;font-weight:600;}
+.sample-badge{font-size:10px;background:rgba(201,168,76,0.08);border:1px solid var(--golddim);border-radius:20px;padding:3px 11px;color:var(--gold);letter-spacing:0.07em;}
+.sample-body{padding:28px;}
+.chap{margin-bottom:24px;}
+.chap-lbl{font-size:10px;letter-spacing:0.38em;color:var(--gold);text-transform:uppercase;margin-bottom:7px;opacity:0.75;font-weight:600;}
+.chap-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.3;}
+.chap-txt{font-size:13px;color:var(--dim);line-height:2.0;letter-spacing:0.02em;}
+.chap-txt strong{color:var(--text);font-weight:600;}
+.blur-wrap{position:relative;margin-top:6px;}
+.blur-txt{font-size:13px;color:var(--dim);line-height:2;letter-spacing:0.02em;filter:blur(4px);user-select:none;pointer-events:none;padding:14px 0;}
+.blur-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,transparent,rgba(7,3,18,0.95) 40%);}
+.blur-msg{font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px;letter-spacing:0.04em;}
+
+/* ── 후기 ── */
+.rv-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.rv-card{background:linear-gradient(135deg,rgba(36,22,63,0.32),rgba(7,3,18,0.58));border:1px solid var(--golddim);border-radius:18px;padding:24px;transition:all .3s;}
+.rv-card:hover{border-color:rgba(201,168,76,0.3);transform:translateY(-3px);}
+.rv-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.rv-stars{color:var(--gold);font-size:12px;letter-spacing:2px;}
+.rv-badge{font-size:10px;letter-spacing:0.1em;padding:3px 9px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;}
+.rv-photo{width:100%;border-radius:10px;margin-bottom:12px;object-fit:cover;max-height:160px;display:block;}
+.rv-quote{font-size:14px;font-weight:700;color:var(--text);margin-bottom:8px;line-height:1.4;}
+.rv-txt{font-size:12px;color:var(--dim);line-height:1.9;margin-bottom:11px;letter-spacing:0.02em;}
+.rv-author{font-size:11px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;}
+.rv-more{display:block;text-align:center;margin-top:24px;font-size:13px;font-weight:600;letter-spacing:0.14em;color:var(--gold);text-decoration:none;border:1px solid var(--golddim);border-radius:30px;padding:11px 30px;width:fit-content;margin-left:auto;margin-right:auto;transition:all .3s;}
+.rv-more:hover{background:rgba(201,168,76,0.08);}
+
+/* 후기 작성 폼 */
+.rv-form-wrap{background:linear-gradient(135deg,rgba(36,22,63,0.28),rgba(7,3,18,0.6));border:1px solid var(--golddim);border-radius:20px;padding:28px;margin-top:20px;}
+.rv-form-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:20px;letter-spacing:0.04em;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-field{display:flex;flex-direction:column;gap:6px;}
+.form-field.full{grid-column:1/-1;}
+.form-label{font-size:11px;color:var(--dim);letter-spacing:0.1em;font-weight:600;text-transform:uppercase;}
+.form-input{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;color:var(--text);font-size:13px;font-family:var(--fn);letter-spacing:0.02em;transition:border .2s;outline:none;}
+.form-input:focus{border-color:rgba(201,168,76,0.4);}
+.form-textarea{min-height:90px;resize:vertical;}
+.star-select{display:flex;gap:6px;margin-top:2px;}
+.star-btn{background:none;border:none;font-size:22px;cursor:pointer;opacity:0.25;transition:opacity .2s;padding:0;}
+.star-btn.active{opacity:1;}
+/* 사진 업로드 */
+.photo-upload{border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.02);}
+.photo-upload:hover{border-color:rgba(201,168,76,0.45);background:rgba(201,168,76,0.03);}
+.photo-upload input{display:none;}
+.photo-upload-txt{font-size:12px;color:var(--dim);letter-spacing:0.04em;}
+.photo-upload-txt span{color:var(--gold);}
+.photo-preview{width:100%;border-radius:8px;margin-top:10px;max-height:140px;object-fit:cover;display:none;}
+/* 리포트 타입 */
+.type-select{display:flex;gap:8px;margin-top:2px;}
+.type-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 16px;color:var(--dim);font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--fn);}
+.type-btn.active-l{border-color:rgba(138,180,255,0.4);color:var(--blue);background:rgba(138,180,255,0.08);}
+.type-btn.active-p{border-color:rgba(201,168,76,0.4);color:var(--gold);background:rgba(201,168,76,0.08);}
+.submit-rv{width:100%;margin-top:16px;border-radius:10px;padding:13px;font-size:13px;font-weight:700;letter-spacing:0.08em;cursor:pointer;border:none;font-family:var(--fn);background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;color:#0a0612;animation:shimmer 3s ease infinite;transition:all .3s;}
+.submit-rv:hover{box-shadow:0 6px 24px rgba(201,168,76,0.35);}
+.rv-result{font-size:13px;text-align:center;margin-top:12px;min-height:20px;color:var(--dim);}
+
+/* ── 무료 ── */
+.free-main{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.free-card{background:linear-gradient(135deg,rgba(36,22,63,0.3),rgba(7,3,18,0.6));border:1px solid var(--golddim);border-radius:18px;padding:22px;text-decoration:none;transition:all .3s;display:block;}
+.free-card:hover{border-color:rgba(201,168,76,0.38);transform:translateY(-3px);}
+.free-emoji{font-size:24px;margin-bottom:9px;display:block;}
+.free-tag{font-size:10px;letter-spacing:0.3em;color:var(--gold);text-transform:uppercase;margin-bottom:7px;display:block;font-weight:600;}
+.free-name{font-size:16px;font-weight:700;color:var(--text);margin-bottom:5px;line-height:1.3;}
+.free-desc{font-size:12px;color:var(--dim);line-height:1.8;margin-bottom:12px;letter-spacing:0.02em;}
+.free-arrow{font-size:12px;color:var(--gold);letter-spacing:0.1em;border-bottom:1px solid rgba(201,168,76,0.3);padding-bottom:2px;font-weight:600;}
+.free-more{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.free-tag-item{background:rgba(255,255,255,0.03);border:1px solid var(--golddim);border-radius:30px;padding:9px 16px;text-decoration:none;font-size:12px;color:var(--dim);letter-spacing:0.04em;transition:all .25s;}
+.free-tag-item:hover{border-color:rgba(201,168,76,0.3);color:var(--gold);}
+
+/* 툴팁 */
+.tip{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;border:1px solid rgba(155,143,176,0.3);color:rgba(155,143,176,0.5);font-size:9px;cursor:pointer;margin-left:5px;position:relative;vertical-align:middle;font-style:normal;}
+.tip:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:0;transform:none;background:#1a0f38;border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:9px 13px;font-size:11px;color:var(--dim);z-index:999;line-height:1.7;letter-spacing:0.02em;pointer-events:none;width:220px;white-space:normal;text-align:left;}
+.cta-banner{background:linear-gradient(135deg,rgba(46,24,7,0.72),rgba(16,7,2,0.88));border:1px solid rgba(201,168,76,0.26);border-radius:28px;padding:56px 40px;text-align:center;position:relative;overflow:hidden;}
+.cta-banner::before{content:'';position:absolute;top:-55%;left:-18%;width:136%;height:210%;background:radial-gradient(ellipse at 50% 40%,rgba(201,168,76,0.06) 0%,transparent 58%);pointer-events:none;}
+.cta-in{position:relative;z-index:1;}
+.cta-eye{font-size:10px;letter-spacing:0.5em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;display:block;font-weight:600;}
+.cta-title{font-size:clamp(28px,4.2vw,46px);font-weight:700;line-height:1.2;margin-bottom:14px;letter-spacing:-0.01em;}
+.cta-title em{font-style:normal;color:var(--gold);}
+.cta-sub{font-size:14px;color:var(--dim);line-height:2;margin-bottom:32px;letter-spacing:0.03em;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+
+/* 푸터 */
+footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-top:1px solid rgba(201,168,76,0.07);}
+.footer-brand{font-size:20px;font-weight:700;letter-spacing:0.22em;color:var(--gold);margin-bottom:11px;}
+.footer-txt{font-size:12px;color:var(--dim);line-height:2.2;letter-spacing:0.04em;}
+.footer-links{display:flex;gap:18px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.footer-link{font-size:11px;letter-spacing:0.09em;color:var(--dim);text-decoration:none;transition:color .2s;}
+.footer-link:hover{color:var(--gold);}
+
+/* 애니메이션 */
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes twinkle{0%,100%{opacity:var(--o,.4);transform:scale(1)}50%{opacity:.04;transform:scale(.5)}}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .72s ease,transform .72s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.07s}.rd2{transition-delay:.14s}.rd3{transition-delay:.21s}.rd4{transition-delay:.28s}
+
+/* 반응형 */
+@media(max-width:640px){
+  nav{padding:12px 16px;}
+  .nav-brand{font-size:15px;}
+  .nav-links{gap:8px;}
+  .nav-link{font-size:9px;letter-spacing:0.05em;}
+  .nav-cta{font-size:10px;padding:6px 12px;}
+  .hero{padding:90px 18px 52px;}
+  .hero-btns{flex-direction:column;align-items:stretch;}
+  .btn-gold,.btn-outline{text-align:center;}
+  .trust-row{gap:12px;}
+  .products-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .pcard{padding:16px 13px;border-radius:16px;}
+  .pc-name{font-size:16px;}
+  .pc-desc{font-size:11px;margin-bottom:14px;}
+  .pc-num{font-size:22px;}
+  .pc-btn{font-size:11px;padding:11px;letter-spacing:0.02em;}
+  .ctable th,.ctable td{padding:10px 11px;font-size:10px;}
+  .steps{grid-template-columns:1fr 1fr;gap:18px;}
+  .steps::before{display:none;}
+  .rv-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .free-main{grid-template-columns:1fr 1fr;gap:10px;}
+  .free-card{padding:14px 11px;}
+  .free-name{font-size:14px;}
+  .free-desc{display:none;}
+  .cta-banner{padding:32px 18px;border-radius:22px;}
+  .cta-btns{flex-direction:column;align-items:stretch;}
+  .btn-gold,.btn-outline{text-align:center;}
+}
+@media(max-width:360px){
+  .free-main{grid-template-columns:1fr;}
+  .products-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
-<div class="nebula"></div>
-<div class="toast" id="toast"></div>
 
-<div class="login-wrap" id="loginWrap">
-  <div class="login-box">
-    <div class="login-brand">FORTUNA</div>
-    <div class="login-title">관리자 로그인</div>
-    <input type="password" class="login-input" id="pwInput" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
-    <button class="login-btn" onclick="doLogin()">로그인</button>
-    <div class="login-error" id="loginError">비밀번호가 틀렸습니다</div>
+<div class="bg">
+  <div class="neb n1"></div><div class="neb n2"></div><div class="neb n3"></div>
+  <div id="stars"></div>
+</div>
+
+<!-- 네비 -->
+<nav>
+  <div class="nav-brand">FORTUNA</div>
+  <div class="nav-links">
+    <a href="#products" class="nav-link">리포트</a>
+    <a href="#sample" class="nav-link">샘플</a>
+    <a href="#reviews" class="nav-link">후기</a>
+    <a href="light.html" class="nav-cta">신청하기</a>
+  </div>
+</nav>
+
+<!-- ① 히어로 -->
+<section class="hero">
+  <div class="hero-eye">FORTUNA · 점성 리포트</div>
+  <h1 class="hero-title">타고난 성향과<br>삶의 방향을 읽는<br><em>점성 리포트</em></h1>
+  <p class="hero-tag">생년월일 기준 개인 맞춤 분석 · 이메일 PDF 발송</p>
+  <p class="hero-meta">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+  <div class="hero-btns">
+    <a href="light.html" class="btn-gold">라이트 리포트 보기 — 9,900원</a>
+    <a href="dominant.html" class="btn-outline">무료로 먼저 체험하기</a>
+  </div>
+  <div class="trust-row">
+    <div class="trust-item"><div class="tdot"></div>생년월일만 있으면 OK</div>
+    <div class="trust-item"><div class="tdot"></div>PDF 이메일 발송</div>
+    <div class="trust-item"><div class="tdot"></div>개인 맞춤 제작</div>
+  </div>
+</section>
+
+<!-- 소셜 프루프 바 -->
+<div style="position:relative;z-index:1;border-top:1px solid rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.08);background:rgba(5,2,14,0.6);backdrop-filter:blur(20px);padding:28px 24px;margin-bottom:0;">
+  <div style="max-width:840px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:0;text-align:center;">
+    <div style="padding:0 20px;border-right:1px solid rgba(201,168,76,0.1);">
+      <div id="spTotal" style="font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--gold);letter-spacing:-0.02em;line-height:1;">—</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:5px;letter-spacing:0.06em;">누적 리포트 발행</div>
+    </div>
+    <div style="padding:0 20px;border-right:1px solid rgba(201,168,76,0.1);">
+      <div id="spAvg" style="font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--gold);letter-spacing:-0.02em;line-height:1;">—</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:5px;letter-spacing:0.06em;">평균 별점</div>
+    </div>
+    <div style="padding:0 20px;">
+      <div id="spFive" style="font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--gold);letter-spacing:-0.02em;line-height:1;">—</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:5px;letter-spacing:0.06em;">5점 만점 비율</div>
+    </div>
   </div>
 </div>
 
-<div class="dashboard" id="dashboard">
-  <div class="header">
-    <div class="header-left">
-      <div class="brand">포르투나 · 관리자</div>
-      <div class="title">주문 & 후기 관리</div>
+<!-- ② 상품 + 비교표 (붙어있게) -->
+<section class="sec reveal" id="products">
+  <div class="sec-hd">
+    <span class="sec-eye">리포트 선택</span>
+    <h2 class="sec-title">나에게 맞는 <em>리포트</em>를 골라보세요</h2>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+
+  <div class="products-grid">
+    <!-- 라이트 -->
+    <a href="light.html" class="pcard pc-light">
+      <div class="pcard-in">
+        <div class="pc-top"><span class="pc-tag tag-l">Light</span><span class="pc-emoji">🌙</span></div>
+        <span class="pc-for">처음 받아보는 분 · 핵심만 빠르게</span>
+        <div class="pc-name">핵심 자아 리포트</div>
+        <p class="pc-desc">성향·감정·관계 패턴을 한눈에.<br>PDF 11~14장, 24시간 내 발송</p>
+        <div class="pc-price"><span class="pc-num">9,900</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn pb-l">라이트 신청하기</button>
+        <p class="pc-time">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+      </div>
+    </a>
+    <!-- 프리미엄 -->
+    <a href="premium.html" class="pcard pc-premium">
+      <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#c9a84c,#e8cc7a);color:#0a0612;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">✦ 가장 많이 선택</div>
+      <div class="pcard-in" style="padding-top:14px;">
+        <div class="pc-top"><span class="pc-tag tag-p">Premium</span><span class="pc-emoji">☀️</span></div>
+        <span class="pc-for">인생 흐름까지 깊게 보고 싶은 분</span>
+        <div class="pc-name">정밀 분석 리포트</div>
+        <p class="pc-desc">어스펙트·생애 테마·Final Wrap 포함.<br>PDF 50~60장, 48시간 내 발송</p>
+        <div class="pc-price"><span class="pc-num">29,000</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn pb-p">프리미엄 신청하기</button>
+        <p class="pc-time">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+      </div>
+    </a>
+  </div>
+
+  <!-- 비교표 바로 아래 -->
+  <div class="compare-wrap">
+    <table class="ctable">
+      <thead><tr>
+        <th class="th-feat">항목</th>
+        <th class="th-l">라이트</th>
+        <th class="th-p">프리미엄</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>도미넌트 플래닛<i class="tip" data-tip="내 차트에서 가장 강하게 작용하는 행성. 나를 움직이는 핵심 에너지예요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>태양·달·상승점<i class="tip" data-tip="태양=자아, 달=감정, 상승점=첫인상. 나를 이루는 세 가지 핵심축이에요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>수성·금성·화성·목성·토성<i class="tip" data-tip="사고방식·연애스타일·행동력·성장·시련을 각 행성이 담당해요.">?</i></td><td class="tc"><span class="ck-l">✓</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>행성간 어스펙트 해석<i class="tip" data-tip="행성들이 서로 어떤 각도로 영향을 주고받는지 분석. 성격의 갈등·시너지를 알 수 있어요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>생애 테마 4가지<i class="tip" data-tip="삶에서 반복되는 과제, 재능, 관계패턴, 성장 방향을 4가지 키워드로 정리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>Final Wrap 마무리<i class="tip" data-tip="모든 분석을 종합해 '당신에게 가장 중요한 메시지'를 한 편의 글로 마무리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
+        <tr><td>분량</td><td class="tc" style="color:var(--dim)">PDF 11~14장</td><td class="tc" style="color:var(--gold)">PDF 50~60장</td></tr>
+        <tr><td>가격</td><td class="tc"><span class="pl">9,900원</span></td><td class="tc"><span class="pp">29,000원</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 반려동물 리포트 -->
+  <div style="margin-top:28px;">
+    <div style="text-align:center;margin-bottom:18px;">
+      <span style="font-size:10px;letter-spacing:0.4em;color:var(--dim);text-transform:uppercase;font-weight:600;">🐾 반려동물 리포트</span>
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-top:8px;">우리 아이의 <em style="font-style:normal;color:var(--gold);">별자리 & 사주</em>도 궁금하다면?</div>
     </div>
-    <div class="header-right">
-      <a href="/" class="nav-btn">메인</a>
-      <a href="light.html" class="nav-btn">라이트</a>
-      <a href="premium.html" class="nav-btn">프리미엄</a>
-      <button class="logout-btn" onclick="doLogout()">로그아웃</button>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+      <a href="dog_report.html" style="background:linear-gradient(135deg,rgba(78,45,20,0.35),rgba(10,6,18,0.7));border:1px solid rgba(244,162,97,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(244,162,97,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(244,162,97,0.25)';this.style.transform='translateY(0)'">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#f4a261,#e8834a);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">NEW 🐾</div>
+        <div style="font-size:38px;margin:6px 0 10px;">🐶</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;">강아지 리포트</div>
+        <div style="font-size:11px;color:#c8a070;line-height:1.8;margin-bottom:12px;">별자리 · 사주 · 보호자 궁합</div>
+        <div style="background:rgba(244,162,97,0.12);border:1px solid rgba(244,162,97,0.3);border-radius:30px;padding:7px 14px;display:inline-block;font-size:13px;font-weight:800;color:#f4a261;">4,900원 →</div>
+      </a>
+
+      <a href="cat_report.html" style="background:linear-gradient(135deg,rgba(60,30,78,0.35),rgba(10,6,18,0.7));border:1px solid rgba(180,130,255,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(180,130,255,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(180,130,255,0.25)';this.style.transform='translateY(0)'">
+        <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#b482ff,#8a5cd8);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">NEW 🐱</div>
+        <div style="font-size:38px;margin:6px 0 10px;">🐱</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;">고양이 리포트</div>
+        <div style="font-size:11px;color:#b094d8;line-height:1.8;margin-bottom:12px;">별자리 · 사주 · 보호자 궁합</div>
+        <div style="background:rgba(180,130,255,0.12);border:1px solid rgba(180,130,255,0.3);border-radius:30px;padding:7px 14px;display:inline-block;font-size:13px;font-weight:800;color:#b482ff;">4,900원 →</div>
+      </a>
+
     </div>
+    <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:14px;line-height:1.9;">생일만 알면 돼요 · 입금 확인 후 24시간 내 PDF 발송</p>
   </div>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-num" id="stTotal">-</div><div class="stat-label">전체 주문</div></div>
-    <div class="stat"><div class="stat-num" id="stPending">-</div><div class="stat-label">입금 대기</div></div>
-    <div class="stat"><div class="stat-num" id="stDone">-</div><div class="stat-label">발송 완료</div></div>
-    <div class="stat"><div class="stat-num" id="stReviews">-</div><div class="stat-label">후기</div></div>
-  </div>
+</section>
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('orders')" id="tab-orders">
-      주문 관리 <span class="badge" id="pendingBadge">0</span>
-    </button>
-    <button class="tab" onclick="switchTab('pets')" id="tab-pets">🐾 반려동물</button>
-    <button class="tab" onclick="switchTab('reviews')" id="tab-reviews">후기 관리</button>
+<!-- ③ 신청 절차 -->
+<section class="sec-sm reveal">
+  <div class="sec-hd">
+    <span class="sec-eye">신청 방법</span>
+    <h2 class="sec-title">이렇게 <em>진행됩니다</em></h2>
   </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="steps">
+    <div class="step reveal rd1"><div class="step-n">1</div><div class="step-t">신청서 작성</div><div class="step-d">이름·생년월일·출생지·이메일 입력</div></div>
+    <div class="step reveal rd2"><div class="step-n">2</div><div class="step-t">계좌이체</div><div class="step-d">국민은행 013-21-0780-866<br>예금주 오주영</div></div>
+    <div class="step reveal rd3"><div class="step-n">3</div><div class="step-t">리포트 제작</div><div class="step-d">점성 데이터 기반 개인 맞춤 제작</div><div class="step-time">라이트 24h · 프리미엄 48h</div></div>
+    <div class="step reveal rd4"><div class="step-n">4</div><div class="step-t">이메일 발송</div><div class="step-d">PDF 파일로 입력하신 이메일로 전송</div></div>
+  </div>
+</section>
 
-  <!-- 일반 주문 탭 -->
-  <div class="tab-content active" id="content-orders">
-    <div class="filter-row">
-      <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
-      <button class="filter-btn" onclick="setFilter('light',this)">라이트</button>
-      <button class="filter-btn" onclick="setFilter('premium',this)">프리미엄</button>
-      <button class="filter-btn" onclick="setFilter('pending',this)">입금대기</button>
-      <button class="filter-btn" onclick="setFilter('confirmed',this)">발송완료</button>
-      <input type="text" class="search-input" placeholder="이름 검색..." oninput="searchOrders(this.value)">
+<!-- ④ 샘플 -->
+<section class="sec-sm reveal" id="sample">
+  <div class="sec-hd">
+    <span class="sec-eye">샘플 미리보기</span>
+    <h2 class="sec-title">실제 리포트는 <em>이렇게 생겼어요</em></h2>
+    <p class="sec-sub">라이트 리포트 일부를 공개합니다</p>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="sample-box">
+    <div class="sample-hd">
+      <div class="sample-lbl">✦ 샘플 — 핵심 자아 리포트</div>
+      <div class="sample-badge">라이트 리포트</div>
     </div>
-    <div id="orderList"><div class="loading-msg">불러오는 중...</div></div>
-  </div>
-
-  <!-- 반려동물 탭 -->
-  <div class="tab-content" id="content-pets">
-    <div class="filter-row">
-      <button class="filter-btn active" onclick="setPetFilter('all',this)">전체</button>
-      <button class="filter-btn" onclick="setPetFilter('dog',this)">🐶 강아지</button>
-      <button class="filter-btn" onclick="setPetFilter('cat',this)">🐱 고양이</button>
-      <button class="filter-btn" onclick="setPetFilter('pending',this)">입금대기</button>
-      <button class="filter-btn" onclick="setPetFilter('confirmed',this)">발송완료</button>
-    </div>
-    <div id="petOrderList"><div class="loading-msg">불러오는 중...</div></div>
-  </div>
-
-  <!-- 후기 탭 -->
-  <div class="tab-content" id="content-reviews">
-    <button class="add-rv-btn" onclick="toggleRvForm()">+ 후기 직접 등록하기</button>
-    <div class="rv-form-box" id="rvFormBox">
-      <div class="form-field">
-        <label class="form-label">별점 *</label>
-        <div class="star-row">
-          <button class="star-btn" onclick="setStar(1)">★</button>
-          <button class="star-btn" onclick="setStar(2)">★</button>
-          <button class="star-btn" onclick="setStar(3)">★</button>
-          <button class="star-btn" onclick="setStar(4)">★</button>
-          <button class="star-btn" onclick="setStar(5)">★</button>
+    <div class="sample-body">
+      <div class="chap">
+        <div class="chap-lbl">01 · 도미넌트 플래닛</div>
+        <div class="chap-title">당신의 핵심 에너지 — 토성</div>
+        <p class="chap-txt">당신을 움직이는 가장 강한 행성 에너지는 <strong>토성</strong>입니다. 토성이 도미넌트한 사람은 책임감과 구조에 대한 감각이 유달리 강합니다. 무언가를 시작할 때 "제대로 해야 한다"는 내면의 목소리가 먼저 들린다면, 그것이 바로 토성의 언어입니다.</p>
+      </div>
+      <div class="chap">
+        <div class="chap-lbl">02 · 태양 · 달 · 상승점</div>
+        <div class="chap-title">감정 구조와 겉모습 사이</div>
+        <p class="chap-txt">태양 염소자리의 당신은 <strong>내면에서 스스로를 매우 높은 기준으로 평가</strong>합니다. 달 물고기자리는 그 반대편에서 부드럽고 감수성 깊은 내면을 만들어냅니다. "충분히 해냈는데 왜 이렇게 허전하지?"라는 감각이 바로 그것입니다.</p>
+      </div>
+      <div class="blur-wrap">
+        <div class="blur-txt">03 · 수성 · 금성 · 화성<br><br>당신의 소통 방식은 정확성을 중시합니다. 말을 내뱉기 전 머릿속에서 한 번 더 검토하는 습관이 있으며, 이것이 때로는 신중함으로, 때로는 과묵함으로 보입니다. 금성 물병자리는 관계에서 일정 거리를 필요로 합니다.<br><br>04 · 중천(MC) 사회적 방향성<br><br>직업과 사회적 역할에서 당신은 전문성과 신뢰를 가장 중시합니다...</div>
+        <div class="blur-over">
+          <div class="blur-msg">나머지 내용은 리포트에서 확인하세요</div>
+          <a href="light.html" class="btn-gold" style="font-size:13px;padding:11px 26px;">라이트 리포트 신청 — 9,900원</a>
         </div>
       </div>
-      <div class="form-field"><label class="form-label">닉네임 *</label><input type="text" class="form-input" id="rvName" placeholder="예: 30대 직장인"></div>
-      <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option></select></div>
-      <div class="form-field"><label class="form-label">한줄 제목 *</label><input type="text" class="form-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요"></div>
-      <div class="form-field"><label class="form-label">상세 내용 *</label><textarea class="form-textarea" id="rvContent" placeholder="후기 내용"></textarea></div>
-      <div class="form-btns">
-        <button class="btn-cancel-form" onclick="toggleRvForm()">취소</button>
-        <button class="btn-save" onclick="saveReview()">등록하기</button>
-      </div>
     </div>
-    <div id="reviewList"><div class="loading-msg">불러오는 중...</div></div>
+  </div>
+</section>
+
+<!-- ⑤ 후기 -->
+<section class="sec reveal" id="reviews">
+  <div class="sec-hd">
+    <span class="sec-eye">후기</span>
+    <h2 class="sec-title">받아보신 분들의 <em>이야기</em></h2>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="rv-grid" id="reviewsGrid">
+    <div class="rv-card" onclick="openModal({star:5,type:'light',title:'관계 패턴 부분이 특히 정확했어요',content:'내 성향 설명이 전반적으로 맞았고, 특히 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요. 친구한테도 추천했어요.',name:'30대 직장인 · 물고기자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"관계 패턴 부분이 특히 정확했어요"</div><p class="rv-txt">내 성향 설명이 전반적으로 맞았고, 달자리 해석에서 왜 이런 감정 패턴을 반복하는지 설명이 돼서 신기했어요.</p><div class="rv-author">30대 직장인 · 물고기자리</div></div>
+    <div class="rv-card" onclick="openModal({star:5,type:'premium',title:'생애 테마에서 멈춰서 읽었어요',content:'라이트보다 깊이가 달랐어요. 특히 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요. 프리미엄 선택 잘했다고 생각했어요.',name:'20대 프리랜서 · 전갈자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"생애 테마에서 멈춰서 읽었어요"</div><p class="rv-txt">라이트보다 깊이가 달랐어요. 생애 테마 4가지에서 지금까지 왜 이 선택들을 해왔는지 이해됐어요.</p><div class="rv-author">20대 프리랜서 · 전갈자리</div></div>
+    <div class="rv-card" onclick="openModal({star:5,type:'light',title:'막연하게 알던 걸 언어로 정리해준 느낌',content:'별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 훨씬 납득이 됐어요.',name:'30대 교사 · 처녀자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-txt">단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
+    <div class="rv-card" onclick="openModal({star:4,type:'premium',title:'Final Wrap이 제일 좋았어요',content:'리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다. 가격 대비 충분히 만족해요.',name:'40대 자영업자 · 사수자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-txt">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았어요.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
+  </div>
+  <a href="light.html" class="rv-more">지금 신청하기 →</a>
+</section>
+
+<!-- 후기 모달 -->
+<div id="rvModal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;" onclick="closeModal(event)">
+  <div id="rvModalBox" style="background:#0d0820;border:1px solid rgba(201,168,76,0.25);border-radius:24px;max-width:500px;width:100%;padding:32px 28px;position:relative;margin:auto;">
+    <button onclick="document.getElementById('rvModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1;padding:4px;">✕</button>
+    <div id="rvModalContent"></div>
   </div>
 </div>
 
+<!-- ⑥ 무료 -->
+<section class="sec reveal">
+  <div class="sec-hd">
+    <span class="sec-eye">무료 체험</span>
+    <h2 class="sec-title">먼저 <em>무료로</em> 확인해보세요</h2>
+    <p class="sec-sub">회원가입 없이 생년월일만으로 바로 사용 가능</p>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+
+  <!-- 메인 2개 -->
+  <div class="free-main" style="margin-bottom:14px;">
+    <a href="dominant.html" class="free-card reveal rd1"><span class="free-emoji">✦</span><span class="free-tag">무료</span><div class="free-name">내 핵심 행성 찾기</div><p class="free-desc">나를 움직이는 도미넌트 행성이 무엇인지 바로 계산해드려요.</p><span class="free-arrow">지금 확인 →</span></a>
+    <a href="horoscope.html" class="free-card reveal rd2"><span class="free-emoji">🌙</span><span class="free-tag">무료 · 매일 업데이트</span><div class="free-name">오늘의 운세</div><p class="free-desc">전체운·애정운·금전운·건강운을 개인 맞춤으로 드려요.</p><span class="free-arrow">오늘 운세 보기 →</span></a>
+  </div>
+
+  <!-- 궁합 3개 카드로 강조 -->
+  <div style="background:linear-gradient(135deg,rgba(36,22,63,0.25),rgba(7,3,18,0.5));border:1px solid rgba(201,168,76,0.12);border-radius:20px;padding:20px 18px;">
+    <div style="font-size:10px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;font-weight:600;margin-bottom:14px;text-align:center;">궁합 보기</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <a href="compatibility.html" style="background:linear-gradient(135deg,rgba(36,22,63,0.5),rgba(7,3,18,0.7));border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:16px 10px;text-decoration:none;text-align:center;transition:all .3s;display:block;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="font-size:28px;margin-bottom:8px;">♾️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:0.02em;">사람 궁합</div>
+        <div style="font-size:10px;color:var(--dim);">두 사람의<br>별자리 궁합</div>
+      </a>
+      <a href="dog.html" style="background:linear-gradient(135deg,rgba(36,22,63,0.5),rgba(7,3,18,0.7));border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:16px 10px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0612;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">인기</div>
+        <div style="font-size:28px;margin-bottom:8px;">🐶</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:0.02em;">강아지 궁합</div>
+        <div style="font-size:10px;color:var(--dim);">우리 강아지와<br>나의 궁합</div>
+      </a>
+      <a href="cat.html" style="background:linear-gradient(135deg,rgba(36,22,63,0.5),rgba(7,3,18,0.7));border:1px solid rgba(201,168,76,0.15);border-radius:14px;padding:16px 10px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)';this.style.transform='translateY(0)'">
+        <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0a0612;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">인기</div>
+        <div style="font-size:28px;margin-bottom:8px;">🐱</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:0.02em;">고양이 궁합</div>
+        <div style="font-size:10px;color:var(--dim);">우리 고양이와<br>나의 궁합</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="sec reveal">
+  <div class="cta-banner">
+    <div class="cta-in">
+      <span class="cta-eye">지금 시작하기</span>
+      <h2 class="cta-title">당신의 별자리가<br><em>기다리고 있어요</em></h2>
+      <p class="cta-sub">생년월일만으로 당신을 가장 깊이 이해하는<br>개인 맞춤 점성 리포트를 받아보세요</p>
+      <div class="cta-btns">
+        <a href="light.html" class="btn-gold">라이트 신청 — 9,900원</a>
+        <a href="premium.html" class="btn-outline">프리미엄 신청 — 29,000원</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">FORTUNA</div>
+  <p class="footer-txt">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>개인 맞춤 제작 · 계좌이체 후 이메일 발송</p>
+  <div class="footer-links">
+    <a href="light.html" class="footer-link">라이트 리포트</a>
+    <a href="premium.html" class="footer-link">프리미엄 리포트</a>
+    <a href="dominant.html" class="footer-link">핵심 행성 찾기</a>
+    <a href="admin.html" class="footer-link" style="opacity:0.18;">관리자</a>
+  </div>
+</footer>
+
 <script>
-const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
-const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-
-let currentFilter='all', searchTerm='', allOrders=[];
-let petFilter='all', allPetOrders=[];
-
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
-
-async function doLogin(){
-  const pw=document.getElementById('pwInput').value.trim();
-  if(!pw)return;
-  const {data}=await sb.from('admins').select('*').eq('password_hash',pw);
-  if(data&&data.length>0){
-    sessionStorage.setItem('admin','1');
-    document.getElementById('loginWrap').style.display='none';
-    document.getElementById('dashboard').style.display='block';
-    loadAll();
-  } else {
-    document.getElementById('loginError').style.display='block';
-  }
+// 별 생성
+const bg = document.getElementById('stars');
+for(let i=0;i<160;i++){
+  const s=document.createElement('div');
+  const sz=Math.random()*2.1+0.3, op=0.1+Math.random()*0.6, dur=2+Math.random()*5;
+  s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${op};animation:twinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*5}s;`;
+  bg.appendChild(s);
 }
 
-function doLogout(){sessionStorage.removeItem('admin');location.reload();}
+// 스크롤 reveal
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.07});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-if(sessionStorage.getItem('admin')==='1'){
-  document.getElementById('loginWrap').style.display='none';
-  document.getElementById('dashboard').style.display='block';
-} else {
-  location.href='login.html';
+// 날짜+시간 포맷
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-async function loadAll(){
-  await loadOrders();
-  await loadStats();
-}
-
-async function loadStats(){
-  const {data:orders}=await sb.from('orders').select('status');
-  const {data:pets}=await sb.from('pet_orders').select('status');
-  const {data:reviews}=await sb.from('reviews').select('id');
-  const allO=[...(orders||[]),...(pets||[])];
-  const total=allO.length;
-  const pending=allO.filter(o=>o.status==='pending').length;
-  const done=allO.filter(o=>o.status==='confirmed').length;
-  document.getElementById('stTotal').textContent=total;
-  document.getElementById('stPending').textContent=pending;
-  document.getElementById('stDone').textContent=done;
-  document.getElementById('stReviews').textContent=reviews?.length||0;
-  if(pending>0){const b=document.getElementById('pendingBadge');b.style.display='flex';b.textContent=pending;}
-}
-
-async function loadOrders(){
-  const {data}=await sb.from('orders').select('*').order('created_at',{ascending:false});
-  allOrders=data||[];
-  renderOrders();
-}
-
-async function loadPetOrders(){
-  const {data}=await sb.from('pet_orders').select('*').order('id',{ascending:false});
-  allPetOrders=data||[];
-  renderPetOrders();
-}
-
-function switchTab(tab){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('content-'+tab).classList.add('active');
-  if(tab==='reviews')loadReviews();
-  if(tab==='pets')loadPetOrders();
-}
-
-function setFilter(f,el){currentFilter=f;document.querySelectorAll('#content-orders .filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderOrders();}
-function searchOrders(v){searchTerm=v;renderOrders();}
-function setPetFilter(f,el){petFilter=f;document.querySelectorAll('#content-pets .filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderPetOrders();}
-
-function renderOrders(){
-  let orders=[...allOrders];
-  if(currentFilter==='light')orders=orders.filter(o=>o.report_type==='light');
-  else if(currentFilter==='premium')orders=orders.filter(o=>o.report_type==='premium');
-  else if(currentFilter==='pending')orders=orders.filter(o=>o.status==='pending');
-  else if(currentFilter==='confirmed')orders=orders.filter(o=>o.status==='confirmed');
-  if(searchTerm)orders=orders.filter(o=>o.name?.includes(searchTerm)||o.email?.includes(searchTerm));
-  const list=document.getElementById('orderList');
-  if(!orders.length){list.innerHTML='<div class="empty-msg">주문이 없습니다</div>';return;}
-  list.innerHTML=orders.map(o=>`
-    <div class="order-card ${o.report_type} ${o.status==='confirmed'?'done':''}" id="card-${o.order_id}">
-      <div class="order-top"><div>
-        <span class="order-name">${o.name||''}</span>
-        <span class="order-type ${o.report_type==='premium'?'type-premium':'type-light'}">${o.report_type==='premium'?'프리미엄':'라이트'}</span>
-        <div class="order-id">${o.order_id||''} · ${o.created_at?new Date(o.created_at).toLocaleString('ko-KR'):''}</div>
-      </div></div>
-      <div class="order-info">
-        <div>📅 생년월일<br><span>${o.birthdate_raw||''} (${o.calendar||''})</span></div>
-        <div>⏰ 출생시간<br><span>${o.hour}시 ${o.min}분</span></div>
-        <div>📍 지역<br><span>${o.birthplace||''} (${o.place_en||''})</span></div>
-        <div>📧 이메일<br><span>${o.email||''}</span></div>
-      </div>
-      <div class="order-actions">
-        ${o.status==='confirmed'
-          ?'<div class="done-badge">✓ 발송 완료</div>'
-          :`<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>`}
-        <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>
-      </div>
-    </div>`).join('');
-}
-
-function renderPetOrders(){
-  let orders=[...allPetOrders];
-  if(petFilter==='dog')orders=orders.filter(o=>o.report_type==='dog');
-  else if(petFilter==='cat')orders=orders.filter(o=>o.report_type==='cat');
-  else if(petFilter==='pending')orders=orders.filter(o=>o.status==='pending');
-  else if(petFilter==='confirmed')orders=orders.filter(o=>o.status==='confirmed');
-  const list=document.getElementById('petOrderList');
-  if(!orders.length){list.innerHTML='<div class="empty-msg">반려동물 주문이 없습니다</div>';return;}
-  list.innerHTML=orders.map((o,i)=>`
-    <div class="order-card pet ${o.status==='confirmed'?'done':''}" id="pcard-${i}">
-      <div class="order-top"><div>
-        <span class="order-name">${o.report_type==='dog'?'🐶':'🐱'} ${o.pet_name||''}</span>
-        <span class="order-type ${o.report_type==='dog'?'type-dog':'type-cat'}">${o.report_type==='dog'?'강아지':'고양이'}</span>
-        <div class="order-id">${o.order_id||''} · ${o.created_at||''}</div>
-      </div></div>
-      <div class="order-info">
-        <div>🐾 견종/묘종<br><span>${o.pet_breed||'미상'} · ${o.pet_gender||''}</span></div>
-        <div>🌟 별자리/오행<br><span>${o.pet_zodiac||''} · ${o.pet_ohaeng||''}오행</span></div>
-        <div>🧑 보호자<br><span>${o.owner_name||''} (${o.owner_zodiac||''})</span></div>
-        <div>📧 이메일<br><span>${o.email||''}</span></div>
-      </div>
-      <div class="report-preview" id="pprev-${i}"></div>
-      <div class="order-actions">
-        ${o.status==='confirmed'
-          ?'<div class="done-badge">✓ 발송 완료</div>'
-          :`<button class="generate-btn" id="pgen-${i}" onclick="generatePetReport(${i})">✦ Claude로 리포트 생성</button>
-            <button class="confirm-btn" id="psend-${i}" onclick="sendPetReport(${i})" disabled>📧 발송하기</button>`}
-        <button class="del-btn" onclick="deletePetOrder('${o.order_id}')">삭제</button>
-      </div>
-    </div>`).join('');
-}
-
-// 반려동물 리포트 생성
-async function generatePetReport(idx){
-  const o=allPetOrders[idx];
-  const genBtn=document.getElementById('pgen-'+idx);
-  genBtn.disabled=true;genBtn.innerHTML='<span class="loading"></span>생성 중...';
-  const isPet=o.report_type==='dog';
-  const prompt=`당신은 반려동물 별자리 & 사주 전문가입니다. 아래 정보로 ${isPet?'강아지':'고양이'} 리포트를 작성해주세요.
-
-${isPet?'강아지':'고양이'} 이름: ${o.pet_name}
-${isPet?'견종':'묘종'}: ${o.pet_breed||'미상'}
-성별: ${o.pet_gender}
-생년월일: ${o.pet_birthdate_raw}
-별자리: ${o.pet_zodiac}
-사주 오행: ${o.pet_ohaeng}
-보호자 이름: ${o.owner_name}
-보호자 별자리: ${o.owner_zodiac}
-
-다음 6가지 항목으로 리포트를 작성해주세요. 따뜻하고 재밌는 문체로, 보호자가 읽으면서 "맞아 맞아!" 하고 공감할 수 있게 써주세요.
-
-1. 🌟 ${o.pet_name}의 별자리 성격 (${o.pet_zodiac})
-2. 🔥 ${o.pet_name}의 사주 오행 기질 (${o.pet_ohaeng})
-3. ${isPet?'🍖':'🐟'} 밥 & 간식 스타일
-4. ${isPet?'🎾':'🧶'} ${isPet?'산책':'실내'} & 놀이 스타일
-5. 💞 ${o.owner_name}님과의 궁합 (${o.owner_zodiac} × ${o.pet_zodiac})
-6. 💌 ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디
-
-마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 추가해주세요.`;
-
+// ── 소셜 프루프 숫자 로드 ──
+async function loadSocialProof(){
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
-    });
-    const data=await res.json();
-    const report=data.content?.[0]?.text||'생성 실패';
-    allPetOrders[idx].report_content=report;
-    const prev=document.getElementById('pprev-'+idx);
-    prev.textContent=report;prev.style.display='block';
-    genBtn.innerHTML='✓ 생성완료 (다시생성)';genBtn.disabled=false;
-    document.getElementById('psend-'+idx).disabled=false;
-    showToast('리포트 생성 완료! 확인 후 발송해주세요 🐾');
-  }catch(e){
-    genBtn.innerHTML='✦ Claude로 리포트 생성';genBtn.disabled=false;
-    showToast('생성 오류가 발생했습니다');
-  }
-}
-
-async function sendPetReport(idx){
-  const o=allPetOrders[idx];
-  if(!o.report_content){showToast('먼저 리포트를 생성해주세요');return;}
-  const sendBtn=document.getElementById('psend-'+idx);
-  sendBtn.disabled=true;sendBtn.innerHTML='<span class="loading"></span>발송 중...';
-  try{
-    await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        request_id:o.order_id,client_name:o.owner_name,recipient_email:o.email,
-        report_text:o.report_content,report_type:o.report_type,
-        doc_name:`포르투나_${o.pet_name}_별자리사주리포트`,
-        pet_name:o.pet_name,pet_zodiac:o.pet_zodiac,status:'confirmed'
-      })
-    });
-    await sb.from('pet_orders').update({status:'confirmed'}).eq('order_id',o.order_id);
-    allPetOrders[idx].status='confirmed';
-    sendBtn.textContent='✓ 발송 완료';
-    showToast(`${o.pet_name} 리포트 발송 완료! 🐾`);
-    await loadStats();
-  }catch(e){
-    sendBtn.disabled=false;sendBtn.textContent='📧 발송하기';
-    showToast('발송 오류가 발생했습니다');
-  }
-}
-
-async function deletePetOrder(orderId){
-  if(!confirm('정말 삭제할까요?'))return;
-  await sb.from('pet_orders').delete().eq('order_id',orderId);
-  await loadPetOrders();
-  showToast('삭제되었습니다');
-}
-
-// 기존 일반 주문 함수들
-function calcDominant(planets){
-  const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  const scores={};INNER.forEach(p=>{scores[p]=0;});
-  const asc=planets.find(p=>p.name==='Ascendant');
-  const sun=planets.find(p=>p.name==='Sun');
-  const moon=planets.find(p=>p.name==='Moon');
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    if(p.house===1)scores[p.name]+=5;
-    if(p.house===10)scores[p.name]+=4;
-  });
-  [sun,moon,asc].filter(Boolean).forEach(a=>{
-    planets.forEach(p=>{
-      if(!INNER.includes(p.name)||a.name===p.name)return;
-      const diff=Math.abs(p.fullDegree-a.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      if(angle<=8)scores[p.name]+=3;
-    });
-  });
-  let dominant='Sun',maxScore=-999;
-  INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});
-  return dominant;
-}
-
-function calcAspects(planets){
-  const ASPECTS=[{name:'합',angle:0,orb:8},{name:'대립',angle:180,orb:8},{name:'삼각',angle:120,orb:8},{name:'사각',angle:90,orb:6},{name:'육각',angle:60,orb:6}];
-  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  const results=[];
-  for(let i=0;i<PLANETS.length;i++){
-    for(let j=i+1;j<PLANETS.length;j++){
-      const p1=planets.find(p=>p.name===PLANETS[i]);
-      const p2=planets.find(p=>p.name===PLANETS[j]);
-      if(!p1||!p2)continue;
-      const diff=Math.abs(p1.fullDegree-p2.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);});
+    const {count:orderCount} = await sb.from('orders').select('*',{count:'exact',head:true});
+    const {count:petCount} = await sb.from('pet_orders').select('*',{count:'exact',head:true});
+    const {data:reviews} = await sb.from('reviews').select('star').eq('approved',true);
+    const total = (orderCount||0) + (petCount||0);
+    document.getElementById('spTotal').textContent = total > 0 ? total+'건' : '—';
+    if(reviews && reviews.length > 0){
+      const avg = (reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
+      const fiveRatio = Math.round(reviews.filter(r=>r.star===5).length/reviews.length*100);
+      document.getElementById('spAvg').textContent = avg+'★';
+      document.getElementById('spFive').textContent = fiveRatio+'%';
+    } else {
+      document.getElementById('spAvg').textContent = '5.0★';
+      document.getElementById('spFive').textContent = '100%';
     }
-  }
-  return results.join(', ');
+  }catch(e){ console.error(e); }
 }
+loadSocialProof();
+let slideIdx = 0;
+let slidePhotos = [];
 
-async function confirmOrder(orderId,type){
-  const webhook=type==='premium'
-    ?'https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu'
-    :'https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756';
-  const o=allOrders.find(x=>x.order_id===orderId);
-  if(!o)return;
-  const btn=document.getElementById('btn-'+orderId);
-  btn.disabled=true;btn.innerHTML='<span class="loading"></span>차트 분석 중...';
-  try{
-    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
-      body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})
+function openModal(r){
+  const photoUrls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
+  slidePhotos = r.photos && r.photos.length ? r.photos : photoUrls;
+  slideIdx = 0;
+  const stars = '★'.repeat(r.star) + '☆'.repeat(5 - r.star);
+  const badge = r.type === 'premium' ? '프리미엄' : '라이트';
+  document.getElementById('rvModalContent').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="color:var(--gold);font-size:18px;letter-spacing:3px;">${stars}</div>
+      <span style="font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;">${badge}</span>
+    </div>
+    ${slidePhotos.length ? `
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
+      ${slidePhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:contain;max-height:320px;background:#000;" loading="lazy">`).join('')}
+    </div>` : ''}
+    ${r.title ? `<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>` : ''}
+    <p style="font-size:14px;color:var(--dim);line-height:2;margin-bottom:18px;letter-spacing:0.02em;">${r.content}</p>
+    <div style="font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;">${r.name}</div>
+    ${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.35);margin-top:4px;letter-spacing:0.03em;">${fmtDate(r.created_at)}</div>`:''}
+  `;
+  document.getElementById('rvModal').style.display = 'flex';
+
+  // 터치 스와이프
+  if(slidePhotos.length > 1){
+    const track = document.getElementById('slideTrack');
+    let startX = 0;
+    track.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
+    track.addEventListener('touchend', e=>{
+      const diff = startX - e.changedTouches[0].clientX;
+      if(Math.abs(diff) > 40) slide(diff > 0 ? 1 : -1);
     });
-    const astroData=await astroRes.json();
-    const planets=astroData.output||astroData;
-    const dominant=calcDominant(planets);
-    const aspects=calcAspects(planets);
-    btn.innerHTML='<span class="loading"></span>발송 중...';
-    await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      request_id:o.order_id,client_name:o.name,recipient_email:o.email,
-      birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
-      birth_place_text:o.birthplace,place:o.place_en,
-      year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,
-      lat:o.lat,lon:o.lon,tzone:9.0,
-      report_text:type==='premium'?'네이탈 프리미엄 리포트':'네이탈 라이트 리포트',
-      report_type:type,
-      doc_name:type==='premium'?`포르투나_프리미엄_${o.name}`:`포르투나_${o.name}`,
-      dominant_planet:dominant,aspects_summary:aspects,
-      planets_json:JSON.stringify(planets),status:'confirmed'
-    })});
-    await sb.from('orders').update({status:'confirmed'}).eq('order_id',orderId);
-    await loadAll();
-    showToast(`${o.name}님 리포트 발송 완료! ✦`);
-  }catch(err){
-    btn.disabled=false;btn.textContent='✦ 입금확인 · 리포트 발송';
-    showToast('오류 발생. 다시 시도해주세요');
   }
 }
 
-async function deleteOrder(orderId){
-  if(!confirm('정말 삭제할까요?'))return;
-  await sb.from('orders').delete().eq('order_id',orderId);
-  await loadAll();showToast('삭제되었습니다');
+function slide(dir){
+  slideIdx = (slideIdx + dir + slidePhotos.length) % slidePhotos.length;
+  goSlide(slideIdx);
 }
 
-let rvStar=0;
-function toggleRvForm(){document.getElementById('rvFormBox').classList.toggle('show');}
-function setStar(n){rvStar=n;document.querySelectorAll('.star-btn').forEach((b,i)=>b.classList.toggle('on',i<n));}
-
-async function saveReview(){
-  const name=document.getElementById('rvName').value.trim();
-  const type=document.getElementById('rvType').value;
-  const title=document.getElementById('rvTitle').value.trim();
-  const content=document.getElementById('rvContent').value.trim();
-  if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
-  await sb.from('reviews').insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'admin',approved:true}]);
-  rvStar=0;document.querySelectorAll('.star-btn').forEach(b=>b.classList.remove('on'));
-  ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('rvType').value='';
-  document.getElementById('rvFormBox').classList.remove('show');
-  await loadReviews();await loadStats();showToast('후기가 등록되었습니다!');
+function goSlide(i){
+  slideIdx = i;
+  const track = document.getElementById('slideTrack');
+  if(track) track.style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('#slideDots div').forEach((d,j)=>{
+    d.style.background = j===i ? 'white' : 'rgba(255,255,255,0.4)';
+  });
 }
 
+function closeModal(e){
+  if(e.target === document.getElementById('rvModal'))
+    document.getElementById('rvModal').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('rvModal').style.display='none'; });
+
+// ── 사진 썸네일 렌더 (카드용 - 첫 장만, 나머지는 모달에서) ──
+function renderPhotoThumb(r){
+  const urls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
+  if(!urls.length) return '';
+  const more = urls.length > 1 ? `<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;">+${urls.length-1}</div>` : '';
+  return `<div style="position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden;"><img src="${urls[0]}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" loading="lazy">${more}</div>`;
+}
+
+// ── 후기 로드 ──
+let rvData = [];
 async function loadReviews(){
-  const {data}=await sb.from('reviews').select('*').order('created_at',{ascending:false});
-  const list=document.getElementById('reviewList');
-  if(!data||!data.length){list.innerHTML='<div class="empty-msg">등록된 후기가 없습니다</div>';return;}
-  list.innerHTML=data.map(r=>`
-    <div class="rv-card" style="${r.approved?'':'border-color:rgba(255,200,0,0.3);'}">
-      <div class="rv-header">
-        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span>${r.approved?'<span style="font-size:10px;color:#88cc88;margin-left:8px;">✅ 승인됨</span>':'<span style="font-size:10px;color:#e8cc7a;margin-left:8px;">⏳ 승인대기</span>'}</div>
-        <div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
-      </div>
-      <div class="rv-title">${r.title}</div>
-      <div class="rv-content">${r.content}</div>
-      <div class="rv-date">${r.date} · ${r.source==='admin'?'관리자 등록':'고객 작성'}</div>
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        ${!r.approved?`<button onclick="approveReview(${r.id})" style="background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.3);border-radius:6px;padding:5px 12px;color:#88cc88;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">✅ 승인</button>`:''}
-        ${r.approved?`<button onclick="unapproveReview(${r.id})" style="background:none;border:1px solid rgba(255,200,0,0.3);border-radius:6px;padding:5px 12px;color:#e8cc7a;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">승인 취소</button>`:''}
-        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">삭제</button>
-      </div>
-    </div>`).join('');
+  try{
+    const {data} = await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(4);
+    if(!data||data.length===0) return;
+    rvData = data;
+    document.getElementById('reviewsGrid').innerHTML = data.map((r,i)=>`
+      <div class="rv-card" onclick="openModal(rvData[${i}])" style="cursor:pointer;">
+        <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
+        ${renderPhotoThumb(r)}
+        ${r.title?`<div class="rv-quote">"${r.title}"</div>`:''}
+        <p class="rv-txt">${r.content.length>90?r.content.slice(0,90)+'…':r.content}</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+          <div class="rv-author">${r.name}</div>
+          <div style="font-size:10px;color:rgba(155,143,176,0.4);letter-spacing:0.03em;">${fmtDate(r.created_at)}</div>
+        </div>
+      </div>`).join('');
+  }catch(e){ console.error(e); }
 }
-
-async function approveReview(id){await sb.from('reviews').update({approved:true}).eq('id',id);await loadReviews();showToast('후기가 승인되었습니다 ✅');}
-async function unapproveReview(id){await sb.from('reviews').update({approved:false}).eq('id',id);await loadReviews();showToast('승인이 취소되었습니다');}
-async function deleteReview(id){await sb.from('reviews').delete().eq('id',id);await loadReviews();await loadStats();showToast('후기가 삭제되었습니다');}
-
-if(sessionStorage.getItem('admin')==='1') loadAll();
+loadReviews();
 </script>
 </body>
 </html>
