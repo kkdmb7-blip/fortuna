@@ -293,7 +293,8 @@ function renderOrders(){
       </div>
       <div class="order-actions">
         ${o.status==='confirmed'
-          ?'<div class="done-badge">✓ 발송 완료</div>'
+          ?`<div class="done-badge">✓ 발송 완료</div>
+            <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')" style="background:rgba(100,200,100,0.15);border:1px solid rgba(100,200,100,0.3);color:#88cc88;flex:none;padding:10px 14px;font-size:12px;">↺ 다시 발송</button>`
           :`<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>`}
         <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>
       </div>
@@ -490,7 +491,9 @@ async function confirmOrder(orderId,type){
     await loadAll();
     showToast(`${o.name}님 리포트 발송 완료! ✦`);
   }catch(err){
-    btn.disabled=false;btn.textContent='✦ 입금확인 · 리포트 발송';
+    console.error(err);
+    btn.disabled=false;
+    btn.textContent= o.status==='confirmed' ? '↺ 다시 발송' : '✦ 입금확인 · 리포트 발송';
     showToast('오류 발생. 다시 시도해주세요');
   }
 }
