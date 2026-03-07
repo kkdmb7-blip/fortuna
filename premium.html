@@ -69,11 +69,21 @@
   .notice { font-family: var(--font-sans); font-size: 12px; color: var(--text-dim); line-height: 2.1; text-align: center; margin-top: 16px; letter-spacing: 0.03em; }
 
   /* ── 성공 화면 ── */
-  .success-screen { display: none; text-align: center; padding: 60px 20px; }
-  .success-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 2s ease infinite; }
+  .success-screen { display: none; text-align: center; padding: 80px 20px; }
+  .success-icon { font-size: 56px; margin-bottom: 24px; animation: float 3s ease-in-out infinite; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+  .success-badge { display: inline-block; font-size: 10px; letter-spacing: 0.4em; color: var(--gold); border: 1px solid rgba(201,168,76,0.3); border-radius: 20px; padding: 5px 16px; margin-bottom: 20px; text-transform: uppercase; }
+  .success-title { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 16px; letter-spacing: -0.01em; line-height: 1.3; }
+  .success-title em { font-style: normal; color: var(--gold); }
+  .success-divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 20px auto; }
+  .success-text { font-size: 14px; color: var(--text-dim); line-height: 2.2; letter-spacing: 0.03em; }
+  .success-box { background: linear-gradient(135deg, rgba(36,22,63,0.3), rgba(7,3,18,0.6)); border: 1px solid rgba(201,168,76,0.15); border-radius: 16px; padding: 20px 24px; margin: 28px auto; max-width: 380px; text-align: left; }
+  .success-box-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-dim); line-height: 1.8; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .success-box-row:last-child { border-bottom: none; }
+  .success-box-icon { color: var(--gold); font-size: 14px; margin-top: 2px; flex-shrink: 0; }
+  .success-home { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--text-dim); letter-spacing: 0.06em; text-decoration: none; border: 1px solid rgba(201,168,76,0.15); border-radius: 30px; padding: 10px 24px; transition: all .3s; }
+  .success-home:hover { border-color: rgba(201,168,76,0.35); color: var(--gold); }
   @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.1)} }
-  .success-title { font-family: var(--font-display); font-size: 28px; font-weight: 300; letter-spacing: 0.04em; margin-bottom: 12px; color: var(--gold); }
-  .success-text { font-family: var(--font-sans); font-size: 13px; color: var(--text-dim); line-height: 2.2; letter-spacing: 0.03em; }
 
   /* ── 관리자 ── */
   .admin-panel { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100; }
@@ -319,9 +329,17 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </div>
 
 <div class="container success-screen" id="successScreen">
-  <div class="success-icon">🌙</div>
-  <div class="success-title">신청이 완료되었습니다</div>
-  <p class="success-text">입금 확인 후 48시간 내에<br>입력하신 이메일로 리포트를 보내드립니다<br><br><span style="color:var(--gold)">감사합니다 ✦</span></p>
+  <div class="success-icon">☀️</div>
+  <div class="success-badge">Order Confirmed</div>
+  <div class="success-title">신청이 완료되었습니다<br><em>✦ 감사합니다 ✦</em></div>
+  <div class="success-divider"></div>
+  <p class="success-text">AI가 찍어내는 결과가 아닌,<br>당신만을 위해 정성스럽게 제작되는<br>개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+  <div class="success-box">
+    <div class="success-box-row"><span class="success-box-icon">✦</span><span>입금 확인 후 제작을 시작합니다</span></div>
+    <div class="success-box-row"><span class="success-box-icon">📧</span><span>48시간 내 입력하신 이메일로 PDF 리포트를 발송해드립니다</span></div>
+    <div class="success-box-row"><span class="success-box-icon">☀️</span><span>스팸함도 꼭 확인해주세요</span></div>
+  </div>
+  <a href="index.html" class="success-home">← 메인으로 돌아가기</a>
 </div>
 
 <div class="admin-panel" id="adminPanel">
