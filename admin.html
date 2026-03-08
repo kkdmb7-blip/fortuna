@@ -348,10 +348,10 @@ async function generatePetReport(idx){
     // 1단계: Claude API 직접 호출
     const ANTHROPIC_KEY=localStorage.getItem("fortuna_api_key")||"";
     if(!ANTHROPIC_KEY){alert("설정에서 API 키를 먼저 입력해주세요.");genBtn.disabled=false;genBtn.innerHTML="✦ 리포트 생성 & 발송";return;}
-    const aiRes=await fetch("https://api.anthropic.com/v1/messages",{
+    const aiRes=await fetch("https://fortuna.kkdmb7.workers.dev/",{
       method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
-      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:systemPrompt,messages:[{role:"user",content:question}]})
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({apiKey:ANTHROPIC_KEY,model:"claude-haiku-4-5-20251001",max_tokens:1000,system:systemPrompt,messages:[{role:"user",content:question}]})
     });
     const aiData=await aiRes.json();
     const report=aiData?.content?.[0]?.text||"";
