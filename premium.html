@@ -37,11 +37,10 @@
   .price-label{color:var(--text-dim);font-family:var(--font-display);font-size:16px;}
   .amount{font-family:var(--font-serif);font-size:28px;color:var(--gold);font-weight:400;}
   .pay-btns{display:flex;gap:10px;margin-top:8px;}
-  .submit-btn{flex:1;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;border-radius:12px;padding:18px;color:#0a0612;font-family:var(--font-display);font-size:16px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:all 0.3s;animation:shimmer 3s ease infinite;white-space:nowrap;}
+  .submit-btn{flex:1;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;border-radius:12px;padding:18px 8px;color:#0a0612;font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.04em;cursor:pointer;transition:all 0.3s;animation:shimmer 3s ease infinite;white-space:nowrap;min-width:0;}
   .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4);}
   .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;animation:none;}
-  .submit-btn.secondary{background:none;border:1px solid var(--border);color:var(--gold);animation:none;flex:1;}
-  .submit-btn.secondary:hover{background:rgba(201,168,76,0.08);transform:translateY(-2px);}
+  .submit-btn.secondary{background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;color:#0a0612;animation:shimmer 3s ease infinite;}
   @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
   .notice{font-family:var(--font-display);font-size:14px;color:var(--text-dim);line-height:2.1;text-align:center;margin-top:16px;letter-spacing:0.03em;}
   .pay-methods{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
@@ -53,7 +52,7 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .reviews-section{padding:0 0 80px;}
   .reviews-header{text-align:center;margin-bottom:32px;}
-  .reviews-title{font-family:var(--font-display);font-size:24px;font-weight:300;letter-spacing:0.04em;color:var(--text);margin-bottom:8px;}
+  .reviews-title{font-family:var(--font-display);font-size:24px;font-weight:300;letter-spacing:0.04em;color:var(--text);margin-bottom:8px;white-space:nowrap;}
   .reviews-sub{font-family:var(--font-display);font-size:14px;color:var(--text-dim);letter-spacing:0.04em;}
   .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
   .stat-card{background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
@@ -162,7 +161,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
       <span class="pay-method">계좌이체</span>
     </div>
     <div style="text-align:center;margin-top:10px;font-family:var(--font-display);font-size:12px;color:rgba(155,143,176,0.5);">🔒 토스페이먼츠 보안 결제</div>
-    <p class="notice">개인 맞춤 제작 상품으로 환불이 어렵습니다<br>결제 완료 후 48시간 내 이메일로 발송됩니다</p>
+    <p class="notice">결제 완료 즉시 자동 발송됩니다<br>10분 안에 이메일로 받아보실 수 있습니다</p>
   </div>
 
   <div style="text-align:center;margin-top:16px;">
