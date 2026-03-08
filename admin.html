@@ -138,6 +138,7 @@
       <a href="/" class="nav-btn">메인</a>
       <a href="light.html" class="nav-btn">라이트</a>
       <a href="premium.html" class="nav-btn">프리미엄</a>
+      <button class="logout-btn" onclick="setApiKey()" style="border-color:rgba(100,200,255,0.3);color:rgba(100,200,255,0.7);margin-right:8px;">🔑 API키</button>
       <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
@@ -223,6 +224,13 @@ async function doLogin(){
   }
 }
 function doLogout(){sessionStorage.removeItem("admin");location.reload();}
+function setApiKey(){
+  const cur=localStorage.getItem("fortuna_api_key")||"";
+  const key=prompt("Anthropic API 키를 입력하세요:",cur);
+  if(key===null)return;
+  if(key.trim()){localStorage.setItem("fortuna_api_key",key.trim());alert("API 키가 저장되었습니다.");}
+  else{localStorage.removeItem("fortuna_api_key");alert("API 키가 삭제되었습니다.");}
+}
 
 if(sessionStorage.getItem("admin")==="1"){
   document.getElementById("loginWrap").style.display="none";
@@ -334,12 +342,19 @@ async function generatePetReport(idx){
   const isDog=o.report_type==="dog";
 
   const systemPrompt=`당신은 FORTUNA AI, 반려동물 별자리 & 사주 전문 상담사입니다. 반려동물 정보: ${isDog?"강아지":"고양이"} 이름 ${o.pet_name}, ${isDog?"견종":"묘종"} ${o.pet_breed||"미상"}, 성별 ${o.pet_gender}, 생년월일 ${o.pet_birthdate_raw}, 별자리 ${o.pet_zodiac}, 사주 오행 ${o.pet_ohaeng}, 보호자 이름 ${o.owner_name}, 보호자 별자리 ${o.owner_zodiac}. 따뜻하고 재밌는 문체로 리포트를 작성해주세요.`;
-  const question=`다음 6가지 항목으로 리포트를 작성해주세요. 1. 🌟 ${o.pet_name}의 별자리 성격 (${o.pet_zodiac}) 2. 🔥 사주 오행 기질 (${o.pet_ohaeng}) 3. ${isDog?"🍖":"🐟"} 밥 & 간식 스타일 4. ${isDog?"🎾 산책":"🧶 실내"} & 놀이 스타일 5. 💞 ${o.owner_name}님과의 궁합 (${o.owner_zodiac} × ${o.pet_zodiac}) 6. 💌 ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디. 마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 추가해주세요.`;
+  const question=`다음 6가지 항목으로 리포트를 작성해주세요. 1. ${o.pet_name}의 별자리 성격 (${o.pet_zodiac}) 2. 사주 오행 기질 (${o.pet_ohaeng}) 3. 밥 & 간식 스타일 4. ${isDog?"산책":"실내"} & 놀이 스타일 5. ${o.owner_name}님과의 궁합 (${o.owner_zodiac} x ${o.pet_zodiac}) 6. ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디. 마지막에 FORTUNA 반려동물 리포트 ${o.pet_name} ${o.pet_zodiac} ${o.pet_ohaeng}오행 문구 추가해주세요.`;
 
   try{
-    // 1단계: AI 웹훅으로 리포트 생성
-    const aiRes=await fetch(WEBHOOK_AI,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system_prompt:systemPrompt,question:question})});
-    const report=await aiRes.text();
+    // 1단계: Claude API 직접 호출
+    const ANTHROPIC_KEY=localStorage.getItem("fortuna_api_key")||"";
+    if(!ANTHROPIC_KEY){alert("설정에서 API 키를 먼저 입력해주세요.");genBtn.disabled=false;genBtn.innerHTML="✦ 리포트 생성 & 발송";return;}
+    const aiRes=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json","x-api-key":ANTHROPIC_KEY,"anthropic-version":"2023-06-01"},
+      body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:1000,system:systemPrompt,messages:[{role:"user",content:question}]})
+    });
+    const aiData=await aiRes.json();
+    const report=aiData?.content?.[0]?.text||"";
     if(!report||report.trim().length<50)throw new Error("리포트 생성 실패");
 
     // 미리보기 표시
