@@ -61,6 +61,7 @@
   .confirm-btn{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
   .confirm-btn:disabled{opacity:0.4;cursor:not-allowed;background:#444;color:#888;}
   .generate-btn{flex:1;background:rgba(138,180,255,0.12);border:1px solid rgba(138,180,255,0.3);border-radius:8px;padding:10px;color:#8ab4ff;font-family:'Pretendard',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+  .generate-btn:disabled{opacity:0.4;cursor:not-allowed;}
   .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
   .done-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:rgba(100,220,100,0.7);padding:6px 12px;border:1px solid rgba(100,220,100,0.2);border-radius:8px;}
   .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
@@ -88,11 +89,9 @@
   .rv-date{font-size:11px;color:rgba(155,143,176,0.4);margin-top:8px;}
   .empty-msg{text-align:center;padding:40px;color:var(--text-dim);font-size:13px;line-height:2;}
   .loading-msg{text-align:center;padding:20px;color:var(--text-dim);font-size:13px;}
-  /* 후기 사진 썸네일 */
   .rv-photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   .rv-photo-thumb{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:transform 0.2s;}
   .rv-photo-thumb:hover{transform:scale(1.05);border-color:var(--gold);}
-  /* 라이트박스 */
   .lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:9999;display:none;align-items:center;justify-content:center;}
   .lightbox.open{display:flex;}
   .lightbox-img{max-width:90vw;max-height:85vh;border-radius:12px;object-fit:contain;user-select:none;}
@@ -114,7 +113,6 @@
 <div class="nebula"></div>
 <div class="toast" id="toast"></div>
 
-<!-- 라이트박스 -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
   <button class="lightbox-close" onclick="closeLightboxBtn()">✕</button>
   <button class="lightbox-prev" onclick="lightboxNav(-1);event.stopPropagation()">‹</button>
@@ -135,10 +133,7 @@
 
 <div class="dashboard" id="dashboard">
   <div class="header">
-    <div class="header-left">
-      <div class="brand">포르투나 · 관리자</div>
-      <div class="title">주문 & 후기 관리</div>
-    </div>
+    <div class="header-left"><div class="brand">포르투나 · 관리자</div><div class="title">주문 & 후기 관리</div></div>
     <div class="header-right">
       <a href="/" class="nav-btn">메인</a>
       <a href="light.html" class="nav-btn">라이트</a>
@@ -146,20 +141,17 @@
       <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
-
   <div class="stats">
     <div class="stat"><div class="stat-num" id="stTotal">-</div><div class="stat-label">전체 주문</div></div>
     <div class="stat"><div class="stat-num" id="stPending">-</div><div class="stat-label">입금 대기</div></div>
     <div class="stat"><div class="stat-num" id="stDone">-</div><div class="stat-label">발송 완료</div></div>
     <div class="stat"><div class="stat-num" id="stReviews">-</div><div class="stat-label">후기</div></div>
   </div>
-
   <div class="tabs">
     <button class="tab active" onclick="switchTab('orders')" id="tab-orders">주문 관리 <span class="badge" id="pendingBadge">0</span></button>
     <button class="tab" onclick="switchTab('pets')" id="tab-pets">🐾 반려동물</button>
     <button class="tab" onclick="switchTab('reviews')" id="tab-reviews">후기 관리</button>
   </div>
-
   <div class="tab-content active" id="content-orders">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
@@ -171,7 +163,6 @@
     </div>
     <div id="orderList"><div class="loading-msg">불러오는 중...</div></div>
   </div>
-
   <div class="tab-content" id="content-pets">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setPetFilter('all',this)">전체</button>
@@ -182,28 +173,15 @@
     </div>
     <div id="petOrderList"><div class="loading-msg">불러오는 중...</div></div>
   </div>
-
   <div class="tab-content" id="content-reviews">
     <button class="add-rv-btn" onclick="toggleRvForm()">+ 후기 직접 등록하기</button>
     <div class="rv-form-box" id="rvFormBox">
-      <div class="form-field">
-        <label class="form-label">별점 *</label>
-        <div class="star-row">
-          <button class="star-btn" onclick="setStar(1)">★</button>
-          <button class="star-btn" onclick="setStar(2)">★</button>
-          <button class="star-btn" onclick="setStar(3)">★</button>
-          <button class="star-btn" onclick="setStar(4)">★</button>
-          <button class="star-btn" onclick="setStar(5)">★</button>
-        </div>
-      </div>
+      <div class="form-field"><label class="form-label">별점 *</label><div class="star-row"><button class="star-btn" onclick="setStar(1)">★</button><button class="star-btn" onclick="setStar(2)">★</button><button class="star-btn" onclick="setStar(3)">★</button><button class="star-btn" onclick="setStar(4)">★</button><button class="star-btn" onclick="setStar(5)">★</button></div></div>
       <div class="form-field"><label class="form-label">닉네임 *</label><input type="text" class="form-input" id="rvName" placeholder="예: 30대 직장인"></div>
       <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option></select></div>
       <div class="form-field"><label class="form-label">한줄 제목 *</label><input type="text" class="form-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요"></div>
       <div class="form-field"><label class="form-label">상세 내용 *</label><textarea class="form-textarea" id="rvContent" placeholder="후기 내용"></textarea></div>
-      <div class="form-btns">
-        <button class="btn-cancel-form" onclick="toggleRvForm()">취소</button>
-        <button class="btn-save" onclick="saveReview()">등록하기</button>
-      </div>
+      <div class="form-btns"><button class="btn-cancel-form" onclick="toggleRvForm()">취소</button><button class="btn-save" onclick="saveReview()">등록하기</button></div>
     </div>
     <div id="reviewList"><div class="loading-msg">불러오는 중...</div></div>
   </div>
@@ -214,34 +192,23 @@ const SUPABASE_URL="https://afktkixkbcirsknahbmx.supabase.co";
 const SUPABASE_KEY="sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
+// 웹훅 URLs
+const WEBHOOK_LIGHT="https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756";
+const WEBHOOK_PREMIUM="https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu";
+const WEBHOOK_AI="https://hook.us2.make.com/xt64drmpaqux3x58ddbdi0ja9ehifbgh";
+
 let currentFilter="all",searchTerm="",allOrders=[];
 let petFilter="all",allPetOrders=[];
-
-// 라이트박스
 let lbPhotos=[],lbIdx=0;
-function openLightbox(photos,idx){
-  lbPhotos=photos;lbIdx=idx;
-  document.getElementById("lightboxImg").src=photos[idx];
-  document.getElementById("lightboxCounter").textContent=(idx+1)+" / "+photos.length;
-  document.getElementById("lightbox").classList.add("open");
-  document.body.style.overflow="hidden";
-}
+
+function openLightbox(photos,idx){lbPhotos=photos;lbIdx=idx;document.getElementById("lightboxImg").src=photos[idx];document.getElementById("lightboxCounter").textContent=(idx+1)+" / "+photos.length;document.getElementById("lightbox").classList.add("open");document.body.style.overflow="hidden";}
 function closeLightbox(e){if(e.target===document.getElementById("lightbox"))closeLightboxBtn();}
 function closeLightboxBtn(){document.getElementById("lightbox").classList.remove("open");document.body.style.overflow="";}
-function lightboxNav(dir){
-  lbIdx=(lbIdx+dir+lbPhotos.length)%lbPhotos.length;
-  document.getElementById("lightboxImg").src=lbPhotos[lbIdx];
-  document.getElementById("lightboxCounter").textContent=(lbIdx+1)+" / "+lbPhotos.length;
-}
-document.addEventListener("keydown",e=>{
-  if(!document.getElementById("lightbox").classList.contains("open"))return;
-  if(e.key==="ArrowLeft")lightboxNav(-1);
-  if(e.key==="ArrowRight")lightboxNav(1);
-  if(e.key==="Escape")closeLightboxBtn();
-});
-
+function lightboxNav(dir){lbIdx=(lbIdx+dir+lbPhotos.length)%lbPhotos.length;document.getElementById("lightboxImg").src=lbPhotos[lbIdx];document.getElementById("lightboxCounter").textContent=(lbIdx+1)+" / "+lbPhotos.length;}
+document.addEventListener("keydown",e=>{if(!document.getElementById("lightbox").classList.contains("open"))return;if(e.key==="ArrowLeft")lightboxNav(-1);if(e.key==="ArrowRight")lightboxNav(1);if(e.key==="Escape")closeLightboxBtn();});
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000);}
 
+// ✅ 수정1: doLogin이 스크립트 블록 안에 정의됨 (HTML 버튼보다 아래에 있어도 onclick은 실행 시점에 찾음)
 async function doLogin(){
   const pw=document.getElementById("pwInput").value.trim();
   if(!pw)return;
@@ -251,13 +218,16 @@ async function doLogin(){
     document.getElementById("loginWrap").style.display="none";
     document.getElementById("dashboard").style.display="block";
     loadAll();
-  }else{document.getElementById("loginError").style.display="block";}
+  }else{
+    document.getElementById("loginError").style.display="block";
+  }
 }
 function doLogout(){sessionStorage.removeItem("admin");location.reload();}
 
 if(sessionStorage.getItem("admin")==="1"){
   document.getElementById("loginWrap").style.display="none";
   document.getElementById("dashboard").style.display="block";
+  loadAll();
 }else{
   document.getElementById("loginWrap").style.display="flex";
   document.getElementById("dashboard").style.display="none";
@@ -278,14 +248,8 @@ async function loadStats(){
   if(pending>0){const b=document.getElementById("pendingBadge");b.style.display="flex";b.textContent=pending;}
 }
 
-async function loadOrders(){
-  const {data}=await sb.from("orders").select("*").order("created_at",{ascending:false});
-  allOrders=data||[];renderOrders();
-}
-async function loadPetOrders(){
-  const {data}=await sb.from("pet_orders").select("*").order("id",{ascending:false});
-  allPetOrders=data||[];renderPetOrders();
-}
+async function loadOrders(){const {data}=await sb.from("orders").select("*").order("created_at",{ascending:false});allOrders=data||[];renderOrders();}
+async function loadPetOrders(){const {data}=await sb.from("pet_orders").select("*").order("id",{ascending:false});allPetOrders=data||[];renderPetOrders();}
 
 function switchTab(tab){
   document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
@@ -324,8 +288,7 @@ function renderOrders(){
       </div>
       <div class="order-actions">
         ${o.status==="confirmed"
-          ?`<div class="done-badge">✓ 발송 완료</div>
-            <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')" style="background:rgba(100,200,100,0.15);border:1px solid rgba(100,200,100,0.3);color:#88cc88;flex:none;padding:10px 14px;font-size:12px;">↺ 다시 발송</button>`
+          ?`<div class="done-badge">✓ 발송 완료</div><button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')" style="background:rgba(100,200,100,0.15);border:1px solid rgba(100,200,100,0.3);color:#88cc88;flex:none;padding:10px 14px;font-size:12px;">↺ 다시 발송</button>`
           :`<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>`}
         <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>
       </div>
@@ -357,111 +320,81 @@ function renderPetOrders(){
       <div class="order-actions">
         ${o.status==="confirmed"
           ?"<div class='done-badge'>✓ 발송 완료</div>"
-          :`<button class="generate-btn" id="pgen-${i}" onclick="generatePetReport(${i})">✦ Claude로 리포트 생성</button>
-            <button class="confirm-btn" id="psend-${i}" onclick="sendPetReport(${i})" disabled>📧 발송하기</button>`}
+          :`<button class="generate-btn" id="pgen-${i}" onclick="generatePetReport(${i})">✦ 리포트 생성 & 발송</button>`}
         <button class="del-btn" onclick="deletePetOrder('${o.order_id}')">삭제</button>
       </div>
     </div>`).join("");
 }
 
+// ✅ 수정2: Claude API 직접 호출 제거 → Make AI 웹훅으로 교체
 async function generatePetReport(idx){
   const o=allPetOrders[idx];
   const genBtn=document.getElementById("pgen-"+idx);
   genBtn.disabled=true;genBtn.innerHTML="<span class='loading'></span>생성 중...";
   const isDog=o.report_type==="dog";
-  const prompt=`당신은 반려동물 별자리 & 사주 전문가입니다. 아래 정보로 ${isDog?"강아지":"고양이"} 리포트를 작성해주세요.
 
-${isDog?"강아지":"고양이"} 이름: ${o.pet_name}
-${isDog?"견종":"묘종"}: ${o.pet_breed||"미상"}
-성별: ${o.pet_gender}
-생년월일: ${o.pet_birthdate_raw}
-별자리: ${o.pet_zodiac}
-사주 오행: ${o.pet_ohaeng}
-보호자 이름: ${o.owner_name}
-보호자 별자리: ${o.owner_zodiac}
+  const systemPrompt=`당신은 FORTUNA AI, 반려동물 별자리 & 사주 전문 상담사입니다. 반려동물 정보: ${isDog?"강아지":"고양이"} 이름 ${o.pet_name}, ${isDog?"견종":"묘종"} ${o.pet_breed||"미상"}, 성별 ${o.pet_gender}, 생년월일 ${o.pet_birthdate_raw}, 별자리 ${o.pet_zodiac}, 사주 오행 ${o.pet_ohaeng}, 보호자 이름 ${o.owner_name}, 보호자 별자리 ${o.owner_zodiac}. 따뜻하고 재밌는 문체로 리포트를 작성해주세요.`;
+  const question=`다음 6가지 항목으로 리포트를 작성해주세요. 1. 🌟 ${o.pet_name}의 별자리 성격 (${o.pet_zodiac}) 2. 🔥 사주 오행 기질 (${o.pet_ohaeng}) 3. ${isDog?"🍖":"🐟"} 밥 & 간식 스타일 4. ${isDog?"🎾 산책":"🧶 실내"} & 놀이 스타일 5. 💞 ${o.owner_name}님과의 궁합 (${o.owner_zodiac} × ${o.pet_zodiac}) 6. 💌 ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디. 마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 추가해주세요.`;
 
-다음 6가지 항목으로 리포트를 작성해주세요. 따뜻하고 재밌는 문체로 써주세요.
-
-1. 🌟 ${o.pet_name}의 별자리 성격 (${o.pet_zodiac})
-2. 🔥 ${o.pet_name}의 사주 오행 기질 (${o.pet_ohaeng})
-3. ${isDog?"🍖":"🐟"} 밥 & 간식 스타일
-4. ${isDog?"🎾":"🧶"} ${isDog?"산책":"실내"} & 놀이 스타일
-5. 💞 ${o.owner_name}님과의 궁합 (${o.owner_zodiac} × ${o.pet_zodiac})
-6. 💌 ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디
-
-마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 추가해주세요.`;
   try{
-    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1500,messages:[{role:"user",content:prompt}]})});
-    const data=await res.json();
-    const report=data.content?.[0]?.text||"생성 실패";
-    allPetOrders[idx].report_content=report;
+    // 1단계: AI 웹훅으로 리포트 생성
+    const aiRes=await fetch(WEBHOOK_AI,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({system_prompt:systemPrompt,question:question})});
+    const report=await aiRes.text();
+    if(!report||report.trim().length<50)throw new Error("리포트 생성 실패");
+
+    // 미리보기 표시
     const prev=document.getElementById("pprev-"+idx);
     prev.textContent=report;prev.style.display="block";
-    genBtn.innerHTML="✓ 생성완료 (다시생성)";genBtn.disabled=false;
-    document.getElementById("psend-"+idx).disabled=false;
-    showToast("리포트 생성 완료! 확인 후 발송해주세요 🐾");
-  }catch(e){genBtn.innerHTML="✦ Claude로 리포트 생성";genBtn.disabled=false;showToast("생성 오류가 발생했습니다");}
-}
+    genBtn.innerHTML="<span class='loading'></span>발송 중...";
 
-async function sendPetReport(idx){
-  const o=allPetOrders[idx];
-  if(!o.report_content){showToast("먼저 리포트를 생성해주세요");return;}
-  const sendBtn=document.getElementById("psend-"+idx);
-  sendBtn.disabled=true;sendBtn.innerHTML="<span class='loading'></span>발송 중...";
-  try{
-    await fetch("https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request_id:o.order_id,client_name:o.owner_name,recipient_email:o.email,report_text:o.report_content,report_type:o.report_type,doc_name:`포르투나_${o.pet_name}_별자리사주리포트`,pet_name:o.pet_name,pet_zodiac:o.pet_zodiac,status:"confirmed"})});
+    // 2단계: 발송 웹훅으로 전송
+    await fetch(WEBHOOK_LIGHT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+      request_id:o.order_id,client_name:o.owner_name,recipient_email:o.email,
+      report_text:report,report_type:o.report_type,
+      doc_name:`포르투나_${o.pet_name}_별자리사주리포트`,
+      pet_name:o.pet_name,pet_zodiac:o.pet_zodiac,status:"confirmed"
+    })});
+
+    // Supabase 업데이트
     await sb.from("pet_orders").update({status:"confirmed"}).eq("order_id",o.order_id);
     allPetOrders[idx].status="confirmed";
-    sendBtn.textContent="✓ 발송 완료";
+    genBtn.textContent="✓ 발송 완료";
     showToast(`${o.pet_name} 리포트 발송 완료! 🐾`);
     await loadStats();
-  }catch(e){sendBtn.disabled=false;sendBtn.textContent="📧 발송하기";showToast("발송 오류가 발생했습니다");}
+  }catch(e){
+    console.error(e);
+    genBtn.disabled=false;genBtn.innerHTML="✦ 리포트 생성 & 발송";
+    showToast("오류: "+e.message);
+  }
 }
 
-async function deletePetOrder(orderId){
-  if(!confirm("정말 삭제할까요?"))return;
-  await sb.from("pet_orders").delete().eq("order_id",orderId);
-  await loadPetOrders();showToast("삭제되었습니다");
-}
+async function deletePetOrder(orderId){if(!confirm("정말 삭제할까요?"))return;await sb.from("pet_orders").delete().eq("order_id",orderId);await loadPetOrders();showToast("삭제되었습니다");}
 
 function calcDominant(planets){
   const INNER=["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
   const scores={};INNER.forEach(p=>{scores[p]=0;});
-  const asc=planets.find(p=>p.name==="Ascendant");
-  const sun=planets.find(p=>p.name==="Sun");
-  const moon=planets.find(p=>p.name==="Moon");
+  const asc=planets.find(p=>p.name==="Ascendant");const sun=planets.find(p=>p.name==="Sun");const moon=planets.find(p=>p.name==="Moon");
   planets.forEach(p=>{if(!INNER.includes(p.name))return;if(p.house===1)scores[p.name]+=5;if(p.house===10)scores[p.name]+=4;});
   [sun,moon,asc].filter(Boolean).forEach(a=>{planets.forEach(p=>{if(!INNER.includes(p.name)||a.name===p.name)return;const diff=Math.abs(p.fullDegree-a.fullDegree);const angle=diff>180?360-diff:diff;if(angle<=8)scores[p.name]+=3;});});
-  let dominant="Sun",maxScore=-999;
-  INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});
-  return dominant;
+  let dominant="Sun",maxScore=-999;INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});return dominant;
 }
-
 function calcAspects(planets){
   const ASPECTS=[{name:"합",angle:0,orb:8},{name:"대립",angle:180,orb:8},{name:"삼각",angle:120,orb:8},{name:"사각",angle:90,orb:6},{name:"육각",angle:60,orb:6}];
   const PLANETS=["Sun","Moon","Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune","Pluto"];
   const results=[];
-  for(let i=0;i<PLANETS.length;i++){for(let j=i+1;j<PLANETS.length;j++){
-    const p1=planets.find(p=>p.name===PLANETS[i]);const p2=planets.find(p=>p.name===PLANETS[j]);
-    if(!p1||!p2)continue;
-    const diff=Math.abs(p1.fullDegree-p2.fullDegree);const angle=diff>180?360-diff:diff;
-    ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);});
-  }}
+  for(let i=0;i<PLANETS.length;i++){for(let j=i+1;j<PLANETS.length;j++){const p1=planets.find(p=>p.name===PLANETS[i]);const p2=planets.find(p=>p.name===PLANETS[j]);if(!p1||!p2)continue;const diff=Math.abs(p1.fullDegree-p2.fullDegree);const angle=diff>180?360-diff:diff;ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);});}}
   return results.join(", ");
 }
 
 async function confirmOrder(orderId,type){
-  const webhook=type==="premium"?"https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu":"https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756";
-  const o=allOrders.find(x=>x.order_id===orderId);
-  if(!o)return;
+  const webhook=type==="premium"?WEBHOOK_PREMIUM:WEBHOOK_LIGHT;
+  const o=allOrders.find(x=>x.order_id===orderId);if(!o)return;
   const btn=document.getElementById("btn-"+orderId);
   btn.disabled=true;btn.innerHTML="<span class='loading'></span>차트 분석 중...";
   try{
     const astroRes=await fetch("https://json.astrologyapi.com/v1/planets/tropical",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json","Authorization":"Basic "+btoa("650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8")},body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})});
-    const astroData=await astroRes.json();
-    const planets=astroData.output||astroData;
-    const dominant=calcDominant(planets);
-    const aspects=calcAspects(planets);
+    const astroData=await astroRes.json();const planets=astroData.output||astroData;
+    const dominant=calcDominant(planets);const aspects=calcAspects(planets);
     btn.innerHTML="<span class='loading'></span>발송 중...";
     await fetch(webhook,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request_id:o.order_id,client_name:o.name,recipient_email:o.email,birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,birth_place_text:o.birthplace,place:o.place_en,year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,report_text:type==="premium"?"네이탈 프리미엄 리포트":"네이탈 라이트 리포트",report_type:type,doc_name:type==="premium"?`포르투나_프리미엄_${o.name}`:`포르투나_${o.name}`,dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),status:"confirmed"})});
     await sb.from("orders").update({status:"confirmed"}).eq("order_id",orderId);
@@ -473,21 +406,14 @@ async function confirmOrder(orderId,type){
   }
 }
 
-async function deleteOrder(orderId){
-  if(!confirm("정말 삭제할까요?"))return;
-  await sb.from("orders").delete().eq("order_id",orderId);
-  await loadAll();showToast("삭제되었습니다");
-}
+async function deleteOrder(orderId){if(!confirm("정말 삭제할까요?"))return;await sb.from("orders").delete().eq("order_id",orderId);await loadAll();showToast("삭제되었습니다");}
 
 let rvStar=0;
 function toggleRvForm(){document.getElementById("rvFormBox").classList.toggle("show");}
 function setStar(n){rvStar=n;document.querySelectorAll(".star-btn").forEach((b,i)=>b.classList.toggle("on",i<n));}
 
 async function saveReview(){
-  const name=document.getElementById("rvName").value.trim();
-  const type=document.getElementById("rvType").value;
-  const title=document.getElementById("rvTitle").value.trim();
-  const content=document.getElementById("rvContent").value.trim();
+  const name=document.getElementById("rvName").value.trim();const type=document.getElementById("rvType").value;const title=document.getElementById("rvTitle").value.trim();const content=document.getElementById("rvContent").value.trim();
   if(!rvStar||!name||!type||!title||!content){showToast("모든 항목을 입력해주세요");return;}
   await sb.from("reviews").insert([{name,type,title,content,star:rvStar,date:new Date().toLocaleDateString("ko-KR"),source:"admin",approved:true}]);
   rvStar=0;document.querySelectorAll(".star-btn").forEach(b=>b.classList.remove("on"));
@@ -502,38 +428,24 @@ async function loadReviews(){
   const list=document.getElementById("reviewList");
   if(!data||!data.length){list.innerHTML="<div class='empty-msg'>등록된 후기가 없습니다</div>";return;}
   list.innerHTML=data.map(r=>{
-    // 사진 URL 파싱 (photo_urls 컬럼이 배열 또는 JSON 문자열)
     let photos=[];
-    if(r.photo_urls){
-      try{photos=typeof r.photo_urls==="string"?JSON.parse(r.photo_urls):r.photo_urls;}catch(e){}
-    }
-    const photosHtml=photos.length>0
-      ?`<div class="rv-photos">${photos.map((url,i)=>`<img class="rv-photo-thumb" src="${url}" onclick="openLightbox(${JSON.stringify(photos).replace(/"/g,"&quot;")},${i})" alt="후기 사진">`).join("")}</div>`
-      :"";
-    return `
-    <div class="rv-card" style="${r.approved?"":"border-color:rgba(255,200,0,0.3);}">
-      <div class="rv-header">
-        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==="premium"?"프리미엄":"라이트"}</span>${r.approved?"<span style='font-size:10px;color:#88cc88;margin-left:8px;'>✅ 승인됨</span>":"<span style='font-size:10px;color:#e8cc7a;margin-left:8px;'>⏳ 승인대기</span>"}</div>
-        <div class="rv-stars">${"★".repeat(r.star)}${"☆".repeat(5-r.star)}</div>
-      </div>
-      <div class="rv-title">${r.title}</div>
-      <div class="rv-content">${r.content}</div>
-      ${photosHtml}
+    if(r.photo_urls){try{photos=typeof r.photo_urls==="string"?JSON.parse(r.photo_urls):r.photo_urls;}catch(e){}}
+    const photosHtml=photos.length>0?`<div class="rv-photos">${photos.map((url,i)=>`<img class="rv-photo-thumb" src="${url}" onclick="openLightbox(${JSON.stringify(photos).replace(/"/g,"&quot;")},${i})" alt="후기 사진">`).join("")}</div>`:"";
+    return `<div class="rv-card" style="${r.approved?"":"border-color:rgba(255,200,0,0.3);"}">
+      <div class="rv-header"><div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==="premium"?"프리미엄":"라이트"}</span>${r.approved?"<span style='font-size:10px;color:#88cc88;margin-left:8px;'>✅ 승인됨</span>":"<span style='font-size:10px;color:#e8cc7a;margin-left:8px;'>⏳ 승인대기</span>"}</div><div class="rv-stars">${"★".repeat(r.star)}${"☆".repeat(5-r.star)}</div></div>
+      <div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div>${photosHtml}
       <div class="rv-date">${r.date} · ${r.source==="admin"?"관리자 등록":"고객 작성"}</div>
       <div style="margin-top:10px;display:flex;gap:8px;">
         ${!r.approved?`<button onclick="approveReview(${r.id})" style="background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.3);border-radius:6px;padding:5px 12px;color:#88cc88;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">✅ 승인</button>`:""}
         ${r.approved?`<button onclick="unapproveReview(${r.id})" style="background:none;border:1px solid rgba(255,200,0,0.3);border-radius:6px;padding:5px 12px;color:#e8cc7a;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">승인 취소</button>`:""}
         <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">삭제</button>
-      </div>
-    </div>`;
+      </div></div>`;
   }).join("");
 }
 
 async function approveReview(id){await sb.from("reviews").update({approved:true}).eq("id",id);await loadReviews();showToast("후기가 승인되었습니다 ✅");}
 async function unapproveReview(id){await sb.from("reviews").update({approved:false}).eq("id",id);await loadReviews();showToast("승인이 취소되었습니다");}
 async function deleteReview(id){await sb.from("reviews").delete().eq("id",id);await loadReviews();await loadStats();showToast("후기가 삭제되었습니다");}
-
-if(sessionStorage.getItem("admin")==="1")loadAll();
 </script>
 </body>
 </html>
