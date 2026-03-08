@@ -9,122 +9,87 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <style>
-  :root {
-    --void: #06030f;
-    --gold: #c9a84c;
-    --gold-light: #e8cc7a;
-    --text: #e8e0f0;
-    --text-dim: #9b8fb0;
-    --border: rgba(201,168,76,0.25);
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-serif: 'DM Serif Display', Georgia, serif;
-    --font-sans: 'Pretendard', sans-serif;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--void); color: var(--text); font-family: var(--font-sans); min-height: 100vh; overflow-x: hidden; }
-  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-  .star { position: absolute; border-radius: 50%; background: white; animation: twinkle var(--d, 3s) ease-in-out infinite; opacity: var(--o, 0.4); }
-  @keyframes twinkle { 0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:calc(var(--o,0.4)*0.3);transform:scale(0.7)} }
-  .nebula { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.6) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(15,8,35,0.8) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%); }
-  .container { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; padding: 40px 24px 80px; }
-  .header { text-align: center; margin-bottom: 48px; }
-  .brand { font-family: var(--font-display); font-size: 12px; font-weight: 400; letter-spacing: 0.58em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; opacity:0; animation: fadeUp 0.8s ease forwards 0.2s; }
-  .title { font-family: var(--font-display); font-size: 34px; font-weight: 300; line-height: 1.55; letter-spacing: 0.02em; margin-bottom: 14px; opacity:0; animation: fadeUp 0.8s ease forwards 0.4s; }
-  .subtitle { font-family: var(--font-sans); font-size: 14px; color: var(--text-dim); line-height: 2.0; letter-spacing: 0.03em; opacity:0; animation: fadeUp 0.8s ease forwards 0.6s; }
-  .divider { width: 60px; height: 1px; background: linear-gradient(90deg,transparent,var(--gold),transparent); margin: 24px auto; opacity:0; animation: fadeUp 0.8s ease forwards 0.5s; }
-  .card { background: linear-gradient(135deg,rgba(45,31,78,0.4) 0%,rgba(10,6,18,0.6) 100%); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-bottom: 20px; backdrop-filter: blur(10px); opacity:0; animation: fadeUp 0.8s ease forwards; }
+  :root{--void:#06030f;--gold:#c9a84c;--gold-light:#e8cc7a;--text:#e8e0f0;--text-dim:#9b8fb0;--border:rgba(201,168,76,0.25);--font-display:'Cormorant Garamond',Georgia,serif;--font-serif:'DM Serif Display',Georgia,serif;--font-sans:'Pretendard',sans-serif;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--void);color:var(--text);font-family:var(--font-sans);min-height:100vh;overflow-x:hidden;}
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+  .star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) ease-in-out infinite;opacity:var(--o,0.4);}
+  @keyframes twinkle{0%,100%{opacity:var(--o,0.4);transform:scale(1)}50%{opacity:calc(var(--o,0.4)*0.3);transform:scale(0.7)}}
+  .nebula{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.6) 0%,transparent 70%),radial-gradient(ellipse 50% 60% at 80% 70%,rgba(15,8,35,0.8) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%);}
+  .container{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:40px 24px 80px;}
+  .header{text-align:center;margin-bottom:48px;}
+  .brand{font-family:var(--font-display);font-size:12px;font-weight:400;letter-spacing:0.58em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 0.8s ease forwards 0.2s;}
+  .title{font-family:var(--font-display);font-size:34px;font-weight:300;line-height:1.55;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:fadeUp 0.8s ease forwards 0.4s;}
+  .subtitle{font-family:var(--font-sans);font-size:14px;color:var(--text-dim);line-height:2.0;letter-spacing:0.03em;opacity:0;animation:fadeUp 0.8s ease forwards 0.6s;}
+  .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:24px auto;opacity:0;animation:fadeUp 0.8s ease forwards 0.5s;}
+  .card{background:linear-gradient(135deg,rgba(45,31,78,0.4) 0%,rgba(10,6,18,0.6) 100%);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;backdrop-filter:blur(10px);opacity:0;animation:fadeUp 0.8s ease forwards;}
   .card:nth-child(1){animation-delay:0.7s}.card:nth-child(2){animation-delay:0.9s}.card:nth-child(3){animation-delay:1.1s}
-  .card-title { font-family: var(--font-display); font-size: 12px; font-weight: 500; letter-spacing: 0.40em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
-  .field { margin-bottom: 18px; }
-  label { display: block; font-family: var(--font-sans); font-size: 13px; font-weight: 400; color: var(--text-dim); letter-spacing: 0.08em; margin-bottom: 8px; }
-  label span.req { color: var(--gold); margin-left: 3px; }
-  input,select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 13px 16px; color: var(--text); font-family: var(--font-sans); font-size: 15px; letter-spacing: 0.02em; outline: none; transition: border-color 0.3s,background 0.3s; -webkit-appearance:none; }
-  input:focus,select:focus { border-color: var(--gold); background: rgba(201,168,76,0.05); }
-  select option { background: #1a1030; color: var(--text); }
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .hint { font-family: var(--font-sans); font-size: 12px; color: var(--text-dim); margin-top: 6px; line-height: 1.7; letter-spacing: 0.02em; }
-  .account-box { background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 8px; }
-  .account-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; gap: 8px; }
-  .account-label { color: var(--text-dim); font-size: 13px; letter-spacing: 0.04em; white-space: nowrap; flex-shrink: 0; }
-  .account-value { color: var(--text); font-weight: 600; font-size: 14px; letter-spacing: 0.02em; word-break: keep-all; }
-  .amount { font-family: var(--font-serif); font-size: 26px; color: var(--gold); font-weight: 400; letter-spacing: 0.02em; }
-  .copy-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--gold); font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; }
-  .copy-btn:hover { background: rgba(201,168,76,0.1); }
-  .submit-btn { width: 100%; background: linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%); background-size: 200% 200%; border: none; border-radius: 12px; padding: 18px; color: #0a0612; font-family: var(--font-display); font-size: 15px; font-weight: 500; letter-spacing: 0.08em; cursor: pointer; transition: all 0.3s; animation: shimmer 3s ease infinite; margin-top: 8px; white-space: nowrap; }
-  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-  @keyframes shimmer { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
-  .notice { font-family: var(--font-sans); font-size: 12px; color: var(--text-dim); line-height: 2.1; text-align: center; margin-top: 16px; letter-spacing: 0.03em; }
-  .success-screen { display: none; text-align: center; padding: 80px 20px; }
-  .success-icon { font-size: 48px; margin-bottom: 24px; animation: pulse 2s ease infinite; }
-  @keyframes pulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.1)} }
-  .success-badge { display: inline-block; font-size: 10px; letter-spacing: 0.4em; color: var(--gold); border: 1px solid rgba(201,168,76,0.3); border-radius: 20px; padding: 5px 16px; margin-bottom: 20px; text-transform: uppercase; }
-  .success-title { font-family: var(--font-display); font-size: 28px; font-weight: 300; letter-spacing: 0.04em; margin-bottom: 12px; color: var(--gold); }
-  .success-divider { width: 60px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 20px auto; }
-  .success-text { font-family: var(--font-sans); font-size: 13px; color: var(--text-dim); line-height: 2.2; letter-spacing: 0.03em; }
-  .success-box { background: linear-gradient(135deg, rgba(36,22,63,0.3), rgba(7,3,18,0.6)); border: 1px solid rgba(201,168,76,0.15); border-radius: 16px; padding: 20px 24px; margin: 28px auto; max-width: 380px; text-align: left; }
-  .success-box-row { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-dim); line-height: 1.8; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .success-box-row:last-child { border-bottom: none; }
-  .success-box-icon { color: var(--gold); font-size: 14px; margin-top: 2px; flex-shrink: 0; }
-  .success-home { display: inline-block; margin-top: 32px; font-size: 13px; color: var(--text-dim); letter-spacing: 0.06em; text-decoration: none; border: 1px solid rgba(201,168,76,0.15); border-radius: 30px; padding: 10px 24px; transition: all .3s; }
-  .success-home:hover { border-color: rgba(201,168,76,0.35); color: var(--gold); }
-  .admin-panel { display: none; position: fixed; bottom: 20px; right: 20px; z-index: 100; }
-  .admin-toggle { background: rgba(45,31,78,0.9); border: 1px solid var(--border); border-radius: 50px; padding: 10px 20px; color: var(--gold); font-family: var(--font-display); font-size: 12px; letter-spacing: 0.15em; cursor: pointer; backdrop-filter: blur(10px); }
-  .admin-drawer { display: none; background: rgba(10,6,18,0.95); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 12px; backdrop-filter: blur(20px); max-width: 340px; width: 90vw; max-height: 70vh; overflow-y: auto; }
-  .admin-title { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 16px; text-transform: uppercase; }
-  .order-item { border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 10px; font-size: 12px; line-height: 1.8; }
-  .order-name { font-family: var(--font-sans); font-size: 14px; color: var(--text); margin-bottom: 4px; }
-  .order-info { color: var(--text-dim); font-size: 12px; letter-spacing: 0.02em; }
-  .confirm-btn { width: 100%; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 8px; padding: 10px; color: #0a0612; font-family: var(--font-display); font-size: 12px; font-weight: 500; letter-spacing: 0.12em; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
-  .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-  .confirm-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #444; color: #888; }
-  .no-orders { color: var(--text-dim); font-size: 13px; text-align: center; padding: 20px 0; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); background: rgba(201,168,76,0.15); border: 1px solid var(--gold); border-radius: 50px; padding: 12px 24px; color: var(--gold); font-family: var(--font-sans); font-size: 13px; letter-spacing: 0.04em; z-index: 999; transition: transform 0.3s ease; backdrop-filter: blur(10px); white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .loading { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(10,6,18,0.3); border-top-color: #0a0612; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  .reviews-section { max-width: 560px; margin: 0 auto; padding: 0 24px 80px; position: relative; z-index: 1; }
-  .reviews-header { text-align: center; margin-bottom: 32px; }
-  .reviews-title { font-family: var(--font-display); font-size: 24px; font-weight: 300; letter-spacing: 0.04em; color: var(--text); margin-bottom: 8px; }
-  .reviews-sub { font-family: var(--font-sans); font-size: 12px; color: var(--text-dim); letter-spacing: 0.04em; }
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
-  .stat-card { background: linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6)); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
-  .stat-num { font-family: var(--font-serif); font-size: 28px; color: var(--gold); font-weight: 400; }
-  .stat-lbl { font-family: var(--font-sans); font-size: 11px; color: var(--text-dim); margin-top: 4px; letter-spacing: 0.06em; }
-  .review-card { background: linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5)); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 14px; }
-  .rv-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .rv-name { font-family: var(--font-sans); font-size: 15px; color: var(--text); letter-spacing: 0.02em; }
-  .rv-badge { font-family: var(--font-display); font-size: 11px; letter-spacing: 0.14em; padding: 3px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--gold); display: inline-block; margin-top: 4px; }
-  .rv-stars { color: var(--gold); font-size: 13px; letter-spacing: 2px; }
-  .rv-title { font-family: var(--font-sans); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 6px; line-height: 1.6; }
-  .rv-content { font-family: var(--font-sans); font-size: 13px; color: var(--text-dim); line-height: 2.0; letter-spacing: 0.02em; }
-  .rv-date { font-family: var(--font-sans); font-size: 11px; color: rgba(155,143,176,0.4); margin-top: 10px; text-align: right; letter-spacing: 0.04em; }
-  .write-review-btn { width: 100%; background: none; border: 1px solid var(--border); border-radius: 50px; padding: 16px; color: var(--gold); font-family: var(--font-display); font-size: 14px; letter-spacing: 0.22em; cursor: pointer; transition: all 0.3s; margin-top: 8px; }
-  .write-review-btn:hover { background: rgba(201,168,76,0.1); }
-  .no-reviews-msg { text-align: center; padding: 40px 20px; color: var(--text-dim); font-size: 13px; line-height: 2.2; letter-spacing: 0.03em; }
-  .rv-overlay { display: none; position: fixed; inset: 0; background: rgba(6,3,15,0.92); z-index: 200; backdrop-filter: blur(10px); justify-content: center; align-items: center; padding: 20px; }
-  .rv-overlay.show { display: flex; }
-  .rv-form { background: linear-gradient(135deg,rgba(45,31,78,0.95),rgba(10,6,18,0.98)); border: 1px solid var(--border); border-radius: 20px; padding: 28px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
-  .rv-form-title { font-family: var(--font-display); font-size: 11px; font-weight: 500; letter-spacing: 0.42em; color: var(--gold); text-transform: uppercase; margin-bottom: 20px; }
-  .rv-field { margin-bottom: 14px; }
-  .rv-label { display: block; font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.06em; color: var(--text-dim); margin-bottom: 7px; }
-  .rv-input, .rv-textarea, .rv-select { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); border-radius: 8px; padding: 11px 14px; color: var(--text); font-family: var(--font-sans); font-size: 13px; letter-spacing: 0.02em; outline: none; transition: border-color 0.3s; -webkit-appearance: none; }
-  .rv-input:focus,.rv-textarea:focus,.rv-select:focus { border-color: var(--gold); }
-  .rv-textarea { resize: vertical; min-height: 90px; }
-  .rv-select option { background: #1a1030; }
-  .star-row { display: flex; gap: 8px; margin-top: 4px; }
-  .star-pick { font-size: 22px; cursor: pointer; color: rgba(201,168,76,0.2); transition: color 0.15s; background: none; border: none; padding: 0; }
-  .star-pick.on { color: var(--gold); }
-  .rv-btns { display: flex; gap: 10px; margin-top: 20px; }
-  .rv-submit { flex: 1; background: linear-gradient(135deg,#c9a84c,#e8cc7a); border: none; border-radius: 10px; padding: 13px; color: #0a0612; font-family: var(--font-display); font-size: 13px; font-weight: 500; letter-spacing: 0.14em; cursor: pointer; }
-  .rv-cancel { background: none; border: 1px solid var(--border); border-radius: 10px; padding: 13px 18px; color: var(--text-dim); font-family: var(--font-sans); font-size: 12px; letter-spacing: 0.04em; cursor: pointer; }
+  .card-title{font-family:var(--font-display);font-size:12px;font-weight:500;letter-spacing:0.40em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
+  .field{margin-bottom:18px;}
+  label{display:block;font-family:var(--font-sans);font-size:13px;font-weight:400;color:var(--text-dim);letter-spacing:0.08em;margin-bottom:8px;}
+  label span.req{color:var(--gold);margin-left:3px;}
+  input,select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:13px 16px;color:var(--text);font-family:var(--font-sans);font-size:15px;letter-spacing:0.02em;outline:none;transition:border-color 0.3s,background 0.3s;-webkit-appearance:none;}
+  input:focus,select:focus{border-color:var(--gold);background:rgba(201,168,76,0.05);}
+  select option{background:#1a1030;color:var(--text);}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .hint{font-family:var(--font-sans);font-size:12px;color:var(--text-dim);margin-top:6px;line-height:1.7;letter-spacing:0.02em;}
+  .price-box{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:20px 24px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+  .price-label{color:var(--text-dim);font-size:14px;}
+  .amount{font-family:var(--font-serif);font-size:28px;color:var(--gold);font-weight:400;}
+  .submit-btn{width:100%;background:linear-gradient(135deg,#c9a84c 0%,#e8cc7a 50%,#c9a84c 100%);background-size:200% 200%;border:none;border-radius:12px;padding:18px;color:#0a0612;font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:all 0.3s;animation:shimmer 3s ease infinite;margin-top:8px;white-space:nowrap;}
+  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4);}
+  .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;animation:none;}
+  @keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .notice{font-family:var(--font-sans);font-size:12px;color:var(--text-dim);line-height:2.1;text-align:center;margin-top:16px;letter-spacing:0.03em;}
+  .pay-methods{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+  .pay-method{font-size:10px;color:var(--text-dim);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:3px 10px;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-family:var(--font-sans);font-size:13px;letter-spacing:0.04em;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(10,6,18,0.3);border-top-color:#0a0612;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .reviews-section{padding:0 0 80px;}
+  .reviews-header{text-align:center;margin-bottom:32px;}
+  .reviews-title{font-family:var(--font-display);font-size:24px;font-weight:300;letter-spacing:0.04em;color:var(--text);margin-bottom:8px;}
+  .reviews-sub{font-family:var(--font-sans);font-size:12px;color:var(--text-dim);letter-spacing:0.04em;}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+  .stat-card{background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+  .stat-num{font-family:var(--font-serif);font-size:28px;color:var(--gold);font-weight:400;}
+  .stat-lbl{font-family:var(--font-sans);font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:0.06em;}
+  .review-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;cursor:pointer;}
+  .rv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .rv-name{font-family:var(--font-sans);font-size:15px;color:var(--text);}
+  .rv-badge{font-family:var(--font-display);font-size:11px;letter-spacing:0.14em;padding:3px 8px;border-radius:20px;border:1px solid var(--border);color:var(--gold);display:inline-block;margin-top:4px;}
+  .rv-stars{color:var(--gold);font-size:13px;letter-spacing:2px;}
+  .rv-title{font-family:var(--font-sans);font-size:15px;font-weight:600;margin-bottom:6px;line-height:1.6;}
+  .rv-content{font-family:var(--font-sans);font-size:13px;color:var(--text-dim);line-height:2.0;}
+  .rv-date{font-family:var(--font-sans);font-size:11px;color:rgba(155,143,176,0.4);margin-top:10px;text-align:right;}
+  .write-review-btn{width:100%;background:none;border:1px solid var(--border);border-radius:50px;padding:16px;color:var(--gold);font-family:var(--font-display);font-size:14px;letter-spacing:0.22em;cursor:pointer;transition:all 0.3s;margin-top:8px;}
+  .write-review-btn:hover{background:rgba(201,168,76,0.1);}
+  .no-reviews-msg{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;line-height:2.2;}
+  .rv-overlay{display:none;position:fixed;inset:0;background:rgba(6,3,15,0.92);z-index:200;backdrop-filter:blur(10px);justify-content:center;align-items:center;padding:20px;}
+  .rv-overlay.show{display:flex;}
+  .rv-form{background:linear-gradient(135deg,rgba(45,31,78,0.95),rgba(10,6,18,0.98));border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+  .rv-form-title{font-family:var(--font-display);font-size:11px;font-weight:500;letter-spacing:0.42em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
+  .rv-field{margin-bottom:14px;}
+  .rv-label{display:block;font-family:var(--font-sans);font-size:11px;letter-spacing:0.06em;color:var(--text-dim);margin-bottom:7px;}
+  .rv-input,.rv-textarea,.rv-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:11px 14px;color:var(--text);font-family:var(--font-sans);font-size:13px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
+  .rv-input:focus,.rv-textarea:focus,.rv-select:focus{border-color:var(--gold);}
+  .rv-textarea{resize:vertical;min-height:90px;}
+  .rv-select option{background:#1a1030;}
+  .star-row{display:flex;gap:8px;margin-top:4px;}
+  .star-pick{font-size:22px;cursor:pointer;color:rgba(201,168,76,0.2);transition:color 0.15s;background:none;border:none;padding:0;}
+  .star-pick.on{color:var(--gold);}
+  .rv-btns{display:flex;gap:10px;margin-top:20px;}
+  .rv-submit{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:10px;padding:13px;color:#0a0612;font-family:var(--font-display);font-size:13px;font-weight:500;letter-spacing:0.14em;cursor:pointer;}
+  .rv-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text-dim);font-family:var(--font-sans);font-size:12px;cursor:pointer;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://js.tosspayments.com/v2/standard"></script>
 <script>
-const SUPABASE_URL = 'https://afktkixkbcirsknahbmx.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 </script>
 </head>
 <body>
@@ -132,7 +97,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 <div class="stars" id="stars"></div>
 <div class="toast" id="toast"></div>
 
-<!-- ✅ mainForm -->
 <div class="container" id="mainForm">
   <div class="header">
     <div class="brand">FORTUNA</div>
@@ -143,7 +107,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   <div style="background:linear-gradient(135deg,rgba(45,31,78,0.5),rgba(10,6,18,0.7));border:1px solid rgba(201,168,76,0.3);border-radius:16px;padding:24px;margin-bottom:32px;opacity:0;animation:fadeUp 0.8s ease forwards 0.7s;">
     <div style="font-family:var(--font-display);font-size:11px;letter-spacing:0.38em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;">✦ 라이트 리포트 구성</div>
-    <div style="font-family:var(--font-sans);font-size:14px;line-height:2.2;color:var(--text-dim);letter-spacing:0.02em;">
+    <div style="font-family:var(--font-sans);font-size:14px;line-height:2.2;color:var(--text-dim);">
       ✓ &nbsp;도미넌트 플래닛 — 나를 움직이는 핵심 에너지<br>
       ✓ &nbsp;태양 · 달 · 상승점 해석<br>
       ✓ &nbsp;수성 · 금성 · 화성 · 목성 · 토성 해석<br>
@@ -151,7 +115,7 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       ✓ &nbsp;일상 활용 팁 + 주의 패턴
     </div>
     <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(201,168,76,0.15);display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-family:var(--font-sans);font-size:13px;color:var(--text-dim);letter-spacing:0.02em;">더 깊은 분석이 필요하다면?</span>
+      <span style="font-family:var(--font-sans);font-size:13px;color:var(--text-dim);">더 깊은 분석이 필요하다면?</span>
       <a href="premium.html" style="font-family:var(--font-display);font-size:12px;letter-spacing:0.12em;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:5px 14px;">프리미엄 보기 →</a>
     </div>
   </div>
@@ -175,30 +139,30 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   </div>
 
   <div class="card">
-    <div class="card-title">✦ 입금 안내</div>
-    <div class="account-box">
-      <div class="account-row"><span class="account-label">금액</span><span class="amount">9,900원</span></div>
-      <div class="account-row"><span class="account-label">은행</span><span class="account-value">국민은행</span></div>
-      <div class="account-row"><span class="account-label">계좌번호</span><div style="display:flex;align-items:center;gap:8px;"><span class="account-value">013-21-0780-866</span><button class="copy-btn" onclick="copyAccount()">복사</button></div></div>
-      <div class="account-row"><span class="account-label">예금주</span><span class="account-value">오주영</span></div>
+    <div class="card-title">✦ 결제</div>
+    <div class="price-box">
+      <span class="price-label">라이트 리포트</span>
+      <span class="amount">9,900원</span>
     </div>
-    <p class="hint" style="text-align:center;margin-top:12px;">입금 후 아래 버튼을 눌러 신청을 완료해주세요<br>입금자명을 <strong style="color:var(--gold)">본인 이름</strong>으로 해주세요</p>
-  </div>
-
-  <div class="card">
-    <div class="card-title">✦ 신청 완료</div>
-    <button class="submit-btn" onclick="submitOrder()">입금 완료 · 리포트 신청하기</button>
-    <p class="notice">개인 맞춤 제작 상품으로 환불이 어렵습니다<br>입금 확인 후 24시간 내 이메일로 발송됩니다</p>
+    <button class="submit-btn" id="payBtn" onclick="startPayment()">카드로 결제하기 ✦</button>
+    <div class="pay-methods">
+      <span class="pay-method">신용카드</span>
+      <span class="pay-method">체크카드</span>
+      <span class="pay-method">카카오페이</span>
+      <span class="pay-method">네이버페이</span>
+      <span class="pay-method">토스페이</span>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:rgba(155,143,176,0.5);">🔒 토스페이먼츠 보안 결제</div>
+    <p class="notice">개인 맞춤 제작 상품으로 환불이 어렵습니다<br>결제 완료 후 24시간 내 이메일로 발송됩니다</p>
   </div>
 
   <div style="text-align:center;margin-top:16px;">
     <a href="reviews.html" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;">✦ 리포트 후기 보기</a>
     &nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="premium.html" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-dim)'">✦ 프리미엄 리포트 보기</a>
+    <a href="premium.html" style="font-family:var(--font-sans);font-size:12px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;">✦ 프리미엄 리포트 보기</a>
   </div>
 
-  <!-- 후기 섹션 -->
-  <div class="reviews-section" id="reviewsSection">
+  <div class="reviews-section">
     <div class="reviews-header">
       <div class="divider"></div>
       <h2 class="reviews-title">리포트를 받아보신 분들의 이야기</h2>
@@ -212,35 +176,19 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     <div id="rvGrid"></div>
     <button class="write-review-btn" onclick="openRvForm()">✦ 후기 작성하기</button>
   </div>
-</div><!-- ✅ /mainForm -->
-
-<!-- ✅ 성공 화면 — mainForm 밖 -->
-<div class="container success-screen" id="successScreen">
-  <div class="success-icon">🌙</div>
-  <div class="success-badge">Order Confirmed</div>
-  <div class="success-title">신청이 완료되었습니다<br><em>✦ 감사합니다 ✦</em></div>
-  <div class="success-divider"></div>
-  <p class="success-text">AI가 찍어내는 결과가 아닌,<br>당신만을 위해 정성스럽게 제작되는<br>개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
-  <div class="success-box">
-    <div class="success-box-row"><span class="success-box-icon">✦</span><span>입금 확인 후 제작을 시작합니다</span></div>
-    <div class="success-box-row"><span class="success-box-icon">📧</span><span>24시간 내 입력하신 이메일로 PDF 리포트를 발송해드립니다</span></div>
-    <div class="success-box-row"><span class="success-box-icon">🌙</span><span>스팸함도 꼭 확인해주세요</span></div>
-  </div>
-  <a href="index.html" class="success-home">← 메인으로 돌아가기</a>
 </div>
 
-<!-- 후기 작성 폼 -->
 <div class="rv-overlay" id="rvOverlay">
   <div class="rv-form">
     <div class="rv-form-title">✦ 후기 작성</div>
-    <div class="rv-field"><label class="rv-label">별점 *</label><div class="star-row" id="rvStarRow"><button class="star-pick" onclick="pickStar(1)">★</button><button class="star-pick" onclick="pickStar(2)">★</button><button class="star-pick" onclick="pickStar(3)">★</button><button class="star-pick" onclick="pickStar(4)">★</button><button class="star-pick" onclick="pickStar(5)">★</button></div></div>
+    <div class="rv-field"><label class="rv-label">별점 *</label><div class="star-row"><button class="star-pick" onclick="pickStar(1)">★</button><button class="star-pick" onclick="pickStar(2)">★</button><button class="star-pick" onclick="pickStar(3)">★</button><button class="star-pick" onclick="pickStar(4)">★</button><button class="star-pick" onclick="pickStar(5)">★</button></div></div>
     <div class="rv-field"><label class="rv-label">닉네임 *</label><input type="text" class="rv-input" id="rvName" placeholder="예: 30대 직장인, 물고기자리"></div>
     <div class="rv-field"><label class="rv-label">리포트 종류 *</label><select class="rv-select" id="rvType"><option value="">선택해주세요</option><option value="light">라이트 리포트</option><option value="premium">프리미엄 리포트</option></select></div>
     <div class="rv-field"><label class="rv-label">한줄 제목 *</label><input type="text" class="rv-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요"></div>
     <div class="rv-field"><label class="rv-label">상세 후기 *</label><textarea class="rv-textarea" id="rvContent" placeholder="리포트를 받고 느낀 점을 자유롭게 적어주세요 😊"></textarea></div>
     <div class="rv-field">
       <label class="rv-label">사진 첨부 (최대 3장, 선택)</label>
-      <label style="display:block;border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);transition:all .2s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.45)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.25)'">
+      <label style="display:block;border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:14px;text-align:center;cursor:pointer;background:rgba(255,255,255,0.02);">
         <input type="file" id="rvPhotos" accept="image/*" multiple style="display:none;" onchange="previewRvPhotos(this)">
         <span style="font-size:12px;color:var(--text-dim);">📷 <span style="color:var(--gold);">클릭하여 사진 선택</span> (JPG, PNG · 최대 3장)</span>
       </label>
@@ -250,16 +198,6 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   </div>
 </div>
 
-<!-- 관리자 패널 -->
-<div class="admin-panel" id="adminPanel">
-  <div class="admin-drawer" id="adminDrawer">
-    <div class="admin-title">✦ 주문 관리</div>
-    <div id="orderList"></div>
-  </div>
-  <button class="admin-toggle" onclick="toggleAdmin()">관리자 ✦</button>
-</div>
-
-<!-- 후기 모달 -->
 <div id="rvModal" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:#0d0820;border:1px solid rgba(201,168,76,0.25);border-radius:22px;max-width:480px;width:100%;padding:28px 24px;position:relative;margin:auto;">
     <button onclick="document.getElementById('rvModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#9b8fb0;font-size:22px;cursor:pointer;">✕</button>
@@ -268,106 +206,121 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 </div>
 
 <script>
-const starsEl = document.getElementById('stars');
-for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star';const size=Math.random()*2.5+0.5;s.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s;`;starsEl.appendChild(s);}
+const starsEl=document.getElementById('stars');
+for(let i=0;i<120;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2.5+0.5;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--o:${0.2+Math.random()*0.6};animation-delay:${Math.random()*4}s;`;starsEl.appendChild(s);}
 
-const CITIES = {"서울":{en:"Seoul",lat:37.5665,lon:126.9780},"부산":{en:"Busan",lat:35.1796,lon:129.0756},"인천":{en:"Incheon",lat:37.4563,lon:126.7052},"대구":{en:"Daegu",lat:35.8714,lon:128.6014},"대전":{en:"Daejeon",lat:36.3504,lon:127.3845},"광주":{en:"Gwangju",lat:35.1595,lon:126.8526},"울산":{en:"Ulsan",lat:35.5384,lon:129.3114},"수원":{en:"Suwon",lat:37.2636,lon:127.0286},"성남":{en:"Seongnam",lat:37.4449,lon:127.1388},"고양":{en:"Goyang",lat:37.6584,lon:126.8320},"용인":{en:"Yongin",lat:37.2411,lon:127.1776},"창원":{en:"Changwon",lat:35.2284,lon:128.6811},"청주":{en:"Cheongju",lat:36.6424,lon:127.4890},"전주":{en:"Jeonju",lat:35.8242,lon:127.1480},"천안":{en:"Cheonan",lat:36.8151,lon:127.1139},"안산":{en:"Ansan",lat:37.3236,lon:126.8219},"안양":{en:"Anyang",lat:37.3943,lon:126.9568},"남양주":{en:"Namyangju",lat:37.6360,lon:127.2165},"화성":{en:"Hwaseong",lat:37.1996,lon:126.8316},"부천":{en:"Bucheon",lat:37.5035,lon:126.7660},"김해":{en:"Gimhae",lat:35.2285,lon:128.8893},"평택":{en:"Pyeongtaek",lat:36.9921,lon:127.1129},"포항":{en:"Pohang",lat:36.0190,lon:129.3435},"원주":{en:"Wonju",lat:37.3422,lon:127.9201},"파주":{en:"Paju",lat:37.7601,lon:126.7800},"광명":{en:"Gwangmyeong",lat:37.4784,lon:126.8648},"의정부":{en:"Uijeongbu",lat:37.7381,lon:127.0337},"하남":{en:"Hanam",lat:37.5392,lon:127.2148},"경주":{en:"Gyeongju",lat:35.8562,lon:129.2247},"진주":{en:"Jinju",lat:35.1799,lon:128.1076},"구미":{en:"Gumi",lat:36.1197,lon:128.3446},"군산":{en:"Gunsan",lat:35.9676,lon:126.7368},"익산":{en:"Iksan",lat:35.9483,lon:126.9576},"목포":{en:"Mokpo",lat:34.8118,lon:126.3922},"여수":{en:"Yeosu",lat:34.7604,lon:127.6622},"순천":{en:"Suncheon",lat:34.9506,lon:127.4872},"제주":{en:"Jeju City",lat:33.4996,lon:126.5312},"제주시":{en:"Jeju City",lat:33.4996,lon:126.5312},"서귀포":{en:"Seogwipo",lat:33.2541,lon:126.5600},"춘천":{en:"Chuncheon",lat:37.8813,lon:127.7300},"강릉":{en:"Gangneung",lat:37.7519,lon:128.8761},"속초":{en:"Sokcho",lat:38.2048,lon:128.5912},"동해":{en:"Donghae",lat:37.5244,lon:129.1140},"충주":{en:"Chungju",lat:36.9910,lon:127.9259},"제천":{en:"Jecheon",lat:37.1326,lon:128.1909},"당진":{en:"Dangjin",lat:36.8930,lon:126.6280},"아산":{en:"Asan",lat:36.7898,lon:127.0015},"공주":{en:"Gongju",lat:36.4465,lon:127.1192},"논산":{en:"Nonsan",lat:36.1870,lon:127.0990},"서산":{en:"Seosan",lat:36.7848,lon:126.4503},"김천":{en:"Gimcheon",lat:36.1398,lon:128.1138},"경산":{en:"Gyeongsan",lat:35.8253,lon:128.7414},"안동":{en:"Andong",lat:36.5684,lon:128.7294},"통영":{en:"Tongyeong",lat:34.8544,lon:128.4333},"거제":{en:"Geoje",lat:34.8806,lon:128.6218},"밀양":{en:"Miryang",lat:35.5035,lon:128.7460},"양산":{en:"Yangsan",lat:35.3350,lon:129.0370},"나주":{en:"Naju",lat:35.0160,lon:126.7108},"광양":{en:"Gwangyang",lat:34.9407,lon:127.6960},"정읍":{en:"Jeongeup",lat:35.5696,lon:126.8560},"남원":{en:"Namwon",lat:35.4165,lon:127.3901},"김포":{en:"Gimpo",lat:37.6152,lon:126.7156},"이천":{en:"Icheon",lat:37.2722,lon:127.4349},"오산":{en:"Osan",lat:37.1500,lon:127.0773},"군포":{en:"Gunpo",lat:37.3616,lon:126.9352},"구리":{en:"Guri",lat:37.5943,lon:127.1296},"양주":{en:"Yangju",lat:37.7854,lon:127.0460},"포천":{en:"Pocheon",lat:37.8949,lon:127.2003},"양평":{en:"Yangpyeong",lat:37.4914,lon:127.4873},"홍천":{en:"Hongcheon",lat:37.6973,lon:127.8886},"태백":{en:"Taebaek",lat:37.1642,lon:128.9854},"삼척":{en:"Samcheok",lat:37.4500,lon:129.1650},"홍성":{en:"Hongseong",lat:36.6012,lon:126.6608},"태안":{en:"Taean",lat:36.7453,lon:126.2981},"하동":{en:"Hadong",lat:35.0671,lon:127.7518},"함양":{en:"Hamyang",lat:35.5205,lon:127.7250},"거창":{en:"Geochang",lat:35.6867,lon:127.9099},"합천":{en:"Hapcheon",lat:35.5662,lon:128.1659},"남해":{en:"Namhae",lat:34.8375,lon:127.8924},"산청":{en:"Sancheong",lat:35.4157,lon:127.8735}};
+const CITIES={"서울":{en:"Seoul",lat:37.5665,lon:126.9780},"부산":{en:"Busan",lat:35.1796,lon:129.0756},"인천":{en:"Incheon",lat:37.4563,lon:126.7052},"대구":{en:"Daegu",lat:35.8714,lon:128.6014},"대전":{en:"Daejeon",lat:36.3504,lon:127.3845},"광주":{en:"Gwangju",lat:35.1595,lon:126.8526},"울산":{en:"Ulsan",lat:35.5384,lon:129.3114},"수원":{en:"Suwon",lat:37.2636,lon:127.0286},"성남":{en:"Seongnam",lat:37.4449,lon:127.1388},"고양":{en:"Goyang",lat:37.6584,lon:126.8320},"용인":{en:"Yongin",lat:37.2411,lon:127.1776},"창원":{en:"Changwon",lat:35.2284,lon:128.6811},"청주":{en:"Cheongju",lat:36.6424,lon:127.4890},"전주":{en:"Jeonju",lat:35.8242,lon:127.1480},"천안":{en:"Cheonan",lat:36.8151,lon:127.1139},"안산":{en:"Ansan",lat:37.3236,lon:126.8219},"안양":{en:"Anyang",lat:37.3943,lon:126.9568},"남양주":{en:"Namyangju",lat:37.6360,lon:127.2165},"화성":{en:"Hwaseong",lat:37.1996,lon:126.8316},"부천":{en:"Bucheon",lat:37.5035,lon:126.7660},"김해":{en:"Gimhae",lat:35.2285,lon:128.8893},"평택":{en:"Pyeongtaek",lat:36.9921,lon:127.1129},"포항":{en:"Pohang",lat:36.0190,lon:129.3435},"원주":{en:"Wonju",lat:37.3422,lon:127.9201},"파주":{en:"Paju",lat:37.7601,lon:126.7800},"광명":{en:"Gwangmyeong",lat:37.4784,lon:126.8648},"의정부":{en:"Uijeongbu",lat:37.7381,lon:127.0337},"하남":{en:"Hanam",lat:37.5392,lon:127.2148},"경주":{en:"Gyeongju",lat:35.8562,lon:129.2247},"진주":{en:"Jinju",lat:35.1799,lon:128.1076},"구미":{en:"Gumi",lat:36.1197,lon:128.3446},"군산":{en:"Gunsan",lat:35.9676,lon:126.7368},"목포":{en:"Mokpo",lat:34.8118,lon:126.3922},"여수":{en:"Yeosu",lat:34.7604,lon:127.6622},"순천":{en:"Suncheon",lat:34.9506,lon:127.4872},"제주":{en:"Jeju City",lat:33.4996,lon:126.5312},"제주시":{en:"Jeju City",lat:33.4996,lon:126.5312},"서귀포":{en:"Seogwipo",lat:33.2541,lon:126.5600},"춘천":{en:"Chuncheon",lat:37.8813,lon:127.7300},"강릉":{en:"Gangneung",lat:37.7519,lon:128.8761},"속초":{en:"Sokcho",lat:38.2048,lon:128.5912},"충주":{en:"Chungju",lat:36.9910,lon:127.9259},"당진":{en:"Dangjin",lat:36.8930,lon:126.6280},"아산":{en:"Asan",lat:36.7898,lon:127.0015},"공주":{en:"Gongju",lat:36.4465,lon:127.1192},"서산":{en:"Seosan",lat:36.7848,lon:126.4503},"김천":{en:"Gimcheon",lat:36.1398,lon:128.1138},"경산":{en:"Gyeongsan",lat:35.8253,lon:128.7414},"안동":{en:"Andong",lat:36.5684,lon:128.7294},"통영":{en:"Tongyeong",lat:34.8544,lon:128.4333},"거제":{en:"Geoje",lat:34.8806,lon:128.6218},"양산":{en:"Yangsan",lat:35.3350,lon:129.0370},"나주":{en:"Naju",lat:35.0160,lon:126.7108},"광양":{en:"Gwangyang",lat:34.9407,lon:127.6960},"김포":{en:"Gimpo",lat:37.6152,lon:126.7156},"이천":{en:"Icheon",lat:37.2722,lon:127.4349},"오산":{en:"Osan",lat:37.1500,lon:127.0773},"군포":{en:"Gunpo",lat:37.3616,lon:126.9352},"구리":{en:"Guri",lat:37.5943,lon:127.1296},"양주":{en:"Yangju",lat:37.7854,lon:127.0460},"포천":{en:"Pocheon",lat:37.8949,lon:127.2003}};
 
-const datalist=document.getElementById('cityList');
-Object.keys(CITIES).forEach(c=>{const o=document.createElement('option');o.value=c;datalist.appendChild(o);});
-
+const dl=document.getElementById('cityList');
+Object.keys(CITIES).forEach(c=>{const o=document.createElement('option');o.value=c;dl.appendChild(o);});
 document.getElementById('birthplace').addEventListener('input',function(){
   const city=CITIES[this.value.trim()];const hint=document.getElementById('coordHint');
   if(city){hint.textContent=`✓ ${city.en} (${city.lat}, ${city.lon})`;hint.style.color='var(--gold)';}
   else{hint.textContent=this.value?'도시명을 정확히 입력해주세요':'';hint.style.color='var(--text-dim)';}
 });
 
-if(location.search.includes('admin')){document.getElementById('adminPanel').style.display='block';loadOrders();}
-let adminOpen=false;
-function toggleAdmin(){adminOpen=!adminOpen;document.getElementById('adminDrawer').style.display=adminOpen?'block':'none';if(adminOpen)loadOrders();}
-function copyAccount(){navigator.clipboard.writeText('013210780866').then(()=>showToast('계좌번호가 복사되었습니다'));}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 function parseBirthdate(str){const c=str.replace(/[^\d]/g,'');if(c.length>=8)return{year:parseInt(c.substring(0,4)),month:parseInt(c.substring(4,6)),day:parseInt(c.substring(6,8))};return null;}
 function parseBirthtime(str){if(!str||!str.trim())return{hour:0,min:0};const parts=str.replace(/[^\d:]/g,'').split(':');if(parts.length>=2)return{hour:parseInt(parts[0])||0,min:parseInt(parts[1])||0};return{hour:0,min:0};}
+function lunarToSolar(y,m,d){const nyo={1940:[1,27],1941:[2,15],1942:[2,5],1943:[1,25],1944:[2,13],1945:[2,2],1946:[1,22],1947:[2,10],1948:[1,29],1949:[2,17],1950:[2,17],1951:[2,6],1952:[1,27],1953:[2,14],1954:[2,3],1955:[1,24],1956:[2,12],1957:[1,31],1958:[2,18],1959:[2,8],1960:[1,28],1961:[2,15],1962:[2,5],1963:[1,25],1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],1968:[1,30],1969:[2,17],1970:[2,6],1971:[1,27],1972:[2,15],1973:[2,3],1974:[1,23],1975:[2,11],1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],1980:[2,16],1981:[2,5],1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],1986:[2,9],1987:[1,29],1988:[2,17],1989:[2,6],1990:[1,27],1991:[2,15],1992:[2,4],1993:[1,23],1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],1998:[1,28],1999:[2,16],2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],2020:[1,25],2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],2028:[1,26],2029:[2,13],2030:[2,3]};const lmd=[29,30,29,30,29,30,29,30,29,30,29,30];const o=nyo[y];if(!o)return null;const ny=new Date(y,o[0]-1,o[1]);let days=d-1;for(let i=1;i<m;i++)days+=lmd[(i-1)%12];const s=new Date(ny.getTime()+days*86400000);return{year:s.getFullYear(),month:s.getMonth()+1,day:s.getDate()};}
 
-function lunarToSolar(lyear,lmonth,lday){const lunarMonthDays=[29,30,29,30,29,30,29,30,29,30,29,30];const newYearOffsets={1940:[1,27],1941:[2,15],1942:[2,5],1943:[1,25],1944:[2,13],1945:[2,2],1946:[1,22],1947:[2,10],1948:[1,29],1949:[2,17],1950:[2,17],1951:[2,6],1952:[1,27],1953:[2,14],1954:[2,3],1955:[1,24],1956:[2,12],1957:[1,31],1958:[2,18],1959:[2,8],1960:[1,28],1961:[2,15],1962:[2,5],1963:[1,25],1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],1968:[1,30],1969:[2,17],1970:[2,6],1971:[1,27],1972:[2,15],1973:[2,3],1974:[1,23],1975:[2,11],1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],1980:[2,16],1981:[2,5],1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],1986:[2,9],1987:[1,29],1988:[2,17],1989:[2,6],1990:[1,27],1991:[2,15],1992:[2,4],1993:[1,23],1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],1998:[1,28],1999:[2,16],2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],2020:[1,25],2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],2028:[1,26],2029:[2,13],2030:[2,3]};const offset=newYearOffsets[lyear];if(!offset)return null;const newYear=new Date(lyear,offset[0]-1,offset[1]);let days=lday-1;for(let m=1;m<lmonth;m++){days+=lunarMonthDays[(m-1)%12];}const solar=new Date(newYear.getTime()+days*86400000);return{year:solar.getFullYear(),month:solar.getMonth()+1,day:solar.getDate()};}
+// ── 토스페이먼츠 결제 ──
+async function startPayment(){
+  const name=document.getElementById('name').value.trim();
+  const gender=document.getElementById('gender').value;
+  const birthdate=document.getElementById('birthdate').value.trim();
+  const calendar=document.getElementById('calendar').value;
+  const birthtime=document.getElementById('birthtime').value.trim();
+  const birthplace=document.getElementById('birthplace').value.trim();
+  const email=document.getElementById('email').value.trim();
 
-async function submitOrder(){
-  const name=document.getElementById('name').value.trim();const gender=document.getElementById('gender').value;const birthdate=document.getElementById('birthdate').value.trim();const calendar=document.getElementById('calendar').value;const birthtime=document.getElementById('birthtime').value.trim();const birthplace=document.getElementById('birthplace').value.trim();const email=document.getElementById('email').value.trim();
   if(!name||!gender||!birthdate||!birthplace||!email){showToast('필수 항목을 모두 입력해주세요');return;}
   if(!email.includes('@')){showToast('올바른 이메일 주소를 입력해주세요');return;}
-  const city=CITIES[birthplace];if(!city){showToast('태어난 지역을 정확히 입력해주세요 (예: 서울, 부산)');return;}
-  const bdRaw=parseBirthdate(birthdate);if(!bdRaw){showToast('생년월일 형식을 확인해주세요 (예: 1990.03.15)');return;}
-  const bt=parseBirthtime(birthtime);const orderId='ORD-'+Date.now();
-  const btn=document.querySelector('.submit-btn');btn.disabled=true;btn.innerHTML='<span class="loading"></span>신청 중...';
+  const city=CITIES[birthplace];
+  if(!city){showToast('태어난 지역을 정확히 입력해주세요 (예: 서울, 부산)');return;}
+  const bdRaw=parseBirthdate(birthdate);
+  if(!bdRaw){showToast('생년월일 형식을 확인해주세요 (예: 1990.03.15)');return;}
+
+  const bt=parseBirthtime(birthtime);
   let bd=bdRaw;
-  if(calendar==='음력'){const converted=lunarToSolar(bdRaw.year,bdRaw.month,bdRaw.day);if(converted){bd=converted;showToast(`음력 → 양력 ${bd.year}.${String(bd.month).padStart(2,'0')}.${String(bd.day).padStart(2,'0')} 변환됨`);}else{showToast('음력 변환 범위 초과. 양력으로 입력해주세요');btn.disabled=false;btn.innerHTML='신청하기';return;}}
-  const orderData={order_id:orderId,name,gender,birthdate_raw:birthdate,calendar,birthtime_raw:birthtime||'모름',birthplace,email,year:bd.year,month:bd.month,day:bd.day,hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,place_en:city.en,tzone:9.0,status:'pending',created_at:new Date().toLocaleString('ko-KR')};
-  try{const dbData={order_id:orderData.order_id,name:orderData.name,email:orderData.email,gender:orderData.gender,birthdate_raw:orderData.birthdate_raw,calendar:orderData.calendar,year:orderData.year,month:orderData.month,day:orderData.day,hour:orderData.hour,min:orderData.min,birthplace:orderData.birthplace,place_en:orderData.place_en,lat:orderData.lat,lon:orderData.lon,tzone:orderData.tzone,report_type:'light',status:'pending'};const{error}=await sb.from('orders').insert([dbData]);if(error)console.error('Supabase 오류:',error);}catch(e){console.error('Supabase 저장 오류:',e);}
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');orders.push(orderData);localStorage.setItem('orders',JSON.stringify(orders));
-  // ✅ 수정: mainForm이 밖에서 닫혔으므로 정상 작동
-  setTimeout(()=>{document.getElementById('mainForm').style.display='none';document.getElementById('successScreen').style.display='block';window.scrollTo(0,0);},800);
-}
+  if(calendar==='음력'){
+    const cv=lunarToSolar(bdRaw.year,bdRaw.month,bdRaw.day);
+    if(cv){bd=cv;showToast(`음력 → 양력 ${bd.year}.${String(bd.month).padStart(2,'0')}.${String(bd.day).padStart(2,'0')} 변환됨`);}
+    else{showToast('음력 변환 범위 초과. 양력으로 입력해주세요');return;}
+  }
 
-function loadOrders(){const orders=JSON.parse(localStorage.getItem('orders')||'[]');const list=document.getElementById('orderList');if(orders.length===0){list.innerHTML='<div class="no-orders">주문이 없습니다</div>';return;}list.innerHTML=[...orders].reverse().map((o,i)=>{const realIndex=orders.length-1-i;return `<div class="order-item" id="order-${realIndex}"><div class="order-name">${o.name} · ${o.gender}</div><div class="order-info">📅 ${o.birthdate_raw} (${o.calendar})<br>⏰ ${o.hour}시 ${o.min}분<br>📍 ${o.birthplace} → ${o.place_en}<br>📧 ${o.email}<br>🕐 ${o.created_at}</div><button class="confirm-btn" onclick="confirmOrder(${realIndex})" ${o.status==='confirmed'?'disabled':''}>${o.status==='confirmed'?'✓ 발송 완료':'✦ 입금확인 · 리포트 발송'}</button></div>`;}).join('');}
+  const orderId='LIGHT-'+Date.now();
+  // 결제 성공 후 success.html에서 처리할 데이터 임시 저장
+  sessionStorage.setItem('pendingOrder',JSON.stringify({
+    order_id:orderId,name,gender,birthdate_raw:birthdate,calendar,
+    birthtime_raw:birthtime||'모름',birthplace,email,
+    year:bd.year,month:bd.month,day:bd.day,
+    hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,
+    place_en:city.en,tzone:9.0,report_type:'light',status:'pending'
+  }));
 
-function calcDominant(planets){const scores={};const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];INNER.forEach(p=>{scores[p]=0;});const asc=planets.find(p=>p.name==='Ascendant');const sun=planets.find(p=>p.name==='Sun');const moon=planets.find(p=>p.name==='Moon');planets.forEach(p=>{if(!INNER.includes(p.name))return;if(p.house===1)scores[p.name]+=5;if(p.house===10)scores[p.name]+=4;if(p.isRetro==='true')scores[p.name]-=1;});const anchors=[sun,moon,asc].filter(Boolean);planets.forEach(p=>{if(!INNER.includes(p.name))return;anchors.forEach(a=>{if(a.name===p.name)return;const diff=Math.abs(p.fullDegree-a.fullDegree);const angle=diff>180?360-diff:diff;if(angle<=8)scores[p.name]+=3;});});planets.forEach(p=>{if(!INNER.includes(p.name))return;let count=0;planets.forEach(q=>{if(q.name===p.name||!INNER.includes(q.name))return;const diff=Math.abs(p.fullDegree-q.fullDegree);const angle=diff>180?360-diff:diff;if(angle<=8)count++;});if(count>=2)scores[p.name]+=2;});let dominant='Sun';let maxScore=-999;INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}else if(scores[p]===maxScore){const pData=planets.find(x=>x.name===p);if(pData&&pData.house===1)dominant=p;}});return dominant;}
-function calcAspects(planets){const ASPECTS=[{name:'합',angle:0,orb:8},{name:'대립',angle:180,orb:8},{name:'삼각',angle:120,orb:8},{name:'사각',angle:90,orb:6},{name:'육각',angle:60,orb:6}];const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];const results=[];for(let i=0;i<PLANETS.length;i++){for(let j=i+1;j<PLANETS.length;j++){const p1=planets.find(p=>p.name===PLANETS[i]);const p2=planets.find(p=>p.name===PLANETS[j]);if(!p1||!p2)continue;const diff=Math.abs(p1.fullDegree-p2.fullDegree);const angle=diff>180?360-diff:diff;ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);});}}return results.join(', ');}
+  const btn=document.getElementById('payBtn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading"></span>결제창 여는 중...';
 
-async function confirmOrder(index){
-  const orders=JSON.parse(localStorage.getItem('orders')||'[]');const o=orders[index];
-  const btn=document.querySelector(`#order-${index} .confirm-btn`);btn.disabled=true;btn.innerHTML='<span class="loading"></span>차트 분석 중...';
   try{
-    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})});
-    const astroData=await astroRes.json();const planets=astroData.output||astroData;
-    const dominant=calcDominant(planets);const aspects=calcAspects(planets);
-    btn.innerHTML='<span class="loading"></span>리포트 발송 중...';
-    const payload={request_id:o.order_id,client_name:o.name,recipient_email:o.email,birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,birth_place_text:o.birthplace,place:o.place_en,year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,report_text:"네이탈 라이트 리포트",report_type:"light",doc_name:`포르투나_${o.name}`,dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),status:"confirmed"};
-    await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    orders[index].status='confirmed';localStorage.setItem('orders',JSON.stringify(orders));btn.textContent='✓ 발송 완료';showToast(`${o.name}님 리포트 발송 완료!`);
-  }catch(err){console.error(err);btn.disabled=false;btn.textContent='✦ 입금확인 · 리포트 발송';showToast('오류 발생. 다시 시도해주세요');}
+    const tossPayments=TossPayments('test_ck_Gv6LjeKD8azvRelz7MlM3wYxAdXy');
+    const customerKey=email.replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)+'_'+Date.now();
+    const payment=tossPayments.payment({customerKey});
+    await payment.requestPayment({
+      method:'CARD',
+      amount:{currency:'KRW',value:9900},
+      orderId,
+      orderName:'포르투나 라이트 리포트',
+      customerName:name,
+      customerEmail:email,
+      successUrl:window.location.origin+'/success.html?type=light',
+      failUrl:window.location.href.split('?')[0]+'?fail=1',
+    });
+  }catch(err){
+    console.error(err);
+    btn.disabled=false;
+    btn.innerHTML='카드로 결제하기 ✦';
+    if(err.code!=='USER_CANCEL')showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
+  }
 }
+if(location.search.includes('fail=1'))setTimeout(()=>showToast('결제가 취소되었습니다'),500);
 
+// ── 후기 ──
 function fmtDt(iso){const d=new Date(iso);return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;}
 let rvStar=0;
 function pickStar(n){rvStar=n;document.querySelectorAll('.star-pick').forEach((b,i)=>b.classList.toggle('on',i<n));}
-function previewRvPhotos(input){const row=document.getElementById('rvPhotoPreviewRow');row.innerHTML='';const files=Array.from(input.files).slice(0,3);files.forEach(f=>{const img=document.createElement('img');img.src=URL.createObjectURL(f);img.style.cssText='width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,168,76,0.2);';row.appendChild(img);});if(files.length<input.files.length)showToast('사진은 최대 3장까지 첨부 가능해요');}
+function previewRvPhotos(input){const row=document.getElementById('rvPhotoPreviewRow');row.innerHTML='';Array.from(input.files).slice(0,3).forEach(f=>{const img=document.createElement('img');img.src=URL.createObjectURL(f);img.style.cssText='width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,168,76,0.2);';row.appendChild(img);});}
 function openRvForm(){document.getElementById('rvOverlay').classList.add('show');}
 function closeRvForm(){document.getElementById('rvOverlay').classList.remove('show');rvStar=0;document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');document.getElementById('rvType').value='';document.getElementById('rvPhotos').value='';document.getElementById('rvPhotoPreviewRow').innerHTML='';}
-
-async function uploadPhoto(file){const ext=file.name.split('.').pop();const fileName=`rv_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;const{error}=await sb.storage.from('review-photos').upload(fileName,file,{cacheControl:'3600',upsert:false});if(error)return null;return sb.storage.from('review-photos').getPublicUrl(fileName).data.publicUrl;}
-
+async function uploadPhoto(file){const ext=file.name.split('.').pop();const fn=`rv_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;const{error}=await sb.storage.from('review-photos').upload(fn,file,{cacheControl:'3600',upsert:false});if(error)return null;return sb.storage.from('review-photos').getPublicUrl(fn).data.publicUrl;}
 async function submitRv(){
-  const name=document.getElementById('rvName').value.trim();const type=document.getElementById('rvType').value;const title=document.getElementById('rvTitle').value.trim();const content=document.getElementById('rvContent').value.trim();
+  const name=document.getElementById('rvName').value.trim(),type=document.getElementById('rvType').value,title=document.getElementById('rvTitle').value.trim(),content=document.getElementById('rvContent').value.trim();
   if(!rvStar||!name||!type||!title||!content){showToast('모든 항목을 입력해주세요');return;}
   const photoFiles=Array.from(document.getElementById('rvPhotos').files).slice(0,3);const photoUrls=[];
-  for(const f of photoFiles){try{const url=await uploadPhoto(f);if(url)photoUrls.push(url);}catch(e){}}
+  for(const f of photoFiles){try{const u=await uploadPhoto(f);if(u)photoUrls.push(u);}catch(e){}}
   const row={name,type,title,content,star:rvStar,date:new Date().toLocaleDateString('ko-KR'),source:'customer',approved:false};
   if(photoUrls[0])row.photo_url1=photoUrls[0];if(photoUrls[1])row.photo_url2=photoUrls[1];if(photoUrls[2])row.photo_url3=photoUrls[2];
   await sb.from('reviews').insert([row]);await renderRv();showToast('후기가 등록되었습니다! 감사합니다 ✦');closeRvForm();
 }
-
-let rvList=[],rvSlideIdx=0,rvSlidePhotos=[];
+let rvList=[];
 async function renderRv(){
   const grid=document.getElementById('rvGrid');
   try{
     const{data:reviews}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false});
     if(!reviews||reviews.length===0){grid.innerHTML='<div class="no-reviews-msg">아직 후기가 없습니다<br>첫 번째 후기를 남겨주세요</div>';return;}
     rvList=reviews;
-    grid.innerHTML=reviews.map((r,i)=>{const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';const photos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);const photoHtml=photos.length?`<div style="position:relative;margin:10px 0;border-radius:8px;overflow:hidden;"><img src="${photos[0]}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" loading="lazy">${photos.length>1?`<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;">+${photos.length-1}</div>`:''}</div>`:'';return `<div class="review-card" onclick="openRvModal(${i})" style="cursor:pointer;"><div class="rv-header"><div><div class="rv-name">${r.name}</div><span class="rv-badge">${badge}</span></div><div class="rv-stars">${stars}</div></div>${photoHtml}<div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div><div class="rv-date">${r.created_at?fmtDt(r.created_at):(r.date||'')}</div></div>`;}).join('');
-    document.getElementById('rvTotal').textContent=reviews.length;const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;document.getElementById('rvAvg').textContent=avg+'★';document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
+    grid.innerHTML=reviews.map((r,i)=>{const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';const photos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);const ph=photos.length?`<div style="position:relative;margin:10px 0;border-radius:8px;overflow:hidden;"><img src="${photos[0]}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" loading="lazy">${photos.length>1?`<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;">+${photos.length-1}</div>`:''}</div>`:'';return `<div class="review-card" onclick="openRvModal(${i})"><div class="rv-header"><div><div class="rv-name">${r.name}</div><span class="rv-badge">${badge}</span></div><div class="rv-stars">${stars}</div></div>${ph}<div class="rv-title">${r.title}</div><div class="rv-content">${r.content}</div><div class="rv-date">${r.created_at?fmtDt(r.created_at):(r.date||'')}</div></div>`;}).join('');
+    document.getElementById('rvTotal').textContent=reviews.length;
+    const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);const five=reviews.filter(r=>r.star===5).length;
+    document.getElementById('rvAvg').textContent=avg+'★';document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
   }catch(e){grid.innerHTML='<div class="no-reviews-msg">후기를 불러오는 중...</div>';}
 }
-
 function openRvModal(i){
-  const r=rvList[i];rvSlidePhotos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);rvSlideIdx=0;
-  const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';
-  document.getElementById('rvModalContent').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><div style="color:#c9a84c;font-size:17px;letter-spacing:3px;">${stars}</div><span style="font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.2);color:#c9a84c;font-weight:600;">${badge}</span></div>${rvSlidePhotos.length?`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">${rvSlidePhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:contain;max-height:320px;background:#000;" loading="lazy">`).join('')}</div>`:''}${r.title?`<div style="font-size:16px;font-weight:700;color:#ede6f8;margin-bottom:10px;line-height:1.4;">"${r.title}"</div>`:''}<p style="font-size:13px;color:#9b8fb0;line-height:2;margin-bottom:16px;">${r.content}</p><div style="font-size:12px;color:rgba(155,143,176,0.5);">${r.name}</div>${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.3);margin-top:3px;">${fmtDt(r.created_at)}</div>`:''}`;
+  const r=rvList[i];const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);const badge=r.type==='premium'?'프리미엄':'라이트';const photos=[r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);
+  document.getElementById('rvModalContent').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><div style="color:#c9a84c;font-size:17px;letter-spacing:3px;">${stars}</div><span style="font-size:10px;padding:3px 10px;border-radius:10px;border:1px solid rgba(201,168,76,0.2);color:#c9a84c;">${badge}</span></div>${photos.length?`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">${photos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;max-height:320px;object-fit:contain;" loading="lazy">`).join('')}</div>`:''}${r.title?`<div style="font-size:16px;font-weight:700;color:#ede6f8;margin-bottom:10px;">"${r.title}"</div>`:''}<p style="font-size:13px;color:#9b8fb0;line-height:2;margin-bottom:16px;">${r.content}</p><div style="font-size:12px;color:rgba(155,143,176,0.5);">${r.name}</div>${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.3);margin-top:3px;">${fmtDt(r.created_at)}</div>`:''}`;
   document.getElementById('rvModal').style.cssText='display:flex;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;';
 }
-function rvSlide(dir){rvSlideIdx=(rvSlideIdx+dir+rvSlidePhotos.length)%rvSlidePhotos.length;rvGoSlide(rvSlideIdx);}
-function rvGoSlide(i){rvSlideIdx=i;const t=document.getElementById('rvSlideTrack');if(t)t.style.transform=`translateX(-${i*100}%)`;document.querySelectorAll('#rvSlideDots div').forEach((d,j)=>{d.style.background=j===i?'white':'rgba(255,255,255,0.4)';});}
-function rejectRv(i){const pending=JSON.parse(localStorage.getItem('pending_reviews')||'[]');pending.splice(i,1);localStorage.setItem('pending_reviews',JSON.stringify(pending));loadOrders();showToast('후기 거절');}
 renderRv();
 </script>
 </body>
