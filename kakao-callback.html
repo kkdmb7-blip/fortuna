@@ -1,64 +1,82 @@
-<script>
 
-const REST_API_KEY = "51b4f87ad9cfd6312c176ad34eb62025";
-const SUPABASE_URL = "https://kkdmb7-blip.supabase.co";
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로그인 중...</title>
+<style>
+  body { background: #05020e; color: #ede6f8; font-family: 'Pretendard', sans-serif;
+    display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+  .msg { text-align: center; }
+  .msg p { font-size: 14px; color: #9b8fb0; margin-top: 12px; letter-spacing: 0.05em; }
+  .spinner { width: 32px; height: 32px; border: 2px solid rgba(201,168,76,0.2);
+    border-top-color: #c9a84c; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="msg">
+  <div class="spinner"></div>
+  <p>로그인 처리 중...</p>
+</div>
+<script>
+const WORKER = "https://fortuna.kkdmb7.workers.dev";
+const SUPABASE_URL = "https://afktkixkbcirsknahbmx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11";
 
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
+async function handleLogin() {
+  const code = new URLSearchParams(window.location.search).get("code");
+  if (!code) { location.href = "/"; return; }
 
-async function getUser(){
+  try {
+    // 1. Worker 통해 카카오 토큰 교환
+    const tokenRes = await fetch(`${WORKER}/kakao-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const tokenData = await tokenRes.json();
+    const access_token = tokenData.access_token;
+    if (!access_token) throw new Error("토큰 없음");
 
-if(!code){
-document.body.innerHTML="인가코드 없음";
-return;
+    // 2. 카카오 사용자 정보 가져오기
+    const userRes = await fetch("https://kapi.kakao.com/v2/user/me", {
+      headers: { Authorization: `Bearer ${access_token}` }
+    });
+    const userData = await userRes.json();
+    const user = {
+      id: String(userData.id),
+      nickname: userData.properties?.nickname || "포르투나 회원"
+    };
+
+    // 3. localStorage 저장
+    localStorage.setItem("fortuna_login", "1");
+    localStorage.setItem("fortuna_user", JSON.stringify(user));
+
+    // 4. Supabase에 upsert (중복 무시)
+    await fetch(`${SUPABASE_URL}/rest/v1/users`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "resolution=ignore-duplicates"
+      },
+      body: JSON.stringify({ kakao_id: user.id, nickname: user.nickname })
+    });
+
+    // 5. 메인으로 이동
+    location.href = "/";
+
+  } catch (e) {
+    console.error(e);
+    document.querySelector('.msg p').textContent = "로그인 실패. 다시 시도해주세요.";
+    setTimeout(() => location.href = "/", 2000);
+  }
 }
 
-const tokenRes = await fetch("https://kauth.kakao.com/oauth/token",{
-method:"POST",
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
-},
-body:`grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&code=${code}`
-});
-
-const tokenData = await tokenRes.json();
-const access_token = tokenData.access_token;
-
-const userRes = await fetch("https://kapi.kakao.com/v2/user/me",{
-headers:{
-Authorization:`Bearer ${access_token}`
-}
-});
-
-const userData = await userRes.json();
-
-const user={
-id:userData.id,
-nickname:userData.properties.nickname
-};
-
-localStorage.setItem("fortuna_login","1");
-localStorage.setItem("fortuna_user",JSON.stringify(user));
-
-await fetch("https://kkdmb7-blip.supabase.co/rest/v1/users",{
-method:"POST",
-headers:{
-"apikey":"sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11",
-"Authorization":"Bearer sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11",
-"Content-Type":"application/json",
-"Prefer":"return=minimal"
-},
-body:JSON.stringify({
-kakao_id:user.id,
-nickname:user.nickname
-})
-});
-
-window.location.href="/";
-
-}
-
-getUser();
-
+handleLogin();
 </script>
+</body>
+</html>
