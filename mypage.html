@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>마이페이지 — FORTUNA</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const sb = supabase.createClient('https://afktkixkbcirsknahbmx.supabase.co','sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11');
+</script>
+<style>
+:root{
+  --void:#05020e;
+  --gold:#c9a84c;
+  --gold2:#e8cc7a;
+  --golddim:rgba(201,168,76,0.18);
+  --blue:#8ab4ff;
+  --text:#ede6f8;
+  --dim:#9b8fb0;
+  --fn:'Pretendard',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--void);color:var(--text);font-family:var(--fn);min-height:100vh;overflow-x:hidden;}
+
+/* 배경 */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.neb{position:absolute;border-radius:50%;filter:blur(90px);}
+.n1{width:60vw;height:60vw;max-width:560px;max-height:560px;top:-20%;left:-15%;background:radial-gradient(circle,rgba(48,18,95,0.45) 0%,transparent 65%);}
+.n2{width:50vw;height:50vw;max-width:480px;max-height:480px;bottom:-10%;right:-12%;background:radial-gradient(circle,rgba(18,6,55,0.6) 0%,transparent 65%);}
+#stars{position:absolute;inset:0;}
+
+/* 네비 */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,2,14,0.6);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
+.nav-brand{font-size:18px;font-weight:700;letter-spacing:0.22em;color:var(--gold);text-decoration:none;}
+.nav-back{font-size:12px;color:var(--dim);letter-spacing:0.1em;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s;}
+.nav-back:hover{color:var(--gold);}
+
+/* 메인 레이아웃 */
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:100px 24px 80px;}
+
+/* 프로필 헤더 */
+.profile-card{background:linear-gradient(135deg,rgba(40,24,75,0.5),rgba(7,3,18,0.8));border:1px solid rgba(201,168,76,0.2);border-radius:24px;padding:32px;margin-bottom:20px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;}
+.profile-card::before{content:'';position:absolute;top:-40%;right:-10%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.06) 0%,transparent 60%);pointer-events:none;}
+.avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(201,168,76,0.08));border:1px solid var(--golddim);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.profile-info{flex:1;}
+.profile-name{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.01em;}
+.profile-email{font-size:12px;color:var(--dim);letter-spacing:0.04em;}
+.logout-btn{background:none;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px 16px;color:var(--dim);font-size:12px;font-family:var(--fn);cursor:pointer;letter-spacing:0.06em;transition:all .2s;white-space:nowrap;}
+.logout-btn:hover{border-color:rgba(255,80,80,0.3);color:#ff8080;}
+
+/* 섹션 카드 */
+.card{background:linear-gradient(135deg,rgba(36,22,63,0.32),rgba(7,3,18,0.65));border:1px solid var(--golddim);border-radius:20px;overflow:hidden;margin-bottom:16px;}
+.card-hd{padding:18px 24px;border-bottom:1px solid rgba(201,168,76,0.08);display:flex;align-items:center;gap:10px;}
+.card-hd-icon{font-size:16px;}
+.card-hd-title{font-size:13px;font-weight:700;letter-spacing:0.12em;color:var(--gold);text-transform:uppercase;}
+.card-body{padding:20px 24px;}
+
+/* 주문 내역 */
+.order-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.order-item:last-child{border-bottom:none;padding-bottom:0;}
+.order-item:first-child{padding-top:0;}
+.order-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.oi-light{background:rgba(138,180,255,0.08);border:1px solid rgba(138,180,255,0.15);}
+.oi-premium{background:rgba(201,168,76,0.08);border:1px solid var(--golddim);}
+.oi-pet{background:rgba(244,162,97,0.08);border:1px solid rgba(244,162,97,0.2);}
+.order-info{flex:1;}
+.order-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;letter-spacing:0.02em;}
+.order-meta{font-size:11px;color:var(--dim);letter-spacing:0.03em;}
+.order-status{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap;letter-spacing:0.04em;}
+.status-done{background:rgba(100,220,100,0.08);border:1px solid rgba(100,220,100,0.2);color:#7de87d;}
+.status-pending{background:rgba(201,168,76,0.08);border:1px solid var(--golddim);color:var(--gold);}
+.order-empty{text-align:center;padding:28px 0;color:var(--dim);font-size:13px;line-height:2;letter-spacing:0.04em;}
+.order-empty a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.3);}
+
+/* AI 상담 카드 */
+.consult-card{display:flex;align-items:center;gap:16px;padding:16px;background:linear-gradient(135deg,rgba(45,28,85,0.4),rgba(10,6,18,0.5));border:1px solid rgba(138,100,255,0.2);border-radius:14px;text-decoration:none;transition:all .3s;}
+.consult-card:hover{border-color:rgba(138,100,255,0.4);transform:translateY(-2px);}
+.consult-icon{font-size:28px;}
+.consult-info{flex:1;}
+.consult-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.consult-desc{font-size:12px;color:var(--dim);letter-spacing:0.02em;}
+.consult-arrow{color:#c4b0ff;font-size:18px;}
+
+/* 내 정보 */
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.info-row:last-child{border-bottom:none;}
+.info-label{font-size:12px;color:var(--dim);letter-spacing:0.06em;}
+.info-value{font-size:13px;color:var(--text);font-weight:500;letter-spacing:0.02em;}
+
+/* 로딩 */
+.spinner{width:24px;height:24px;border:2px solid rgba(201,168,76,0.15);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 애니메이션 */
+@keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes twinkle{0%,100%{opacity:var(--o,.4);transform:scale(1)}50%{opacity:.04;transform:scale(.5)}}
+.fade{opacity:0;animation:up .6s ease forwards;}
+.fd1{animation-delay:.1s}.fd2{animation-delay:.2s}.fd3{animation-delay:.3s}.fd4{animation-delay:.4s}
+
+/* 반응형 */
+@media(max-width:480px){
+  nav{padding:12px 16px;}
+  .wrap{padding:80px 16px 60px;}
+  .profile-card{flex-direction:column;align-items:flex-start;gap:14px;}
+  .logout-btn{align-self:flex-end;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="neb n1"></div>
+  <div class="neb n2"></div>
+  <div id="stars"></div>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-brand">FORTUNA</a>
+  <a href="index.html" class="nav-back">← 홈으로</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- 프로필 -->
+  <div class="profile-card fade fd1" id="profileCard">
+    <div class="avatar">✦</div>
+    <div class="profile-info">
+      <div class="profile-name" id="profileName">—</div>
+      <div class="profile-email" id="profileEmail">카카오 로그인</div>
+    </div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+  </div>
+
+  <!-- 주문 내역 -->
+  <div class="card fade fd2">
+    <div class="card-hd">
+      <span class="card-hd-icon">📋</span>
+      <span class="card-hd-title">주문 내역</span>
+    </div>
+    <div class="card-body" id="ordersBody">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- AI 상담 -->
+  <div class="card fade fd3">
+    <div class="card-hd">
+      <span class="card-hd-icon">✦</span>
+      <span class="card-hd-title">AI 상담</span>
+    </div>
+    <div class="card-body">
+      <a href="consult.html" class="consult-card">
+        <div class="consult-icon">🔮</div>
+        <div class="consult-info">
+          <div class="consult-title">별자리 AI 상담 시작하기</div>
+          <div class="consult-desc">출생 차트 기반 · 연애·직업·성격 무엇이든</div>
+        </div>
+        <div class="consult-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 내 정보 -->
+  <div class="card fade fd4">
+    <div class="card-hd">
+      <span class="card-hd-icon">👤</span>
+      <span class="card-hd-title">내 정보</span>
+    </div>
+    <div class="card-body">
+      <div class="info-row">
+        <span class="info-label">닉네임</span>
+        <span class="info-value" id="infoName">—</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">로그인 방식</span>
+        <span class="info-value" style="display:flex;align-items:center;gap:6px;"><span style="background:rgba(254,229,0,0.1);border:1px solid rgba(254,229,0,0.25);border-radius:6px;padding:2px 8px;font-size:11px;color:#FEE500;font-weight:600;">카카오</span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">회원 ID</span>
+        <span class="info-value" id="infoId" style="font-size:11px;color:var(--dim);">—</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 별 생성
+const bg = document.getElementById('stars');
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');
+  const sz=Math.random()*1.8+0.3, op=0.08+Math.random()*0.5, dur=2+Math.random()*5;
+  s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${op};animation:twinkle ${dur}s ease-in-out infinite;animation-delay:${Math.random()*5}s;`;
+  bg.appendChild(s);
+}
+
+// 날짜 포맷
+function fmtDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// 로그인 확인
+const user = JSON.parse(localStorage.getItem('fortuna_user') || 'null');
+if(!user){
+  location.href = 'index.html';
+}
+
+// 프로필 표시
+document.getElementById('profileName').textContent = user?.nickname || '포르투나 회원';
+document.getElementById('infoName').textContent = user?.nickname || '포르투나 회원';
+document.getElementById('infoId').textContent = user?.id ? user.id.slice(0,6)+'****' : '—';
+
+// 주문 내역 로드
+async function loadOrders(){
+  const body = document.getElementById('ordersBody');
+  try{
+    // 이메일로 매칭 (orders 테이블)
+    const { data: orders } = await sb
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const { data: petOrders } = await sb
+      .from('pet_orders')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    const allOrders = [
+      ...(orders||[]).map(o=>({...o, _type:'report'})),
+      ...(petOrders||[]).map(o=>({...o, _type:'pet'}))
+    ].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+    if(!allOrders.length){
+      body.innerHTML = `<div class="order-empty">아직 주문 내역이 없어요<br><a href="light.html">첫 리포트 신청하기 →</a></div>`;
+      return;
+    }
+
+    body.innerHTML = allOrders.map(o=>{
+      const isPremium = o.product_type === 'premium' || o.amount >= 20000;
+      const isPet = o._type === 'pet';
+      const iconClass = isPet ? 'oi-pet' : isPremium ? 'oi-premium' : 'oi-light';
+      const icon = isPet ? '🐾' : isPremium ? '☀️' : '🌙';
+      const name = isPet
+        ? (o.pet_name ? `${o.pet_name} 반려동물 리포트` : '반려동물 리포트')
+        : isPremium ? '프리미엄 리포트' : '라이트 리포트';
+      const price = o.amount ? Number(o.amount).toLocaleString()+'원' : '—';
+      const date = fmtDate(o.created_at);
+      const statusText = o.status === 'sent' || o.status === 'completed' ? '발송완료' : '처리중';
+      const statusClass = statusText === '발송완료' ? 'status-done' : 'status-pending';
+
+      return `
+        <div class="order-item">
+          <div class="order-icon ${iconClass}">${icon}</div>
+          <div class="order-info">
+            <div class="order-name">${name}</div>
+            <div class="order-meta">${date} · ${price}</div>
+          </div>
+          <span class="order-status ${statusClass}">${statusText}</span>
+        </div>`;
+    }).join('');
+
+  }catch(e){
+    body.innerHTML = `<div class="order-empty">주문 내역을 불러오지 못했어요</div>`;
+    console.error(e);
+  }
+}
+loadOrders();
+
+// 로그아웃
+function logout(){
+  localStorage.removeItem('fortuna_login');
+  localStorage.removeItem('fortuna_user');
+  location.href = 'index.html';
+}
+</script>
+</body>
+</html>
