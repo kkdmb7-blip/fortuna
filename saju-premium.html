@@ -372,6 +372,18 @@ async function submitBankOrder(){
         status:'bank_transfer_pending'
       })
     });
+    // Supabase 저장
+    const rid='BANK-SAJU-'+Date.now();
+    await sb.from('orders').insert([{
+      order_id:rid,name:d.name,gender:d.gender,
+      birthdate_raw:d.birthdate,calendar:d.calendar,
+      birthtime_raw:d.birthtime||'모름',birthplace:d.birthplace,email:d.email,
+      year:o.bd.year,month:o.bd.month,day:o.bd.day,
+      hour:o.bt.hour,min:o.bt.min,lat:o.city.lat,lon:o.city.lon,
+      place_en:o.city.en,tzone:9.0,
+      report_type:'saju_premium',status:'bank_transfer_pending',
+      saju_birth:o.sajuBirth,saju_gender:o.sajuGender,saju_city:d.sajuCity
+    }]);
     btn.innerHTML='✦ 신청 완료!';
     showToast('신청이 완료되었습니다! 입금 확인 후 제작을 시작합니다 ✦');
   }catch(e){
