@@ -401,8 +401,10 @@ async function confirmOrder(orderId, type){
       let sajuData={};
       if(o.saju_birth&&o.saju_gender&&o.saju_city){
         try{
-          const sajuRes=await fetch('https://api.ablecity.kr/api/v1/saju/fortune?birth='+encodeURIComponent(o.saju_birth)+'&gender='+o.saju_gender+'&city='+encodeURIComponent(o.saju_city)+'&calendar=solar',{
-            headers:{'x-api-key':'able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o'}
+          const sajuRes=await fetch('https://fortuna.kkdmb7.workers.dev/saju',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city})
           });
           sajuData=await sajuRes.json();
         }catch(e){console.warn('사주 API 오류',e);}
