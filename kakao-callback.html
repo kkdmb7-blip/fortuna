@@ -1,61 +1,74 @@
 <script>
+
 const REST_API_KEY = "51b4f87ad9cfd6312c176ad34eb62025";
+const REDIRECT_URI = "https://fortuna-silk.vercel.app/kakao-callback.html";
 
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
 async function getUser(){
-  try{
-    if(!code){
-      document.body.innerHTML = "<h2 style='color:white;background:#05020e;padding-top:120px;text-align:center;'>인가코드 없음</h2>";
-      return;
-    }
 
-    const tokenRes = await fetch("https://kauth.kakao.com/oauth/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8"
-      },
-      body: `grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&code=${code}`
-    });
+try{
 
-    const tokenData = await tokenRes.json();
-    console.log("tokenData:", tokenData);
+if(!code){
+document.body.innerHTML="<h2 style='color:white;background:#05020e;padding-top:120px;text-align:center;'>인가코드 없음</h2>";
+return;
+}
 
-    if(!tokenData.access_token){
-      document.body.innerHTML = `
-      <div style="color:white;background:#05020e;padding:40px;text-align:center;">
-        <h2>토큰 발급 실패</h2>
-        <pre style="white-space:pre-wrap;text-align:left;max-width:700px;margin:20px auto;background:#111;padding:16px;border-radius:12px;">${JSON.stringify(tokenData, null, 2)}</pre>
-      </div>`;
-      return;
-    }
+const tokenRes = await fetch("https://kauth.kakao.com/oauth/token",{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded;charset=utf-8"
+},
+body:`grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${code}`
+});
 
-    const userRes = await fetch("https://kapi.kakao.com/v2/user/me", {
-      headers: {
-        Authorization: `Bearer ${tokenData.access_token}`
-      }
-    });
+const tokenData = await tokenRes.json();
 
-    const user = await userRes.json();
-    console.log("user:", user);
+if(!tokenData.access_token){
+document.body.innerHTML=`
+<div style="color:white;background:#05020e;padding:40px;text-align:center;">
+<h2>토큰 발급 실패</h2>
+<pre style="white-space:pre-wrap;text-align:left;max-width:700px;margin:20px auto;background:#111;padding:16px;border-radius:12px;">${JSON.stringify(tokenData,null,2)}</pre>
+</div>`;
+return;
+}
 
-    document.body.innerHTML = `
-      <div style="color:white;background:#05020e;padding-top:120px;text-align:center;">
-        <h2>카카오 로그인 성공</h2>
-        <p>닉네임 : ${user?.kakao_account?.profile?.nickname || "없음"}</p>
-        <p>ID : ${user?.id || "없음"}</p>
-      </div>
-    `;
-  }catch(e){
-    console.error(e);
-    document.body.innerHTML = `
-      <div style="color:white;background:#05020e;padding:40px;text-align:center;">
-        <h2>자바스크립트 에러</h2>
-        <pre style="white-space:pre-wrap;text-align:left;max-width:700px;margin:20px auto;background:#111;padding:16px;border-radius:12px;">${e.message}</pre>
-      </div>`;
-  }
+const userRes = await fetch("https://kapi.kakao.com/v2/user/me",{
+headers:{
+Authorization:`Bearer ${tokenData.access_token}`
+}
+});
+
+const user = await userRes.json();
+
+const nickname =
+user.properties?.nickname ||
+user.kakao_account?.profile?.nickname ||
+"카카오사용자";
+
+document.body.innerHTML=`
+<div style="color:white;background:#05020e;padding-top:120px;text-align:center;">
+<h2>카카오 로그인 성공</h2>
+<p>닉네임 : ${nickname}</p>
+<p>ID : ${user.id}</p>
+</div>
+`;
+
+console.log(user);
+
+}catch(e){
+
+document.body.innerHTML=`
+<div style="color:white;background:#05020e;padding:40px;text-align:center;">
+<h2>자바스크립트 에러</h2>
+<pre style="white-space:pre-wrap;text-align:left;max-width:700px;margin:20px auto;background:#111;padding:16px;border-radius:12px;">${e.message}</pre>
+</div>`;
+
+}
+
 }
 
 getUser();
+
 </script>
