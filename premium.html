@@ -271,6 +271,17 @@ async function submitBankOrder(){
       hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,tzone:9.0,
       report_type:'premium',doc_name:'포르투나_'+name,status:'bank_transfer_pending'
     })});
+    // Supabase에 주문 저장
+    const rid='BANK-PREMIUM-'+Date.now();
+    await sb.from('orders').insert([{
+      order_id:rid,name:d.name,gender:d.gender,
+      birthdate_raw:d.birthdate,calendar:d.calendar,
+      birthtime_raw:d.birthtime||'모름',birthplace:d.birthplace,email:d.email,
+      year:o.bd.year,month:o.bd.month,day:o.bd.day,
+      hour:o.bt.hour,min:o.bt.min,lat:o.city.lat,lon:o.city.lon,
+      place_en:o.city.en,tzone:9.0,
+      report_type:'premium',status:'bank_transfer_pending'
+    }]);
     btn.textContent='✦ 신청 완료!';
     showToast('신청이 완료되었습니다! 입금 확인 후 제작을 시작합니다 ✦');
   }catch(e){btn.disabled=false;btn.textContent='입금 완료 후 → 신청 완료하기';showToast('오류가 발생했습니다. 다시 시도해주세요.');}
