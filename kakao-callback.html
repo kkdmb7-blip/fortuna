@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>카카오 로그인 처리</title>
+</head>
+
+<body style="background:#05020e;color:white;text-align:center;padding-top:120px;font-family:sans-serif;">
+
+<h2>로그인 처리 중...</h2>
+
+<script>
+
+const params = new URLSearchParams(window.location.search);
+const code = params.get("code");
+
+if(code){
+  console.log("인가코드:", code);
+  document.body.innerHTML = "<h2>카카오 로그인 성공</h2>";
+}else{
+  document.body.innerHTML = "<h2>로그인 실패</h2>";
+}
+
+</script>
+
+</body>
+</html>
