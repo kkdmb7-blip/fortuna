@@ -2,7 +2,7 @@
   "name": "FORTUNA",
   "short_name": "FORTUNA",
   "description": "나를 위한 점성 리포트",
-  "start_url": "/",
+  "start_url": "/fortuna/",
   "display": "standalone",
   "background_color": "#06030f",
   "theme_color": "#06030f",
