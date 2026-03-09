@@ -23,7 +23,7 @@
   .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
   .header-left .brand{font-size:12px;letter-spacing:0.4em;color:var(--gold);}
   .header-left .title{font-size:22px;font-weight:300;margin-top:4px;}
-  .header-right{display:flex;gap:10px;align-items:center;}
+  .header-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
   .nav-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:8px 16px;color:var(--text-dim);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;transition:all 0.2s;}
   .nav-btn:hover{border-color:var(--gold);color:var(--gold);}
   .logout-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:20px;padding:8px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
@@ -45,6 +45,7 @@
   .order-card{background:linear-gradient(135deg,rgba(45,31,78,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
   .order-card.light{border-left:3px solid rgba(100,150,220,0.5);}
   .order-card.premium{border-left:3px solid var(--gold);}
+  .order-card.saju_premium{border-left:3px solid rgba(180,100,255,0.7);}
   .order-card.pet{border-left:3px solid rgba(244,162,97,0.6);}
   .order-card.done{opacity:0.6;}
   .order-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
@@ -52,6 +53,7 @@
   .order-type{font-size:10px;letter-spacing:0.15em;padding:3px 10px;border-radius:20px;margin-left:8px;}
   .type-light{background:rgba(100,150,220,0.15);color:#8ab4ff;border:1px solid rgba(100,150,220,0.3);}
   .type-premium{background:rgba(201,168,76,0.15);color:var(--gold);border:1px solid var(--border);}
+  .type-saju{background:rgba(180,100,255,0.15);color:#b482ff;border:1px solid rgba(180,100,255,0.3);}
   .type-dog{background:rgba(244,162,97,0.15);color:#f4a261;border:1px solid rgba(244,162,97,0.3);}
   .type-cat{background:rgba(180,130,255,0.15);color:#b482ff;border:1px solid rgba(180,130,255,0.3);}
   .order-id{font-size:11px;color:var(--text-dim);margin-top:3px;}
@@ -63,6 +65,8 @@
   .generate-btn{flex:1;background:rgba(138,180,255,0.12);border:1px solid rgba(138,180,255,0.3);border-radius:8px;padding:10px;color:#8ab4ff;font-family:'Pretendard',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
   .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
   .done-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:rgba(100,220,100,0.7);padding:6px 12px;border:1px solid rgba(100,220,100,0.2);border-radius:8px;}
+  .saju-info-box{background:rgba(180,100,255,0.06);border:1px solid rgba(180,100,255,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text-dim);line-height:1.9;}
+  .saju-info-box span{color:#b482ff;}
   .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
   .rv-form-box{background:rgba(45,31,78,0.3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:none;}
   .rv-form-box.show{display:block;}
@@ -119,6 +123,7 @@
       <a href="/" class="nav-btn">메인</a>
       <a href="light.html" class="nav-btn">라이트</a>
       <a href="premium.html" class="nav-btn">프리미엄</a>
+      <a href="saju-premium.html" class="nav-btn">사주+점성</a>
       <button class="logout-btn" onclick="doLogout()">로그아웃</button>
     </div>
   </div>
@@ -138,12 +143,12 @@
     <button class="tab" onclick="switchTab('reviews')" id="tab-reviews">후기 관리</button>
   </div>
 
-  <!-- 일반 주문 탭 -->
   <div class="tab-content active" id="content-orders">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
       <button class="filter-btn" onclick="setFilter('light',this)">라이트</button>
       <button class="filter-btn" onclick="setFilter('premium',this)">프리미엄</button>
+      <button class="filter-btn" onclick="setFilter('saju_premium',this)">☯ 사주+점성</button>
       <button class="filter-btn" onclick="setFilter('pending',this)">입금대기</button>
       <button class="filter-btn" onclick="setFilter('confirmed',this)">발송완료</button>
       <input type="text" class="search-input" placeholder="이름 검색..." oninput="searchOrders(this.value)">
@@ -151,7 +156,6 @@
     <div id="orderList"><div class="loading-msg">불러오는 중...</div></div>
   </div>
 
-  <!-- 반려동물 탭 -->
   <div class="tab-content" id="content-pets">
     <div class="filter-row">
       <button class="filter-btn active" onclick="setPetFilter('all',this)">전체</button>
@@ -163,7 +167,6 @@
     <div id="petOrderList"><div class="loading-msg">불러오는 중...</div></div>
   </div>
 
-  <!-- 후기 탭 -->
   <div class="tab-content" id="content-reviews">
     <button class="add-rv-btn" onclick="toggleRvForm()">+ 후기 직접 등록하기</button>
     <div class="rv-form-box" id="rvFormBox">
@@ -178,7 +181,7 @@
         </div>
       </div>
       <div class="form-field"><label class="form-label">닉네임 *</label><input type="text" class="form-input" id="rvName" placeholder="예: 30대 직장인"></div>
-      <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option></select></div>
+      <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option><option value="saju_premium">사주+점성</option></select></div>
       <div class="form-field"><label class="form-label">한줄 제목 *</label><input type="text" class="form-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요"></div>
       <div class="form-field"><label class="form-label">상세 내용 *</label><textarea class="form-textarea" id="rvContent" placeholder="후기 내용"></textarea></div>
       <div class="form-btns">
@@ -194,11 +197,14 @@
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const MAKE_LIGHT='https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756';
+const MAKE_PREMIUM='https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu';
+const MAKE_SAJU='https://hook.us2.make.com/21j8nsy69amf2xhm4amiqovve7dv2xge';
 
-let currentFilter='all', searchTerm='', allOrders=[];
-let petFilter='all', allPetOrders=[];
+let currentFilter='all',searchTerm='',allOrders=[];
+let petFilter='all',allPetOrders=[];
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 async function doLogin(){
   const pw=document.getElementById('pwInput').value.trim();
@@ -213,7 +219,6 @@ async function doLogin(){
     document.getElementById('loginError').style.display='block';
   }
 }
-
 function doLogout(){sessionStorage.removeItem('admin');location.reload();}
 
 if(sessionStorage.getItem('admin')==='1'){
@@ -224,20 +229,16 @@ if(sessionStorage.getItem('admin')==='1'){
   document.getElementById('dashboard').style.display='none';
 }
 
-async function loadAll(){
-  await loadOrders();
-  await loadStats();
-}
+async function loadAll(){await loadOrders();await loadStats();}
 
 async function loadStats(){
   const {data:orders}=await sb.from('orders').select('status');
   const {data:pets}=await sb.from('pet_orders').select('status');
   const {data:reviews}=await sb.from('reviews').select('id');
   const allO=[...(orders||[]),...(pets||[])];
-  const total=allO.length;
-  const pending=allO.filter(o=>o.status==='pending').length;
+  const pending=allO.filter(o=>o.status==='pending'||o.status==='bank_transfer_pending').length;
   const done=allO.filter(o=>o.status==='confirmed').length;
-  document.getElementById('stTotal').textContent=total;
+  document.getElementById('stTotal').textContent=allO.length;
   document.getElementById('stPending').textContent=pending;
   document.getElementById('stDone').textContent=done;
   document.getElementById('stReviews').textContent=reviews?.length||0;
@@ -246,14 +247,11 @@ async function loadStats(){
 
 async function loadOrders(){
   const {data}=await sb.from('orders').select('*').order('created_at',{ascending:false});
-  allOrders=data||[];
-  renderOrders();
+  allOrders=data||[];renderOrders();
 }
-
 async function loadPetOrders(){
   const {data}=await sb.from('pet_orders').select('*').order('id',{ascending:false});
-  allPetOrders=data||[];
-  renderPetOrders();
+  allPetOrders=data||[];renderPetOrders();
 }
 
 function switchTab(tab){
@@ -269,20 +267,43 @@ function setFilter(f,el){currentFilter=f;document.querySelectorAll('#content-ord
 function searchOrders(v){searchTerm=v;renderOrders();}
 function setPetFilter(f,el){petFilter=f;document.querySelectorAll('#content-pets .filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderPetOrders();}
 
+function getTypeLabel(type){
+  if(type==='premium')return '프리미엄';
+  if(type==='saju_premium')return '☯ 사주+점성';
+  return '라이트';
+}
+function getTypeClass(type){
+  if(type==='premium')return 'type-premium';
+  if(type==='saju_premium')return 'type-saju';
+  return 'type-light';
+}
+
 function renderOrders(){
   let orders=[...allOrders];
   if(currentFilter==='light')orders=orders.filter(o=>o.report_type==='light');
   else if(currentFilter==='premium')orders=orders.filter(o=>o.report_type==='premium');
-  else if(currentFilter==='pending')orders=orders.filter(o=>o.status==='pending');
+  else if(currentFilter==='saju_premium')orders=orders.filter(o=>o.report_type==='saju_premium');
+  else if(currentFilter==='pending')orders=orders.filter(o=>o.status==='pending'||o.status==='bank_transfer_pending');
   else if(currentFilter==='confirmed')orders=orders.filter(o=>o.status==='confirmed');
   if(searchTerm)orders=orders.filter(o=>o.name?.includes(searchTerm)||o.email?.includes(searchTerm));
   const list=document.getElementById('orderList');
   if(!orders.length){list.innerHTML='<div class="empty-msg">주문이 없습니다</div>';return;}
-  list.innerHTML=orders.map(o=>`
+  list.innerHTML=orders.map(o=>{
+    const isBankTransfer=o.status==='bank_transfer_pending';
+    const isSaju=o.report_type==='saju_premium';
+    const sajuBox=isSaju?`
+      <div class="saju-info-box">
+        ☯ 사주 &nbsp;·&nbsp;
+        생시: <span>${o.saju_birth||'-'}</span> &nbsp;·&nbsp;
+        성별: <span>${o.saju_gender||'-'}</span> &nbsp;·&nbsp;
+        도시: <span>${o.saju_city||'-'}</span>
+      </div>`:'';
+    return `
     <div class="order-card ${o.report_type} ${o.status==='confirmed'?'done':''}" id="card-${o.order_id}">
       <div class="order-top"><div>
         <span class="order-name">${o.name||''}</span>
-        <span class="order-type ${o.report_type==='premium'?'type-premium':'type-light'}">${o.report_type==='premium'?'프리미엄':'라이트'}</span>
+        <span class="order-type ${getTypeClass(o.report_type)}">${getTypeLabel(o.report_type)}</span>
+        ${isBankTransfer?'<span style="font-size:10px;color:#e8cc7a;margin-left:8px;border:1px solid rgba(232,204,122,0.3);padding:2px 8px;border-radius:10px;">무통장 입금</span>':''}
         <div class="order-id">${o.order_id||''} · ${o.created_at?new Date(o.created_at).toLocaleString('ko-KR'):''}</div>
       </div></div>
       <div class="order-info">
@@ -291,6 +312,7 @@ function renderOrders(){
         <div>📍 지역<br><span>${o.birthplace||''} (${o.place_en||''})</span></div>
         <div>📧 이메일<br><span>${o.email||''}</span></div>
       </div>
+      ${sajuBox}
       <div class="order-actions">
         ${o.status==='confirmed'
           ?`<div class="done-badge">✓ 발송 완료</div>
@@ -298,14 +320,15 @@ function renderOrders(){
           :`<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>`}
         <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderPetOrders(){
   let orders=[...allPetOrders];
   if(petFilter==='dog')orders=orders.filter(o=>o.report_type==='dog');
   else if(petFilter==='cat')orders=orders.filter(o=>o.report_type==='cat');
-  else if(petFilter==='pending')orders=orders.filter(o=>o.status==='pending');
+  else if(petFilter==='pending')orders=orders.filter(o=>o.status==='pending'||o.status==='bank_transfer_pending');
   else if(petFilter==='confirmed')orders=orders.filter(o=>o.status==='confirmed');
   const list=document.getElementById('petOrderList');
   if(!orders.length){list.innerHTML='<div class="empty-msg">반려동물 주문이 없습니다</div>';return;}
@@ -333,138 +356,32 @@ function renderPetOrders(){
     </div>`).join('');
 }
 
-// 반려동물 리포트 생성
-async function generatePetReport(idx){
-  const o=allPetOrders[idx];
-  const genBtn=document.getElementById('pgen-'+idx);
-  genBtn.disabled=true;genBtn.innerHTML='<span class="loading"></span>생성 중...';
-  const isPet=o.report_type==='dog';
-  const prompt=`당신은 반려동물 별자리 & 사주 전문가입니다. 아래 정보로 ${isPet?'강아지':'고양이'} 리포트를 작성해주세요.
-
-${isPet?'강아지':'고양이'} 이름: ${o.pet_name}
-${isPet?'견종':'묘종'}: ${o.pet_breed||'미상'}
-성별: ${o.pet_gender}
-생년월일: ${o.pet_birthdate_raw}
-별자리: ${o.pet_zodiac}
-사주 오행: ${o.pet_ohaeng}
-보호자 이름: ${o.owner_name}
-보호자 별자리: ${o.owner_zodiac}
-
-다음 6가지 항목으로 리포트를 작성해주세요. 따뜻하고 재밌는 문체로, 보호자가 읽으면서 "맞아 맞아!" 하고 공감할 수 있게 써주세요.
-
-1. 🌟 ${o.pet_name}의 별자리 성격 (${o.pet_zodiac})
-2. 🔥 ${o.pet_name}의 사주 오행 기질 (${o.pet_ohaeng})
-3. ${isPet?'🍖':'🐟'} 밥 & 간식 스타일
-4. ${isPet?'🎾':'🧶'} ${isPet?'산책':'실내'} & 놀이 스타일
-5. 💞 ${o.owner_name}님과의 궁합 (${o.owner_zodiac} × ${o.pet_zodiac})
-6. 💌 ${o.pet_name}이가 ${o.owner_name}님께 전하는 한마디
-
-마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 추가해주세요.`;
-
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})
-    });
-    const data=await res.json();
-    const report=data.content?.[0]?.text||'생성 실패';
-    allPetOrders[idx].report_content=report;
-    const prev=document.getElementById('pprev-'+idx);
-    prev.textContent=report;prev.style.display='block';
-    genBtn.innerHTML='✓ 생성완료 (다시생성)';genBtn.disabled=false;
-    document.getElementById('psend-'+idx).disabled=false;
-    showToast('리포트 생성 완료! 확인 후 발송해주세요 🐾');
-  }catch(e){
-    genBtn.innerHTML='✦ Claude로 리포트 생성';genBtn.disabled=false;
-    showToast('생성 오류가 발생했습니다');
-  }
-}
-
-async function sendPetReport(idx){
-  const o=allPetOrders[idx];
-  if(!o.report_content){showToast('먼저 리포트를 생성해주세요');return;}
-  const sendBtn=document.getElementById('psend-'+idx);
-  sendBtn.disabled=true;sendBtn.innerHTML='<span class="loading"></span>발송 중...';
-  try{
-    await fetch('https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        request_id:o.order_id,client_name:o.owner_name,recipient_email:o.email,
-        report_text:o.report_content,report_type:o.report_type,
-        doc_name:`포르투나_${o.pet_name}_별자리사주리포트`,
-        pet_name:o.pet_name,pet_zodiac:o.pet_zodiac,status:'confirmed'
-      })
-    });
-    await sb.from('pet_orders').update({status:'confirmed'}).eq('order_id',o.order_id);
-    allPetOrders[idx].status='confirmed';
-    sendBtn.textContent='✓ 발송 완료';
-    showToast(`${o.pet_name} 리포트 발송 완료! 🐾`);
-    await loadStats();
-  }catch(e){
-    sendBtn.disabled=false;sendBtn.textContent='📧 발송하기';
-    showToast('발송 오류가 발생했습니다');
-  }
-}
-
-async function deletePetOrder(orderId){
-  if(!confirm('정말 삭제할까요?'))return;
-  await sb.from('pet_orders').delete().eq('order_id',orderId);
-  await loadPetOrders();
-  showToast('삭제되었습니다');
-}
-
-// 기존 일반 주문 함수들
 function calcDominant(planets){
   const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
   const scores={};INNER.forEach(p=>{scores[p]=0;});
-  const asc=planets.find(p=>p.name==='Ascendant');
   const sun=planets.find(p=>p.name==='Sun');
   const moon=planets.find(p=>p.name==='Moon');
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    if(p.house===1)scores[p.name]+=5;
-    if(p.house===10)scores[p.name]+=4;
-  });
-  [sun,moon,asc].filter(Boolean).forEach(a=>{
-    planets.forEach(p=>{
-      if(!INNER.includes(p.name)||a.name===p.name)return;
-      const diff=Math.abs(p.fullDegree-a.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      if(angle<=8)scores[p.name]+=3;
-    });
-  });
-  let dominant='Sun',maxScore=-999;
-  INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});
+  const asc=planets.find(p=>p.name==='Ascendant');
+  planets.forEach(p=>{if(!INNER.includes(p.name))return;if(p.house===1)scores[p.name]+=5;if(p.house===10)scores[p.name]+=4;});
+  [sun,moon,asc].filter(Boolean).forEach(a=>{planets.forEach(p=>{if(!INNER.includes(p.name)||a.name===p.name)return;const diff=Math.abs(p.fullDegree-a.fullDegree);const angle=diff>180?360-diff:diff;if(angle<=8)scores[p.name]+=3;});});
+  let dominant='Sun',maxScore=-999;INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});
   return dominant;
 }
-
 function calcAspects(planets){
   const ASPECTS=[{name:'합',angle:0,orb:8},{name:'대립',angle:180,orb:8},{name:'삼각',angle:120,orb:8},{name:'사각',angle:90,orb:6},{name:'육각',angle:60,orb:6}];
   const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
   const results=[];
-  for(let i=0;i<PLANETS.length;i++){
-    for(let j=i+1;j<PLANETS.length;j++){
-      const p1=planets.find(p=>p.name===PLANETS[i]);
-      const p2=planets.find(p=>p.name===PLANETS[j]);
-      if(!p1||!p2)continue;
-      const diff=Math.abs(p1.fullDegree-p2.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(`${PLANETS[i]}-${PLANETS[j]} ${asp.name}(${angle.toFixed(1)}°)`);});
-    }
-  }
+  for(let i=0;i<PLANETS.length;i++){for(let j=i+1;j<PLANETS.length;j++){const p1=planets.find(p=>p.name===PLANETS[i]);const p2=planets.find(p=>p.name===PLANETS[j]);if(!p1||!p2)continue;const diff=Math.abs(p1.fullDegree-p2.fullDegree);const angle=diff>180?360-diff:diff;ASPECTS.forEach(asp=>{if(Math.abs(angle-asp.angle)<=asp.orb)results.push(PLANETS[i]+'-'+PLANETS[j]+' '+asp.name+'('+angle.toFixed(1)+'°)');});}}
   return results.join(', ');
 }
 
-async function confirmOrder(orderId,type){
-  const webhook=type==='premium'
-    ?'https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu'
-    :'https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756';
+async function confirmOrder(orderId, type){
   const o=allOrders.find(x=>x.order_id===orderId);
   if(!o)return;
   const btn=document.getElementById('btn-'+orderId);
   btn.disabled=true;btn.innerHTML='<span class="loading"></span>차트 분석 중...';
   try{
+    // 점성술 API
     const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
@@ -474,26 +391,73 @@ async function confirmOrder(orderId,type){
     const planets=astroData.output||astroData;
     const dominant=calcDominant(planets);
     const aspects=calcAspects(planets);
+
     btn.innerHTML='<span class="loading"></span>발송 중...';
-    await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      request_id:o.order_id,client_name:o.name,recipient_email:o.email,
-      birth_info_raw:`${o.birthdate_raw} (${o.calendar}) ${o.hour}시 ${o.min}분 ${o.birthplace}`,
-      birth_place_text:o.birthplace,place:o.place_en,
-      year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,
-      lat:o.lat,lon:o.lon,tzone:9.0,
-      report_text:type==='premium'?'네이탈 프리미엄 리포트':'네이탈 라이트 리포트',
-      report_type:type,
-      doc_name:type==='premium'?`포르투나_프리미엄_${o.name}`:`포르투나_${o.name}`,
-      dominant_planet:dominant,aspects_summary:aspects,
-      planets_json:JSON.stringify(planets),status:'confirmed'
-    })});
+
+    let webhook, payload;
+
+    if(type==='saju_premium'){
+      // 사주 API 호출
+      let sajuData={};
+      if(o.saju_birth&&o.saju_gender&&o.saju_city){
+        try{
+          const sajuRes=await fetch('https://api.ablecity.kr/api/v1/saju/fortune?birth='+encodeURIComponent(o.saju_birth)+'&gender='+o.saju_gender+'&city='+encodeURIComponent(o.saju_city)+'&calendar=solar',{
+            headers:{'x-api-key':'able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o'}
+          });
+          sajuData=await sajuRes.json();
+        }catch(e){console.warn('사주 API 오류',e);}
+      }
+      webhook=MAKE_SAJU;
+      payload={
+        request_id:o.order_id,client_name:o.name,recipient_email:o.email,
+        birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
+        birth_place_text:o.birthplace,place:o.place_en,
+        year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,
+        report_type:'saju_premium',
+        doc_name:'포르투나_사주점성_'+o.name,
+        dominant_planet:dominant,aspects_summary:aspects,
+        planets_json:JSON.stringify(planets),
+        saju_birth:o.saju_birth||'',saju_gender:o.saju_gender||'',saju_city:o.saju_city||'',
+        saju_pillars:sajuData?.data?.pillar||'',
+        saju_strength:sajuData?.data?.strength||'',
+        saju_zodiac:sajuData?.data?.zodiac||'',
+        saju_yongshin_primary:sajuData?.data?.yongshin?.primary||'',
+        saju_yongshin_secondary:sajuData?.data?.yongshin?.secondary||'',
+        saju_five_pct:JSON.stringify(sajuData?.data?.five_elements_pct||{}),
+        saju_big_luck:JSON.stringify((sajuData?.data?.big_luck||[]).slice(0,5)),
+        saju_data_full:JSON.stringify(sajuData),
+        status:'confirmed'
+      };
+    } else if(type==='premium'){
+      webhook=MAKE_PREMIUM;
+      payload={
+        request_id:o.order_id,client_name:o.name,recipient_email:o.email,
+        birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
+        birth_place_text:o.birthplace,place:o.place_en,
+        year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,
+        report_type:'premium',doc_name:'포르투나_프리미엄_'+o.name,
+        dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),status:'confirmed'
+      };
+    } else {
+      webhook=MAKE_LIGHT;
+      payload={
+        request_id:o.order_id,client_name:o.name,recipient_email:o.email,
+        birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
+        birth_place_text:o.birthplace,place:o.place_en,
+        year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,
+        report_type:'light',doc_name:'포르투나_'+o.name,
+        dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),status:'confirmed'
+      };
+    }
+
+    await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     await sb.from('orders').update({status:'confirmed'}).eq('order_id',orderId);
     await loadAll();
-    showToast(`${o.name}님 리포트 발송 완료! ✦`);
+    showToast(o.name+'님 리포트 발송 완료! ✦');
   }catch(err){
     console.error(err);
     btn.disabled=false;
-    btn.textContent= o.status==='confirmed' ? '↺ 다시 발송' : '✦ 입금확인 · 리포트 발송';
+    btn.textContent=o.status==='confirmed'?'↺ 다시 발송':'✦ 입금확인 · 리포트 발송';
     showToast('오류 발생. 다시 시도해주세요');
   }
 }
@@ -502,6 +466,43 @@ async function deleteOrder(orderId){
   if(!confirm('정말 삭제할까요?'))return;
   await sb.from('orders').delete().eq('order_id',orderId);
   await loadAll();showToast('삭제되었습니다');
+}
+
+async function generatePetReport(idx){
+  const o=allPetOrders[idx];
+  const genBtn=document.getElementById('pgen-'+idx);
+  genBtn.disabled=true;genBtn.innerHTML='<span class="loading"></span>생성 중...';
+  const isPet=o.report_type==='dog';
+  const prompt='당신은 반려동물 별자리 & 사주 전문가입니다. 아래 정보로 '+(isPet?'강아지':'고양이')+' 리포트를 작성해주세요.\n\n'+(isPet?'강아지':'고양이')+' 이름: '+o.pet_name+'\n'+(isPet?'견종':'묘종')+': '+(o.pet_breed||'미상')+'\n성별: '+o.pet_gender+'\n생년월일: '+o.pet_birthdate_raw+'\n별자리: '+o.pet_zodiac+'\n사주 오행: '+o.pet_ohaeng+'\n보호자 이름: '+o.owner_name+'\n보호자 별자리: '+o.owner_zodiac+'\n\n다음 6가지 항목으로 리포트를 작성해주세요. 따뜻하고 재밌는 문체로 작성해주세요.\n\n1. 🌟 '+o.pet_name+'의 별자리 성격 ('+o.pet_zodiac+')\n2. 🔥 '+o.pet_name+'의 사주 오행 기질 ('+o.pet_ohaeng+')\n3. '+(isPet?'🍖':'🐟')+' 밥 & 간식 스타일\n4. '+(isPet?'🎾':'🧶')+' '+(isPet?'산책':'실내')+' & 놀이 스타일\n5. 💞 '+o.owner_name+'님과의 궁합 ('+o.owner_zodiac+' × '+o.pet_zodiac+')\n6. 💌 '+o.pet_name+'이가 '+o.owner_name+'님께 전하는 한마디\n\n마지막에 "✦ FORTUNA 반려동물 리포트 | '+o.pet_name+' · '+o.pet_zodiac+' · '+o.pet_ohaeng+'오행" 추가해주세요.';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const report=data.content?.[0]?.text||'생성 실패';
+    allPetOrders[idx].report_content=report;
+    const prev=document.getElementById('pprev-'+idx);prev.textContent=report;prev.style.display='block';
+    genBtn.innerHTML='✓ 생성완료 (다시생성)';genBtn.disabled=false;
+    document.getElementById('psend-'+idx).disabled=false;
+    showToast('리포트 생성 완료! 확인 후 발송해주세요 🐾');
+  }catch(e){genBtn.innerHTML='✦ Claude로 리포트 생성';genBtn.disabled=false;showToast('생성 오류가 발생했습니다');}
+}
+
+async function sendPetReport(idx){
+  const o=allPetOrders[idx];
+  if(!o.report_content){showToast('먼저 리포트를 생성해주세요');return;}
+  const sendBtn=document.getElementById('psend-'+idx);
+  sendBtn.disabled=true;sendBtn.innerHTML='<span class="loading"></span>발송 중...';
+  try{
+    await fetch(MAKE_LIGHT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({request_id:o.order_id,client_name:o.owner_name,recipient_email:o.email,report_text:o.report_content,report_type:o.report_type,doc_name:'포르투나_'+o.pet_name+'_별자리사주리포트',pet_name:o.pet_name,pet_zodiac:o.pet_zodiac,status:'confirmed'})});
+    await sb.from('pet_orders').update({status:'confirmed'}).eq('order_id',o.order_id);
+    allPetOrders[idx].status='confirmed';sendBtn.textContent='✓ 발송 완료';
+    showToast(o.pet_name+' 리포트 발송 완료! 🐾');await loadStats();
+  }catch(e){sendBtn.disabled=false;sendBtn.textContent='📧 발송하기';showToast('발송 오류가 발생했습니다');}
+}
+
+async function deletePetOrder(orderId){
+  if(!confirm('정말 삭제할까요?'))return;
+  await sb.from('pet_orders').delete().eq('order_id',orderId);
+  await loadPetOrders();showToast('삭제되었습니다');
 }
 
 let rvStar=0;
@@ -529,16 +530,16 @@ async function loadReviews(){
   list.innerHTML=data.map(r=>`
     <div class="rv-card" style="${r.approved?'':'border-color:rgba(255,200,0,0.3);'}">
       <div class="rv-header">
-        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span>${r.approved?'<span style="font-size:10px;color:#88cc88;margin-left:8px;">✅ 승인됨</span>':'<span style="font-size:10px;color:#e8cc7a;margin-left:8px;">⏳ 승인대기</span>'}</div>
+        <div><span style="font-size:15px;">${r.name}</span><span class="rv-badge">${getTypeLabel(r.type)}</span>${r.approved?'<span style="font-size:10px;color:#88cc88;margin-left:8px;">✅ 승인됨</span>':'<span style="font-size:10px;color:#e8cc7a;margin-left:8px;">⏳ 승인대기</span>'}</div>
         <div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div>
       </div>
       <div class="rv-title">${r.title}</div>
       <div class="rv-content">${r.content}</div>
       <div class="rv-date">${r.date} · ${r.source==='admin'?'관리자 등록':'고객 작성'}</div>
       <div style="margin-top:10px;display:flex;gap:8px;">
-        ${!r.approved?`<button onclick="approveReview(${r.id})" style="background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.3);border-radius:6px;padding:5px 12px;color:#88cc88;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">✅ 승인</button>`:''}
-        ${r.approved?`<button onclick="unapproveReview(${r.id})" style="background:none;border:1px solid rgba(255,200,0,0.3);border-radius:6px;padding:5px 12px;color:#e8cc7a;font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">승인 취소</button>`:''}
-        <button onclick="deleteReview(${r.id})" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:11px;cursor:pointer;">삭제</button>
+        ${!r.approved?'<button onclick="approveReview('+r.id+')" style="background:rgba(100,200,100,0.1);border:1px solid rgba(100,200,100,0.3);border-radius:6px;padding:5px 12px;color:#88cc88;font-family:Pretendard,sans-serif;font-size:11px;cursor:pointer;">✅ 승인</button>':''}
+        ${r.approved?'<button onclick="unapproveReview('+r.id+')" style="background:none;border:1px solid rgba(255,200,0,0.3);border-radius:6px;padding:5px 12px;color:#e8cc7a;font-family:Pretendard,sans-serif;font-size:11px;cursor:pointer;">승인 취소</button>':''}
+        <button onclick="deleteReview('+r.id+')" style="background:none;border:1px solid rgba(255,100,100,0.3);border-radius:6px;padding:5px 12px;color:rgba(255,100,100,0.6);font-family:Pretendard,sans-serif;font-size:11px;cursor:pointer;">삭제</button>
       </div>
     </div>`).join('');
 }
@@ -547,7 +548,7 @@ async function approveReview(id){await sb.from('reviews').update({approved:true}
 async function unapproveReview(id){await sb.from('reviews').update({approved:false}).eq('id',id);await loadReviews();showToast('승인이 취소되었습니다');}
 async function deleteReview(id){await sb.from('reviews').delete().eq('id',id);await loadReviews();await loadStats();showToast('후기가 삭제되었습니다');}
 
-if(sessionStorage.getItem('admin')==='1') loadAll();
+if(sessionStorage.getItem('admin')==='1')loadAll();
 </script>
 </body>
 </html>
