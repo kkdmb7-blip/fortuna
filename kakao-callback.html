@@ -1,27 +1,47 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>카카오 로그인 처리</title>
-</head>
-
-<body style="background:#05020e;color:white;text-align:center;padding-top:120px;font-family:sans-serif;">
-
-<h2>로그인 처리 중...</h2>
-
 <script>
+
+const REST_API_KEY = "51b4f87ad9cfd6312c176ad34eb62025";
 
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
-if(code){
-  console.log("인가코드:", code);
-  document.body.innerHTML = "<h2>카카오 로그인 성공</h2>";
-}else{
-  document.body.innerHTML = "<h2>로그인 실패</h2>";
+async function getUser(){
+
+if(!code){
+document.body.innerHTML="<h2>로그인 실패</h2>";
+return;
 }
 
-</script>
+const tokenRes = await fetch("https://kauth.kakao.com/oauth/token",{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+body:`grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&code=${code}`
+});
 
-</body>
-</html>
+const tokenData = await tokenRes.json();
+
+const access_token = tokenData.access_token;
+
+const userRes = await fetch("https://kapi.kakao.com/v2/user/me",{
+headers:{
+Authorization:`Bearer ${access_token}`
+}
+});
+
+const user = await userRes.json();
+
+document.body.innerHTML = `
+<h2>카카오 로그인 성공</h2>
+<p>닉네임 : ${user.kakao_account.profile.nickname}</p>
+<p>ID : ${user.id}</p>
+`;
+
+console.log(user);
+
+}
+
+getUser();
+
+</script>
