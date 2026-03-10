@@ -80,13 +80,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .od{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.4;}
 
 /* ── 상품 카드 ── */
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:0;}
 .pcard{border-radius:22px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all .35s;}
 .pcard:hover{transform:translateY(-5px);}
 .pcard::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent);transition:left .7s;pointer-events:none;}
 .pcard:hover::after{left:160%;}
 .pc-light{background:linear-gradient(145deg,rgba(20,12,48,0.9),rgba(7,3,19,0.95));border:1px solid rgba(138,180,255,0.18);}
 .pc-light:hover{border-color:rgba(138,180,255,0.44);box-shadow:0 18px 60px rgba(80,110,220,0.15);}
+.pc-saju{background:linear-gradient(145deg,rgba(30,15,50,0.9),rgba(8,4,20,0.95));border:1px solid rgba(160,100,220,0.35);}
+.pc-saju:hover{border-color:rgba(160,100,220,0.65);box-shadow:0 18px 60px rgba(120,60,200,0.18);}
 .pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:2px solid rgba(201,168,76,0.45);box-shadow:0 0 30px rgba(201,168,76,0.08);position:relative;}
 .pc-premium:hover{border-color:rgba(201,168,76,0.75);box-shadow:0 18px 60px rgba(201,168,76,0.2);}
 .pcard-in{position:relative;z-index:1;}
@@ -295,6 +297,17 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
 </head>
 <body>
 
+<!-- 로그인 유도 모달 -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.82);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#0d0820;border:1px solid rgba(254,229,0,0.22);border-radius:24px;max-width:380px;width:100%;padding:36px 28px;text-align:center;position:relative;">
+    <div style="font-size:32px;margin-bottom:16px;">✦</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:0.02em;">로그인이 필요해요</div>
+    <div style="font-size:13px;color:var(--dim);line-height:2;margin-bottom:28px;">리포트 신청은 카카오 로그인 후<br>이용하실 수 있어요</div>
+    <a href="https://kauth.kakao.com/oauth/authorize?client_id=51b4f87ad9cfd6312c176ad34eb62025&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&response_type=code" style="display:block;background:#FEE500;color:#1a1200;font-size:15px;font-weight:800;letter-spacing:0.04em;border-radius:12px;padding:15px;text-decoration:none;margin-bottom:12px;">카카오로 시작하기</a>
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="background:none;border:none;color:var(--dim);font-size:13px;cursor:pointer;letter-spacing:0.04em;padding:8px;">나중에 하기</button>
+  </div>
+</div>
+
 <div class="bg">
   <div class="neb n1"></div><div class="neb n2"></div><div class="neb n3"></div>
   <div id="stars"></div>
@@ -369,6 +382,18 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
         <p class="pc-time">✦ 출생 데이터 기반 개인 맞춤 분석 · 2시간 이내 발송</p>
       </div>
     </a>
+    <!-- 사주 -->
+    <a href="#" onclick="requireLogin('saju.html')" class="pcard pc-saju">
+      <div class="pcard-in">
+        <div class="pc-top"><span class="pc-tag" style="background:rgba(160,100,220,0.12);color:#c4a0f0;border:1px solid rgba(160,100,220,0.3);">Saju</span><span class="pc-emoji">&#x262F;&#xFE0F;</span></div>
+        <span class="pc-for">사주팔자로 타고난 기질 보기</span>
+        <div class="pc-name">사주 리포트</div>
+        <p class="pc-desc">4기둥·오행·격국·용신·대운·띠궁합.<br>PDF 30~40장</p>
+        <div class="pc-price"><span class="pc-num">29,000</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn" style="background:linear-gradient(135deg,rgba(160,100,220,0.8),rgba(120,60,200,0.9));color:#fff;">사주 신청하기</button>
+        <p class="pc-time">&#x2756; 생년월일시 기반 사주팔자 분석 · 2시간 이내 발송</p>
+      </div>
+    </a>
     <!-- 프리미엄 -->
     <a href="#" onclick="requireLogin('premium.html')" class="pcard pc-premium">
       <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#c9a84c,#e8cc7a);color:#0a0612;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">✦ 가장 많이 선택</div>
@@ -401,6 +426,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
         <tr><td>Final Wrap 마무리<i class="tip" data-tip="모든 분석을 종합해 '당신에게 가장 중요한 메시지'를 한 편의 글로 마무리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
         <tr><td>분량</td><td class="tc" style="color:var(--dim)">PDF 11~14장</td><td class="tc" style="color:var(--gold)">PDF 50~60장</td></tr>
         <tr><td>발송</td><td class="tc" style="color:var(--gold);font-weight:600;">2시간 이내</td><td class="tc" style="color:var(--gold);font-weight:600;">2시간 이내</td></tr>
+        <tr><td>발송 시간</td><td class="tc" style="color:var(--gold);font-weight:700;">⚡ 2시간 이내</td><td class="tc" style="color:var(--gold);font-weight:700;">⚡ 2시간 이내</td></tr>
         <tr><td>가격</td><td class="tc"><span class="pl">9,900원</span></td><td class="tc"><span class="pp">29,000원</span></td></tr>
       </tbody>
     </table>
@@ -484,7 +510,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
     <div class="step reveal rd1"><div class="step-n">1</div><div class="step-t">카카오 로그인</div><div class="step-d">카카오 계정으로 간편 가입 후 신청</div></div>
     <div class="step reveal rd2"><div class="step-n">2</div><div class="step-t">결제</div><div class="step-d">카드결제 또는 계좌이체<br>예금주 윤은채</div></div>
     <div class="step reveal rd3"><div class="step-n">3</div><div class="step-t">리포트 제작</div><div class="step-d">출생 차트 기반 개인 맞춤 정밀 분석</div><div class="step-time">모든 상품 2시간 이내</div></div>
-    <div class="step reveal rd4"><div class="step-n">4</div><div class="step-t">이메일 발송</div><div class="step-d">PDF 파일로 입력하신 이메일로 전송</div></div>
+    <div class="step reveal rd4"><div class="step-n">4</div><div class="step-t">이메일 발송</div><div class="step-d">PDF 파일로 입력하신 이메일 전송</div><div class="step-time">⚡ 결제 후 2시간 이내</div></div>
   </div>
 </section>
 
@@ -583,6 +609,127 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
   </div>
 </section>
 
+
+<!-- 서비스 제공 및 환불 정책 -->
+<section class="sec reveal" id="policy">
+  <div class="sec-hd">
+    <span class="sec-eye">이용 안내</span>
+    <h2 class="sec-title">서비스 제공 및 <em>환불 정책</em></h2>
+    <p class="sec-sub">구매 전 반드시 확인해주세요</p>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+
+  <div style="background:linear-gradient(135deg,rgba(20,10,40,0.6),rgba(7,3,18,0.8));border:1px solid var(--golddim);border-radius:20px;padding:36px 32px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:22px 20px;">
+        <div style="font-size:20px;margin-bottom:10px;">⚡</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">서비스 제공 기간</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            결제 완료 후 <strong style="color:var(--text);">2시간 이내</strong> 이메일 PDF 발송
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            생년월일·출생지 기반 <strong style="color:var(--text);">1인 1분석 개별 작성</strong> 서비스
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            서비스 제공은 <strong style="color:var(--text);">1회성</strong>으로 이메일 수신 즉시 완료됩니다
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            이메일 분실 시 <strong style="color:var(--text);">1회 재발송</strong> 가능 (고객센터 문의)
+          </li>
+        </ul>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:22px 20px;">
+        <div style="font-size:20px;margin-bottom:10px;">↩️</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">취소 및 환불 정책</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            <strong style="color:var(--text);">결제 후 제작 시작 전</strong>: 100% 전액 환불
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            <strong style="color:var(--text);">리포트 발송 완료 후</strong>: 디지털 콘텐츠 특성상 환불 불가
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            서비스 오류·오발송 등 <strong style="color:var(--text);">포르투나 귀책 사유</strong> 시 전액 환불
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            취소 요청: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f49405d5b5a414e015d4a5f405d5b6f48424e4643014c4042">[email&#160;protected]</a>
+          </li>
+        </ul>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:22px 20px;">
+        <div style="font-size:20px;margin-bottom:10px;">📋</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">청약철회 안내</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            전자상거래법에 따라 결제일로부터 <strong style="color:var(--text);">7일 이내</strong> 청약철회 가능
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            단, 리포트 수신(이메일 열람) 후에는 디지털 콘텐츠 특성상 철회 제한
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            미수신 상태 철회 요청은 <strong style="color:var(--text);">전액 환불</strong> 처리됩니다
+          </li>
+        </ul>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:22px 20px;">
+        <div style="font-size:20px;margin-bottom:10px;">📞</div>
+        <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">고객센터</div>
+        <ul style="list-style:none;padding:0;">
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            이메일: <strong style="color:var(--text);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aaccc5d8dedfc4cb84d8cfdac5d8deeacdc7cbc3c684c9c5c7">[email&#160;protected]</a></strong>
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            운영: 평일 10:00 ~ 18:00
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            문의 시 주문번호·결제 이메일 함께 기재
+          </li>
+          <li style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;">
+            <span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>
+            통상 <strong style="color:var(--text);">24시간 이내</strong> 답변 드립니다
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- 결제 수단 -->
+    <div style="background:rgba(255,255,255,0.025);border:1px solid rgba(201,168,76,0.1);border-radius:14px;padding:22px 20px;margin-top:14px;">
+      <div style="font-size:20px;margin-bottom:10px;">💳</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gold);letter-spacing:0.06em;margin-bottom:10px;">결제 수단 안내</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px;">
+        <div style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>신용카드 · 체크카드 (국내 전 카드사)</div>
+        <div style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>카카오페이 · 네이버페이 · 토스페이</div>
+        <div style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>실시간 계좌이체</div>
+        <div style="font-size:12px;color:var(--dim);line-height:2;padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--gold);opacity:0.5;">·</span>무통장 입금 (가상계좌)</div>
+      </div>
+      <div style="font-size:11px;color:rgba(155,143,176,0.45);margin-top:14px;line-height:1.8;border-top:1px solid rgba(201,168,76,0.08);padding-top:14px;">
+        결제는 KG이니시스 PG사를 통해 안전하게 처리됩니다. 포르투나는 카드 정보를 직접 저장하지 않습니다.
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="sec reveal">
   <div class="cta-banner">
@@ -669,7 +816,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
       <div class="biz-item"><strong>업태/종목</strong> 점술 및 유사 서비스업</div>
       <div class="biz-item"><strong>개업일</strong> 2024. 08. 01</div>
       <div class="biz-item" style="grid-column:1/-1;"><strong>사업장 주소</strong> 서울특별시 강서구 강서로 174, 지하2층 B206호 (화곡동, 근린생활시설)</div>
-      <div class="biz-item"><strong>이메일</strong> fortuna@kakao.com</div>
+      <div class="biz-item"><strong>이메일</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8fe9e0fdfbfae1eecfe4eee4eee0a1ece0e2">[email&#160;protected]</a></div>
       <div class="biz-item"><strong>호스팅 제공자</strong> Vercel Inc.</div>
     </div>
     <p style="font-size:10px;color:rgba(155,143,176,0.3);letter-spacing:0.04em;padding-bottom:28px;">© 2024 FORTUNA. All rights reserved.</p>
@@ -688,7 +835,23 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+
+// ── 로그인 필수 처리 ──
+function requireLogin(e, dest){
+  e.preventDefault();
+  const user = JSON.parse(localStorage.getItem('fortuna_user') || 'null');
+  if(user){
+    window.location.href = dest;
+  } else {
+    sessionStorage.setItem('login_redirect', dest);
+    document.getElementById('loginModal').style.display = 'flex';
+  }
+}
+document.getElementById('loginModal').addEventListener('click', function(e){
+  if(e.target === this) this.style.display = 'none';
+});
+
 // 별 생성
 const bg = document.getElementById('stars');
 for(let i=0;i<160;i++){
@@ -831,18 +994,4 @@ async function loadReviews(){
     rvData = data;
     document.getElementById('reviewsGrid').innerHTML = data.map((r,i)=>`
       <div class="rv-card" onclick="openModal(rvData[${i}])" style="cursor:pointer;">
-        <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이트'}</span></div>
-        ${renderPhotoThumb(r)}
-        ${r.title?`<div class="rv-quote">"${r.title}"</div>`:''}
-        <p class="rv-txt">${r.content.length>90?r.content.slice(0,90)+'…':r.content}</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-          <div class="rv-author">${r.name}</div>
-          <div style="font-size:10px;color:rgba(155,143,176,0.4);letter-spacing:0.03em;">${fmtDate(r.created_at)}</div>
-        </div>
-      </div>`).join('');
-  }catch(e){ console.error(e); }
-}
-loadReviews();
-</script>
-</body>
-</html>
+        <div class="rv-top"><div class="rv-stars">${'★'.repeat(r.star)}${'☆'.repeat(5-r.star)}</div><span class="rv-badge">${r.type==='premium'?'프리미엄':'라이�
