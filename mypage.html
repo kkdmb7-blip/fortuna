@@ -870,54 +870,62 @@ function renderPayments(){
 
 // ── 메인 초기화 ──
 async function init(){
-  // 카카오 로그인 확인
+  // 가능한 모든 localStorage/sessionStorage 키 시도
   let user = null;
-  try{
-    const stored = sessionStorage.getItem('kakaoUser') || localStorage.getItem('kakaoUser');
-    if(stored) user = JSON.parse(stored);
-  }catch(e){}
+  const KEYS = ['fortuna_user','kakaoUser','kakao_user','user'];
+  for(const k of KEYS){
+    try{
+      const v = localStorage.getItem(k) || sessionStorage.getItem(k);
+      if(v){ user = JSON.parse(v); break; }
+    }catch(e){}
+  }
 
-  if(!user || !user.kakao_id){
-    // 로그인 안 됨 → 메인으로
+  console.log('[mypage] user data:', user); // 개발자도구 Console로 확인 가능
+
+  if(!user){
+    console.warn('[mypage] 로그인 없음 → index.html');
     window.location.href = 'index.html';
     return;
   }
 
-  // UI 사용자 정보 채우기
-  const name  = user.nickname || user.name || '사용자';
-  const email = user.email || '—';
-  const kakaoId = user.kakao_id || '';
+  // 카카오 응답 구조 다양성 대응
+  const kakaoId    = String(user.id || user.kakao_id || '');
+  const props      = user.properties || {};
+  const kakaoAcct  = user.kakao_account || {};
+  const profile    = kakaoAcct.profile || {};
+  const name       = user.nickname || props.nickname || profile.nickname || user.name || '사용자';
+  const email      = user.email || kakaoAcct.email || '—';
+  const profileImg = user.profile_image_url || user.profile_image
+                  || props.profile_image || profile.profile_image_url || '';
 
-  document.getElementById('greetingName').textContent   = name;
-  document.getElementById('userNameSide').textContent   = name;
-  document.getElementById('userEmailSide').textContent  = email;
+  document.getElementById('greetingName').textContent    = name;
+  document.getElementById('userNameSide').textContent    = name;
+  document.getElementById('userEmailSide').textContent   = email !== '—' ? email : (kakaoId ? 'id:'+kakaoId : '—');
   document.getElementById('settingNickname').textContent = name;
-  document.getElementById('settingEmail').textContent   = email;
-  document.getElementById('settingKakaoId').textContent = kakaoId;
-
-  // 프로필 이미지
-  if(user.profile_image){
-    document.getElementById('userAvatar').innerHTML = `<img src="${user.profile_image}" alt="">`;
+  document.getElementById('settingEmail').textContent    = email;
+  document.getElementById('settingKakaoId').textContent  = kakaoId || '—';
+  if(profileImg){
+    document.getElementById('userAvatar').innerHTML = '<img src="'+profileImg+'" alt="" onerror="this.parentElement.textContent='✦'">';
   }
 
-  // Supabase에서 주문 가져오기
+  // Supabase 주문 조회
   try{
-    let query = sb.from('orders').select('*').order('created_at',{ascending:false});
-    // kakao_id 또는 email 로 필터
-    if(kakaoId){
-      query = sb.from('orders').select('*')
-        .or(`kakao_id.eq.${kakaoId},email.eq.${email}`)
-        .order('created_at',{ascending:false});
-    } else if(email && email!=='—'){
-      query = sb.from('orders').select('*').eq('email',email).order('created_at',{ascending:false});
+    if(email && email !== '—'){
+      const { data, error } = await sb.from('orders').select('*')
+        .eq('email', email).order('created_at',{ascending:false});
+      if(!error && data) allOrders = data;
     }
-    const {data,error} = await query;
-    if(!error && data) allOrders = data;
-  }catch(e){ console.error('주문 조회 오류:',e); }
+    if(allOrders.length === 0 && kakaoId){
+      try{
+        const { data, error } = await sb.from('orders').select('*')
+          .eq('kakao_id', kakaoId).order('created_at',{ascending:false});
+        if(!error && data) allOrders = data;
+      }catch(e2){}
+    }
+  }catch(e){ console.error('[mypage] 주문 조회 오류:', e); }
 
   renderDashboard(allOrders);
 
-  // 레이아웃 표시
   document.getElementById('pageLoading').style.display = 'none';
   document.getElementById('appLayout').style.display   = 'flex';
 }
