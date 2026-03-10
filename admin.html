@@ -46,6 +46,7 @@
   .order-card.light{border-left:3px solid rgba(100,150,220,0.5);}
   .order-card.premium{border-left:3px solid var(--gold);}
   .order-card.saju_premium{border-left:3px solid rgba(180,100,255,0.7);}
+  .order-card.saju{border-left:3px solid rgba(130,80,220,0.7);}
   .order-card.pet{border-left:3px solid rgba(244,162,97,0.6);}
   .order-card.done{opacity:0.6;}
   .order-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
@@ -155,6 +156,7 @@
       <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
       <button class="filter-btn" onclick="setFilter('light',this)">라이트</button>
       <button class="filter-btn" onclick="setFilter('premium',this)">프리미엄</button>
+      <button class="filter-btn" onclick="setFilter('saju',this)">☯ 사주</button>
       <button class="filter-btn" onclick="setFilter('saju_premium',this)">☯ 사주+점성</button>
       <button class="filter-btn" onclick="setFilter('pending',this)">입금대기</button>
       <button class="filter-btn" onclick="setFilter('confirmed',this)">발송완료</button>
@@ -188,7 +190,7 @@
         </div>
       </div>
       <div class="form-field"><label class="form-label">닉네임 *</label><input type="text" class="form-input" id="rvName" placeholder="예: 30대 직장인"></div>
-      <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option><option value="saju_premium">사주+점성</option></select></div>
+      <div class="form-field"><label class="form-label">리포트 종류 *</label><select class="form-select" id="rvType"><option value="">선택</option><option value="light">라이트</option><option value="premium">프리미엄</option><option value="saju">사주</option><option value="saju_premium">사주+점성</option></select></div>
       <div class="form-field"><label class="form-label">한줄 제목 *</label><input type="text" class="form-input" id="rvTitle" placeholder="예: 읽으면서 소름이 돋았어요"></div>
       <div class="form-field"><label class="form-label">상세 내용 *</label><textarea class="form-textarea" id="rvContent" placeholder="후기 내용"></textarea></div>
       <div class="form-btns">
@@ -276,11 +278,13 @@ function setPetFilter(f,el){petFilter=f;document.querySelectorAll('#content-pets
 
 function getTypeLabel(type){
   if(type==='premium')return '프리미엄';
+  if(type==='saju')return '☯ 사주';
   if(type==='saju_premium')return '☯ 사주+점성';
   return '라이트';
 }
 function getTypeClass(type){
   if(type==='premium')return 'type-premium';
+  if(type==='saju')return 'type-saju';
   if(type==='saju_premium')return 'type-saju';
   return 'type-light';
 }
@@ -298,6 +302,7 @@ function renderOrders(){
   let orders=[...allOrders];
   if(currentFilter==='light')orders=orders.filter(o=>o.report_type==='light');
   else if(currentFilter==='premium')orders=orders.filter(o=>o.report_type==='premium');
+  else if(currentFilter==='saju')orders=orders.filter(o=>o.report_type==='saju');
   else if(currentFilter==='saju_premium')orders=orders.filter(o=>o.report_type==='saju_premium');
   else if(currentFilter==='pending')orders=orders.filter(o=>o.status==='pending'||o.status==='bank_transfer_pending');
   else if(currentFilter==='confirmed')orders=orders.filter(o=>o.status==='confirmed');
@@ -306,7 +311,7 @@ function renderOrders(){
   if(!orders.length){list.innerHTML='<div class="empty-msg">주문이 없습니다</div>';return;}
   list.innerHTML=orders.map(o=>{
     const isBankTransfer=o.status==='bank_transfer_pending';
-    const isSaju=o.report_type==='saju_premium';
+    const isSaju=o.report_type==='saju_premium'||o.report_type==='saju';
     const isDone=o.status==='confirmed';
 
     // 사주 정보 박스
@@ -438,7 +443,44 @@ async function sendOrder(orderId, type, btnEl){
     const aspects=calcAspects(planets);
     btnEl.innerHTML='<span class="loading"></span>발송 중...';
     let webhook, payload;
-    if(type==='saju_premium'){
+    if(type==='saju'){
+      // 사주 단독 리포트
+      let sajuData={};
+      if(o.saju_birth&&o.saju_gender&&o.saju_city){
+        try{
+          const sajuRes=await fetch('https://fortuna.kkdmb7.workers.dev/saju',{
+            method:'POST',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city})
+          });
+          sajuData=await sajuRes.json();
+        }catch(e){console.warn('사주 API 오류',e);}
+      }
+      webhook='https://hook.us2.make.com/ku5srjx0e11lpfhptou1jyqbwsf3vej2';
+      payload={
+        request_id:o.order_id,client_name:o.name,recipient_email:o.email,
+        birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
+        gender:o.gender,
+        report_type:'saju',doc_name:'포르투나_사주_'+o.name,
+        saju_birth:o.saju_birth||'',saju_gender:o.saju_gender||'',saju_city:o.saju_city||'',
+        saju_summary:JSON.stringify(sajuData?.data?.summary||{}),
+        saju_pillars:sajuData?.data?.summary?.pillars||'',
+        saju_strength:sajuData?.data?.summary?.strength||'',
+        saju_zodiac:sajuData?.data?.summary?.zodiac||'',
+        saju_yongshin_primary:sajuData?.data?.yongshin?.primary_kor||'',
+        saju_yongshin_secondary:sajuData?.data?.yongshin?.secondary_kor||'',
+        saju_five_pct:JSON.stringify(sajuData?.data?.five_pct||{}),
+        saju_five_star:JSON.stringify(sajuData?.data?.five_star||{}),
+        saju_geokguk:sajuData?.data?.geokguk?.geok_kor||'',
+        saju_strength_label:sajuData?.data?.strength||'',
+        saju_big_luck:JSON.stringify((sajuData?.data?.big_luck||[]).slice(0,5)),
+        saju_lucky:JSON.stringify(sajuData?.data?.lucky||{}),
+        saju_branch_relations:JSON.stringify(sajuData?.data?.branch_relations_kor||{}),
+        saju_zodiac_compatibility:JSON.stringify(sajuData?.data?.zodiac_compatibility||[]),
+        saju_relations_ui:JSON.stringify(sajuData?.data?.relations_ui||{}),
+        saju_data_full:JSON.stringify(sajuData?.data||{}),
+        status:'confirmed'
+      };
+    } else if(type==='saju_premium'){
       let sajuData={};
       if(o.saju_birth&&o.saju_gender&&o.saju_city){
         try{
