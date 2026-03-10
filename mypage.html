@@ -911,33 +911,44 @@ async function init(){
     document.getElementById('userAvatar').innerHTML = `<img src="${profileImg}" alt="" onerror="this.parentElement.innerHTML='&#10022;'">` ;
   }
 
-  // Supabase 주문 조회
-  // 후보 이메일: 카카오 이메일 > 주문 시 입력 이메일(fortuna_order_email)
-  let queryEmail = (email && email !== '—') ? email : null;
-  if(!queryEmail){
-    try{ queryEmail = localStorage.getItem('fortuna_order_email') || null; }catch(e){}
-  }
-  console.log('[mypage] 조회 이메일:', queryEmail);
+  // ── Supabase 주문 조회 ──
+  // 우선순위: 카카오 이메일 > localStorage의 주문 이메일 > sessionStorage 직전주문
+  const candidates = [];
+  if(email && email !== '—') candidates.push(email);
   try{
-    if(queryEmail){
-      const { data, error } = await sb.from('orders').select('*')
-        .eq('email', queryEmail).order('created_at',{ascending:false});
-      if(!error && data){ allOrders = data; console.log('[mypage] 주문 조회 결과:', data.length, '건'); }
-      else console.warn('[mypage] 조회 오류:', error);
-    } else {
-      console.warn('[mypage] 조회할 이메일 없음');
-    }
-  }catch(e){ console.error('[mypage] 주문 조회 오류:', e); }
+    const oe = localStorage.getItem('fortuna_order_email');
+    if(oe && !candidates.includes(oe)) candidates.push(oe);
+  }catch(e){}
 
-  // 직전 주문(sessionStorage)이 있으면 목록에 합치기 (DB 반영 전에도 즉시 표시)
+  console.log('[mypage] 조회 후보 이메일:', candidates);
+
+  for(const qEmail of candidates){
+    try{
+      const { data, error } = await sb.from('orders').select('*')
+        .eq('email', qEmail).order('created_at',{ascending:false});
+      if(!error && data && data.length > 0){
+        allOrders = data;
+        console.log('[mypage] 조회 성공:', qEmail, data.length+'건');
+        break;
+      }
+    }catch(e){ console.error('[mypage] 조회 오류:', e); }
+  }
+
+  // sessionStorage/localStorage 직전 주문도 병합 (결제 직후 바로 표시용)
   try{
-    const lastStr = sessionStorage.getItem('fortuna_last_order');
+    const lastStr = sessionStorage.getItem('fortuna_last_order')
+                 || localStorage.getItem('fortuna_last_order');
     if(lastStr){
       const lo = JSON.parse(lastStr);
+      // 이메일 없으면 여기서 저장
+      if(lo.email && lo.email !== '') try{ localStorage.setItem('fortuna_order_email', lo.email); }catch(e){}
       const exists = allOrders.some(o => o.order_id === lo.order_id);
       if(!exists) allOrders = [lo, ...allOrders];
     }
   }catch(e){}
+
+  // 여전히 0건이면 로딩 표시 없이 빈 화면
+  console.log('[mypage] 최종 주문 수:', allOrders.length);
 
   renderDashboard(allOrders);
 
