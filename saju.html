@@ -295,8 +295,6 @@ async function submitBankOrder(){
     // 사주 API용 ISO 형식 birth
     const midnightTypeEl=document.querySelector('input[name="yajasi"]:checked');
     const midnightType=midnightTypeEl?parseInt(midnightTypeEl.value):0;
-    const midnightTypeEl=document.querySelector('input[name="yajasi"]:checked');
-  const midnightType=midnightTypeEl?parseInt(midnightTypeEl.value):0;
   const sajuBirth = `${String(bd.year).padStart(4,'0')}-${String(bd.month).padStart(2,'0')}-${String(bd.day).padStart(2,'0')}T${String(bt.hour).padStart(2,'0')}:${String(bt.min).padStart(2,'0')}:00`;
     const sajuGender = gender==='여성' ? 'female' : 'male';
     const sajuCity = CITIES[birthplace] ? birthplace+'특별시' : birthplace;
