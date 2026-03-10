@@ -80,13 +80,15 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .od{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.4;}
 
 /* ── 상품 카드 ── */
-.products-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;}
+.products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:0;}
 .pcard{border-radius:22px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all .35s;}
 .pcard:hover{transform:translateY(-5px);}
 .pcard::after{content:'';position:absolute;top:0;left:-100%;width:55%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.025),transparent);transition:left .7s;pointer-events:none;}
 .pcard:hover::after{left:160%;}
 .pc-light{background:linear-gradient(145deg,rgba(20,12,48,0.9),rgba(7,3,19,0.95));border:1px solid rgba(138,180,255,0.18);}
 .pc-light:hover{border-color:rgba(138,180,255,0.44);box-shadow:0 18px 60px rgba(80,110,220,0.15);}
+.pc-saju{background:linear-gradient(145deg,rgba(30,15,50,0.9),rgba(8,4,20,0.95));border:1px solid rgba(160,100,220,0.35);}
+.pc-saju:hover{border-color:rgba(160,100,220,0.65);box-shadow:0 18px 60px rgba(120,60,200,0.18);}
 .pc-premium{background:linear-gradient(145deg,rgba(40,20,7,0.9),rgba(14,6,2,0.95));border:2px solid rgba(201,168,76,0.45);box-shadow:0 0 30px rgba(201,168,76,0.08);position:relative;}
 .pc-premium:hover{border-color:rgba(201,168,76,0.75);box-shadow:0 18px 60px rgba(201,168,76,0.2);}
 .pcard-in{position:relative;z-index:1;}
@@ -367,6 +369,18 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
         <div class="pc-price"><span class="pc-num">9,900</span><span class="pc-unit">원</span></div>
         <button class="pc-btn pb-l">라이트 신청하기</button>
         <p class="pc-time">✦ 출생 데이터 기반 개인 맞춤 분석 · 2시간 이내 발송</p>
+      </div>
+    </a>
+    <!-- 사주 -->
+    <a href="#" onclick="requireLogin('saju.html')" class="pcard pc-saju">
+      <div class="pcard-in">
+        <div class="pc-top"><span class="pc-tag" style="background:rgba(160,100,220,0.12);color:#c4a0f0;border:1px solid rgba(160,100,220,0.3);">Saju</span><span class="pc-emoji">&#x262F;&#xFE0F;</span></div>
+        <span class="pc-for">사주팔자로 타고난 기질 보기</span>
+        <div class="pc-name">사주 리포트</div>
+        <p class="pc-desc">4기둥·오행·격국·용신·대운·띠궁합.<br>PDF 30~40장</p>
+        <div class="pc-price"><span class="pc-num">29,000</span><span class="pc-unit">원</span></div>
+        <button class="pc-btn" style="background:linear-gradient(135deg,rgba(160,100,220,0.8),rgba(120,60,200,0.9));color:#fff;">사주 신청하기</button>
+        <p class="pc-time">&#x2756; 생년월일시 기반 사주팔자 분석 · 2시간 이내 발송</p>
       </div>
     </a>
     <!-- 프리미엄 -->
@@ -653,6 +667,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
   <p class="footer-txt">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>출생 차트 기반 개인 맞춤 제작 · 2시간 이내 이메일 발송</p>
   <div class="footer-links">
     <a href="#" onclick="requireLogin('light.html')" class="footer-link">라이트 리포트</a>
+    <a href="#" onclick="requireLogin('saju.html')" class="footer-link">사주 리포트</a>
     <a href="#" onclick="requireLogin('premium.html')" class="footer-link">프리미엄 리포트</a>
     <a href="dominant.html" class="footer-link">핵심 행성 찾기</a>
     <a href="#policy" class="footer-link">환불정책</a>
@@ -669,7 +684,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
       <div class="biz-item"><strong>업태/종목</strong> 점술 및 유사 서비스업</div>
       <div class="biz-item"><strong>개업일</strong> 2024. 08. 01</div>
       <div class="biz-item" style="grid-column:1/-1;"><strong>사업장 주소</strong> 서울특별시 강서구 강서로 174, 지하2층 B206호 (화곡동, 근린생활시설)</div>
-      <div class="biz-item"><strong>이메일</strong> fortuna@kakao.com</div>
+      <div class="biz-item"><strong>이메일</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bddbd2cfc9c8d3dcfdd6dcd6dcd293ded2d0">[email&#160;protected]</a></div>
       <div class="biz-item"><strong>호스팅 제공자</strong> Vercel Inc.</div>
     </div>
     <p style="font-size:10px;color:rgba(155,143,176,0.3);letter-spacing:0.04em;padding-bottom:28px;">© 2024 FORTUNA. All rights reserved.</p>
@@ -688,7 +703,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // 별 생성
 const bg = document.getElementById('stars');
 for(let i=0;i<160;i++){
