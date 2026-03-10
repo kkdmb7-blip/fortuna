@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>포르투나 — 마이페이지</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -20,8 +20,7 @@
   --surface: rgba(20,12,40,0.6);
   --surface2: rgba(36,22,63,0.4);
   --border: rgba(255,255,255,0.06);
-  --font-display: 'Cormorant Garamond', Georgia, serif;
-  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-display: 'Pretendard', sans-serif;
   --font-sans: 'Pretendard', sans-serif;
   --sidebar-w: 240px;
 }
@@ -73,7 +72,7 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .sidebar-logo a {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size: 22px;
   font-weight: 400;
   letter-spacing: 0.12em;
@@ -177,7 +176,7 @@ body {
   position:sticky; top:0; z-index:50;
 }
 .topbar-title {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   font-size:18px; font-weight:400;
   letter-spacing:0.06em; color:var(--text);
 }
@@ -205,23 +204,13 @@ body {
 .dashboard-greeting {
   margin-bottom:32px;
 }
-.greeting-badge {
-  display:inline-block; font-size:10px; letter-spacing:0.35em;
-  color:var(--gold); border:1px solid var(--gold-border);
-  border-radius:20px; padding:4px 14px; margin-bottom:14px;
-  text-transform:uppercase;
-}
 .greeting-title {
-  font-family: var(--font-display);
-  font-size:32px; font-weight:300;
-  letter-spacing:0.04em; color:var(--text);
-  line-height:1.3;
+  font-family: var(--font-sans);
+  font-size:24px; font-weight:700;
+  letter-spacing:-0.01em; color:var(--text);
+  line-height:1.3; margin-bottom:28px;
 }
-.greeting-title em { color:var(--gold); font-style:italic; }
-.greeting-sub {
-  font-size:13px; color:var(--text-dim);
-  margin-top:8px; line-height:1.8;
-}
+.greeting-title em { color:var(--gold); font-style:normal; }
 
 .stat-grid {
   display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
@@ -241,13 +230,13 @@ body {
 }
 .stat-icon { font-size:22px; margin-bottom:10px; }
 .stat-value {
-  font-family:var(--font-display); font-size:28px; font-weight:400;
+  font-family:var(--font-sans); font-size:28px; font-weight:400;
   color:var(--gold); letter-spacing:0.04em;
 }
 .stat-label { font-size:11px; color:var(--text-muted); margin-top:4px; letter-spacing:0.05em; }
 
 .dash-section-title {
-  font-family:var(--font-display); font-size:16px; font-weight:400;
+  font-family:var(--font-sans); font-size:16px; font-weight:400;
   letter-spacing:0.08em; color:var(--text-dim);
   margin-bottom:16px; padding-bottom:10px;
   border-bottom:1px solid var(--border);
@@ -320,7 +309,7 @@ body {
   font-size:9px; letter-spacing:0.35em; color:var(--gold);
   text-transform:uppercase; margin-bottom:8px;
 }
-.report-card-name { font-family:var(--font-display); font-size:18px; font-weight:400; color:var(--text); margin-bottom:6px; }
+.report-card-name { font-family:var(--font-sans); font-size:18px; font-weight:400; color:var(--text); margin-bottom:6px; }
 .report-card-date { font-size:11px; color:var(--text-muted); }
 .report-card-badge {
   position:absolute; top:16px; right:16px;
@@ -369,7 +358,7 @@ body {
   border-radius:16px; padding:28px; margin-bottom:20px;
 }
 .settings-card-title {
-  font-family:var(--font-display); font-size:16px; font-weight:400;
+  font-family:var(--font-sans); font-size:16px; font-weight:400;
   color:var(--text); margin-bottom:20px; letter-spacing:0.06em;
 }
 .settings-row {
@@ -394,7 +383,7 @@ body {
 }
 .page-hero-icon { font-size:52px; margin-bottom:16px; }
 .page-hero-title {
-  font-family:var(--font-display); font-size:26px; font-weight:300;
+  font-family:var(--font-sans); font-size:26px; font-weight:700;
   color:var(--gold); margin-bottom:10px; letter-spacing:0.06em;
 }
 .page-hero-sub { font-size:13px; color:var(--text-dim); line-height:2; }
@@ -434,7 +423,7 @@ body {
   box-shadow:0 8px 32px rgba(201,168,76,0.08);
 }
 .pet-option-icon { font-size:40px; margin-bottom:12px; }
-.pet-option-name { font-family:var(--font-display); font-size:18px; color:var(--gold); margin-bottom:6px; }
+.pet-option-name { font-family:var(--font-sans); font-size:18px; color:var(--gold); margin-bottom:6px; }
 .pet-option-desc { font-size:12px; color:var(--text-muted); line-height:1.7; }
 
 /* ── 모바일 오버레이 ── */
@@ -450,7 +439,7 @@ body {
 }
 .spinner { width:32px; height:32px; border:2px solid rgba(201,168,76,0.2); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to{transform:rotate(360deg)} }
-.loading-txt { font-family:var(--font-display); font-size:14px; color:var(--text-dim); letter-spacing:0.1em; }
+.loading-txt { font-family:var(--font-sans); font-size:14px; color:var(--text-dim); letter-spacing:0.1em; }
 
 /* ── 반응형 ── */
 @media (max-width:768px) {
@@ -558,9 +547,7 @@ body {
       <!-- ── 대시보드 ── -->
       <div class="section active" id="sec-dashboard">
         <div class="dashboard-greeting">
-          <div class="greeting-badge">My Fortuna</div>
-          <div class="greeting-title">안녕하세요, <em id="greetingName">—</em>님</div>
-          <div class="greeting-sub">별자리와 사주가 당신을 기다리고 있어요</div>
+          <div class="greeting-title">안녕하세요, <em id="greetingName">—</em>님 👋</div>
         </div>
 
         <div class="stat-grid">
@@ -909,18 +896,20 @@ async function init(){
   }
 
   // Supabase 주문 조회
+  // 후보 이메일: 카카오 이메일 > 주문 시 입력 이메일(fortuna_order_email)
+  let queryEmail = (email && email !== '—') ? email : null;
+  if(!queryEmail){
+    try{ queryEmail = localStorage.getItem('fortuna_order_email') || null; }catch(e){}
+  }
+  console.log('[mypage] 조회 이메일:', queryEmail);
   try{
-    if(email && email !== '—'){
+    if(queryEmail){
       const { data, error } = await sb.from('orders').select('*')
-        .eq('email', email).order('created_at',{ascending:false});
-      if(!error && data) allOrders = data;
-    }
-    if(allOrders.length === 0 && kakaoId){
-      try{
-        const { data, error } = await sb.from('orders').select('*')
-          .eq('kakao_id', kakaoId).order('created_at',{ascending:false});
-        if(!error && data) allOrders = data;
-      }catch(e2){}
+        .eq('email', queryEmail).order('created_at',{ascending:false});
+      if(!error && data){ allOrders = data; console.log('[mypage] 주문 조회 결과:', data.length, '건'); }
+      else console.warn('[mypage] 조회 오류:', error);
+    } else {
+      console.warn('[mypage] 조회할 이메일 없음');
     }
   }catch(e){ console.error('[mypage] 주문 조회 오류:', e); }
 
