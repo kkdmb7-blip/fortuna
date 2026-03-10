@@ -63,7 +63,7 @@
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://js.tosspayments.com/v2/standard"></script>
+<script src="https://stdpay.inicis.com/stdjs/INIStdPay.js" charset="UTF-8"></script>
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -205,9 +205,9 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     <div class="pay-methods">
       <span class="pay-method">신용카드</span><span class="pay-method">체크카드</span>
       <span class="pay-method">카카오페이</span><span class="pay-method">네이버페이</span>
-      <span class="pay-method">토스페이</span><span class="pay-method">계좌이체</span>
+      <span class="pay-method">삼성페이</span><span class="pay-method">계좌이체</span>
     </div>
-    <div style="text-align:center;margin-top:10px;font-size:12px;color:rgba(155,143,176,0.5);">🔒 토스페이먼츠 보안 결제</div>
+    <div style="text-align:center;margin-top:10px;font-size:12px;color:rgba(155,143,176,0.5);">🔒 KG이니시스 보안 결제</div>
     <div style="margin-top:20px;padding:16px 18px;background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.3);border-radius:10px;text-align:center;">
       <div style="font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 입금 안내</div>
       <div style="font-size:16px;color:var(--text);letter-spacing:0.04em;margin-bottom:4px;">국민은행 013-21-0780-866</div>
@@ -343,19 +343,39 @@ async function startPayment(method){
   if(method==='CARD')btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';
   else btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';
   try{
-    const tossPayments=TossPayments('test_ck_Gv6LjeKD8azvRelz7MlM3wYxAdXy');
-    const payment=tossPayments.payment({customerKey:d.email.replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)+'_'+Date.now()});
-    await payment.requestPayment({
-      method,amount:{currency:'KRW',value:39000},orderId,
-      orderName:'포르투나 사주+점성 통합 리포트',
-      customerName:d.name,customerEmail:d.email,
-      successUrl:window.location.origin+'/success.html?type=saju_premium',
-      failUrl:window.location.href.split('?')[0]+'?fail=1',
+    const timestamp = String(Date.now()).slice(0,10);
+    const res = await fetch('https://fortuna.kkdmb7.workers.dev/inicis-sign',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({mid:'MOI3302087', oid:orderId, price:39000, timestamp})
     });
+    const {signature, mKey} = await res.json();
+    const f = document.createElement('form');
+    f.name='INIpayStd'; f.method='post'; f.acceptCharset='euc-kr';
+    const payMethod = method==='CARD' ? 'Card' : 'DirectBank';
+    const fields = {
+      version:'1.0', gopaymethod:payMethod,
+      mid:'MOI3302087', oid:orderId,
+      price:'39000', timestamp, use_chkfake:'Y',
+      signature, mKey,
+      goodname:'포르투나 사주+점성 통합 리포트',
+      buyername:d.name, buyeremail:d.email, buyertel:'01000000000',
+      currency:'WON', langWON:'ko',
+      returnUrl:window.location.origin+'/success.html?type=saju_premium',
+      closeUrl:window.location.origin+'/close.html',
+      acceptmethod:'HPP(1):no_receipt:SKIN(green)',
+    };
+    Object.entries(fields).forEach(([k,v])=>{
+      const i=document.createElement('input');
+      i.type='hidden'; i.name=k; i.value=v;
+      f.appendChild(i);
+    });
+    document.body.appendChild(f);
+    INIStdPay.pay('INIpayStd');
   }catch(err){
     btnCard.disabled=false;btnBank.disabled=false;
     btnCard.innerHTML='카드로 결제하기 ✦';btnBank.innerHTML='계좌이체 ✦';
-    if(err.code!=='USER_CANCEL')showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
+    showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
   }
 }
 
