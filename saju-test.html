@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사주 API 응답 테스트</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#06030f; color:#e8e0f0; font-family:'Pretendard',monospace; padding:24px; }
+h1 { color:#c9a84c; font-size:18px; margin-bottom:20px; }
+.row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; align-items:flex-end; }
+label { font-size:12px; color:#9b8fb0; display:block; margin-bottom:4px; }
+input, select {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:8px 12px; color:#e8e0f0; font-size:13px; outline:none;
+}
+button {
+  background:linear-gradient(135deg,#c9a84c,#e8cc7a); color:#0a0612;
+  border:none; border-radius:8px; padding:10px 24px; font-size:13px;
+  font-weight:700; cursor:pointer;
+}
+#result {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px; padding:20px; margin-top:20px;
+  font-size:12px; line-height:1.8; white-space:pre-wrap; word-break:break-all;
+  max-height:80vh; overflow-y:auto;
+}
+.key { color:#88aaff; }
+.str { color:#98e098; }
+.num { color:#ffcc70; }
+.null { color:#ff8080; }
+.section { margin-top:16px; padding:12px; background:rgba(201,168,76,0.05); border-radius:8px; border-left:2px solid #c9a84c; }
+.section-title { color:#c9a84c; font-size:11px; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:8px; }
+</style>
+</head>
+<body>
+<h1>✦ 사주 API 응답 테스터</h1>
+<div class="row">
+  <div>
+    <label>생년월일시 (ISO)</label>
+    <input id="birth" value="1990-03-15T12:00:00" style="width:200px">
+  </div>
+  <div>
+    <label>성별</label>
+    <select id="gender" style="width:100px">
+      <option value="female">여성</option>
+      <option value="male">남성</option>
+    </select>
+  </div>
+  <div>
+    <label>도시</label>
+    <input id="city" value="서울특별시" style="width:140px">
+  </div>
+  <button onclick="callApi()">API 호출</button>
+</div>
+<div id="status" style="font-size:12px;color:#9b8fb0;"></div>
+<div id="result" style="display:none"></div>
+
+<script>
+const WORKER = 'https://fortuna.kkdmb7.workers.dev/saju';
+
+function syntaxHighlight(json) {
+  return JSON.stringify(json, null, 2)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+      let cls = 'num';
+      if (/^"/.test(m)) cls = /:$/.test(m) ? 'key' : 'str';
+      else if (/null/.test(m)) cls = 'null';
+      return `<span class="${cls}">${m}</span>`;
+    });
+}
+
+function renderSummary(data) {
+  const sections = [];
+
+  if(data.summary) {
+    sections.push(`<div class="section">
+      <div class="section-title">📋 summary</div>
+      <pre>${JSON.stringify(data.summary, null, 2)}</pre>
+    </div>`);
+  }
+  if(data.pillars || data.saju_pillars) {
+    sections.push(`<div class="section">
+      <div class="section-title">🏛 pillars (사주팔자)</div>
+      <pre>${JSON.stringify(data.pillars || data.saju_pillars, null, 2)}</pre>
+    </div>`);
+  }
+  if(data.five_pct) {
+    sections.push(`<div class="section">
+      <div class="section-title">🔥 five_pct (오행 비율)</div>
+      <pre>${JSON.stringify(data.five_pct, null, 2)}</pre>
+    </div>`);
+  }
+  if(data.yongshin) {
+    sections.push(`<div class="section">
+      <div class="section-title">⭐ yongshin (용신)</div>
+      <pre>${JSON.stringify(data.yongshin, null, 2)}</pre>
+    </div>`);
+  }
+  if(data.big_luck) {
+    sections.push(`<div class="section">
+      <div class="section-title">🔮 big_luck (대운, 처음 5개)</div>
+      <pre>${JSON.stringify(data.big_luck?.slice(0,5), null, 2)}</pre>
+    </div>`);
+  }
+  if(data.geokguk) {
+    sections.push(`<div class="section">
+      <div class="section-title">🏺 geokguk (격국)</div>
+      <pre>${JSON.stringify(data.geokguk, null, 2)}</pre>
+    </div>`);
+  }
+
+  // 전체 키 목록
+  const keys = Object.keys(data);
+  sections.push(`<div class="section">
+    <div class="section-title">🗝 전체 최상위 키 (${keys.length}개)</div>
+    <pre>${keys.join('\n')}</pre>
+  </div>`);
+
+  return sections.join('');
+}
+
+async function callApi() {
+  const birth = document.getElementById('birth').value;
+  const gender = document.getElementById('gender').value;
+  const city = document.getElementById('city').value;
+  const statusEl = document.getElementById('status');
+  const resultEl = document.getElementById('result');
+
+  statusEl.textContent = '⏳ 호출 중...';
+  resultEl.style.display = 'none';
+
+  try {
+    const res = await fetch(WORKER, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ birth, gender, city })
+    });
+    const json = await res.json();
+    statusEl.textContent = `✅ 응답 완료 (status: ${json.status || res.status})`;
+
+    const data = json.data || json;
+
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = renderSummary(data) +
+      `<div class="section" style="margin-top:16px">
+        <div class="section-title">📦 전체 응답 JSON</div>
+        <pre>${syntaxHighlight(json)}</pre>
+      </div>`;
+  } catch(e) {
+    statusEl.textContent = '❌ 오류: ' + e.message;
+    resultEl.style.display = 'block';
+    resultEl.textContent = e.toString();
+  }
+}
+</script>
+</body>
+</html>
