@@ -914,10 +914,10 @@ async function init(){
   // ── Supabase 주문 조회 ──
   // 우선순위: 카카오 이메일 > localStorage의 주문 이메일 > sessionStorage 직전주문
   const candidates = [];
-  if(email && email !== '—') candidates.push(email);
+  if(email && email !== '—' && email.includes('@')) candidates.push(email);
   try{
     const oe = localStorage.getItem('fortuna_order_email');
-    if(oe && !candidates.includes(oe)) candidates.push(oe);
+    if(oe && oe.trim() && oe.includes('@') && !candidates.includes(oe)) candidates.push(oe.trim());
   }catch(e){}
 
   console.log('[mypage] 조회 후보 이메일:', candidates);
