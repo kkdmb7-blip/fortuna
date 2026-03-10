@@ -905,7 +905,7 @@ async function init(){
   document.getElementById('settingEmail').textContent    = email;
   document.getElementById('settingKakaoId').textContent  = kakaoId || '—';
   if(profileImg){
-    document.getElementById('userAvatar').innerHTML = '<img src="'+profileImg+'" alt="" onerror="this.parentElement.textContent='✦'">';
+    document.getElementById('userAvatar').innerHTML = `<img src="${profileImg}" alt="" onerror="this.parentElement.innerHTML='&#10022;'">` ;
   }
 
   // Supabase 주문 조회
