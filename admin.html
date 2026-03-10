@@ -62,11 +62,18 @@
   .order-actions{display:flex;gap:8px;flex-wrap:wrap;}
   .confirm-btn{flex:1;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
   .confirm-btn:disabled{opacity:0.4;cursor:not-allowed;background:#444;color:#888;}
+  /* ✦ 강제 즉시 발송 버튼 스타일 */
+  .force-send-btn{background:rgba(255,150,50,0.12);border:1px solid rgba(255,150,50,0.4);border-radius:8px;padding:10px 14px;color:#ffaa44;font-family:'Pretendard',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+  .force-send-btn:hover{background:rgba(255,150,50,0.2);}
+  .force-send-btn:disabled{opacity:0.4;cursor:not-allowed;}
   .generate-btn{flex:1;background:rgba(138,180,255,0.12);border:1px solid rgba(138,180,255,0.3);border-radius:8px;padding:10px;color:#8ab4ff;font-family:'Pretendard',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
   .del-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:8px;padding:10px 16px;color:rgba(255,100,100,0.6);font-family:'Pretendard',sans-serif;font-size:12px;cursor:pointer;}
   .done-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:rgba(100,220,100,0.7);padding:6px 12px;border:1px solid rgba(100,220,100,0.2);border-radius:8px;}
   .saju-info-box{background:rgba(180,100,255,0.06);border:1px solid rgba(180,100,255,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text-dim);line-height:1.9;}
   .saju-info-box span{color:#b482ff;}
+  /* ✦ 입금 대기 정보 박스 */
+  .bank-pending-box{background:rgba(232,204,122,0.06);border:1px solid rgba(232,204,122,0.25);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text-dim);line-height:1.9;}
+  .bank-pending-box span{color:#e8cc7a;}
   .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.1);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
   .rv-form-box{background:rgba(45,31,78,0.3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:none;}
   .rv-form-box.show{display:block;}
@@ -278,6 +285,15 @@ function getTypeClass(type){
   return 'type-light';
 }
 
+// ✦ 남은 대기 시간 계산
+function getWaitInfo(confirmedAt){
+  if(!confirmedAt)return null;
+  const elapsed=(Date.now()-new Date(confirmedAt).getTime())/1000/60; // 분
+  const remaining=30-elapsed;
+  if(remaining<=0)return{ready:true,text:'자동발송 대기 중 (크론 처리 예정)'};
+  return{ready:false,text:`자동발송까지 약 ${Math.ceil(remaining)}분 남음`};
+}
+
 function renderOrders(){
   let orders=[...allOrders];
   if(currentFilter==='light')orders=orders.filter(o=>o.report_type==='light');
@@ -291,6 +307,9 @@ function renderOrders(){
   list.innerHTML=orders.map(o=>{
     const isBankTransfer=o.status==='bank_transfer_pending';
     const isSaju=o.report_type==='saju_premium';
+    const isDone=o.status==='confirmed';
+
+    // 사주 정보 박스
     const sajuBox=isSaju?`
       <div class="saju-info-box">
         ☯ 사주 &nbsp;·&nbsp;
@@ -298,8 +317,40 @@ function renderOrders(){
         성별: <span>${o.saju_gender||'-'}</span> &nbsp;·&nbsp;
         도시: <span>${o.saju_city||'-'}</span>
       </div>`:'';
+
+    // ✦ 무통장 입금 대기 정보 박스 (자동발송 타이머 표시)
+    let bankPendingBox='';
+    if(isBankTransfer&&!isDone){
+      const waitInfo=getWaitInfo(o.confirmed_at);
+      const waitText=waitInfo
+        ?`<span>${waitInfo.text}</span>`
+        :`<span style="color:var(--text-dim)">confirmed_at 없음</span>`;
+      bankPendingBox=`
+        <div class="bank-pending-box">
+          💰 무통장 입금 대기 &nbsp;·&nbsp; ${waitText}
+        </div>`;
+    }
+
+    // 액션 버튼
+    let actionBtns='';
+    if(isDone){
+      actionBtns=`
+        <div class="done-badge">✓ 발송 완료</div>
+        <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')" style="background:rgba(100,200,100,0.15);border:1px solid rgba(100,200,100,0.3);color:#88cc88;flex:none;padding:10px 14px;font-size:12px;">↺ 다시 발송</button>`;
+    } else if(isBankTransfer){
+      // 무통장 입금 대기 → 강제 즉시 발송 버튼 제공
+      actionBtns=`
+        <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>
+        <button class="force-send-btn" id="force-${o.order_id}" onclick="forceConfirmOrder('${o.order_id}','${o.report_type}')" title="30분 대기 없이 즉시 발송">⚡ 즉시 발송</button>
+        <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>`;
+    } else {
+      actionBtns=`
+        <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>
+        <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>`;
+    }
+
     return `
-    <div class="order-card ${o.report_type} ${o.status==='confirmed'?'done':''}" id="card-${o.order_id}">
+    <div class="order-card ${o.report_type} ${isDone?'done':''}" id="card-${o.order_id}">
       <div class="order-top"><div>
         <span class="order-name">${o.name||''}</span>
         <span class="order-type ${getTypeClass(o.report_type)}">${getTypeLabel(o.report_type)}</span>
@@ -313,13 +364,8 @@ function renderOrders(){
         <div>📧 이메일<br><span>${o.email||''}</span></div>
       </div>
       ${sajuBox}
-      <div class="order-actions">
-        ${o.status==='confirmed'
-          ?`<div class="done-badge">✓ 발송 완료</div>
-            <button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')" style="background:rgba(100,200,100,0.15);border:1px solid rgba(100,200,100,0.3);color:#88cc88;flex:none;padding:10px 14px;font-size:12px;">↺ 다시 발송</button>`
-          :`<button class="confirm-btn" id="btn-${o.order_id}" onclick="confirmOrder('${o.order_id}','${o.report_type}')">✦ 입금확인 · 리포트 발송</button>`}
-        <button class="del-btn" onclick="deleteOrder('${o.order_id}')">삭제</button>
-      </div>
+      ${bankPendingBox}
+      <div class="order-actions">${actionBtns}</div>
     </div>`;
   }).join('');
 }
@@ -375,13 +421,12 @@ function calcAspects(planets){
   return results.join(', ');
 }
 
-async function confirmOrder(orderId, type){
+// ✦ 공통 발송 로직 (confirmOrder와 forceConfirmOrder 공유)
+async function sendOrder(orderId, type, btnEl){
   const o=allOrders.find(x=>x.order_id===orderId);
   if(!o)return;
-  const btn=document.getElementById('btn-'+orderId);
-  btn.disabled=true;btn.innerHTML='<span class="loading"></span>차트 분석 중...';
+  btnEl.disabled=true;btnEl.innerHTML='<span class="loading"></span>차트 분석 중...';
   try{
-    // 점성술 API
     const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
       method:'POST',
       headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
@@ -391,19 +436,14 @@ async function confirmOrder(orderId, type){
     const planets=astroData.output||astroData;
     const dominant=calcDominant(planets);
     const aspects=calcAspects(planets);
-
-    btn.innerHTML='<span class="loading"></span>발송 중...';
-
+    btnEl.innerHTML='<span class="loading"></span>발송 중...';
     let webhook, payload;
-
     if(type==='saju_premium'){
-      // 사주 API 호출
       let sajuData={};
       if(o.saju_birth&&o.saju_gender&&o.saju_city){
         try{
           const sajuRes=await fetch('https://fortuna.kkdmb7.workers.dev/saju',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
+            method:'POST',headers:{'Content-Type':'application/json'},
             body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city})
           });
           sajuData=await sajuRes.json();
@@ -415,20 +455,16 @@ async function confirmOrder(orderId, type){
         birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
         birth_place_text:o.birthplace,place:o.place_en,
         year:o.year,month:o.month,day:o.day,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0,
-        report_type:'saju_premium',
-        doc_name:'포르투나_사주점성_'+o.name,
-        dominant_planet:dominant,aspects_summary:aspects,
-        planets_json:JSON.stringify(planets),
+        report_type:'saju_premium',doc_name:'포르투나_사주점성_'+o.name,
+        dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),
         saju_birth:o.saju_birth||'',saju_gender:o.saju_gender||'',saju_city:o.saju_city||'',
-        saju_pillars:sajuData?.data?.pillar||'',
-        saju_strength:sajuData?.data?.strength||'',
+        saju_pillars:sajuData?.data?.pillar||'',saju_strength:sajuData?.data?.strength||'',
         saju_zodiac:sajuData?.data?.zodiac||'',
         saju_yongshin_primary:sajuData?.data?.yongshin?.primary||'',
         saju_yongshin_secondary:sajuData?.data?.yongshin?.secondary||'',
         saju_five_pct:JSON.stringify(sajuData?.data?.five_elements_pct||{}),
         saju_big_luck:JSON.stringify((sajuData?.data?.big_luck||[]).slice(0,5)),
-        saju_data_full:JSON.stringify(sajuData),
-        status:'confirmed'
+        saju_data_full:JSON.stringify(sajuData),status:'confirmed'
       };
     } else if(type==='premium'){
       webhook=MAKE_PREMIUM;
@@ -451,17 +487,31 @@ async function confirmOrder(orderId, type){
         dominant_planet:dominant,aspects_summary:aspects,planets_json:JSON.stringify(planets),status:'confirmed'
       };
     }
-
     await fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     await sb.from('orders').update({status:'confirmed'}).eq('order_id',orderId);
     await loadAll();
     showToast(o.name+'님 리포트 발송 완료! ✦');
   }catch(err){
     console.error(err);
-    btn.disabled=false;
-    btn.textContent=o.status==='confirmed'?'↺ 다시 발송':'✦ 입금확인 · 리포트 발송';
+    btnEl.disabled=false;
+    btnEl.textContent=o.status==='confirmed'?'↺ 다시 발송':'✦ 입금확인 · 리포트 발송';
     showToast('오류 발생. 다시 시도해주세요');
   }
+}
+
+// 기존 발송 버튼 (입금확인 + 발송)
+async function confirmOrder(orderId, type){
+  const btn=document.getElementById('btn-'+orderId);
+  await sendOrder(orderId, type, btn);
+}
+
+// ✦ 강제 즉시 발송 (30분 대기 무시, 테스트용)
+async function forceConfirmOrder(orderId, type){
+  const o=allOrders.find(x=>x.order_id===orderId);
+  if(!o)return;
+  if(!confirm(`⚡ ${o.name}님 리포트를 지금 즉시 발송할까요?\n(30분 대기 무시)`))return;
+  const btn=document.getElementById('force-'+orderId);
+  await sendOrder(orderId, type, btn);
 }
 
 async function deleteOrder(orderId){
