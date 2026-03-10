@@ -455,7 +455,7 @@ async function sendOrder(orderId, type, btnEl){
           sajuData=await sajuRes.json();
         }catch(e){console.warn('사주 API 오류',e);}
       }
-      webhook='https://hook.us2.make.com/ku5srjx0e11lpfhptou1jyqbwsf3vej2';
+      webhook='https://hook.us2.make.com/36h0w2knvc5w1esic7988z21se44pyld';
       payload={
         request_id:o.order_id,client_name:o.name,recipient_email:o.email,
         birth_info_raw:(o.birthdate_raw||'')+'  ('+(o.calendar||'')+') '+(o.hour||0)+'시 '+(o.min||0)+'분 '+(o.birthplace||''),
