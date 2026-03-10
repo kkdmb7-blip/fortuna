@@ -450,7 +450,7 @@ async function sendOrder(orderId, type, btnEl){
         try{
           const sajuRes=await fetch('https://fortuna.kkdmb7.workers.dev/saju',{
             method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city})
+            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city,midnightType:o.midnight_type||0})
           });
           sajuData=await sajuRes.json();
         }catch(e){console.warn('사주 API 오류',e);}
@@ -486,7 +486,7 @@ async function sendOrder(orderId, type, btnEl){
         try{
           const sajuRes=await fetch('https://fortuna.kkdmb7.workers.dev/saju',{
             method:'POST',headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city})
+            body:JSON.stringify({birth:o.saju_birth,gender:o.saju_gender,city:o.saju_city,midnightType:o.midnight_type||0})
           });
           sajuData=await sajuRes.json();
         }catch(e){console.warn('사주 API 오류',e);}
