@@ -135,7 +135,10 @@ function showSuccess(order, reportType){
       <div class="info-row"><span class="info-icon">🔍</span><span>스팸함도 꼭 확인해주세요</span></div>
       ${isSaju?`<div class="info-row"><span class="info-icon">☯</span><span>사주+점성 통합 분석으로 더욱 깊이 있는 리포트를 준비합니다</span></div>`:''}
     </div>
-    <a href="index.html" class="home-btn">← 메인으로 돌아가기</a>
+    <div style="display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:32px;">
+      <a href="javascript:void(0)" onclick="goMypage()" style="display:inline-block;font-size:14px;font-weight:700;letter-spacing:0.06em;text-decoration:none;border-radius:30px;padding:12px 28px;background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);color:#0a0612;transition:all .3s;">📋 마이페이지에서 확인하기</a>
+      <a href="index.html" class="home-btn">← 메인으로 돌아가기</a>
+    </div>
   `;
 }
 
@@ -200,6 +203,7 @@ async function processPayment(){
 
   try{
     // 1. Supabase 저장/업데이트
+    window._lastOrder = null;
     const dbData = {
       order_id:   order.order_id || orderId,
       name:       order.name || '',
@@ -226,8 +230,12 @@ async function processPayment(){
     // upsert: 이미 있으면 status만 업데이트
     await sb.from('orders').upsert([dbData], {onConflict:'order_id'});
 
-    // 마이페이지 조회용으로 주문 이메일을 localStorage에 저장
-    if(order.email){ try{ localStorage.setItem('fortuna_order_email', order.email); }catch(e){} }
+    // 마이페이지 즉시 표시용 - 직전 주문 저장
+    try{
+      window._lastOrder = {...dbData, created_at: new Date().toISOString()};
+      sessionStorage.setItem('fortuna_last_order', JSON.stringify(window._lastOrder));
+      if(order.email) localStorage.setItem('fortuna_order_email', order.email);
+    }catch(e){}
 
     if(order.year && order.lat){
 
@@ -383,6 +391,9 @@ async function processTossPayment(paymentKey, orderId, amount, reportType){
 }
 
 processPayment();
+function goMypage(){
+  window.location.href = 'mypage.html';
+}
 </script>
 </body>
 </html>
