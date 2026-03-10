@@ -87,7 +87,7 @@
   .rv-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text-dim);font-family:var(--font-display);font-size:14px;cursor:pointer;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://js.tosspayments.com/v2/standard"></script>
+<script src="https://stdpay.inicis.com/stdjs/INIStdPay.js" charset="UTF-8"></script>
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -155,10 +155,10 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
       <span class="pay-method">체크카드</span>
       <span class="pay-method">카카오페이</span>
       <span class="pay-method">네이버페이</span>
-      <span class="pay-method">토스페이</span>
+      <span class="pay-method">삼성페이</span>
       <span class="pay-method">계좌이체</span>
     </div>
-    <div style="text-align:center;margin-top:10px;font-family:var(--font-display);font-size:12px;color:rgba(155,143,176,0.5);">🔒 토스페이먼츠 보안 결제</div>
+    <div style="text-align:center;margin-top:10px;font-family:var(--font-display);font-size:12px;color:rgba(155,143,176,0.5);">🔒 KG이니시스 보안 결제</div>
     <p class="notice">결제 완료 즉시 자동 발송됩니다<br>10분 안에 이메일로 받아보실 수 있습니다</p>
     <div style="margin-top:16px;padding:14px 18px;background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.3);border-radius:10px;text-align:center;">
       <div style="font-family:var(--font-display);font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 계좌 안내</div>
@@ -327,18 +327,43 @@ async function startPayment(method){
   if(method==='CARD'){btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';}
   else{btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';}
   try{
-    const tossPayments=TossPayments('test_ck_Gv6LjeKD8azvRelz7MlM3wYxAdXy');
-    const customerKey=email.replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)+'_'+Date.now();
-    const payment=tossPayments.payment({customerKey});
-    await payment.requestPayment({
-      method,amount:{currency:'KRW',value:9900},orderId,
-      orderName:'포르투나 라이트 리포트',customerName:name,customerEmail:email,
-      successUrl:window.location.origin+'/success.html?type=light',
-      failUrl:window.location.href.split('?')[0]+'?fail=1',
+    // KG이니시스 결제 요청 - Worker에서 서명값 생성
+    const timestamp = String(Date.now()).slice(0,10);
+    const res = await fetch('https://fortuna.kkdmb7.workers.dev/inicis-sign',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        mid:'MOI3302087', oid:orderId, price:9900, timestamp
+      })
     });
+    const {signature, mKey} = await res.json();
+
+    // 이니시스 결제창 폼 생성
+    const f = document.createElement('form');
+    f.name='INIpayStd'; f.method='post'; f.acceptCharset='euc-kr';
+    const payMethod = method==='CARD' ? 'Card' : 'DirectBank';
+    const fields = {
+      version:'1.0', gopaymethod:payMethod,
+      mid:'MOI3302087', oid:orderId,
+      price:'9900', timestamp, use_chkfake:'Y',
+      signature, mKey,
+      goodname:'포르투나 라이트 리포트',
+      buyername:name, buyeremail:email, buyertel:'01000000000',
+      currency:'WON', langWON:'ko',
+      returnUrl:window.location.origin+'/success.html?type=light',
+      closeUrl:window.location.origin+'/close.html',
+      acceptmethod:'HPP(1):no_receipt:SKIN(green)',
+    };
+    Object.entries(fields).forEach(([k,v])=>{
+      const i=document.createElement('input');
+      i.type='hidden'; i.name=k; i.value=v;
+      f.appendChild(i);
+    });
+    document.body.appendChild(f);
+    INIStdPay.pay('INIpayStd');
   }catch(err){
     console.error(err);resetPayBtns();
-    if(err.code!=='USER_CANCEL')showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
+    showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
   }
 }
 if(location.search.includes('fail=1')){
