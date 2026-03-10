@@ -276,8 +276,24 @@ async function submitBankOrder(){
       confirmed_at:new Date().toISOString()
     }]);
     if(error)throw error;
+    // 마이페이지 조회용 이메일 저장
+    try{ localStorage.setItem('fortuna_order_email', email); }catch(e){}
+    // 직전 주문 저장
+    try{
+      const lo = {order_id:rid,name,email,report_type:'light',status:'bank_transfer_pending',payment_amount:19900,created_at:new Date().toISOString()};
+      localStorage.setItem('fortuna_last_order', JSON.stringify(lo));
+    }catch(e){}
     btn.textContent='✦ 신청 완료!';
     showToast('신청 완료! 입금 확인 후 리포트를 발송해 드립니다 ✦');
+    // 마이페이지 이동 버튼 표시
+    setTimeout(()=>{
+      const wrap = document.getElementById('bankConfirmBtn').parentElement;
+      const goBtn = document.createElement('a');
+      goBtn.href='mypage.html';
+      goBtn.style.cssText='display:block;margin-top:12px;text-align:center;font-size:13px;color:#c9a84c;border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px;text-decoration:none;';
+      goBtn.textContent='📋 마이페이지에서 주문 확인하기';
+      wrap.appendChild(goBtn);
+    }, 500);
   }catch(e){
     console.error(e);
     btn.disabled=false;btn.textContent='입금 완료 후 → 신청 완료하기';
