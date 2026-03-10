@@ -68,8 +68,6 @@
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const MAKE_SAJU_PREMIUM='https://hook.us2.make.com/27oszhlem54ghv1o5ilaps7cj2sr9302';
-const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
 </script>
 </head>
 <body>
@@ -118,7 +116,6 @@ const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
     </div>
   </div>
 
-  <!-- 기본 정보 -->
   <div class="card">
     <div class="card-title">✦ 기본 정보</div>
     <div class="field"><label>이름<span class="req">*</span></label><input type="text" id="name" placeholder="홍길동"></div>
@@ -137,7 +134,6 @@ const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
     <div class="field"><label>리포트 받을 이메일<span class="req">*</span></label><input type="email" id="email" placeholder="example@email.com"></div>
   </div>
 
-  <!-- 사주 추가 정보 -->
   <div class="card card-saju">
     <div class="card-title">☯ 사주 분석 추가 정보</div>
     <div style="font-size:13px;color:var(--text-dim);line-height:1.9;margin-bottom:20px;">
@@ -193,7 +189,6 @@ const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
     </div>
   </div>
 
-  <!-- 결제 -->
   <div class="card">
     <div class="card-title">✦ 결제</div>
     <div class="price-box">
@@ -203,8 +198,6 @@ const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
       </div>
       <div class="price-sub">프리미엄(29,000) + 사주분석 추가 · 동양·서양 통합 최고급</div>
     </div>
-
-    <!-- 카드/계좌이체 결제 버튼 -->
     <div class="pay-btns">
       <button class="submit-btn" id="payBtnCard" onclick="startPayment('CARD')">카드로 결제하기 ✦</button>
       <button class="submit-btn" id="payBtnBank" onclick="startPayment('TRANSFER')" style="background:linear-gradient(135deg,#8a6fd8,#b482ff,#8a6fd8);background-size:200% 200%;animation:shimmer 3s ease infinite;color:#fff;">계좌이체 ✦</button>
@@ -215,20 +208,15 @@ const SAJU_API_KEY='able_test_oQYNyh3DBwThnyKvXwzXOVVnc15cav7hRni9DsfP21o';
       <span class="pay-method">토스페이</span><span class="pay-method">계좌이체</span>
     </div>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:rgba(155,143,176,0.5);">🔒 토스페이먼츠 보안 결제</div>
-
-    <!-- 무통장 입금 안내 -->
     <div style="margin-top:20px;padding:16px 18px;background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.3);border-radius:10px;text-align:center;">
       <div style="font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 입금 안내</div>
       <div style="font-size:16px;color:var(--text);letter-spacing:0.04em;margin-bottom:4px;">국민은행 013-21-0780-866</div>
       <div style="font-size:13px;color:var(--text-dim);">예금주 오주영 · 39,000원</div>
     </div>
-
-    <!-- 입금 완료 신청 버튼 -->
     <button class="btn-bank-confirm" id="bankConfirmBtn" onclick="submitBankOrder()">
       입금 완료 후 → 신청 완료하기
     </button>
-    <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;line-height:1.8;">입금 후 위 버튼을 눌러주세요 · 정보가 전달되어 제작을 시작합니다</p>
-
+    <p style="font-size:12px;color:var(--text-dim);text-align:center;margin-top:8px;line-height:1.8;">입금 후 위 버튼을 눌러주세요 · 입금 확인 후 리포트를 발송해 드립니다</p>
     <p class="notice">결제 완료 후 48시간 내 이메일로 발송됩니다</p>
   </div>
 
@@ -262,16 +250,17 @@ function parseBirthtime(str){if(!str||!str.trim())return{hour:0,min:0};const s=s
 function lunarToSolar(y,m,d){const nyo={1940:[1,27],1941:[2,15],1942:[2,5],1943:[1,25],1944:[2,13],1945:[2,2],1946:[1,22],1947:[2,10],1948:[1,29],1949:[2,17],1950:[2,17],1951:[2,6],1952:[1,27],1953:[2,14],1954:[2,3],1955:[1,24],1956:[2,12],1957:[1,31],1958:[2,18],1959:[2,8],1960:[1,28],1961:[2,15],1962:[2,5],1963:[1,25],1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],1968:[1,30],1969:[2,17],1970:[2,6],1971:[1,27],1972:[2,15],1973:[2,3],1974:[1,23],1975:[2,11],1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],1980:[2,16],1981:[2,5],1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],1986:[2,9],1987:[1,29],1988:[2,17],1989:[2,6],1990:[1,27],1991:[2,15],1992:[2,4],1993:[1,23],1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],1998:[1,28],1999:[2,16],2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],2004:[1,22],2005:[2,9],2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],2010:[2,14],2011:[2,3],2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],2016:[2,8],2017:[1,28],2018:[2,16],2019:[2,5],2020:[1,25],2021:[2,12],2022:[2,1],2023:[1,22],2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],2028:[1,26],2029:[2,13],2030:[2,3]};const lmd=[29,30,29,30,29,30,29,30,29,30,29,30];const o=nyo[y];if(!o)return null;const ny=new Date(y,o[0]-1,o[1]);let days=d-1;for(let i=1;i<m;i++)days+=lmd[(i-1)%12];const s=new Date(ny.getTime()+days*86400000);return{year:s.getFullYear(),month:s.getMonth()+1,day:s.getDate()};}
 
 function getFormData(){
-  const name=document.getElementById('name').value.trim();
-  const gender=document.getElementById('gender').value;
-  const birthdate=document.getElementById('birthdate').value.trim();
-  const calendar=document.getElementById('calendar').value;
-  const birthtime=document.getElementById('birthtime').value.trim();
-  const birthplace=document.getElementById('birthplace').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const sajuHour=document.getElementById('sajuHour').value;
-  const sajuCity=document.getElementById('sajuCity').value;
-  return{name,gender,birthdate,calendar,birthtime,birthplace,email,sajuHour,sajuCity};
+  return{
+    name:document.getElementById('name').value.trim(),
+    gender:document.getElementById('gender').value,
+    birthdate:document.getElementById('birthdate').value.trim(),
+    calendar:document.getElementById('calendar').value,
+    birthtime:document.getElementById('birthtime').value.trim(),
+    birthplace:document.getElementById('birthplace').value.trim(),
+    email:document.getElementById('email').value.trim(),
+    sajuHour:document.getElementById('sajuHour').value,
+    sajuCity:document.getElementById('sajuCity').value
+  };
 }
 
 function validateForm(d){
@@ -298,12 +287,45 @@ function buildOrderData(d){
   return{...d,city,bd,bt,sajuBirth,sajuGender};
 }
 
+// ✦ 무통장 입금 신청 — 웹훅 제거, DB만 저장 (30분 후 크론이 자동 발송)
+async function submitBankOrder(){
+  const d=getFormData();
+  if(!validateForm(d))return;
+  const o=buildOrderData(d);
+  if(!o)return;
+  const btn=document.getElementById('bankConfirmBtn');
+  btn.disabled=true;
+  btn.innerHTML='<span class="loading loading-gold"></span>저장 중...';
+  try{
+    const rid='BANK-SAJU-'+Date.now();
+    const {error}=await sb.from('orders').insert([{
+      order_id:rid,name:d.name,gender:d.gender,
+      birthdate_raw:d.birthdate,calendar:d.calendar,
+      birthtime_raw:d.birthtime||'모름',birthplace:d.birthplace,email:d.email,
+      year:o.bd.year,month:o.bd.month,day:o.bd.day,
+      hour:o.bt.hour,min:o.bt.min,lat:o.city.lat,lon:o.city.lon,
+      place_en:o.city.en,tzone:9.0,
+      report_type:'saju_premium',
+      status:'bank_transfer_pending',
+      confirmed_at:new Date().toISOString(),
+      saju_birth:o.sajuBirth,saju_gender:o.sajuGender,saju_city:d.sajuCity
+    }]);
+    if(error)throw error;
+    btn.innerHTML='✦ 신청 완료!';
+    showToast('신청 완료! 입금 확인 후 리포트를 발송해 드립니다 ✦');
+  }catch(e){
+    console.error(e);
+    btn.disabled=false;
+    btn.innerHTML='입금 완료 후 → 신청 완료하기';
+    showToast('오류가 발생했습니다. 다시 시도해주세요.');
+  }
+}
+
 async function startPayment(method){
   const d=getFormData();
   if(!validateForm(d))return;
   const o=buildOrderData(d);
   if(!o)return;
-
   const orderId='SAJU-'+Date.now();
   sessionStorage.setItem('pendingOrder',JSON.stringify({
     order_id:orderId,name:d.name,gender:d.gender,
@@ -315,13 +337,11 @@ async function startPayment(method){
     saju_birth:o.sajuBirth,saju_gender:o.sajuGender,
     saju_city:d.sajuCity,saju_hour_raw:d.sajuHour
   }));
-
   const btnCard=document.getElementById('payBtnCard');
   const btnBank=document.getElementById('payBtnBank');
   btnCard.disabled=true;btnBank.disabled=true;
   if(method==='CARD')btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';
   else btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';
-
   try{
     const tossPayments=TossPayments('test_ck_Gv6LjeKD8azvRelz7MlM3wYxAdXy');
     const payment=tossPayments.payment({customerKey:d.email.replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)+'_'+Date.now()});
@@ -336,60 +356,6 @@ async function startPayment(method){
     btnCard.disabled=false;btnBank.disabled=false;
     btnCard.innerHTML='카드로 결제하기 ✦';btnBank.innerHTML='계좌이체 ✦';
     if(err.code!=='USER_CANCEL')showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
-  }
-}
-
-// 무통장 입금 후 신청 완료 버튼
-async function submitBankOrder(){
-  const d=getFormData();
-  if(!validateForm(d))return;
-  const o=buildOrderData(d);
-  if(!o)return;
-
-  const btn=document.getElementById('bankConfirmBtn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="loading loading-gold"></span>전송 중...';
-
-  try{
-    await fetch(MAKE_SAJU_PREMIUM,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        request_id:'BANK-SAJU-'+Date.now(),
-        client_name:d.name,
-        recipient_email:d.email,
-        birth_info_raw:`${d.birthdate} (${d.calendar}) ${d.birthtime||'모름'} ${d.birthplace}`,
-        birth_place_text:d.birthplace,
-        place:o.city.en,
-        year:o.bd.year,month:o.bd.month,day:o.bd.day,
-        hour:o.bt.hour,min:o.bt.min,
-        lat:o.city.lat,lon:o.city.lon,tzone:9.0,
-        report_type:'saju_premium',
-        doc_name:`포르투나_${d.name}`,
-        saju_birth:o.sajuBirth,
-        saju_gender:o.sajuGender,
-        saju_city:d.sajuCity,
-        status:'bank_transfer_pending'
-      })
-    });
-    // Supabase 저장
-    const rid='BANK-SAJU-'+Date.now();
-    await sb.from('orders').insert([{
-      order_id:rid,name:d.name,gender:d.gender,
-      birthdate_raw:d.birthdate,calendar:d.calendar,
-      birthtime_raw:d.birthtime||'모름',birthplace:d.birthplace,email:d.email,
-      year:o.bd.year,month:o.bd.month,day:o.bd.day,
-      hour:o.bt.hour,min:o.bt.min,lat:o.city.lat,lon:o.city.lon,
-      place_en:o.city.en,tzone:9.0,
-      report_type:'saju_premium',status:'bank_transfer_pending',
-      saju_birth:o.sajuBirth,saju_gender:o.sajuGender,saju_city:d.sajuCity
-    }]);
-    btn.innerHTML='✦ 신청 완료!';
-    showToast('신청이 완료되었습니다! 입금 확인 후 제작을 시작합니다 ✦');
-  }catch(e){
-    btn.disabled=false;
-    btn.innerHTML='입금 완료 후 → 신청 완료하기';
-    showToast('오류가 발생했습니다. 다시 시도해주세요.');
   }
 }
 
