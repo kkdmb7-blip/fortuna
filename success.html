@@ -226,6 +226,9 @@ async function processPayment(){
     // upsert: 이미 있으면 status만 업데이트
     await sb.from('orders').upsert([dbData], {onConflict:'order_id'});
 
+    // 마이페이지 조회용으로 주문 이메일을 localStorage에 저장
+    if(order.email){ try{ localStorage.setItem('fortuna_order_email', order.email); }catch(e){} }
+
     if(order.year && order.lat){
 
       // 2. 점성 API 호출
