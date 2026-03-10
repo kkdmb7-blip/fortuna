@@ -230,12 +230,14 @@ async function processPayment(){
     // upsert: 이미 있으면 status만 업데이트
     await sb.from('orders').upsert([dbData], {onConflict:'order_id'});
 
-    // 마이페이지 즉시 표시용 - 직전 주문 저장
+    // 마이페이지 즉시 표시용 - 직전 주문 저장 (localStorage + sessionStorage 둘 다)
     try{
       window._lastOrder = {...dbData, created_at: new Date().toISOString()};
-      sessionStorage.setItem('fortuna_last_order', JSON.stringify(window._lastOrder));
+      const lastOrderJson = JSON.stringify(window._lastOrder);
+      sessionStorage.setItem('fortuna_last_order', lastOrderJson);
+      localStorage.setItem('fortuna_last_order', lastOrderJson); // fallback
       if(order.email) localStorage.setItem('fortuna_order_email', order.email);
-    }catch(e){}
+    }catch(e){ console.error('주문 저장 실패:', e); }
 
     if(order.year && order.lat){
 
