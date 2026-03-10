@@ -79,7 +79,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .ol-r{background:linear-gradient(90deg,var(--golddim),transparent);}
 .od{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.4;}
 
-/* ── 상품 카드 (짧게) ── */
+/* ── 상품 카드 ── */
 .products-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:0;}
 .pcard{border-radius:22px;padding:28px 24px;text-decoration:none;display:block;position:relative;overflow:hidden;transition:all .35s;}
 .pcard:hover{transform:translateY(-5px);}
@@ -106,9 +106,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .pb-l:hover{background:rgba(138,180,255,0.22);}
 .pb-p{background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;color:#0a0612;animation:shimmer 3s ease infinite;}
 .pb-p:hover{box-shadow:0 6px 26px rgba(201,168,76,0.35);}
-.pc-time{font-size:11px;color:var(--dim);text-align:center;margin-top:7px;opacity:0.6;letter-spacing:0.04em;}
+.pc-time{font-size:11px;color:var(--gold);text-align:center;margin-top:7px;opacity:0.85;letter-spacing:0.04em;font-weight:600;}
 
-/* ── 비교 테이블 (카드 바로 아래) ── */
+/* ── 비교 테이블 ── */
 .compare-wrap{background:linear-gradient(135deg,rgba(36,22,65,0.28),rgba(7,3,18,0.62));border:1px solid var(--golddim);border-radius:20px;overflow:visible;margin-top:16px;}
 .ctable{width:100%;border-collapse:collapse;}
 .ctable thead tr{border-bottom:1px solid rgba(201,168,76,0.1);}
@@ -178,14 +178,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .star-select{display:flex;gap:6px;margin-top:2px;}
 .star-btn{background:none;border:none;font-size:22px;cursor:pointer;opacity:0.25;transition:opacity .2s;padding:0;}
 .star-btn.active{opacity:1;}
-/* 사진 업로드 */
 .photo-upload{border:1px dashed rgba(201,168,76,0.25);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;background:rgba(255,255,255,0.02);}
 .photo-upload:hover{border-color:rgba(201,168,76,0.45);background:rgba(201,168,76,0.03);}
 .photo-upload input{display:none;}
 .photo-upload-txt{font-size:12px;color:var(--dim);letter-spacing:0.04em;}
 .photo-upload-txt span{color:var(--gold);}
 .photo-preview{width:100%;border-radius:8px;margin-top:10px;max-height:140px;object-fit:cover;display:none;}
-/* 리포트 타입 */
 .type-select{display:flex;gap:8px;margin-top:2px;}
 .type-btn{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 16px;color:var(--dim);font-size:12px;cursor:pointer;transition:all .2s;font-family:var(--fn);}
 .type-btn.active-l{border-color:rgba(138,180,255,0.4);color:var(--blue);background:rgba(138,180,255,0.08);}
@@ -219,8 +217,29 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:fl
 .cta-sub{font-size:14px;color:var(--dim);line-height:2;margin-bottom:32px;letter-spacing:0.03em;}
 .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 
+/* ── 환불정책 섹션 ── */
+.policy-wrap{background:linear-gradient(135deg,rgba(28,16,52,0.45),rgba(7,3,18,0.7));border:1px solid var(--golddim);border-radius:24px;overflow:hidden;}
+.policy-tab-row{display:flex;border-bottom:1px solid rgba(201,168,76,0.1);}
+.policy-tab{flex:1;padding:14px 10px;text-align:center;font-size:12px;font-weight:700;letter-spacing:0.08em;color:var(--dim);cursor:pointer;transition:all .2s;border:none;background:none;font-family:var(--fn);}
+.policy-tab.active{color:var(--gold);border-bottom:2px solid var(--gold);}
+.policy-tab:hover{color:var(--text);}
+.policy-pane{display:none;padding:28px;}
+.policy-pane.active{display:block;}
+.policy-row{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.policy-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:0.6;flex-shrink:0;margin-top:7px;}
+.policy-txt{font-size:13px;color:var(--dim);line-height:1.9;letter-spacing:0.02em;}
+.policy-txt strong{color:var(--text);font-weight:600;}
+.policy-notice{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:12px;padding:14px 16px;margin-top:18px;}
+.policy-notice-txt{font-size:12px;color:rgba(201,168,76,0.7);line-height:1.9;letter-spacing:0.02em;}
+
+/* ── 사업자 정보 푸터 ── */
+.biz-info{border-top:1px solid rgba(201,168,76,0.08);padding:28px 24px 0;margin-top:8px;}
+.biz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 20px;max-width:700px;margin:0 auto 16px;}
+.biz-item{font-size:11px;color:rgba(155,143,176,0.55);letter-spacing:0.03em;line-height:1.8;}
+.biz-item strong{color:rgba(155,143,176,0.75);font-weight:600;}
+
 /* 푸터 */
-footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-top:1px solid rgba(201,168,76,0.07);}
+footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-top:1px solid rgba(201,168,76,0.07);}
 .footer-brand{font-size:20px;font-weight:700;letter-spacing:0.22em;color:var(--gold);margin-bottom:11px;}
 .footer-txt{font-size:12px;color:var(--dim);line-height:2.2;letter-spacing:0.04em;}
 .footer-links{display:flex;gap:18px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
@@ -264,10 +283,13 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   .cta-banner{padding:32px 18px;border-radius:22px;}
   .cta-btns{flex-direction:column;align-items:stretch;}
   .btn-gold,.btn-outline{text-align:center;}
+  .biz-grid{grid-template-columns:1fr 1fr;}
+  .policy-tab{font-size:10px;padding:12px 6px;}
 }
 @media(max-width:360px){
   .free-main{grid-template-columns:1fr;}
   .products-grid{grid-template-columns:1fr;}
+  .biz-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -285,8 +307,8 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
     <a href="#products" class="nav-link">리포트</a>
     <a href="#sample" class="nav-link">샘플</a>
     <a href="#reviews" class="nav-link">후기</a>
-    <a href="light.html" class="nav-cta">신청하기</a>
-    <a href="https://kauth.kakao.com/oauth/authorize?client_id=51b4f87ad9cfd6312c176ad34eb62025&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&response_type=code" class="nav-cta" id="kakaoBtn" style="background:rgba(254,229,0,0.08);border-color:rgba(254,229,0,0.25);color:#FEE500;">카카오 로그인</a>
+    <a href="#" id="loginTrigger" class="nav-cta" style="background:rgba(254,229,0,0.08);border-color:rgba(254,229,0,0.25);color:#FEE500;" id="kakaoBtn">카카오 로그인</a>
+    <a href="light.html" class="nav-cta" id="applyBtn">신청하기</a>
   </div>
 </nav>
 
@@ -295,15 +317,16 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   <div class="hero-eye">FORTUNA · 점성 리포트</div>
   <h1 class="hero-title">타고난 성향과<br>삶의 방향을 읽는<br><em>점성 리포트</em></h1>
   <p class="hero-tag">생년월일 기준 개인 맞춤 분석 · 이메일 PDF 발송</p>
-  <p class="hero-meta">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+  <p class="hero-meta">출생 차트 데이터를 기반으로 당신만을 위해 정성스럽게 분석·제작되는 리포트 · 빠른 발송을 위해 노력합니다</p>
   <div class="hero-btns">
-    <a href="light.html" class="btn-gold">라이트 리포트 보기 — 9,900원</a>
+    <a href="#" onclick="requireLogin('light.html')" class="btn-gold">라이트 리포트 보기 — 9,900원</a>
     <a href="dominant.html" class="btn-outline">무료로 먼저 체험하기</a>
   </div>
   <div class="trust-row">
     <div class="trust-item"><div class="tdot"></div>생년월일만 있으면 OK</div>
     <div class="trust-item"><div class="tdot"></div>PDF 이메일 발송</div>
     <div class="trust-item"><div class="tdot"></div>개인 맞춤 제작</div>
+    <div class="trust-item"><div class="tdot"></div>2시간 이내 발송</div>
   </div>
 </section>
 
@@ -325,7 +348,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   </div>
 </div>
 
-<!-- ② 상품 + 비교표 (붙어있게) -->
+<!-- ② 상품 + 비교표 -->
 <section class="sec reveal" id="products">
   <div class="sec-hd">
     <span class="sec-eye">리포트 선택</span>
@@ -335,33 +358,33 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
 
   <div class="products-grid">
     <!-- 라이트 -->
-    <a href="light.html" class="pcard pc-light">
+    <a href="#" onclick="requireLogin('light.html')" class="pcard pc-light">
       <div class="pcard-in">
         <div class="pc-top"><span class="pc-tag tag-l">Light</span><span class="pc-emoji">🌙</span></div>
         <span class="pc-for">처음 받아보는 분 · 핵심만 빠르게</span>
         <div class="pc-name">핵심 자아 리포트</div>
-        <p class="pc-desc">성향·감정·관계 패턴을 한눈에.<br>PDF 11~14장, 24시간 내 발송</p>
+        <p class="pc-desc">성향·감정·관계 패턴을 한눈에.<br>PDF 11~14장</p>
         <div class="pc-price"><span class="pc-num">9,900</span><span class="pc-unit">원</span></div>
         <button class="pc-btn pb-l">라이트 신청하기</button>
-        <p class="pc-time">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+        <p class="pc-time">✦ 출생 데이터 기반 개인 맞춤 분석 · 2시간 이내 발송</p>
       </div>
     </a>
     <!-- 프리미엄 -->
-    <a href="premium.html" class="pcard pc-premium">
+    <a href="#" onclick="requireLogin('premium.html')" class="pcard pc-premium">
       <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#c9a84c,#e8cc7a);color:#0a0612;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">✦ 가장 많이 선택</div>
       <div class="pcard-in" style="padding-top:14px;">
         <div class="pc-top"><span class="pc-tag tag-p">Premium</span><span class="pc-emoji">☀️</span></div>
         <span class="pc-for">인생 흐름까지 깊게 보고 싶은 분</span>
         <div class="pc-name">정밀 분석 리포트</div>
-        <p class="pc-desc">어스펙트·생애 테마·Final Wrap 포함.<br>PDF 50~60장, 48시간 내 발송</p>
+        <p class="pc-desc">어스펙트·생애 테마·Final Wrap 포함.<br>PDF 50~60장</p>
         <div class="pc-price"><span class="pc-num">29,000</span><span class="pc-unit">원</span></div>
         <button class="pc-btn pb-p">프리미엄 신청하기</button>
-        <p class="pc-time">AI가 찍어내는 결과가 아닌, 당신만을 위해 정성스럽게 제작되는 개인 맞춤형 리포트이기에 시간이 소요됩니다</p>
+        <p class="pc-time">✦ 출생 차트 정밀 분석 · 2시간 이내 발송</p>
       </div>
     </a>
   </div>
 
-  <!-- 비교표 바로 아래 -->
+  <!-- 비교표 -->
   <div class="compare-wrap">
     <table class="ctable">
       <thead><tr>
@@ -377,25 +400,28 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
         <tr><td>생애 테마 4가지<i class="tip" data-tip="삶에서 반복되는 과제, 재능, 관계패턴, 성장 방향을 4가지 키워드로 정리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
         <tr><td>Final Wrap 마무리<i class="tip" data-tip="모든 분석을 종합해 '당신에게 가장 중요한 메시지'를 한 편의 글로 마무리해요.">?</i></td><td class="tc"><span class="xd">—</span></td><td class="tc"><span class="ck">✓</span></td></tr>
         <tr><td>분량</td><td class="tc" style="color:var(--dim)">PDF 11~14장</td><td class="tc" style="color:var(--gold)">PDF 50~60장</td></tr>
+        <tr><td>발송</td><td class="tc" style="color:var(--gold);font-weight:600;">2시간 이내</td><td class="tc" style="color:var(--gold);font-weight:600;">2시간 이내</td></tr>
         <tr><td>가격</td><td class="tc"><span class="pl">9,900원</span></td><td class="tc"><span class="pp">29,000원</span></td></tr>
       </tbody>
     </table>
   </div>
+
   <!-- 사주+점성 통합 -->
-<a href="saju-premium.html" class="pcard" style="grid-column:1/-1;background:linear-gradient(145deg,rgba(55,28,90,0.9),rgba(10,5,22,0.95));border:2px solid rgba(201,168,76,0.5);box-shadow:0 0 40px rgba(201,168,76,0.1);margin-top:10px;display:block;border-radius:22px;padding:28px 24px;text-decoration:none;position:relative;overflow:hidden;transition:all .35s;">
-  <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#8a5cd8,#c9a84c);color:#fff;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">☯ NEW — 동양+서양 통합 분석</div>
-  <div class="pcard-in" style="padding-top:14px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
-    <div style="flex:1;min-width:200px;">
-      <div class="pc-top"><span class="pc-tag" style="background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid var(--golddim);">사주 + 점성</span><span class="pc-emoji">☯</span></div>
-      <span class="pc-for">사주명리 + 서양점성 교차 분석</span>
-      <div class="pc-name" style="color:var(--gold);">통합 심층 리포트</div>
-      <p class="pc-desc">일간·격국·용신 × 도미넌트·어스펙트·생애테마<br>동양과 서양의 지혜로 당신을 입체적으로 읽습니다</p>
-      <div class="pc-price"><span class="pc-num">39,000</span><span class="pc-unit">원</span></div>
+  <a href="#" onclick="requireLogin('saju-premium.html')" class="pcard" style="grid-column:1/-1;background:linear-gradient(145deg,rgba(55,28,90,0.9),rgba(10,5,22,0.95));border:2px solid rgba(201,168,76,0.5);box-shadow:0 0 40px rgba(201,168,76,0.1);margin-top:10px;display:block;border-radius:22px;padding:28px 24px;text-decoration:none;position:relative;overflow:hidden;transition:all .35s;">
+    <div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#8a5cd8,#c9a84c);color:#fff;font-size:10px;font-weight:800;padding:4px 16px;border-radius:0 0 10px 10px;letter-spacing:0.1em;white-space:nowrap;z-index:2;">☯ NEW — 동양+서양 통합 분석</div>
+    <div class="pcard-in" style="padding-top:14px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <div class="pc-top"><span class="pc-tag" style="background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid var(--golddim);">사주 + 점성</span><span class="pc-emoji">☯</span></div>
+        <span class="pc-for">사주명리 + 서양점성 교차 분석</span>
+        <div class="pc-name" style="color:var(--gold);">통합 심층 리포트</div>
+        <p class="pc-desc">일간·격국·용신 × 도미넌트·어스펙트·생애테마<br>동양과 서양의 지혜로 당신을 입체적으로 읽습니다</p>
+        <div class="pc-price"><span class="pc-num">39,000</span><span class="pc-unit">원</span></div>
+      </div>
+      <button class="pc-btn pb-p" style="max-width:180px;flex-shrink:0;">통합 리포트 신청하기</button>
     </div>
-    <button class="pc-btn pb-p" style="max-width:180px;flex-shrink:0;">통합 리포트 신청하기</button>
-  </div>
-  <p class="pc-time" style="margin-top:10px;">PDF 60~80장 예상 · 48시간 내 발송</p>
-</a>
+    <p class="pc-time" style="margin-top:10px;">✦ 사주+점성 교차 분석 · PDF 60~80장 예상 · 2시간 이내 발송</p>
+  </a>
+
   <!-- 반려동물 리포트 -->
   <div style="margin-top:28px;">
     <div style="text-align:center;margin-bottom:18px;">
@@ -403,27 +429,23 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
       <div style="font-size:16px;font-weight:700;color:var(--text);margin-top:8px;">우리 아이의 <em style="font-style:normal;color:var(--gold);">별자리 & 사주</em>도 궁금하다면?</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-
-      <a href="dog_report.html" style="background:linear-gradient(135deg,rgba(78,45,20,0.35),rgba(10,6,18,0.7));border:1px solid rgba(244,162,97,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(244,162,97,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(244,162,97,0.25)';this.style.transform='translateY(0)'">
+      <a href="#" onclick="requireLogin('dog_report.html')" style="background:linear-gradient(135deg,rgba(78,45,20,0.35),rgba(10,6,18,0.7));border:1px solid rgba(244,162,97,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(244,162,97,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(244,162,97,0.25)';this.style.transform='translateY(0)'">
         <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#f4a261,#e8834a);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">NEW 🐾</div>
         <div style="font-size:38px;margin:6px 0 10px;">🐶</div>
         <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;">강아지 리포트</div>
         <div style="font-size:11px;color:#c8a070;line-height:1.8;margin-bottom:12px;">별자리 · 사주 · 보호자 궁합</div>
         <div style="background:rgba(244,162,97,0.12);border:1px solid rgba(244,162,97,0.3);border-radius:30px;padding:7px 14px;display:inline-block;font-size:13px;font-weight:800;color:#f4a261;">4,900원 →</div>
       </a>
-
-      <a href="cat_report.html" style="background:linear-gradient(135deg,rgba(60,30,78,0.35),rgba(10,6,18,0.7));border:1px solid rgba(180,130,255,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(180,130,255,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(180,130,255,0.25)';this.style.transform='translateY(0)'">
+      <a href="#" onclick="requireLogin('cat_report.html')" style="background:linear-gradient(135deg,rgba(60,30,78,0.35),rgba(10,6,18,0.7));border:1px solid rgba(180,130,255,0.25);border-radius:18px;padding:22px 16px;text-decoration:none;text-align:center;transition:all .3s;display:block;position:relative;" onmouseover="this.style.borderColor='rgba(180,130,255,0.5)';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='rgba(180,130,255,0.25)';this.style.transform='translateY(0)'">
         <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#b482ff,#8a5cd8);color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:10px;letter-spacing:0.05em;white-space:nowrap;">NEW 🐱</div>
         <div style="font-size:38px;margin:6px 0 10px;">🐱</div>
         <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;">고양이 리포트</div>
         <div style="font-size:11px;color:#b094d8;line-height:1.8;margin-bottom:12px;">별자리 · 사주 · 보호자 궁합</div>
         <div style="background:rgba(180,130,255,0.12);border:1px solid rgba(180,130,255,0.3);border-radius:30px;padding:7px 14px;display:inline-block;font-size:13px;font-weight:800;color:#b482ff;">4,900원 →</div>
       </a>
-
     </div>
-    <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:14px;line-height:1.9;">생일만 알면 돼요 · 입금 확인 후 24시간 내 PDF 발송</p>
+    <p style="text-align:center;font-size:11px;color:var(--dim);margin-top:14px;line-height:1.9;">생일만 알면 돼요 · 개인 맞춤 분석 · 2시간 이내 PDF 발송</p>
   </div>
-
 </section>
 
 <!-- AI 상담 섹션 -->
@@ -434,7 +456,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
     <p class="sec-sub">리포트 구매자라면 AI와 1:1 점성 상담을 바로 시작할 수 있어요</p>
   </div>
   <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
-  <div style="max-width:600px;margin:0 auto;background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:20px;padding:32px;text-align:center;">
+  <div style="max-width:600px;margin:0 auto;background:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));border:1px solid var(--golddim);border-radius:20px;padding:32px;text-align:center;">
     <div style="font-size:36px;margin-bottom:16px;">✦</div>
     <div style="font-size:18px;font-weight:500;margin-bottom:12px;">리포트 구매자 전용</div>
     <div style="font-size:13px;color:var(--dim);line-height:2;margin-bottom:24px;">
@@ -442,14 +464,16 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
       당신의 출생 차트 데이터를 기반으로 무엇이든 물어보세요
     </div>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;">
-      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">🌟 실제 행성 데이터 기반</div>
-      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">💬 무제한 질문</div>
-      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">🐾 반려동물도 가능</div>
+      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--golddim);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">🌟 실제 행성 데이터 기반</div>
+      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--golddim);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">💬 무제한 질문</div>
+      <div style="background:rgba(201,168,76,0.08);border:1px solid var(--golddim);border-radius:20px;padding:8px 16px;font-size:12px;color:var(--dim);">🐾 반려동물도 가능</div>
     </div>
     <a href="consult.html" style="display:inline-block;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border-radius:12px;padding:14px 40px;color:#0a0612;font-size:14px;font-weight:600;text-decoration:none;">AI 상담 시작하기 →</a>
     <div style="font-size:11px;color:var(--dim);margin-top:12px;">리포트 구매 이메일로 바로 입장 가능</div>
   </div>
 </section>
+
+<!-- 신청 절차 -->
 <section class="sec-sm reveal">
   <div class="sec-hd">
     <span class="sec-eye">신청 방법</span>
@@ -457,9 +481,9 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
   </div>
   <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
   <div class="steps">
-    <div class="step reveal rd1"><div class="step-n">1</div><div class="step-t">신청서 작성</div><div class="step-d">이름·생년월일·출생지·이메일 입력</div></div>
-    <div class="step reveal rd2"><div class="step-n">2</div><div class="step-t">계좌이체</div><div class="step-d">국민은행 013-21-0780-866<br>예금주 오주영</div></div>
-    <div class="step reveal rd3"><div class="step-n">3</div><div class="step-t">리포트 제작</div><div class="step-d">점성 데이터 기반 개인 맞춤 제작</div><div class="step-time">라이트 24h · 프리미엄 48h</div></div>
+    <div class="step reveal rd1"><div class="step-n">1</div><div class="step-t">카카오 로그인</div><div class="step-d">카카오 계정으로 간편 가입 후 신청</div></div>
+    <div class="step reveal rd2"><div class="step-n">2</div><div class="step-t">결제</div><div class="step-d">카드결제 또는 계좌이체<br>예금주 윤은채</div></div>
+    <div class="step reveal rd3"><div class="step-n">3</div><div class="step-t">리포트 제작</div><div class="step-d">출생 차트 기반 개인 맞춤 정밀 분석</div><div class="step-time">모든 상품 2시간 이내</div></div>
     <div class="step reveal rd4"><div class="step-n">4</div><div class="step-t">이메일 발송</div><div class="step-d">PDF 파일로 입력하신 이메일로 전송</div></div>
   </div>
 </section>
@@ -492,7 +516,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
         <div class="blur-txt">03 · 수성 · 금성 · 화성<br><br>당신의 소통 방식은 정확성을 중시합니다. 말을 내뱉기 전 머릿속에서 한 번 더 검토하는 습관이 있으며, 이것이 때로는 신중함으로, 때로는 과묵함으로 보입니다. 금성 물병자리는 관계에서 일정 거리를 필요로 합니다.<br><br>04 · 중천(MC) 사회적 방향성<br><br>직업과 사회적 역할에서 당신은 전문성과 신뢰를 가장 중시합니다...</div>
         <div class="blur-over">
           <div class="blur-msg">나머지 내용은 리포트에서 확인하세요</div>
-          <a href="light.html" class="btn-gold" style="font-size:13px;padding:11px 26px;">라이트 리포트 신청 — 9,900원</a>
+          <a href="#" onclick="requireLogin('light.html')" class="btn-gold" style="font-size:13px;padding:11px 26px;">라이트 리포트 신청 — 9,900원</a>
         </div>
       </div>
     </div>
@@ -512,7 +536,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
     <div class="rv-card" onclick="openModal({star:5,type:'light',title:'막연하게 알던 걸 언어로 정리해준 느낌',content:'별자리 앱으로 이것저것 봤는데 포르투나는 달랐어요. 단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 훨씬 납득이 됐어요.',name:'30대 교사 · 처녀자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★★</div><span class="rv-badge">라이트</span></div><div class="rv-quote">"막연하게 알던 걸 언어로 정리해준 느낌"</div><p class="rv-txt">단순 성격 설명이 아니라 왜 그런 패턴이 생기는지까지 설명해줘서 납득이 됐어요.</p><div class="rv-author">30대 교사 · 처녀자리</div></div>
     <div class="rv-card" onclick="openModal({star:4,type:'premium',title:'Final Wrap이 제일 좋았어요',content:'리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았습니다. 가격 대비 충분히 만족해요.',name:'40대 자영업자 · 사수자리',photos:[]})"><div class="rv-top"><div class="rv-stars">★★★★☆</div><span class="rv-badge">프리미엄</span></div><div class="rv-quote">"Final Wrap이 제일 좋았어요"</div><p class="rv-txt">리포트 마지막 Final Wrap 부분이 마음에 남았어요. 분석 너머 위로가 되는 문장들이 있어서 좋았어요.</p><div class="rv-author">40대 자영업자 · 사수자리</div></div>
   </div>
-  <a href="light.html" class="rv-more">지금 신청하기 →</a>
+  <a href="#" onclick="requireLogin('light.html')" class="rv-more">지금 신청하기 →</a>
 </section>
 
 <!-- 후기 모달 -->
@@ -531,14 +555,10 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
     <p class="sec-sub">회원가입 없이 생년월일만으로 바로 사용 가능</p>
   </div>
   <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
-
-  <!-- 메인 2개 -->
   <div class="free-main" style="margin-bottom:14px;">
     <a href="dominant.html" class="free-card reveal rd1"><span class="free-emoji">✦</span><span class="free-tag">무료</span><div class="free-name">내 핵심 행성 찾기</div><p class="free-desc">나를 움직이는 도미넌트 행성이 무엇인지 바로 계산해드려요.</p><span class="free-arrow">지금 확인 →</span></a>
     <a href="horoscope.html" class="free-card reveal rd2"><span class="free-emoji">🌙</span><span class="free-tag">무료 · 매일 업데이트</span><div class="free-name">오늘의 운세</div><p class="free-desc">전체운·애정운·금전운·건강운을 개인 맞춤으로 드려요.</p><span class="free-arrow">오늘 운세 보기 →</span></a>
   </div>
-
-  <!-- 궁합 3개 카드로 강조 -->
   <div style="background:linear-gradient(135deg,rgba(36,22,63,0.25),rgba(7,3,18,0.5));border:1px solid rgba(201,168,76,0.12);border-radius:20px;padding:20px 18px;">
     <div style="font-size:10px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;font-weight:600;margin-bottom:14px;text-align:center;">궁합 보기</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
@@ -571,23 +591,102 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px;border-to
       <h2 class="cta-title">당신의 별자리가<br><em>기다리고 있어요</em></h2>
       <p class="cta-sub">생년월일만으로 당신을 가장 깊이 이해하는<br>개인 맞춤 점성 리포트를 받아보세요</p>
       <div class="cta-btns">
-        <a href="light.html" class="btn-gold">라이트 신청 — 9,900원</a>
-        <a href="premium.html" class="btn-outline">프리미엄 신청 — 29,000원</a>
+        <a href="#" onclick="requireLogin('light.html')" class="btn-gold">라이트 신청 — 9,900원</a>
+        <a href="#" onclick="requireLogin('premium.html')" class="btn-outline">프리미엄 신청 — 29,000원</a>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ⑦ 환불 · 취소 · 서비스 정책 -->
+<section class="sec reveal" id="policy">
+  <div class="sec-hd">
+    <span class="sec-eye">이용 안내</span>
+    <h2 class="sec-title">서비스 제공 및 <em>환불 정책</em></h2>
+  </div>
+  <div class="orn"><div class="ol ol-l"></div><div class="od"></div><div class="ol ol-r"></div></div>
+  <div class="policy-wrap">
+    <div class="policy-tab-row">
+      <button class="policy-tab active" onclick="showPolicy('delivery')">서비스 제공</button>
+      <button class="policy-tab" onclick="showPolicy('refund')">취소 · 환불</button>
+      <button class="policy-tab" onclick="showPolicy('cancel')">유의사항</button>
+    </div>
+
+    <!-- 서비스 제공 -->
+    <div class="policy-pane active" id="pane-delivery">
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>서비스 내용</strong> — 고객님의 생년월일·출생시각·출생지를 기반으로 출생 차트를 산출하고, 전문 분석 내용을 PDF 리포트로 제작하여 이메일로 발송하는 디지털 콘텐츠 서비스입니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>발송 기간</strong> — 결제 확인 후 <strong style="color:var(--gold)">2시간 이내</strong> 입력하신 이메일로 PDF를 발송합니다. 주문량에 따라 다소 지연될 수 있으며, 지연 시 개별 안내드립니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>서비스 제공 기간</strong> — 이메일 발송 완료 시점을 서비스 제공 완료로 봅니다. 발송된 PDF 파일은 영구 보관 가능합니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>재발송 요청</strong> — 이메일 오기입 등으로 수신하지 못하신 경우, 주문일로부터 30일 이내에 고객센터로 연락 주시면 무상 재발송해드립니다.</div></div>
+      <div class="policy-notice">
+        <div class="policy-notice-txt">📌 포르투나 리포트는 AI가 일괄 생성하는 방식이 아니라, 실제 출생 차트 데이터를 기반으로 개인별 맞춤 분석·제작되는 디지털 콘텐츠입니다. 이 점을 감안하여 발송 시간이 소요됩니다.</div>
+      </div>
+    </div>
+
+    <!-- 취소 · 환불 -->
+    <div class="policy-pane" id="pane-refund">
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>리포트 발송 전</strong> — 결제 완료 후 리포트 발송 전까지는 전액 환불이 가능합니다. 고객센터로 연락 주세요.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>리포트 발송 후</strong> — 디지털 콘텐츠 특성상 발송 완료 후에는 <strong>원칙적으로 환불이 불가</strong>합니다. 단, 다음의 경우는 예외적으로 처리합니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt">① 주문 정보(생년월일 등) 오기입으로 인한 잘못된 리포트 발송 → 정정 재발송 또는 전액 환불</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt">② 동일 상품 중복 결제 → 중복분 전액 환불</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt">③ 시스템 오류로 인한 미발송 → 재발송 또는 전액 환불</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>환불 처리 기간</strong> — 환불 확정 후 카드사 환불 3~5 영업일 / 계좌이체 환불 1~3 영업일 이내 처리됩니다.</div></div>
+      <div class="policy-notice">
+        <div class="policy-notice-txt">📌 전자상거래법 제17조에 따라 디지털 콘텐츠는 제공이 개시된 경우 청약철회가 제한될 수 있습니다. 구매 전 샘플을 꼭 확인해 주세요.</div>
+      </div>
+    </div>
+
+    <!-- 유의사항 -->
+    <div class="policy-pane" id="pane-cancel">
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>이메일 정확 기입</strong> — 리포트는 입력하신 이메일로만 발송됩니다. 오기입으로 인한 미수령 책임은 고객에게 있으며, 30일 내 재발송 요청 가능합니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>개인정보 활용</strong> — 입력하신 생년월일 등 개인정보는 리포트 제작 목적으로만 활용되며, 제3자에게 제공하지 않습니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>콘텐츠 저작권</strong> — 발송된 리포트의 저작권은 포르투나에 있으며, 무단 복제·재배포·상업적 이용을 금합니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>서비스 특성 안내</strong> — 포르투나 리포트는 오락·참고 목적의 콘텐츠입니다. 의료·법률·금융 등 전문 조언을 대체하지 않습니다.</div></div>
+      <div class="policy-row"><div class="policy-dot"></div><div class="policy-txt"><strong>고객센터</strong> — 문의사항은 카카오톡 채널 또는 이메일로 연락 주세요. 평일 10:00~18:00 운영.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 푸터 -->
 <footer>
   <div class="footer-brand">FORTUNA</div>
-  <p class="footer-txt">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>개인 맞춤 제작 · 계좌이체 후 이메일 발송</p>
+  <p class="footer-txt">생년월일을 바탕으로 당신을 이해하는 점성 리포트<br>출생 차트 기반 개인 맞춤 제작 · 2시간 이내 이메일 발송</p>
   <div class="footer-links">
-    <a href="light.html" class="footer-link">라이트 리포트</a>
-    <a href="premium.html" class="footer-link">프리미엄 리포트</a>
+    <a href="#" onclick="requireLogin('light.html')" class="footer-link">라이트 리포트</a>
+    <a href="#" onclick="requireLogin('premium.html')" class="footer-link">프리미엄 리포트</a>
     <a href="dominant.html" class="footer-link">핵심 행성 찾기</a>
+    <a href="#policy" class="footer-link">환불정책</a>
     <a href="admin.html" class="footer-link" style="opacity:0.18;">관리자</a>
   </div>
+
+  <!-- 사업자 필수 정보 -->
+  <div class="biz-info">
+    <div class="biz-grid">
+      <div class="biz-item"><strong>상호명</strong> 포르투나</div>
+      <div class="biz-item"><strong>대표자</strong> 윤은채</div>
+      <div class="biz-item"><strong>사업자등록번호</strong> 260-14-01952</div>
+      <div class="biz-item"><strong>통신판매업 신고번호</strong> 제2024-서울강서-XXXX호</div>
+      <div class="biz-item"><strong>업태/종목</strong> 점술 및 유사 서비스업</div>
+      <div class="biz-item"><strong>개업일</strong> 2024. 08. 01</div>
+      <div class="biz-item" style="grid-column:1/-1;"><strong>사업장 주소</strong> 서울특별시 강서구 강서로 174, 지하2층 B206호 (화곡동, 근린생활시설)</div>
+      <div class="biz-item"><strong>이메일</strong> fortuna@kakao.com</div>
+      <div class="biz-item"><strong>호스팅 제공자</strong> Vercel Inc.</div>
+    </div>
+    <p style="font-size:10px;color:rgba(155,143,176,0.3);letter-spacing:0.04em;padding-bottom:28px;">© 2024 FORTUNA. All rights reserved.</p>
+  </div>
 </footer>
+
+<!-- 로그인 필수 모달 -->
+<div id="loginModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.82);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:20px;" onclick="closeLoginModal(event)">
+  <div style="background:linear-gradient(135deg,#0e0620,#07030f);border:1px solid rgba(201,168,76,0.3);border-radius:28px;max-width:380px;width:100%;padding:40px 32px;text-align:center;position:relative;">
+    <button onclick="document.getElementById('loginModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:22px;cursor:pointer;line-height:1;padding:4px;">✕</button>
+    <div style="font-size:32px;margin-bottom:16px;">✦</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:0.02em;">로그인이 필요해요</div>
+    <p style="font-size:13px;color:var(--dim);line-height:1.9;margin-bottom:28px;">리포트 신청은 카카오 로그인 후 이용할 수 있어요.<br>30초면 완료됩니다!</p>
+    <a id="loginModalKakaoBtn" href="https://kauth.kakao.com/oauth/authorize?client_id=51b4f87ad9cfd6312c176ad34eb62025&redirect_uri=https://fortuna-silk.vercel.app/kakao-callback.html&response_type=code" style="display:block;background:#FEE500;border-radius:12px;padding:14px 24px;color:#3C1E1E;font-size:14px;font-weight:800;text-decoration:none;letter-spacing:0.04em;margin-bottom:12px;">🟡 카카오로 로그인하기</a>
+    <div style="font-size:11px;color:rgba(155,143,176,0.4);">로그인 후 신청 페이지로 자동 이동됩니다</div>
+  </div>
+</div>
 
 <script>
 // 별 생성
@@ -615,7 +714,7 @@ function fmtDate(iso){
 // ── 소셜 프루프 숫자 로드 ──
 async function loadSocialProof(){
   try{
-    const BASE = 397; // 기본 누적 발행 수
+    const BASE = 397;
     const {count:orderCount} = await sb.from('orders').select('*',{count:'exact',head:true});
     const {count:petCount} = await sb.from('pet_orders').select('*',{count:'exact',head:true});
     const {data:reviews} = await sb.from('reviews').select('star').eq('approved',true);
@@ -633,68 +732,93 @@ async function loadSocialProof(){
   }catch(e){ console.error(e); }
 }
 loadSocialProof();
-let slideIdx = 0;
-let slidePhotos = [];
+
+// ── 로그인 필수 처리 ──
+let _pendingUrl = '';
+function requireLogin(url){
+  const loginUser = JSON.parse(localStorage.getItem('fortuna_user') || 'null');
+  if(loginUser){
+    location.href = url;
+    return false;
+  }
+  _pendingUrl = url;
+  // 로그인 후 돌아올 페이지 저장
+  sessionStorage.setItem('fortuna_after_login', url);
+  document.getElementById('loginModal').style.display = 'flex';
+  return false;
+}
+function closeLoginModal(e){
+  if(e.target === document.getElementById('loginModal'))
+    document.getElementById('loginModal').style.display = 'none';
+}
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape'){
+    document.getElementById('loginModal').style.display='none';
+    document.getElementById('rvModal').style.display='none';
+  }
+});
+
+// ── 로그인 상태 확인 ──
+const loginUser = JSON.parse(localStorage.getItem('fortuna_user') || 'null');
+const kakaoNavBtn = document.getElementById('loginTrigger');
+const applyBtn = document.getElementById('applyBtn');
+if(loginUser){
+  if(kakaoNavBtn){
+    kakaoNavBtn.textContent = loginUser.nickname + ' ▾';
+    kakaoNavBtn.href = 'mypage.html';
+    kakaoNavBtn.onclick = null;
+  }
+  if(applyBtn) applyBtn.href = 'light.html';
+} else {
+  if(kakaoNavBtn){
+    kakaoNavBtn.onclick = (e)=>{ e.preventDefault(); requireLogin('light.html'); };
+  }
+  if(applyBtn){
+    applyBtn.href = '#';
+    applyBtn.onclick = (e)=>{ e.preventDefault(); requireLogin('light.html'); };
+  }
+}
+
+// ── 정책 탭 ──
+function showPolicy(tab){
+  document.querySelectorAll('.policy-tab').forEach((t,i)=>{
+    t.classList.toggle('active', ['delivery','refund','cancel'][i]===tab);
+  });
+  document.querySelectorAll('.policy-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+tab).classList.add('active');
+}
+
+let slideIdx = 0, slidePhotos = [];
 
 function openModal(r){
   const photoUrls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
   slidePhotos = r.photos && r.photos.length ? r.photos : photoUrls;
   slideIdx = 0;
-  const stars = '★'.repeat(r.star) + '☆'.repeat(5 - r.star);
-  const badge = r.type === 'premium' ? '프리미엄' : '라이트';
+  const stars = '★'.repeat(r.star) + '☆'.repeat(5-r.star);
+  const badge = r.type==='premium'?'프리미엄':'라이트';
   document.getElementById('rvModalContent').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
       <div style="color:var(--gold);font-size:18px;letter-spacing:3px;">${stars}</div>
       <span style="font-size:10px;letter-spacing:0.1em;padding:3px 10px;border-radius:10px;border:1px solid var(--golddim);color:var(--gold);font-weight:600;">${badge}</span>
     </div>
-    ${slidePhotos.length ? `
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">
-      ${slidePhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:contain;max-height:320px;background:#000;" loading="lazy">`).join('')}
-    </div>` : ''}
-    ${r.title ? `<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>` : ''}
+    ${slidePhotos.length?`<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:18px;">${slidePhotos.map(u=>`<img src="${u}" style="width:100%;border-radius:10px;object-fit:contain;max-height:320px;background:#000;" loading="lazy">`).join('')}</div>`:''}
+    ${r.title?`<div style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.4;">"${r.title}"</div>`:''}
     <p style="font-size:14px;color:var(--dim);line-height:2;margin-bottom:18px;letter-spacing:0.02em;">${r.content}</p>
     <div style="font-size:12px;color:rgba(155,143,176,0.5);letter-spacing:0.04em;">${r.name}</div>
     ${r.created_at?`<div style="font-size:11px;color:rgba(155,143,176,0.35);margin-top:4px;letter-spacing:0.03em;">${fmtDate(r.created_at)}</div>`:''}
   `;
   document.getElementById('rvModal').style.display = 'flex';
-
-  // 터치 스와이프
-  if(slidePhotos.length > 1){
-    const track = document.getElementById('slideTrack');
-    let startX = 0;
-    track.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
-    track.addEventListener('touchend', e=>{
-      const diff = startX - e.changedTouches[0].clientX;
-      if(Math.abs(diff) > 40) slide(diff > 0 ? 1 : -1);
-    });
-  }
-}
-
-function slide(dir){
-  slideIdx = (slideIdx + dir + slidePhotos.length) % slidePhotos.length;
-  goSlide(slideIdx);
-}
-
-function goSlide(i){
-  slideIdx = i;
-  const track = document.getElementById('slideTrack');
-  if(track) track.style.transform = `translateX(-${i*100}%)`;
-  document.querySelectorAll('#slideDots div').forEach((d,j)=>{
-    d.style.background = j===i ? 'white' : 'rgba(255,255,255,0.4)';
-  });
 }
 
 function closeModal(e){
-  if(e.target === document.getElementById('rvModal'))
-    document.getElementById('rvModal').style.display = 'none';
+  if(e.target===document.getElementById('rvModal'))
+    document.getElementById('rvModal').style.display='none';
 }
-document.addEventListener('keydown', e => { if(e.key==='Escape') document.getElementById('rvModal').style.display='none'; });
 
-// ── 사진 썸네일 렌더 (카드용 - 첫 장만, 나머지는 모달에서) ──
 function renderPhotoThumb(r){
-  const urls = [r.photo_url1, r.photo_url2, r.photo_url3].filter(Boolean);
+  const urls = [r.photo_url1,r.photo_url2,r.photo_url3].filter(Boolean);
   if(!urls.length) return '';
-  const more = urls.length > 1 ? `<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;">+${urls.length-1}</div>` : '';
+  const more = urls.length>1?`<div style="position:absolute;bottom:6px;right:6px;background:rgba(0,0,0,0.55);color:white;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;">+${urls.length-1}</div>`:'';
   return `<div style="position:relative;margin-bottom:10px;border-radius:8px;overflow:hidden;"><img src="${urls[0]}" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;" loading="lazy">${more}</div>`;
 }
 
@@ -719,13 +843,6 @@ async function loadReviews(){
   }catch(e){ console.error(e); }
 }
 loadReviews();
-  // 로그인 상태 확인
-const loginUser = JSON.parse(localStorage.getItem('fortuna_user') || 'null');
-const kakaoBtn = document.getElementById('kakaoBtn');
-if (loginUser && kakaoBtn) {
-  kakaoBtn.textContent = loginUser.nickname + ' ▾';
-  kakaoBtn.href = 'mypage.html';
-}
 </script>
 </body>
 </html>
