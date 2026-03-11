@@ -53,7 +53,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 78%가<br>목성이 도미넌트 행성으로 나옵니다.</div>
     <hr class="divider">
     <div style="font-size:13px;color:var(--dim);line-height:1.7;">내 도미넌트 행성이 정말 목성인지<br>정확한 출생 시간으로 확인해보세요.</div>
-    <a class="cta-btn" href="https://fortuna-silk.vercel.app" id="ctaBtn">✦ 내 행성 정확히 확인하기</a>
+    <a class="cta-btn" href="https://fortuna-silk.vercel.app/dominant.html" id="ctaBtn">✦ 내 행성 정확히 확인하기</a>
     <button class="kakao-btn" onclick="shareKakao()" id="kakaoBtn">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" onerror="this.style.display='none'">
       카카오톡으로 공유하기
@@ -221,6 +221,7 @@ function shareKakao(){
   const data=PILLAR_PLANET[pillar]||{primary_kor:'목성',primary_pct:78};
   const msg=`${pillar}일주는 ${data.primary_pct}% 확률로 ${data.primary_kor}이 도미넌트 행성으로 나옵니다 🪐\n\n내 행성도 확인해보세요!`;
   const shareUrl=`https://fortuna-silk.vercel.app/planet_share.html?pillar=${encodeURIComponent(pillar)}`;
+  const ctaUrl=`https://fortuna-silk.vercel.app/dominant.html`;
   
   if(window.Kakao && window.Kakao.isInitialized()){
     Kakao.Share.sendDefault({
@@ -231,7 +232,7 @@ function shareKakao(){
         imageUrl:'https://fortuna-silk.vercel.app/og-image.png',
         link:{mobileWebUrl:shareUrl,webUrl:shareUrl}
       },
-      buttons:[{title:'내 행성 확인하기',link:{mobileWebUrl:shareUrl,webUrl:shareUrl}}]
+      buttons:[{title:'내 행성 확인하기',link:{mobileWebUrl:ctaUrl,webUrl:ctaUrl}}]
     });
   } else {
     // 카카오 SDK 없으면 링크 복사
@@ -248,7 +249,7 @@ for(let i=0;i<80;i++){
 }
 
 // 카카오 SDK 초기화 (키 교체 필요)
-try{Kakao.init('51b4f87ad9cfd6312c176ad34eb62025');}catch(e){}
+try{Kakao.init('2543c896dead8185e2edfa0976396f25');}catch(e){}
 
 init();
 </script>
