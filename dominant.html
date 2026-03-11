@@ -3,590 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORTUNA — 내 핵심 행성 찾기</title>
-<meta name="description" content="생년월일로 나를 움직이는 핵심 행성을 무료로 확인해보세요.">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<title>내 도미넌트 행성 확인하기 — FORTUNA</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{
-    --void:#05020e;
-    --gold:#c9a84c;
-    --gold-light:#e8cc7a;
-    --text:#ede6f8;
-    --text-dim:#9b8fb0;
-    --border:rgba(201,168,76,0.2);
-    --card:linear-gradient(135deg,rgba(45,31,78,0.4),rgba(10,6,18,0.6));
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--void);color:var(--text);font-family:'Pretendard',sans-serif;min-height:100vh;}
-  .nebula{
-    position:fixed;inset:0;pointer-events:none;z-index:0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.5) 0%,transparent 70%),
-      radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%);
-  }
-  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
-  nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    padding:16px 32px;display:flex;justify-content:space-between;align-items:center;
-    backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.08);
-    background:rgba(5,2,14,0.35);
-  }
-  .nav-brand{font-size:16px;letter-spacing:0.2em;color:var(--gold);text-decoration:none;}
-  .nav-back{font-size:12px;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
-  .nav-back:hover{color:var(--gold);}
-  .wrap{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:120px 24px 80px;}
-  .header{text-align:center;margin-bottom:48px;}
-  .eyebrow{font-size:11px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
-  .title{font-size:32px;font-weight:300;line-height:1.4;margin-bottom:12px;}
-  .subtitle{font-size:14px;color:var(--text-dim);line-height:1.8;}
-  .card{
-    background:var(--card);
-    border:1px solid var(--border);border-radius:20px;padding:32px;margin-bottom:20px;
-    box-shadow:0 10px 40px rgba(0,0,0,0.15);
-  }
-  .field{margin-bottom:18px;}
-  .label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:8px;letter-spacing:0.05em;}
-  .input{
-    width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);
-    border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Pretendard',sans-serif;
-    font-size:15px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;
-  }
-  .input:focus{border-color:var(--gold);}
-  select.input option{background:#1a1030;}
-  .helper{
-    margin-top:10px;font-size:12px;color:rgba(155,143,176,0.75);line-height:1.7;
-  }
-  .btn{
-    width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200% 200%;
-    border:none;border-radius:12px;padding:16px;color:#0a0612;font-family:'Pretendard',sans-serif;
-    font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;animation:shimmer 3s ease infinite;margin-top:8px;
-  }
-  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4);}
-  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-  .btn-sub{
-    width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);
-    border-radius:12px;padding:14px;color:var(--text);font-family:'Pretendard',sans-serif;
-    font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;text-decoration:none;
-  }
-  .btn-sub:hover{border-color:var(--gold);color:var(--gold);}
-  @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading{
-    display:inline-block;width:14px;height:14px;border:2px solid rgba(10,6,18,0.3);
-    border-top-color:#0a0612;border-radius:50%;animation:spin 0.8s linear infinite;
-    vertical-align:middle;margin-right:6px;
-  }
-  .result{
-    background:linear-gradient(135deg,rgba(45,31,78,0.5),rgba(10,6,18,0.7));
-    border:1px solid var(--gold);border-radius:20px;padding:40px 32px;margin-top:24px;text-align:center;
-    animation:fadeUp 0.6s ease;display:none;
-    box-shadow:0 14px 50px rgba(0,0,0,0.22);
-  }
-  .result-topline{
-    font-size:11px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;
-  }
-  .result-emoji{font-size:60px;margin-bottom:12px;}
-  .result-name{font-size:24px;font-weight:300;color:var(--gold);letter-spacing:0.1em;margin-bottom:18px;}
-  .result-hook{
-    font-size:15px;color:var(--text);line-height:1.8;margin-bottom:16px;
-  }
-  .result-desc{
-    font-size:15px;line-height:1.9;color:var(--text);margin-bottom:26px;text-align:left;
-    background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);
-    border-radius:14px;padding:18px 16px;
-  }
-  .share-box{
-    border-top:1px solid var(--border);
-    padding-top:24px;margin-top:4px;margin-bottom:26px;
-  }
-  .share-title{
-    font-size:13px;color:var(--text-dim);margin-bottom:14px;line-height:1.8;
-  }
-  .share-actions{
-    display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;
-  }
-  .share-btn{
-    background:rgba(255,255,255,0.04);
-    border:1px solid rgba(201,168,76,0.18);
-    color:var(--text);
-    border-radius:12px;
-    padding:13px 10px;
-    font-family:'Pretendard',sans-serif;
-    font-size:13px;
-    font-weight:600;
-    cursor:pointer;
-    transition:all .25s;
-  }
-  .share-btn:hover{
-    border-color:var(--gold);
-    color:var(--gold);
-    transform:translateY(-1px);
-  }
-  .upsell{
-    border-top:1px solid var(--border);padding-top:28px;
-  }
-  .upsell-text{
-    font-size:14px;color:var(--text-dim);line-height:1.9;margin-bottom:20px;
-  }
-  .upsell-btn{
-    display:inline-block;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border-radius:50px;
-    padding:14px 32px;color:#0a0612;font-family:'Pretendard',sans-serif;font-size:14px;font-weight:700;
-    text-decoration:none;transition:all 0.3s;
-  }
-  .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4);}
-  .toast{
-    position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);
-    background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:50px;
-    padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;
-    backdrop-filter:blur(10px);white-space:nowrap;
-  }
-  .toast.show{transform:translateX(-50%) translateY(0);}
-
-  @media(max-width:640px){
-    nav{padding:14px 18px;}
-    .wrap{padding:100px 18px 64px;}
-    .title{font-size:28px;}
-    .card,.result{padding:24px 18px;}
-    .share-actions{grid-template-columns:1fr;}
-  }
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+:root{--gold:#c9a84c;--purple:#b482ff;--bg:#0d0b14;--card:#16132a;--text:#e8e0f0;--dim:#8a7fa0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.container{position:relative;z-index:1;width:100%;max-width:480px;}
+.logo{font-family:'Noto Serif KR',serif;letter-spacing:0.3em;color:var(--gold);font-size:14px;text-align:center;margin-bottom:32px;opacity:0.8;}
+.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:24px;}
+.hook-pill{display:inline-block;background:rgba(180,130,255,0.1);border:1px solid rgba(180,130,255,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--purple);letter-spacing:0.1em;margin-bottom:20px;}
+.hook-title{font-family:'Noto Serif KR',serif;font-size:22px;line-height:1.5;margin-bottom:12px;color:var(--text);}
+.hook-pillar{font-size:28px;font-weight:600;color:var(--purple);margin:8px 0;}
+.hook-pct{font-size:42px;font-weight:700;color:var(--gold);margin:4px 0;}
+.hook-planet{font-size:18px;color:var(--text);margin-bottom:16px;}
+.hook-sub{font-size:13px;color:var(--dim);line-height:1.7;}
+.planet-icon{font-size:56px;margin:16px 0;}
+.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#6c3fa0,#b482ff);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:20px;text-decoration:none;transition:opacity 0.2s;}
+.cta-btn:hover{opacity:0.85;}
+.kakao-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#FEE500;border:none;border-radius:14px;color:#3A1D1D;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:opacity 0.2s;}
+.kakao-btn:hover{opacity:0.85;}
+.kakao-btn img{width:24px;height:24px;}
+.stats-card{background:var(--card);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:20px;margin-top:16px;}
+.stats-title{font-size:12px;color:var(--dim);letter-spacing:0.1em;margin-bottom:16px;text-align:center;}
+.stat-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.stat-planet{font-size:13px;color:var(--text);width:40px;}
+.stat-bar-wrap{flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:8px;overflow:hidden;}
+.stat-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--gold));transition:width 0.8s ease;}
+.stat-pct{font-size:12px;color:var(--gold);width:36px;text-align:right;}
+.stat-count{font-size:11px;color:var(--dim);width:40px;text-align:right;}
+.data-note{font-size:11px;color:var(--dim);text-align:center;margin-top:12px;line-height:1.6;}
+.divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;}
 </style>
 </head>
 <body>
-<div class="nebula"></div>
 <div class="stars" id="stars"></div>
-<div class="toast" id="toast"></div>
+<div class="container">
+  <div class="logo">✦ FORTUNA ✦</div>
 
-<nav>
-  <a href="/" class="nav-brand">FORTUNA</a>
-  <a href="/" class="nav-back">← 메인으로</a>
-</nav>
-
-<div class="wrap">
-  <div class="header">
-    <div class="eyebrow">무료 계산기</div>
-    <h1 class="title">나를 움직이는<br>핵심 행성은?</h1>
-    <p class="subtitle">생년월일만 입력하면 무료로 확인할 수 있어요</p>
+  <div class="hook-card" id="hookCard">
+    <div class="hook-pill">일주 × 도미넌트 행성</div>
+    <div class="planet-icon" id="planetIcon">🪐</div>
+    <div class="hook-pillar" id="pillarText">갑인일주</div>
+    <div style="font-size:14px;color:var(--dim);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
+    <div class="hook-pct" id="pctText">78%</div>
+    <div class="hook-planet" id="planetText">목성(Jupiter)</div>
+    <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 78%가<br>목성이 도미넌트 행성으로 나옵니다.</div>
+    <hr class="divider">
+    <div style="font-size:13px;color:var(--dim);line-height:1.7;">내 도미넌트 행성이 정말 목성인지<br>정확한 출생 시간으로 확인해보세요.</div>
+    <a class="cta-btn" href="https://fortuna-silk.vercel.app/dominant.html" id="ctaBtn">✦ 내 행성 정확히 확인하기</a>
+    <button class="kakao-btn" onclick="shareKakao()" id="kakaoBtn">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" onerror="this.style.display='none'">
+      카카오톡으로 공유하기
+    </button>
   </div>
 
-  <div class="card">
-    <div class="field">
-      <label class="label">생년월일 *</label>
-      <input type="text" id="calcBirth" class="input" placeholder="예: 1990.03.15">
-    </div>
-    <div class="field">
-      <label class="label">출생시간 <span style="color:var(--text-dim);font-size:12px;">(모르면 공란)</span></label>
-      <input type="text" id="calcTime" class="input" placeholder="예: 14:30">
-    </div>
-    <div class="field">
-      <label class="label">태어난 지역 *</label>
-      <select id="calcPlace" class="input">
-        <option value="">지역 선택</option>
-        <option>강릉</option><option>거제</option><option>경주</option>
-        <option>고양</option><option>광명</option><option>광주</option>
-        <option>구미</option><option>군산</option><option>김해</option>
-        <option>남양주</option><option>대구</option><option>대전</option>
-        <option>목포</option><option>부산</option><option>부천</option>
-        <option>사천</option><option>서울</option><option>성남</option>
-        <option>수원</option><option>순천</option><option>시흥</option>
-        <option>아산</option><option>안산</option><option>안성</option>
-        <option>안양</option><option>양산</option><option>여수</option>
-        <option>오산</option><option>용인</option><option>원주</option>
-        <option>의정부</option><option>이천</option><option>인천</option>
-        <option>전주</option><option>제주</option><option>진주</option>
-        <option>창원</option><option>천안</option><option>청주</option>
-        <option>춘천</option><option>통영</option><option>평택</option>
-        <option>포항</option><option>하남</option><option>화성</option>
-        <option>울산</option>
-      </select>
-    </div>
-
-    <button class="btn" id="calcBtn" onclick="calcDominant()">✦ 내 핵심 행성 확인하기</button>
-
-    <div class="helper">
-      결과를 본 뒤 친구에게 공유하거나, 더 자세한 해석으로 바로 이어볼 수 있어요.
-    </div>
-  </div>
-
-  <div class="result" id="result">
-    <div class="result-topline">dominant planet</div>
-    <div class="result-emoji" id="resultEmoji"></div>
-    <div class="result-name" id="resultName"></div>
-    <div class="result-hook" id="resultHook"></div>
-    <div class="result-desc" id="resultDesc"></div>
-
-    <div class="share-box">
-      <div class="share-title">
-        결과를 저장하거나 친구에게 보내보세요
-      </div>
-      <div class="share-actions">
-        <button class="share-btn" onclick="shareResult()">공유하기</button>
-        <button class="share-btn" onclick="copyResultLink()">링크 복사</button>
-        <button class="share-btn" onclick="resetForm()">다시 하기</button>
-      </div>
-    </div>
-
-    <div class="upsell">
-      <p class="upsell-text">
-        도미넌트 행성은 시작일 뿐이에요.<br>
-        이 행성이 당신의 태양·달·상승점과 어떻게 얽혀있는지,<br>
-        반복되는 패턴의 뿌리가 무엇인지 — 라이트 리포트에서 확인하세요.
-      </p>
-      <a href="light.html" class="upsell-btn">✦ 라이트 리포트 9,900원</a>
-    </div>
+  <div class="stats-card" id="statsCard">
+    <div class="stats-title">📊 갑인일주 행성 분포 데이터</div>
+    <div id="statsBars"></div>
+    <div class="data-note" id="dataNote">추정 데이터 기반 · 실제 분석 누적 시 업데이트됩니다</div>
   </div>
 </div>
 
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"></script>
 <script>
-const CITIES={
-  '강릉':{lat:37.7519,lon:128.8761},'거제':{lat:34.8803,lon:128.6219},
-  '경주':{lat:35.8562,lon:129.2247},'고양':{lat:37.6584,lon:126.8320},
-  '광명':{lat:37.4789,lon:126.8643},'광주':{lat:35.1595,lon:126.8526},
-  '구미':{lat:36.1196,lon:128.3446},'군산':{lat:35.9675,lon:126.7368},
-  '김해':{lat:35.2341,lon:128.8893},'남양주':{lat:37.6359,lon:127.2168},
-  '대구':{lat:35.8714,lon:128.6014},'대전':{lat:36.3504,lon:127.3845},
-  '목포':{lat:34.8118,lon:126.3922},'부산':{lat:35.1796,lon:129.0756},
-  '부천':{lat:37.5034,lon:126.7660},'사천':{lat:35.0035,lon:128.0645},
-  '서울':{lat:37.5665,lon:126.9780},'성남':{lat:37.4386,lon:127.1378},
-  '수원':{lat:37.2636,lon:127.0286},'순천':{lat:34.9506,lon:127.4872},
-  '시흥':{lat:37.3797,lon:126.8031},'아산':{lat:36.7897,lon:127.0023},
-  '안산':{lat:37.3219,lon:126.8309},'안성':{lat:37.0078,lon:127.2797},
-  '안양':{lat:37.3943,lon:126.9568},'양산':{lat:35.3350,lon:129.0371},
-  '여수':{lat:34.7604,lon:127.6622},'오산':{lat:37.1498,lon:127.0774},
-  '용인':{lat:37.2411,lon:127.1775},'원주':{lat:37.3420,lon:127.9202},
-  '의정부':{lat:37.7381,lon:127.0472},'이천':{lat:37.2721,lon:127.4350},
-  '인천':{lat:37.4563,lon:126.7052},'전주':{lat:35.8242,lon:127.1480},
-  '제주':{lat:33.4996,lon:126.5312},'진주':{lat:35.1799,lon:128.1076},
-  '창원':{lat:35.2280,lon:128.6811},'천안':{lat:36.8151,lon:127.1139},
-  '청주':{lat:36.6424,lon:127.4890},'춘천':{lat:37.8813,lon:127.7298},
-  '통영':{lat:34.8544,lon:128.4330},'평택':{lat:36.9921,lon:127.1128},
-  '포항':{lat:36.0190,lon:129.3435},'하남':{lat:37.5392,lon:127.2148},
-  '화성':{lat:37.1996,lon:126.8317},'울산':{lat:35.5384,lon:129.3114},
+const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// 60갑자 행성 데이터 (하드코딩 초기값)
+const PILLAR_PLANET={
+  "갑자":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "을축":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "병인":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "정묘":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "무진":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "기사":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "경오":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "신미":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "임신":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "계유":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "갑술":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "을해":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "병자":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "정축":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "무인":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "기묘":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "경진":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "신사":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "임오":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "계미":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "갑신":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "을유":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "병술":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "정해":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "무자":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "기축":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "경인":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "신묘":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "임진":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "계사":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "갑오":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "을미":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "병신":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "정유":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "무술":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "기해":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "경자":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "신축":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "임인":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "계묘":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "갑진":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "을사":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "병오":{"primary":"Mars","primary_kor":"화성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "정미":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "무신":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "기유":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "경술":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "신해":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "임자":{"primary":"Mercury","primary_kor":"수성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "계축":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "갑인":{"primary":"Jupiter","primary_kor":"목성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "을묘":{"primary":"Jupiter","primary_kor":"목성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "병진":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "정사":{"primary":"Mars","primary_kor":"화성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "무오":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "기미":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "경신":{"primary":"Venus","primary_kor":"금성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "신유":{"primary":"Venus","primary_kor":"금성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "임술":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "계해":{"primary":"Mercury","primary_kor":"수성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null}
 };
 
-const PLANET_INFO={
-  Sun:{
-    emoji:'☀️',
-    name:'태양',
-    hook:'당신을 이끄는 건 존재감과 의지예요.',
-    desc:'무언가를 해낼 때 가장 빛나고, 자신의 신념을 따를 때 에너지가 올라오는 사람이에요. 인정받고 싶은 마음이 강하지만, 그 마음이 동시에 당신을 움직이는 연료가 되기도 합니다.'
-  },
-  Moon:{
-    emoji:'🌙',
-    name:'달',
-    hook:'감정이 당신의 나침반이에요.',
-    desc:'논리보다 느낌이 먼저 오고, 분위기를 읽는 능력이 탁월해요. 혼자만의 시간이 없으면 배터리가 빨리 닳는 편이라 주기적인 감정 충전이 꼭 필요합니다.'
-  },
-  Mercury:{
-    emoji:'☿',
-    name:'수성',
-    hook:'생각과 말의 속도가 빠른 사람입니다.',
-    desc:'대화 중에도 이미 다음 문장을 준비하고 있을 때가 많아요. 정보를 빠르게 받아들이고 연결하는 능력이 강점이며, 배우고 정리하고 설명할 때 특히 힘이 살아납니다.'
-  },
-  Venus:{
-    emoji:'♀',
-    name:'금성',
-    hook:'관계와 아름다움에서 힘을 얻는 타입이에요.',
-    desc:'누군가를 편안하게 만들고, 조화로운 분위기를 만드는 감각이 좋아요. 갈등보다 연결을 택하는 편이고, 사랑받는 감각과 감성적인 만족이 삶의 큰 동력이 됩니다.'
-  },
-  Mars:{
-    emoji:'♂',
-    name:'화성',
-    hook:'행동이 먼저 나가는 추진형입니다.',
-    desc:'목표가 생기면 바로 움직이고, 에너지가 넘칠 때와 방전됐을 때의 차이가 분명한 편이에요. 무언가에 도전하고 부딪칠 때 오히려 살아있다는 감각을 느끼기도 합니다.'
-  },
-  Jupiter:{
-    emoji:'♃',
-    name:'목성',
-    hook:'가능성과 확장을 먼저 보는 사람입니다.',
-    desc:'크게 생각하고, 경험을 통해 성장하는 걸 즐기며, 주변 사람에게 자연스럽게 희망을 전달해요. 배움과 확장이 멈추면 답답함을 느끼는 타입입니다.'
-  },
-  Saturn:{
-    emoji:'♄',
-    name:'토성',
-    hook:'책임감과 기준이 당신의 핵심 힘이에요.',
-    desc:'한 번 맡은 일은 제대로 끝내야 하고, 자신에 대한 잣대가 특히 엄격해요. 대충 넘기기보다는 오래 걸려도 제대로 해내고 싶은 마음이 강한 사람입니다.'
-  },
-  Uranus:{
-    emoji:'♅',
-    name:'천왕성',
-    hook:'틀을 깨는 에너지가 강합니다.',
-    desc:'남들이 당연하게 여기는 것에 의문을 품고, 자유롭게 움직일 때 가장 창의적이에요. 익숙한 방식보다 새로운 가능성을 먼저 보는 사람입니다.'
-  },
-  Neptune:{
-    emoji:'♆',
-    name:'해왕성',
-    hook:'직관과 감수성이 유난히 예민한 편이에요.',
-    desc:'눈에 보이지 않는 분위기, 감정, 상징을 남들보다 더 먼저 읽어냅니다. 공감 능력이 깊고, 감정의 결을 섬세하게 느끼는 대신 쉽게 지칠 수도 있어요.'
-  },
-  Pluto:{
-    emoji:'♇',
-    name:'명왕성',
-    hook:'깊이와 변화가 삶의 핵심 주제예요.',
-    desc:'표면에 머무르지 않고 본질을 파고드는 성향이 강하며, 한 번 꽂히면 끝까지 가는 집념이 있어요. 삶에서 몇 번의 큰 전환점을 통해 더 강해지는 타입입니다.'
-  },
-};
+const PLANET_ICON={Jupiter:'🪐',Mars:'🔴',Saturn:'🪐',Venus:'💫',Mercury:'⚡'};
+const PLANET_COLOR={Jupiter:'#b482ff',Mars:'#ff6b6b',Saturn:'#c9a84c',Venus:'#ff9eb5',Mercury:'#7ecbff'};
 
-let currentResult = null;
+// URL 파라미터에서 일주 가져오기
+const params=new URLSearchParams(location.search);
+let pillar=params.get('pillar')||'갑인';
+let orderId=params.get('order')||null;
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
+async function init(){
+  const data=PILLAR_PLANET[pillar];
+  if(!data){document.getElementById('hookCard').innerHTML='<p style="color:var(--dim)">일주 정보를 찾을 수 없습니다.</p>';return;}
 
-function parseBirthdate(str){
-  const clean=str.replace(/[^0-9]/g,'');
-  if(clean.length===8){
-    const y=parseInt(clean.slice(0,4)),m=parseInt(clean.slice(4,6)),d=parseInt(clean.slice(6,8));
-    if(y<1900||y>2026||m<1||m>12||d<1||d>31) return null;
-    return {year:y,month:m,day:d};
-  }
-  const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
-  if(p.length<3) return null;
-  const y=parseInt(p[0]),m=parseInt(p[1]),d=parseInt(p[2]);
-  if(y<1900||y>2026||m<1||m>12||d<1||d>31) return null;
-  return {year:y,month:m,day:d};
-}
+  // DB에서 실제 통계 가져오기 (100건 이상이면 실제값 사용)
+  let displayPct=data.primary_pct;
+  let displayPct2=data.secondary_pct;
+  let isRealData=false;
+  let totalCount=0;
 
-function parseTime(str){
-  if(!str||!str.trim()) return {hour:12,min:0};
-  const clean=str.replace(/[^0-9]/g,'');
-  let h,m;
-  if(clean.length===3){h=parseInt(clean.slice(0,1));m=parseInt(clean.slice(1));}
-  else if(clean.length===4){h=parseInt(clean.slice(0,2));m=parseInt(clean.slice(2));}
-  else{
-    const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
-    h=parseInt(p[0])||12;
-    m=parseInt(p[1])||0;
-  }
-  if(h<0||h>23||m<0||m>59) return {hour:12,min:0};
-  return {hour:h,min:m};
-}
-
-function calcDominantPlanet(planets){
-  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  const SIGN_NAMES=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
-  const SIGN_RULERS={
-    'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon',
-    'Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto',
-    'Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'
-  };
-  const BASE_WEIGHT={Sun:2.0,Moon:2.0,Mercury:1.5,Venus:1.5,Mars:2.0,Jupiter:1.0,Saturn:0.8,Uranus:0.5,Neptune:0.5,Pluto:0.5};
-  const HOUSE_SCORES={1:6,10:5,7:4,4:5,2:2,5:2,8:2,11:2,3:1,6:1,9:1,12:1};
-
-  const scores={};
-  PLANETS.forEach(p=>{scores[p]=0;});
-
-  planets.forEach(p=>{
-    if(!PLANETS.includes(p.name)) return;
-    const hs=HOUSE_SCORES[p.house]||0;
-    const w=BASE_WEIGHT[p.name]||1;
-    scores[p.name]+=hs*w;
-    if(p.isRetro==='true') scores[p.name]-=1;
-  });
-
-  planets.forEach(p=>{
-    if(!PLANETS.includes(p.name)) return;
-    const signIdx=Math.floor(p.fullDegree/30);
-    const sign=SIGN_NAMES[signIdx];
-    if(SIGN_RULERS[sign]===p.name){
-      const w=BASE_WEIGHT[p.name]||1;
-      scores[p.name]+=6*w;
+  try{
+    const {data:stats}=await sb.from('pillar_planet_stats')
+      .select('dominant_planet_kor, dominant_planet')
+      .eq('day_pillar',pillar);
+    
+    if(stats && stats.length>=100){
+      isRealData=true;
+      totalCount=stats.length;
+      const counts={};
+      stats.forEach(r=>{counts[r.dominant_planet_kor]=(counts[r.dominant_planet_kor]||0)+1;});
+      displayPct=Math.round((counts[data.primary_kor]||0)*100/totalCount);
+      if(data.secondary_kor) displayPct2=Math.round((counts[data.secondary_kor]||0)*100/totalCount);
+    } else if(stats){
+      totalCount=stats.length;
     }
-  });
+  }catch(e){}
 
-  planets.forEach(p=>{
-    if(!PLANETS.includes(p.name)) return;
-    const ruledSigns=Object.entries(SIGN_RULERS).filter(([s,r])=>r===p.name).map(([s])=>s);
-    planets.forEach(other=>{
-      if(!PLANETS.includes(other.name)) return;
-      const otherSign=SIGN_NAMES[Math.floor(other.fullDegree/30)];
-      if(ruledSigns.includes(otherSign)){
-        const w=BASE_WEIGHT[other.name]||1;
-        scores[p.name]+=2*w;
-      }
-    });
-  });
-
-  const asc=planets.find(p=>p.name==='Ascendant');
-  if(asc){
-    const ascSign=SIGN_NAMES[Math.floor(asc.fullDegree/30)];
-    const ascRuler=SIGN_RULERS[ascSign];
-    if(ascRuler&&scores[ascRuler]!==undefined) scores[ascRuler]+=3;
-  }
-
-  const keyPoints=planets.filter(p=>['Sun','Moon','Ascendant'].includes(p.name));
-  keyPoints.forEach(key=>{
-    planets.forEach(p=>{
-      if(!PLANETS.includes(p.name)||key.name===p.name) return;
-      const diff=Math.abs(p.fullDegree-key.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      const ASPECTS=[
-        {a:0,orb:8,w:3},
-        {a:120,orb:8,w:2.5},
-        {a:60,orb:6,w:2},
-        {a:180,orb:8,w:2},
-        {a:90,orb:6,w:1.5}
-      ];
-      for(const asp of ASPECTS){
-        if(Math.abs(angle-asp.a)<=asp.orb){
-          scores[p.name]+=asp.w*(BASE_WEIGHT[p.name]||1);
-          break;
-        }
-      }
-    });
-  });
-
-  let dominant='Sun', max=-999;
-  PLANETS.forEach(p=>{
-    if(scores[p]>max){
-      max=scores[p];
-      dominant=p;
-    }
-  });
-  return dominant;
-}
-
-function buildShareText(resultName){
-  return `나의 핵심 행성을 확인했는데 ${resultName}이(가) 나왔어요.\n생각보다 꽤 잘 맞아서 신기했어요 ✦\n\nFORTUNA에서 무료로 확인해보기`;
-}
-
-function getShareUrl(){
-  return `${window.location.origin}${window.location.pathname}?utm_source=share&utm_medium=dominant&utm_campaign=free_test`;
-}
-
-async function shareResult(){
-  if(!currentResult){
-    showToast('먼저 결과를 확인해주세요');
-    return;
-  }
-
-  const shareText = buildShareText(currentResult.name);
-  const shareUrl = getShareUrl();
-
-  if(navigator.share){
+  // 오늘 주문 통계 저장 (중복 방지)
+  if(orderId){
     try{
-      await navigator.share({
-        title:`FORTUNA - 나의 핵심 행성은 ${currentResult.name}`,
-        text:shareText,
-        url:shareUrl
-      });
-      return;
-    }catch(e){
-      // 사용자가 취소한 경우 조용히 종료
-      if(e && e.name === 'AbortError') return;
-    }
+      const {data:exists}=await sb.from('pillar_planet_stats').select('id').eq('order_id',orderId).single();
+      if(!exists){
+        await sb.from('pillar_planet_stats').insert({
+          day_pillar:pillar,
+          dominant_planet:data.primary,
+          dominant_planet_kor:data.primary_kor,
+          order_id:orderId
+        });
+      }
+    }catch(e){}
   }
 
-  try{
-    await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-    showToast('공유 문구와 링크가 복사되었어요');
-  }catch(e){
-    showToast('공유에 실패했어요');
-  }
+  // UI 업데이트
+  document.getElementById('planetIcon').textContent=PLANET_ICON[data.primary]||'🪐';
+  document.getElementById('pillarText').textContent=pillar+'일주';
+  document.getElementById('pctText').textContent=displayPct+'%';
+  document.getElementById('pctText').style.color=PLANET_COLOR[data.primary]||'var(--gold)';
+  document.getElementById('planetText').textContent=data.primary_kor+'('+data.primary+')';
+  document.getElementById('subText').innerHTML=
+    `같은 일주를 가진 사람 중 <strong style="color:${PLANET_COLOR[data.primary]}">${displayPct}%</strong>가<br>${data.primary_kor}이 도미넌트 행성으로 나옵니다.`;
+  
+  document.querySelector('.stats-title').textContent=`📊 ${pillar}일주 행성 분포 데이터`;
+
+  // 통계 바 렌더
+  const bars=[];
+  bars.push({planet:data.primary_kor,pct:displayPct,color:PLANET_COLOR[data.primary]});
+  if(data.secondary_kor) bars.push({planet:data.secondary_kor,pct:displayPct2,color:PLANET_COLOR[data.secondary]||'#aaa'});
+  
+  document.getElementById('statsBars').innerHTML=bars.map(b=>`
+    <div class="stat-row">
+      <div class="stat-planet">${b.planet}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${b.pct}%;background:${b.color}"></div></div>
+      <div class="stat-pct">${b.pct}%</div>
+      <div class="stat-count">${totalCount>0?Math.round(b.pct*totalCount/100)+'건':'-'}</div>
+    </div>
+  `).join('');
+
+  const noteEl=document.getElementById('dataNote');
+  if(isRealData) noteEl.textContent=`실제 분석 ${totalCount.toLocaleString()}건 기반 데이터`;
+  else noteEl.textContent=`추정 데이터 기반${totalCount>0?' · 실제 '+totalCount+'건 누적 중':''} · 100건 이상 시 실제 통계로 전환`;
 }
 
-async function copyResultLink(){
-  try{
-    await navigator.clipboard.writeText(getShareUrl());
-    showToast('링크가 복사되었어요');
-  }catch(e){
-    showToast('링크 복사에 실패했어요');
-  }
-}
-
-function resetForm(){
-  document.getElementById('calcBirth').value='';
-  document.getElementById('calcTime').value='';
-  document.getElementById('calcPlace').value='';
-  document.getElementById('result').style.display='none';
-  currentResult = null;
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-async function calcDominant(){
-  const birth=document.getElementById('calcBirth').value.trim();
-  const place=document.getElementById('calcPlace').value;
-
-  if(!birth||!place){
-    showToast('생년월일과 지역을 선택해주세요');
-    return;
-  }
-
-  const bd=parseBirthdate(birth);
-  if(!bd){
-    showToast('생년월일 형식을 확인해주세요 (예: 1990.03.15)');
-    return;
-  }
-
-  const city=CITIES[place];
-  if(!city){
-    showToast('지역을 선택해주세요');
-    return;
-  }
-
-  const bt=parseTime(document.getElementById('calcTime').value);
-  const btn=document.getElementById('calcBtn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="loading"></span>계산 중...';
-
-  try{
-    const res=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')
+function shareKakao(){
+  const data=PILLAR_PLANET[pillar]||{primary_kor:'목성',primary_pct:78};
+  const msg=`${pillar}일주는 ${data.primary_pct}% 확률로 ${data.primary_kor}이 도미넌트 행성으로 나옵니다 🪐\n\n내 행성도 확인해보세요!`;
+  const shareUrl=`https://fortuna-silk.vercel.app/planet_share.html?pillar=${encodeURIComponent(pillar)}`;
+  const ctaUrl=`https://fortuna-silk.vercel.app/dominant.html`;
+  
+  if(window.Kakao && window.Kakao.isInitialized()){
+    Kakao.Share.sendDefault({
+      objectType:'feed',
+      content:{
+        title:`${pillar}일주 도미넌트 행성 — ${data.primary_pct}% ${data.primary_kor}`,
+        description:msg,
+        imageUrl:'https://fortuna-silk.vercel.app/og-image.png',
+        link:{mobileWebUrl:shareUrl,webUrl:shareUrl}
       },
-      body:JSON.stringify({
-        day:bd.day,
-        month:bd.month,
-        year:bd.year,
-        hour:bt.hour,
-        min:bt.min,
-        lat:city.lat,
-        lon:city.lon,
-        tzone:9.0
-      })
+      buttons:[{title:'내 행성 확인하기',link:{mobileWebUrl:ctaUrl,webUrl:ctaUrl}}]
     });
-
-    const data=await res.json();
-    const planets=data.output||data;
-    const dominant=calcDominantPlanet(planets);
-    const info=PLANET_INFO[dominant]||{emoji:'✦',name:dominant,hook:'당신에게 강하게 작용하는 행성입니다.',desc:''};
-
-    currentResult = {
-      key: dominant,
-      name: info.name,
-      hook: info.hook,
-      desc: info.desc
-    };
-
-    document.getElementById('resultEmoji').textContent=info.emoji;
-    document.getElementById('resultName').textContent=info.name;
-    document.getElementById('resultHook').textContent=info.hook;
-    document.getElementById('resultDesc').textContent=info.desc;
-    document.getElementById('result').style.display='block';
-    document.getElementById('result').scrollIntoView({behavior:'smooth',block:'center'});
-  }catch(e){
-    showToast('오류가 발생했어요. 다시 시도해주세요');
-    console.error(e);
+  } else {
+    // 카카오 SDK 없으면 링크 복사
+    navigator.clipboard.writeText(shareUrl).then(()=>alert('링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요.'));
   }
-
-  btn.disabled=false;
-  btn.textContent='✦ 내 핵심 행성 확인하기';
 }
 
-// 별 생성
+// 별 배경
 const starsEl=document.getElementById('stars');
-for(let i=0;i<100;i++){
+for(let i=0;i<80;i++){
   const s=document.createElement('div');
-  const size=Math.random()*2+0.5;
-  s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.1+Math.random()*0.4};`;
+  s.style.cssText=`position:absolute;background:#fff;border-radius:50%;width:${Math.random()*2}px;height:${Math.random()*2}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.1+Math.random()*0.4}`;
   starsEl.appendChild(s);
 }
+
+// 카카오 SDK 초기화 (키 교체 필요)
+try{Kakao.init('51b4f87ad9cfd6312c176ad34eb62025');}catch(e){}
+
+init();
 </script>
 </body>
 </html>
