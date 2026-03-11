@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 도미넌트 행성 확인하기 — FORTUNA</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
+:root{--gold:#c9a84c;--purple:#b482ff;--bg:#0d0b14;--card:#16132a;--text:#e8e0f0;--dim:#8a7fa0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.container{position:relative;z-index:1;width:100%;max-width:480px;}
+.logo{font-family:'Noto Serif KR',serif;letter-spacing:0.3em;color:var(--gold);font-size:14px;text-align:center;margin-bottom:32px;opacity:0.8;}
+.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:24px;}
+.hook-pill{display:inline-block;background:rgba(180,130,255,0.1);border:1px solid rgba(180,130,255,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--purple);letter-spacing:0.1em;margin-bottom:20px;}
+.hook-title{font-family:'Noto Serif KR',serif;font-size:22px;line-height:1.5;margin-bottom:12px;color:var(--text);}
+.hook-pillar{font-size:28px;font-weight:600;color:var(--purple);margin:8px 0;}
+.hook-pct{font-size:42px;font-weight:700;color:var(--gold);margin:4px 0;}
+.hook-planet{font-size:18px;color:var(--text);margin-bottom:16px;}
+.hook-sub{font-size:13px;color:var(--dim);line-height:1.7;}
+.planet-icon{font-size:56px;margin:16px 0;}
+.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#6c3fa0,#b482ff);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:20px;text-decoration:none;transition:opacity 0.2s;}
+.cta-btn:hover{opacity:0.85;}
+.kakao-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:#FEE500;border:none;border-radius:14px;color:#3A1D1D;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;transition:opacity 0.2s;}
+.kakao-btn:hover{opacity:0.85;}
+.kakao-btn img{width:24px;height:24px;}
+.stats-card{background:var(--card);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:20px;margin-top:16px;}
+.stats-title{font-size:12px;color:var(--dim);letter-spacing:0.1em;margin-bottom:16px;text-align:center;}
+.stat-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.stat-planet{font-size:13px;color:var(--text);width:40px;}
+.stat-bar-wrap{flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:8px;overflow:hidden;}
+.stat-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--gold));transition:width 0.8s ease;}
+.stat-pct{font-size:12px;color:var(--gold);width:36px;text-align:right;}
+.stat-count{font-size:11px;color:var(--dim);width:40px;text-align:right;}
+.data-note{font-size:11px;color:var(--dim);text-align:center;margin-top:12px;line-height:1.6;}
+.divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="container">
+  <div class="logo">✦ FORTUNA ✦</div>
+
+  <div class="hook-card" id="hookCard">
+    <div class="hook-pill">일주 × 도미넌트 행성</div>
+    <div class="planet-icon" id="planetIcon">🪐</div>
+    <div class="hook-pillar" id="pillarText">갑인일주</div>
+    <div style="font-size:14px;color:var(--dim);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
+    <div class="hook-pct" id="pctText">78%</div>
+    <div class="hook-planet" id="planetText">목성(Jupiter)</div>
+    <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 78%가<br>목성이 도미넌트 행성으로 나옵니다.</div>
+    <hr class="divider">
+    <div style="font-size:13px;color:var(--dim);line-height:1.7;">내 도미넌트 행성이 정말 목성인지<br>정확한 출생 시간으로 확인해보세요.</div>
+    <a class="cta-btn" href="https://fortuna-silk.vercel.app" id="ctaBtn">✦ 내 행성 정확히 확인하기</a>
+    <button class="kakao-btn" onclick="shareKakao()" id="kakaoBtn">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" onerror="this.style.display='none'">
+      카카오톡으로 공유하기
+    </button>
+  </div>
+
+  <div class="stats-card" id="statsCard">
+    <div class="stats-title">📊 갑인일주 행성 분포 데이터</div>
+    <div id="statsBars"></div>
+    <div class="data-note" id="dataNote">추정 데이터 기반 · 실제 분석 누적 시 업데이트됩니다</div>
+  </div>
+</div>
+
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" crossorigin="anonymous"></script>
+<script>
+const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+// 60갑자 행성 데이터 (하드코딩 초기값)
+const PILLAR_PLANET={
+  "갑자":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "을축":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "병인":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "정묘":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "무진":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "기사":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "경오":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "신미":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "임신":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "계유":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "갑술":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "을해":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "병자":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "정축":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "무인":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "기묘":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "경진":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "신사":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "임오":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "계미":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "갑신":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "을유":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "병술":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "정해":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "무자":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "기축":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "경인":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "신묘":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "임진":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "계사":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "갑오":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "을미":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "병신":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "정유":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "무술":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "기해":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "경자":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "신축":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "임인":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "계묘":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Jupiter","secondary_kor":"목성","secondary_pct":38},
+  "갑진":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "을사":{"primary":"Jupiter","primary_kor":"목성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "병오":{"primary":"Mars","primary_kor":"화성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "정미":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "무신":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "기유":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Venus","secondary_kor":"금성","secondary_pct":38},
+  "경술":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "신해":{"primary":"Venus","primary_kor":"금성","primary_pct":62,"secondary":"Mercury","secondary_kor":"수성","secondary_pct":38},
+  "임자":{"primary":"Mercury","primary_kor":"수성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "계축":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "갑인":{"primary":"Jupiter","primary_kor":"목성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "을묘":{"primary":"Jupiter","primary_kor":"목성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "병진":{"primary":"Mars","primary_kor":"화성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "정사":{"primary":"Mars","primary_kor":"화성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "무오":{"primary":"Saturn","primary_kor":"토성","primary_pct":62,"secondary":"Mars","secondary_kor":"화성","secondary_pct":38},
+  "기미":{"primary":"Saturn","primary_kor":"토성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "경신":{"primary":"Venus","primary_kor":"금성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "신유":{"primary":"Venus","primary_kor":"금성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null},
+  "임술":{"primary":"Mercury","primary_kor":"수성","primary_pct":62,"secondary":"Saturn","secondary_kor":"토성","secondary_pct":38},
+  "계해":{"primary":"Mercury","primary_kor":"수성","primary_pct":78,"secondary":null,"secondary_kor":null,"secondary_pct":null}
+};
+
+const PLANET_ICON={Jupiter:'🪐',Mars:'🔴',Saturn:'🪐',Venus:'💫',Mercury:'⚡'};
+const PLANET_COLOR={Jupiter:'#b482ff',Mars:'#ff6b6b',Saturn:'#c9a84c',Venus:'#ff9eb5',Mercury:'#7ecbff'};
+
+// URL 파라미터에서 일주 가져오기
+const params=new URLSearchParams(location.search);
+let pillar=params.get('pillar')||'갑인';
+let orderId=params.get('order')||null;
+
+async function init(){
+  const data=PILLAR_PLANET[pillar];
+  if(!data){document.getElementById('hookCard').innerHTML='<p style="color:var(--dim)">일주 정보를 찾을 수 없습니다.</p>';return;}
+
+  // DB에서 실제 통계 가져오기 (100건 이상이면 실제값 사용)
+  let displayPct=data.primary_pct;
+  let displayPct2=data.secondary_pct;
+  let isRealData=false;
+  let totalCount=0;
+
+  try{
+    const {data:stats}=await sb.from('pillar_planet_stats')
+      .select('dominant_planet_kor, dominant_planet')
+      .eq('day_pillar',pillar);
+    
+    if(stats && stats.length>=100){
+      isRealData=true;
+      totalCount=stats.length;
+      const counts={};
+      stats.forEach(r=>{counts[r.dominant_planet_kor]=(counts[r.dominant_planet_kor]||0)+1;});
+      displayPct=Math.round((counts[data.primary_kor]||0)*100/totalCount);
+      if(data.secondary_kor) displayPct2=Math.round((counts[data.secondary_kor]||0)*100/totalCount);
+    } else if(stats){
+      totalCount=stats.length;
+    }
+  }catch(e){}
+
+  // 오늘 주문 통계 저장 (중복 방지)
+  if(orderId){
+    try{
+      const {data:exists}=await sb.from('pillar_planet_stats').select('id').eq('order_id',orderId).single();
+      if(!exists){
+        await sb.from('pillar_planet_stats').insert({
+          day_pillar:pillar,
+          dominant_planet:data.primary,
+          dominant_planet_kor:data.primary_kor,
+          order_id:orderId
+        });
+      }
+    }catch(e){}
+  }
+
+  // UI 업데이트
+  document.getElementById('planetIcon').textContent=PLANET_ICON[data.primary]||'🪐';
+  document.getElementById('pillarText').textContent=pillar+'일주';
+  document.getElementById('pctText').textContent=displayPct+'%';
+  document.getElementById('pctText').style.color=PLANET_COLOR[data.primary]||'var(--gold)';
+  document.getElementById('planetText').textContent=data.primary_kor+'('+data.primary+')';
+  document.getElementById('subText').innerHTML=
+    `같은 일주를 가진 사람 중 <strong style="color:${PLANET_COLOR[data.primary]}">${displayPct}%</strong>가<br>${data.primary_kor}이 도미넌트 행성으로 나옵니다.`;
+  
+  document.querySelector('.stats-title').textContent=`📊 ${pillar}일주 행성 분포 데이터`;
+
+  // 통계 바 렌더
+  const bars=[];
+  bars.push({planet:data.primary_kor,pct:displayPct,color:PLANET_COLOR[data.primary]});
+  if(data.secondary_kor) bars.push({planet:data.secondary_kor,pct:displayPct2,color:PLANET_COLOR[data.secondary]||'#aaa'});
+  
+  document.getElementById('statsBars').innerHTML=bars.map(b=>`
+    <div class="stat-row">
+      <div class="stat-planet">${b.planet}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${b.pct}%;background:${b.color}"></div></div>
+      <div class="stat-pct">${b.pct}%</div>
+      <div class="stat-count">${totalCount>0?Math.round(b.pct*totalCount/100)+'건':'-'}</div>
+    </div>
+  `).join('');
+
+  const noteEl=document.getElementById('dataNote');
+  if(isRealData) noteEl.textContent=`실제 분석 ${totalCount.toLocaleString()}건 기반 데이터`;
+  else noteEl.textContent=`추정 데이터 기반${totalCount>0?' · 실제 '+totalCount+'건 누적 중':''} · 100건 이상 시 실제 통계로 전환`;
+}
+
+function shareKakao(){
+  const data=PILLAR_PLANET[pillar]||{primary_kor:'목성',primary_pct:78};
+  const msg=`${pillar}일주는 ${data.primary_pct}% 확률로 ${data.primary_kor}이 도미넌트 행성으로 나옵니다 🪐\n\n내 행성도 확인해보세요!`;
+  const shareUrl=`https://fortuna-silk.vercel.app/planet_share.html?pillar=${encodeURIComponent(pillar)}`;
+  
+  if(window.Kakao && window.Kakao.isInitialized()){
+    Kakao.Share.sendDefault({
+      objectType:'feed',
+      content:{
+        title:`${pillar}일주 도미넌트 행성 — ${data.primary_pct}% ${data.primary_kor}`,
+        description:msg,
+        imageUrl:'https://fortuna-silk.vercel.app/og-image.png',
+        link:{mobileWebUrl:shareUrl,webUrl:shareUrl}
+      },
+      buttons:[{title:'내 행성 확인하기',link:{mobileWebUrl:shareUrl,webUrl:shareUrl}}]
+    });
+  } else {
+    // 카카오 SDK 없으면 링크 복사
+    navigator.clipboard.writeText(shareUrl).then(()=>alert('링크가 복사되었습니다!\n카카오톡에 붙여넣기 해주세요.'));
+  }
+}
+
+// 별 배경
+const starsEl=document.getElementById('stars');
+for(let i=0;i<80;i++){
+  const s=document.createElement('div');
+  s.style.cssText=`position:absolute;background:#fff;border-radius:50%;width:${Math.random()*2}px;height:${Math.random()*2}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.1+Math.random()*0.4}`;
+  starsEl.appendChild(s);
+}
+
+// 카카오 SDK 초기화 (키 교체 필요)
+try{Kakao.init('51b4f87ad9cfd6312c176ad34eb62025');}catch(e){}
+
+init();
+</script>
+</body>
+</html>
