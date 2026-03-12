@@ -18,16 +18,21 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
 .container{position:relative;z-index:1;width:100%;max-width:480px;}
 .logo{font-family:'Noto Serif KR',serif;letter-spacing:0.3em;color:var(--gold);font-size:14px;text-align:center;margin-bottom:32px;opacity:0.8;}
-.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:24px;}
+.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:20px;}
 .hook-pill{display:inline-block;background:rgba(180,130,255,0.1);border:1px solid rgba(180,130,255,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--purple);letter-spacing:0.1em;margin-bottom:20px;}
-.hook-pillar{font-size:28px;font-weight:600;color:var(--planet);margin:8px 0;}
-.hook-pct{font-size:48px;font-weight:700;color:var(--planet);margin:4px 0;}
-.hook-planet{font-size:18px;color:var(--text);margin-bottom:16px;}
-.hook-sub{font-size:13px;color:var(--dim);line-height:1.7;}
 .planet-icon{font-size:64px;margin:16px 0;}
-.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#6c3fa0,#b482ff);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:20px;text-decoration:none;transition:opacity 0.2s;}
+.hook-pillar{font-size:26px;font-weight:600;color:var(--planet);margin:8px 0;}
+.hook-pct{font-size:48px;font-weight:700;color:var(--planet);margin:4px 0;}
+.hook-planet{font-size:18px;color:var(--text);margin-bottom:12px;}
+.hook-sub{font-size:13px;color:var(--dim);line-height:1.7;}
+.divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;}
+.traits-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:24px;margin-bottom:20px;}
+.traits-title{font-family:'Noto Serif KR',serif;font-size:16px;color:var(--planet);margin-bottom:6px;}
+.traits-keyword{font-size:11px;color:var(--dim);letter-spacing:0.15em;margin-bottom:20px;}
+.cta-box{background:rgba(180,130,255,0.06);border:1px solid rgba(180,130,255,0.2);border-radius:14px;padding:18px;margin-top:20px;font-size:13px;color:var(--dim);line-height:1.8;text-align:center;}
+.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#6c3fa0,#b482ff);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:16px;text-decoration:none;transition:opacity 0.2s;text-align:center;}
 .cta-btn:hover{opacity:0.85;}
-.copy-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:14px;color:var(--text);font-size:15px;font-weight:500;cursor:pointer;margin-top:12px;transition:opacity 0.2s;}
+.copy-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:14px;color:var(--text);font-size:14px;cursor:pointer;margin-top:10px;transition:opacity 0.2s;}
 .copy-btn:hover{opacity:0.75;}
 .stats-card{background:var(--card);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:20px;margin-top:16px;}
 .stats-title{font-size:12px;color:var(--dim);letter-spacing:0.1em;margin-bottom:16px;text-align:center;}
@@ -38,8 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 .stat-pct{font-size:12px;color:var(--gold);width:36px;text-align:right;}
 .stat-count{font-size:11px;color:var(--dim);width:40px;text-align:right;}
 .data-note{font-size:11px;color:var(--dim);text-align:center;margin-top:12px;line-height:1.6;}
-.divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -47,6 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 <div class="toast" id="toast"></div>
 <div class="container">
   <div class="logo">✦ FORTUNA ✦</div>
+
   <div class="hook-card">
     <div class="hook-pill">일주 × 도미넌트 행성</div>
     <div class="planet-icon">🔴</div>
@@ -56,16 +61,45 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     <div class="hook-planet">화성(Mars)</div>
     <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 <strong style="color:var(--planet)">62%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.</div>
     <hr class="divider">
-    <div style="font-size:13px;color:var(--dim);line-height:1.7;">내 도미넌트 행성이 정말 화성인지<br>정확한 출생 시간으로 확인해보세요.</div>
-    <a class="cta-btn" href="https://fortuna-silk.vercel.app/dominant.html">✦ 내 행성 정확히 확인하기</a>
-    <button class="copy-btn" onclick="copyLink()">🔗 링크 복사해서 카카오톡 공유하기</button>
+    <div style="font-size:12px;color:var(--dim);line-height:1.7;">이건 사주 일주 기반 추정이에요. 실제 출생 시간으로 정확히 확인하면 달라질 수 있어요.</div>
   </div>
+
+  <div class="traits-card">
+    <div class="traits-title">화성(Mars) 도미넌트의 특징</div>
+    <div class="traits-keyword">행동 · 에너지 · 경쟁 · 추진력</div>
+    
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">일단 움직이는 사람</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">생각보다 행동이 먼저예요. 다른 사람들이 아직 고민하는 동안 이미 시작해버리는 타입이에요. 그 추진력이 가장 큰 강점이에요.</div>
+        </div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">경쟁에서 살아나는 에너지</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">목표가 생기면 집중력이 극대화돼요. 운동, 영업, 스타트업처럼 성과가 눈에 보이는 분야에서 특히 빛나요. 이기고 싶다는 욕구가 동력이 돼요.</div>
+        </div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">직선적인 소통</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">돌려말하는 걸 답답해하고 직접적으로 표현해요. 솔직하다는 말을 자주 듣지만, 가끔 너무 직설적이라 상처를 주기도 해요.</div>
+        </div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">빠른 분노, 빠른 회복</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">감정이 즉각적으로 반응해서 화가 나면 바로 티가 나요. 하지만 오래 담아두지 않아요. 금방 털고 다시 앞으로 가는 편이에요.</div>
+        </div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">번아웃이 그림자</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">에너지를 폭발적으로 쓰고 나서 갑자기 방전되는 패턴이 있어요. 쉬는 것도 전략이라는 걸 몸이 먼저 알아야 해요.</div>
+        </div>
+    <div class="cta-box">이건 일주 기반 추정이에요. 실제 출생 시간까지 넣으면 화성이 어느 집에서 어떻게 작동하는지, 에너지를 가장 잘 쓰는 영역이 어딘지 정확히 알 수 있어요.</div>
+    <a class="cta-btn" href="https://fortuna-silk.vercel.app/dominant.html">✦ 내 행성 정확히 확인하기</a>
+    <button class="copy-btn" onclick="copyLink()">🔗 이 페이지 카카오톡으로 공유하기</button>
+  </div>
+
   <div class="stats-card">
     <div class="stats-title">📊 병인일주 행성 분포 데이터</div>
-    <div id="statsBars"><div class="stat-row"><div class="stat-planet">화성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:62%;background:#ff6b6b"></div></div><div class="stat-pct">62%</div><div class="stat-count">-</div></div><div class="stat-row"><div class="stat-planet">목성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:38%;background:#b482ff"></div></div><div class="stat-pct">38%</div><div class="stat-count">-</div></div></div>
+    <div id="statsBars"><div class="stat-row"><div class="stat-planet">화성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:62%;background:#ff6b6b"></div></div><div class="stat-pct">62%</div><div class="stat-count" id="c1">-</div></div><div class="stat-row"><div class="stat-planet">목성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:38%;background:#b482ff"></div></div><div class="stat-pct">38%</div><div class="stat-count" id="c2">-</div></div></div>
     <div class="data-note" id="dataNote">추정 데이터 기반 · 실제 분석 누적 시 업데이트됩니다</div>
   </div>
 </div>
+
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -86,7 +120,7 @@ function copyLink(){
 
 async function loadStats(){
   try{
-    const {data:stats}=await sb.from('pillar_planet_stats').select('dominant_planet_kor,dominant_planet').eq('day_pillar',pillar);
+    const {data:stats}=await sb.from('pillar_planet_stats').select('dominant_planet_kor').eq('day_pillar',pillar);
     if(!stats||stats.length<100)return;
     const counts={};
     stats.forEach(r=>{counts[r.dominant_planet_kor]=(counts[r.dominant_planet_kor]||0)+1;});
@@ -94,7 +128,6 @@ async function loadStats(){
     const pPct=Math.round((counts['화성']||0)*100/total);
     document.getElementById('pctText').textContent=pPct+'%';
     document.getElementById('subText').innerHTML=`같은 일주를 가진 사람 중 <strong style="color:var(--planet)">${pPct}%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.`;
-    const sPct=Math.round((counts['목성']||0)*100/total);
     document.getElementById('dataNote').textContent=`실제 분석 ${total.toLocaleString()}건 기반 데이터`;
   }catch(e){}
 }

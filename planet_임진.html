@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>병자일주 도미넌트 행성 확인하기 — FORTUNA</title>
-<meta property="og:title" content="병자일주 도미넌트 행성 확인하기 — FORTUNA">
-<meta property="og:description" content="병자일주는 62% 확률로 화성이 도미넌트 행성으로 나옵니다. 내 행성도 확인해보세요!">
+<title>임진일주 도미넌트 행성 확인하기 — FORTUNA</title>
+<meta property="og:title" content="임진일주 도미넌트 행성 확인하기 — FORTUNA">
+<meta property="og:description" content="임진일주는 62% 확률로 수성이 도미넌트 행성으로 나옵니다. 내 행성도 확인해보세요!">
 <meta property="og:image" content="https://fortuna-silk.vercel.app/og-image.png">
-<meta property="og:url" content="https://fortuna-silk.vercel.app/planet_병자.html">
+<meta property="og:url" content="https://fortuna-silk.vercel.app/planet_임진.html">
 <meta property="og:type" content="website">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
-:root{--gold:#c9a84c;--purple:#b482ff;--bg:#0d0b14;--card:#16132a;--text:#e8e0f0;--dim:#8a7fa0;--planet:#ff6b6b;}
+:root{--gold:#c9a84c;--purple:#b482ff;--bg:#0d0b14;--card:#16132a;--text:#e8e0f0;--dim:#8a7fa0;--planet:#7ecbff;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
 .stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
@@ -54,48 +54,48 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 
   <div class="hook-card">
     <div class="hook-pill">일주 × 도미넌트 행성</div>
-    <div class="planet-icon">🔴</div>
-    <div class="hook-pillar">병자일주</div>
+    <div class="planet-icon">⚡</div>
+    <div class="hook-pillar">임진일주</div>
     <div style="font-size:14px;color:var(--dim);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
     <div class="hook-pct" id="pctText">62%</div>
-    <div class="hook-planet">화성(Mars)</div>
-    <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 <strong style="color:var(--planet)">62%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.</div>
+    <div class="hook-planet">수성(Mercury)</div>
+    <div class="hook-sub" id="subText">같은 일주를 가진 사람 중 <strong style="color:var(--planet)">62%</strong>가<br>수성이 도미넌트 행성으로 나옵니다.</div>
     <hr class="divider">
     <div style="font-size:12px;color:var(--dim);line-height:1.7;">이건 사주 일주 기반 추정이에요. 실제 출생 시간으로 정확히 확인하면 달라질 수 있어요.</div>
   </div>
 
   <div class="traits-card">
-    <div class="traits-title">화성(Mars) 도미넌트의 특징</div>
-    <div class="traits-keyword">행동 · 에너지 · 경쟁 · 추진력</div>
+    <div class="traits-title">수성(Mercury) 도미넌트의 특징</div>
+    <div class="traits-keyword">소통 · 분석 · 언어 · 연결</div>
     
-        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
-          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">일단 움직이는 사람</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.8;">생각보다 행동이 먼저예요. 다른 사람들이 아직 고민하는 동안 이미 시작해버리는 타입이에요. 그 추진력이 가장 큰 강점이에요.</div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #7ecbff;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#7ecbff;margin-bottom:6px;">빠른 생각과 말</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">머릿속에서 정보가 빠르게 처리되고 연결돼요. 대화가 자연스럽고 설명을 잘 해요. 글쓰기, 말하기, 가르치기가 잘 맞아요.</div>
         </div>
-        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
-          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">경쟁에서 살아나는 에너지</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.8;">목표가 생기면 집중력이 극대화돼요. 운동, 영업, 스타트업처럼 성과가 눈에 보이는 분야에서 특히 빛나요. 이기고 싶다는 욕구가 동력이 돼요.</div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #7ecbff;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#7ecbff;margin-bottom:6px;">넓은 호기심</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">하나에 깊이 파기보다 여러 분야를 넓게 아는 타입이에요. 대화 주제가 다양하고 어디서든 말이 통해요.</div>
         </div>
-        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
-          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">직선적인 소통</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.8;">돌려말하는 걸 답답해하고 직접적으로 표현해요. 솔직하다는 말을 자주 듣지만, 가끔 너무 직설적이라 상처를 주기도 해요.</div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #7ecbff;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#7ecbff;margin-bottom:6px;">결정이 느릴 수 있음</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">정보를 많이 모으다 보니 "이것도 맞고 저것도 맞는데"라는 생각에 갇히는 경우가 있어요. 분석 마비가 올 수 있어요.</div>
         </div>
-        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
-          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">빠른 분노, 빠른 회복</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.8;">감정이 즉각적으로 반응해서 화가 나면 바로 티가 나요. 하지만 오래 담아두지 않아요. 금방 털고 다시 앞으로 가는 편이에요.</div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #7ecbff;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#7ecbff;margin-bottom:6px;">예민한 신경계</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">자극에 민감하게 반응해서 쉽게 피로해질 수 있어요. 정보가 많은 환경에서 오히려 에너지가 소진돼요.</div>
         </div>
-        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #ff6b6b;border-radius:0 10px 10px 0;">
-          <div style="font-size:13px;font-weight:600;color:#ff6b6b;margin-bottom:6px;">번아웃이 그림자</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.8;">에너지를 폭발적으로 쓰고 나서 갑자기 방전되는 패턴이 있어요. 쉬는 것도 전략이라는 걸 몸이 먼저 알아야 해요.</div>
+        <div style="text-align:left;margin-bottom:20px;padding:16px;background:rgba(255,255,255,0.03);border-left:3px solid #7ecbff;border-radius:0 10px 10px 0;">
+          <div style="font-size:13px;font-weight:600;color:#7ecbff;margin-bottom:6px;">깊이가 그림자</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.8;">넓게 알지만 어딘가 얕다는 느낌을 스스로 받을 때가 있어요. 한 분야를 깊이 파고드는 경험이 자신감을 키워줘요.</div>
         </div>
-    <div class="cta-box">이건 일주 기반 추정이에요. 실제 출생 시간까지 넣으면 화성이 어느 집에서 어떻게 작동하는지, 에너지를 가장 잘 쓰는 영역이 어딘지 정확히 알 수 있어요.</div>
+    <div class="cta-box">이건 일주 기반 추정이에요. 실제 출생 시간까지 넣으면 수성이 어떤 집에서 작동하는지, 소통과 사고 패턴이 삶에 어떻게 나타나는지 정확히 알 수 있어요.</div>
     <a class="cta-btn" href="https://fortuna-silk.vercel.app/dominant.html">✦ 내 행성 정확히 확인하기</a>
     <button class="copy-btn" onclick="copyLink()">🔗 이 페이지 카카오톡으로 공유하기</button>
   </div>
 
   <div class="stats-card">
-    <div class="stats-title">📊 병자일주 행성 분포 데이터</div>
-    <div id="statsBars"><div class="stat-row"><div class="stat-planet">화성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:62%;background:#ff6b6b"></div></div><div class="stat-pct">62%</div><div class="stat-count" id="c1">-</div></div><div class="stat-row"><div class="stat-planet">수성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:38%;background:#7ecbff"></div></div><div class="stat-pct">38%</div><div class="stat-count" id="c2">-</div></div></div>
+    <div class="stats-title">📊 임진일주 행성 분포 데이터</div>
+    <div id="statsBars"><div class="stat-row"><div class="stat-planet">수성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:62%;background:#7ecbff"></div></div><div class="stat-pct">62%</div><div class="stat-count" id="c1">-</div></div><div class="stat-row"><div class="stat-planet">토성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:38%;background:#c9a84c"></div></div><div class="stat-pct">38%</div><div class="stat-count" id="c2">-</div></div></div>
     <div class="data-note" id="dataNote">추정 데이터 기반 · 실제 분석 누적 시 업데이트됩니다</div>
   </div>
 </div>
@@ -104,8 +104,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const pillar='병자';
-const shareUrl='https://fortuna-silk.vercel.app/planet_병자.html';
+const pillar='임진';
+const shareUrl='https://fortuna-silk.vercel.app/planet_임진.html';
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
 
@@ -125,9 +125,9 @@ async function loadStats(){
     const counts={};
     stats.forEach(r=>{counts[r.dominant_planet_kor]=(counts[r.dominant_planet_kor]||0)+1;});
     const total=stats.length;
-    const pPct=Math.round((counts['화성']||0)*100/total);
+    const pPct=Math.round((counts['수성']||0)*100/total);
     document.getElementById('pctText').textContent=pPct+'%';
-    document.getElementById('subText').innerHTML=`같은 일주를 가진 사람 중 <strong style="color:var(--planet)">${pPct}%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.`;
+    document.getElementById('subText').innerHTML=`같은 일주를 가진 사람 중 <strong style="color:var(--planet)">${pPct}%</strong>가<br>수성이 도미넌트 행성으로 나옵니다.`;
     document.getElementById('dataNote').textContent=`실제 분석 ${total.toLocaleString()}건 기반 데이터`;
   }catch(e){}
 }

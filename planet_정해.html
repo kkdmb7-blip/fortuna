@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>병자일주 도미넌트 행성 확인하기 — FORTUNA</title>
-<meta property="og:title" content="병자일주 도미넌트 행성 확인하기 — FORTUNA">
-<meta property="og:description" content="병자일주는 62% 확률로 화성이 도미넌트 행성으로 나옵니다. 내 행성도 확인해보세요!">
+<title>정해일주 도미넌트 행성 확인하기 — FORTUNA</title>
+<meta property="og:title" content="정해일주 도미넌트 행성 확인하기 — FORTUNA">
+<meta property="og:description" content="정해일주는 62% 확률로 화성이 도미넌트 행성으로 나옵니다. 내 행성도 확인해보세요!">
 <meta property="og:image" content="https://fortuna-silk.vercel.app/og-image.png">
-<meta property="og:url" content="https://fortuna-silk.vercel.app/planet_병자.html">
+<meta property="og:url" content="https://fortuna-silk.vercel.app/planet_정해.html">
 <meta property="og:type" content="website">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -55,7 +55,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   <div class="hook-card">
     <div class="hook-pill">일주 × 도미넌트 행성</div>
     <div class="planet-icon">🔴</div>
-    <div class="hook-pillar">병자일주</div>
+    <div class="hook-pillar">정해일주</div>
     <div style="font-size:14px;color:var(--dim);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
     <div class="hook-pct" id="pctText">62%</div>
     <div class="hook-planet">화성(Mars)</div>
@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
   </div>
 
   <div class="stats-card">
-    <div class="stats-title">📊 병자일주 행성 분포 데이터</div>
+    <div class="stats-title">📊 정해일주 행성 분포 데이터</div>
     <div id="statsBars"><div class="stat-row"><div class="stat-planet">화성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:62%;background:#ff6b6b"></div></div><div class="stat-pct">62%</div><div class="stat-count" id="c1">-</div></div><div class="stat-row"><div class="stat-planet">수성</div><div class="stat-bar-wrap"><div class="stat-bar" style="width:38%;background:#7ecbff"></div></div><div class="stat-pct">38%</div><div class="stat-count" id="c2">-</div></div></div>
     <div class="data-note" id="dataNote">추정 데이터 기반 · 실제 분석 누적 시 업데이트됩니다</div>
   </div>
@@ -104,8 +104,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const pillar='병자';
-const shareUrl='https://fortuna-silk.vercel.app/planet_병자.html';
+const pillar='정해';
+const shareUrl='https://fortuna-silk.vercel.app/planet_정해.html';
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';setTimeout(()=>t.style.opacity='0',2500);}
 
