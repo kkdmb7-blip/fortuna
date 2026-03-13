@@ -69,29 +69,18 @@ for(let i=0;i<80;i++){
 }
 
 function calcDominant(planets){
-  const scores={};
-  const INNER=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
-  INNER.forEach(p=>{scores[p]=0;});
-  const asc=planets.find(p=>p.name==='Ascendant');
-  const sun=planets.find(p=>p.name==='Sun');
-  const moon=planets.find(p=>p.name==='Moon');
-  planets.forEach(p=>{
-    if(!INNER.includes(p.name))return;
-    if(p.house===1)scores[p.name]+=5;
-    if(p.house===10)scores[p.name]+=4;
-    if(p.isRetro==='true')scores[p.name]-=1;
-  });
-  [sun,moon,asc].filter(Boolean).forEach(a=>{
-    planets.forEach(p=>{
-      if(!INNER.includes(p.name)||a.name===p.name)return;
-      const diff=Math.abs(p.fullDegree-a.fullDegree);
-      const angle=diff>180?360-diff:diff;
-      if(angle<=8)scores[p.name]+=3;
-    });
-  });
-  let dominant='Sun';let maxScore=-999;
-  INNER.forEach(p=>{if(scores[p]>maxScore){maxScore=scores[p];dominant=p;}});
-  return dominant;
+  const PLANETS=['Sun','Moon','Mercury','Venus','Mars','Jupiter','Saturn','Uranus','Neptune','Pluto'];
+  const SN=['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
+  const SR={'Aries':'Mars','Taurus':'Venus','Gemini':'Mercury','Cancer':'Moon','Leo':'Sun','Virgo':'Mercury','Libra':'Venus','Scorpio':'Pluto','Sagittarius':'Jupiter','Capricorn':'Saturn','Aquarius':'Uranus','Pisces':'Neptune'};
+  const BW={Sun:2,Moon:2,Mercury:1.5,Venus:1.5,Mars:2,Jupiter:1,Saturn:0.8,Uranus:0.5,Neptune:0.5,Pluto:0.5};
+  const HS={1:6,10:5,7:4,4:5,2:2,5:2,8:2,11:2,3:1,6:1,9:1,12:1};
+  const sc={};PLANETS.forEach(p=>{sc[p]=0;});
+  planets.forEach(p=>{if(!PLANETS.includes(p.name))return;sc[p.name]+=(HS[p.house]||0)*(BW[p.name]||1);if(p.isRetro==='true')sc[p.name]-=1;});
+  planets.forEach(p=>{if(!PLANETS.includes(p.name))return;if(SR[SN[Math.floor(p.fullDegree/30)]]===p.name)sc[p.name]+=6*(BW[p.name]||1);});
+  planets.forEach(p=>{if(!PLANETS.includes(p.name))return;Object.entries(SR).filter(([s,r])=>r===p.name).forEach(([s])=>{planets.forEach(o=>{if(PLANETS.includes(o.name)&&SN[Math.floor(o.fullDegree/30)]===s)sc[p.name]+=2*(BW[o.name]||1);});});});
+  const asc=planets.find(p=>p.name==='Ascendant');if(asc){const r=SR[SN[Math.floor(asc.fullDegree/30)]];if(r&&sc[r]!==undefined)sc[r]+=3;}
+  planets.filter(p=>['Sun','Moon','Ascendant'].includes(p.name)).forEach(key=>{planets.forEach(p=>{if(!PLANETS.includes(p.name)||key.name===p.name)return;const diff=Math.abs(p.fullDegree-key.fullDegree);const angle=diff>180?360-diff:diff;for(const a of [{a:0,orb:8,w:3},{a:120,orb:8,w:2.5},{a:60,orb:6,w:2},{a:180,orb:8,w:2},{a:90,orb:6,w:1.5}]){if(Math.abs(angle-a.a)<=a.orb){sc[p.name]+=a.w*(BW[p.name]||1);break;}}});});
+  let dominant='Sun',max=-999;PLANETS.forEach(p=>{if(sc[p]>max){max=sc[p];dominant=p;}});return dominant;
 }
 
 function calcAspects(planets){
@@ -264,13 +253,9 @@ async function processPayment(){
       updateLoadingText('별자리 데이터 계산 중...');
       let planets=[], dominant='Sun', aspects='';
       try{
-        const astroRes = await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
+        const astroRes = await fetch('https://fortuna.kkdmb7.workers.dev/astro',{
           method:'POST',
-          headers:{
-            'Content-Type':'application/json',
-            'Accept':'application/json',
-            'Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')
-          },
+          headers:{'Content-Type':'application/json'},
           body:JSON.stringify({
             day:order.day, month:order.month, year:order.year,
             hour:order.hour, min:order.min,
@@ -397,8 +382,8 @@ async function processTossPayment(paymentKey, orderId, amount, reportType){
       updateLoadingText('별자리 데이터 계산 중...');
       let planets=[],dominant='Sun',aspects='';
       try{
-        const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
-          method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
+        const astroRes=await fetch('https://fortuna.kkdmb7.workers.dev/astro',{
+          method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({day:order.day,month:order.month,year:order.year,hour:order.hour,min:order.min,lat:order.lat,lon:order.lon,tzone:9.0})
         });
         const ad=await astroRes.json();planets=ad.output||ad;dominant=calcDominant(planets);aspects=calcAspects(planets);
