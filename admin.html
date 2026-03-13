@@ -435,15 +435,29 @@ async function sendOrder(orderId, type, btnEl){
   if(!o)return;
   btnEl.disabled=true;btnEl.innerHTML='<span class="loading"></span>차트 분석 중...';
   try{
-    const astroRes=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
-      body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})
-    });
-    const astroData=await astroRes.json();
-    const planets=astroData.output||astroData;
-    const dominant=calcDominant(planets);
-    const aspects=calcAspects(planets);
+    let planets, dominant, aspects;
+    // 저장된 데이터 있으면 재사용, 없으면 새로 계산
+    if(o.dominant_planet && o.planets_json && o.aspects_summary){
+      planets=JSON.parse(o.planets_json);
+      dominant=o.dominant_planet;
+      aspects=o.aspects_summary;
+    } else {
+      const astroRes=await fetch('https://fortuna.kkdmb7.workers.dev/astro',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({day:o.day,month:o.month,year:o.year,hour:o.hour,min:o.min,lat:o.lat,lon:o.lon,tzone:9.0})
+      });
+      const astroData=await astroRes.json();
+      planets=astroData.output||astroData;
+      dominant=calcDominant(planets);
+      aspects=calcAspects(planets);
+      // 계산 결과 Supabase에 저장
+      await sb.from('orders').update({
+        dominant_planet: dominant,
+        aspects_summary: aspects,
+        planets_json: JSON.stringify(planets)
+      }).eq('order_id', orderId);
+    }
     btnEl.innerHTML='<span class="loading"></span>발송 중...';
     let webhook, payload;
     if(type==='saju'){
