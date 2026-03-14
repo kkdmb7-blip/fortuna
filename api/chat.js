@@ -3,7 +3,7 @@
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY;
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
-const FREE_DAILY = 3;
+const FREE_DAILY = 999; // 현재 무제한
 
 export default async function handler(req, res) {
   // CORS
