@@ -408,17 +408,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'server_error', detail: e.message });
   }
 }
-```
-
----
-
-**바꾼 것 요약**
-```
-detectCategory    → detectDomain (한국어 도메인명)
-searchBaziRules   → domain + weight 기준으로 변경
-searchAstrologyRules → 동일하게 변경
-getDomainGuideline  → 신규 추가
-getAnswerStyle      → 신규 추가
-getRuleExceptions   → 신규 추가
-buildGuidelineBlock → 신규 추가
-buildRulesBlock     → 예외 처리 블록 추가
