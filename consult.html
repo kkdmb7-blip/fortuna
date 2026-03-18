@@ -264,11 +264,14 @@ async function sendMessage(){
 }
 
 function doLogout(){
-  userData=null;chatHistory=[];
+  userData=null;chatHistory=[];isTyping=false;
+  document.getElementById('sendBtn').disabled=false;
   document.getElementById('chatWrap').style.display='none';
   document.getElementById('authWrap').style.display='flex';
   document.getElementById('emailInput').value='';
   document.getElementById('chatMessages').innerHTML='';
+  document.getElementById('suggestions').innerHTML='';
+  const typingMsg=document.getElementById('typingMsg');if(typingMsg)typingMsg.remove();
 }
 </script>
 </body>
