@@ -586,9 +586,9 @@ async function generatePetReport(idx){
   const isPet=o.report_type==='dog';
   const prompt='당신은 반려동물 별자리 & 사주 전문가입니다. 아래 정보로 '+(isPet?'강아지':'고양이')+' 리포트를 작성해주세요.\n\n'+(isPet?'강아지':'고양이')+' 이름: '+o.pet_name+'\n'+(isPet?'견종':'묘종')+': '+(o.pet_breed||'미상')+'\n성별: '+o.pet_gender+'\n생년월일: '+o.pet_birthdate_raw+'\n별자리: '+o.pet_zodiac+'\n사주 오행: '+o.pet_ohaeng+'\n보호자 이름: '+o.owner_name+'\n보호자 별자리: '+o.owner_zodiac+'\n\n다음 6가지 항목으로 리포트를 작성해주세요. 따뜻하고 재밌는 문체로 작성해주세요.\n\n1. 🌟 '+o.pet_name+'의 별자리 성격 ('+o.pet_zodiac+')\n2. 🔥 '+o.pet_name+'의 사주 오행 기질 ('+o.pet_ohaeng+')\n3. '+(isPet?'🍖':'🐟')+' 밥 & 간식 스타일\n4. '+(isPet?'🎾':'🧶')+' '+(isPet?'산책':'실내')+' & 놀이 스타일\n5. 💞 '+o.owner_name+'님과의 궁합 ('+o.owner_zodiac+' × '+o.pet_zodiac+')\n6. 💌 '+o.pet_name+'이가 '+o.owner_name+'님께 전하는 한마디\n\n마지막에 "✦ FORTUNA 반려동물 리포트 | '+o.pet_name+' · '+o.pet_zodiac+' · '+o.pet_ohaeng+'오행" 추가해주세요.';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const res=await fetch('/api/pet-report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
     const data=await res.json();
-    const report=data.content?.[0]?.text||'생성 실패';
+    const report=data.report||'생성 실패';
     allPetOrders[idx].report_content=report;
     const prev=document.getElementById('pprev-'+idx);prev.textContent=report;prev.style.display='block';
     genBtn.innerHTML='✓ 생성완료 (다시생성)';genBtn.disabled=false;

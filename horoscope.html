@@ -251,13 +251,13 @@ function parseBirthdate(str){
   const clean=str.replace(/[^0-9]/g,'');
   if(clean.length===8){
     const y=parseInt(clean.slice(0,4)),m=parseInt(clean.slice(4,6)),d=parseInt(clean.slice(6,8));
-    if(y<1900||y>2025||m<1||m>12||d<1||d>31)return null;
+    if(y<1900||y>now.getFullYear()||m<1||m>12||d<1||d>31)return null;
     return{year:y,month:m,day:d};
   }
   const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);
   if(p.length<3)return null;
   const y=parseInt(p[0]),m=parseInt(p[1]),d=parseInt(p[2]);
-  if(y<1900||y>2025||m<1||m>12||d<1||d>31)return null;
+  if(y<1900||y>now.getFullYear()||m<1||m>12||d<1||d>31)return null;
   return{year:y,month:m,day:d};
 }
 

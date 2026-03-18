@@ -473,17 +473,13 @@ async function generateReport(idx){
 마지막에 "✦ FORTUNA 반려동물 리포트 | ${o.pet_name} · ${o.pet_zodiac} · ${o.pet_ohaeng}오행" 을 한 줄로 추가해주세요.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/pet-report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ prompt })
     });
     const data = await res.json();
-    const report = data.content?.[0]?.text || '생성 실패';
+    const report = data.report || '생성 실패';
 
     window._catOrders[idx].report_content = report;
 

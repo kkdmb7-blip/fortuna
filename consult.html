@@ -248,6 +248,7 @@ async function sendMessage(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({system_prompt:systemPrompt, question:text})
     });
+    if(!res.ok)throw new Error('webhook error '+res.status);
     const reply=await res.text();
     localStorage.setItem(key,count+1);
     document.getElementById('creditsLeft').textContent=10-(count+1);

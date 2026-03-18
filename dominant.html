@@ -148,7 +148,7 @@ function shareResult(){
     .catch(()=>{const el=document.createElement('textarea');el.value=text;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast('✅ 복사됐어요! 카카오톡에 붙여넣기 하세요.');});
 }
 
-function parseBirthdate(str){const clean=str.replace(/[^0-9]/g,'');if(clean.length===8){const y=parseInt(clean.slice(0,4)),m=parseInt(clean.slice(4,6)),d=parseInt(clean.slice(6,8));if(y<1900||y>2025||m<1||m>12||d<1||d>31)return null;return{year:y,month:m,day:d};}const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);if(p.length<3)return null;const y=parseInt(p[0]),m=parseInt(p[1]),d=parseInt(p[2]);if(y<1900||y>2025||m<1||m>12||d<1||d>31)return null;return{year:y,month:m,day:d};}
+function parseBirthdate(str){const clean=str.replace(/[^0-9]/g,'');if(clean.length===8){const y=parseInt(clean.slice(0,4)),m=parseInt(clean.slice(4,6)),d=parseInt(clean.slice(6,8));if(y<1900||y>new Date().getFullYear()||m<1||m>12||d<1||d>31)return null;return{year:y,month:m,day:d};}const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);if(p.length<3)return null;const y=parseInt(p[0]),m=parseInt(p[1]),d=parseInt(p[2]);if(y<1900||y>new Date().getFullYear()||m<1||m>12||d<1||d>31)return null;return{year:y,month:m,day:d};}
 function parseTime(str){if(!str||!str.trim())return{hour:12,min:0};const clean=str.replace(/[^0-9]/g,'');let h,m;if(clean.length===3){h=parseInt(clean.slice(0,1));m=parseInt(clean.slice(1));}else if(clean.length===4){h=parseInt(clean.slice(0,2));m=parseInt(clean.slice(2));}else{const p=str.replace(/[^0-9]/g,' ').trim().split(/\s+/);h=parseInt(p[0])||12;m=parseInt(p[1])||0;}if(h<0||h>23||m<0||m>59)return{hour:12,min:0};return{hour:h,min:m};}
 
 function calcDominantPlanet(planets){
