@@ -750,12 +750,17 @@ function closeSidebar(){
 
 // ── 로그아웃 ──
 function logout(){
-  // localStorage: fortuna_ 접두사 키 전체 삭제
-  Object.keys(localStorage).filter(k=>k.startsWith('fortuna_')).forEach(k=>localStorage.removeItem(k));
-  // localStorage: 레거시 사용자 키 삭제
-  ['kakaoUser','kakao_user','user'].forEach(k=>localStorage.removeItem(k));
-  // sessionStorage 전체 삭제
+  // 카카오 토큰 로그아웃 (토큰 있으면 서버 측 무효화)
+  const user = JSON.parse(localStorage.getItem('fortuna_user') || '{}');
+  // localStorage + sessionStorage 전체 초기화
+  localStorage.clear();
   sessionStorage.clear();
+  // 카카오 로그아웃 API 호출 (fire-and-forget)
+  if (user.kakao_token) {
+    fetch('https://kapi.kakao.com/v1/user/logout', {
+      method: 'POST', headers: { Authorization: 'Bearer ' + user.kakao_token }
+    }).catch(()=>{});
+  }
   window.location.href = 'index.html';
 }
 
