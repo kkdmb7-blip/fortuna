@@ -50,7 +50,10 @@ async function handleLogin() {
       nickname: userData.properties?.nickname || "포르투나 회원"
     };
 
-    // 3. localStorage 저장
+    // 3. 이전 유저 데이터 완전 초기화 후 새 유저 저장
+    Object.keys(localStorage).filter(k=>k.startsWith('fortuna_')).forEach(k=>localStorage.removeItem(k));
+    ['kakaoUser','kakao_user','user'].forEach(k=>localStorage.removeItem(k));
+    sessionStorage.clear();
     localStorage.setItem("fortuna_login", "1");
     localStorage.setItem("fortuna_user", JSON.stringify(user));
 

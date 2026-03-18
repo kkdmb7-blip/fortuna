@@ -936,15 +936,23 @@ async function init(){
   }
 
   // sessionStorage/localStorage 직전 주문도 병합 (결제 직후 바로 표시용)
+  // 단, 현재 유저 이메일과 일치하는 경우에만 병합
   try{
     const lastStr = sessionStorage.getItem('fortuna_last_order')
                  || localStorage.getItem('fortuna_last_order');
     if(lastStr){
       const lo = JSON.parse(lastStr);
-      // 이메일 없으면 여기서 저장
-      if(lo.email && lo.email !== '') try{ localStorage.setItem('fortuna_order_email', lo.email); }catch(e){}
-      const exists = allOrders.some(o => o.order_id === lo.order_id);
-      if(!exists) allOrders = [lo, ...allOrders];
+      const loEmail = (lo.email||'').trim().toLowerCase();
+      const isMine = !loEmail || candidates.some(c=>c.toLowerCase()===loEmail);
+      if(isMine){
+        if(lo.email && lo.email !== '') try{ localStorage.setItem('fortuna_order_email', lo.email); }catch(e){}
+        const exists = allOrders.some(o => o.order_id === lo.order_id);
+        if(!exists) allOrders = [lo, ...allOrders];
+      } else {
+        // 다른 유저 데이터 즉시 삭제
+        localStorage.removeItem('fortuna_last_order');
+        sessionStorage.removeItem('fortuna_last_order');
+      }
     }
   }catch(e){}
 
