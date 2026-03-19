@@ -359,7 +359,7 @@ async function startPayment(method){
       },
       bypass: {
         inicis_v2: {
-          acceptmethod: 'HPP(1):no_receipt:SKIN(green)',
+          acceptmethod: ['HPP(1)', 'no_receipt', 'SKIN(green)'],
           P_UNAME: d.name,
         },
       },
