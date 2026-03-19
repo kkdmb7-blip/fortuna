@@ -345,9 +345,7 @@ async function startPayment(method){
   try {
     const response = await PortOne.requestPayment({
       storeId: 'store-1139f195-d75f-44ca-bed6-c2c89c59e913',
-      channelKey: method === 'CARD'
-        ? 'channel-key-f441c3b4-99a3-4371-9632-044438871630'
-        : 'channel-key-c5bcaf2b-c653-40fd-bec0-085ca6e001a1',
+      channelKey: 'channel-key-f441c3b4-99a3-4371-9632-044438871630', // 인증결제 채널 (카드/계좌이체 공용)
       paymentId: orderId,
       orderName: '포르투나 라이트 리포트',
       totalAmount: 9900,
