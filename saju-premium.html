@@ -63,7 +63,7 @@
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://stdpay.inicis.com/stdjs/INIStdPay.js" charset="UTF-8"></script>
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -342,39 +342,31 @@ async function startPayment(method){
   btnCard.disabled=true;btnBank.disabled=true;
   if(method==='CARD')btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';
   else btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';
-  try{
-    const timestamp = String(Date.now()).slice(0,10);
-    const res = await fetch('https://fortuna-silk.vercel.app/api/inicis-sign',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({mid:'MOI3302087', oid:orderId, price:39000, timestamp})
+  try {
+    const response = await PortOne.requestPayment({
+      storeId: 'store-1139f195-d75f-44ca-bed6-c2c89c59e913',
+      channelKey: method === 'CARD' ? 'channel-key-f441c3b4-99a3-4371-9632-044438871630' : 'channel-key-c5bcaf2b-c653-40fd-bec0-085ca6e001a1',
+      paymentId: orderId,
+      orderName: '포르투나 사주+점성 통합 리포트',
+      totalAmount: 39000,
+      currency: 'KRW',
+      payMethod: method === 'CARD' ? 'CARD' : 'TRANSFER',
+      redirectUrl: 'https://fortuna-silk.vercel.app/api/payment/return?type=saju_premium',
+      customer: { fullName: d.name, email: d.email },
     });
-    const {signature, mKey} = await res.json();
-    const f = document.createElement('form');
-    f.name='INIpayStd'; f.method='post'; f.acceptCharset='euc-kr';
-    const payMethod = method==='CARD' ? 'Card' : 'DirectBank';
-    const fields = {
-      version:'1.0', gopaymethod:payMethod,
-      mid:'MOI3302087', oid:orderId,
-      price:'39000', timestamp, use_chkfake:'Y',
-      signature, mKey,
-      goodname:'포르투나 사주+점성 통합 리포트',
-      buyername:d.name, buyeremail:d.email, buyertel:'01000000000',
-      currency:'WON', langWON:'ko',
-      returnUrl:'https://fortuna-silk.vercel.app/api/inicis-result?type=saju_premium',
-      closeUrl:window.location.origin+'/close.html',
-      acceptmethod:'HPP(1):no_receipt:SKIN(green)',
-    };
-    Object.entries(fields).forEach(([k,v])=>{
-      const i=document.createElement('input');
-      i.type='hidden'; i.name=k; i.value=v;
-      f.appendChild(i);
-    });
-    document.body.appendChild(f);
-    INIStdPay.pay('INIpayStd');
-  }catch(err){
-    btnCard.disabled=false;btnBank.disabled=false;
-    btnCard.innerHTML='카드로 결제하기 ✦';btnBank.innerHTML='계좌이체 ✦';
+
+    if (response && response.code) {
+      btnCard.disabled=false; btnBank.disabled=false;
+      btnCard.innerHTML='카드로 결제하기 ✦'; btnBank.innerHTML='계좌이체 ✦';
+      if (response.code !== 'USER_CANCEL') showToast('결제 오류: ' + (response.message || response.code));
+      return;
+    }
+
+    window.location.href = '/api/payment/return?paymentId=' + encodeURIComponent(response.paymentId || orderId)
+      + '&txId=' + encodeURIComponent(response.txId || '') + '&type=saju_premium';
+  } catch(err) {
+    btnCard.disabled=false; btnBank.disabled=false;
+    btnCard.innerHTML='카드로 결제하기 ✦'; btnBank.innerHTML='계좌이체 ✦';
     showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
   }
 }

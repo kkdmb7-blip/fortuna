@@ -145,9 +145,14 @@ async function processPayment(){
   const params = new URLSearchParams(location.search);
   const reportType = params.get('type') || 'light';
 
-  // ── KG이니시스: returnUrl로 POST 전송됨 → Worker가 검증 후 redirect ──
-  // 이니시스는 결제결과를 POST body로 전달하므로
-  // Worker /inicis-result 에서 검증 후 아래 파라미터로 GET redirect 해줌
+  // ── 포트원/이니시스 공통: /api/payment/return 에서 검증 후 redirect ──
+  // error 파라미터: 결제 실패 또는 취소
+  const errorMsg = params.get('error');
+  if (errorMsg) {
+    showError(decodeURIComponent(errorMsg));
+    return;
+  }
+
   const resultCode  = params.get('resultCode');   // 0000 = 성공
   const resultMsg   = params.get('resultMsg');
   const orderId     = params.get('MOID') || params.get('orderId');
@@ -163,7 +168,7 @@ async function processPayment(){
     return;
   }
 
-  // 이니시스 결과값 없으면 에러
+  // 결제 결과값 없으면 에러
   if(!resultCode || !orderId){
     showError('결제 정보를 찾을 수 없습니다.');
     return;
