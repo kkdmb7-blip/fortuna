@@ -63,7 +63,8 @@
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<script>IMP.init('imp63718155');</script>
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -354,33 +355,26 @@ async function startPayment(method){
   btnCard.disabled=true;btnBank.disabled=true;
   if(method==='CARD')btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';
   else btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';
-  try {
-    const response = await PortOne.requestPayment({
-      storeId: 'store-1139f195-d75f-44ca-bed6-c2c89c59e913',
-      channelKey: 'channel-key-c5bcaf2b-c653-40fd-bec0-085ca6e001a1',
-      paymentId: orderId,
-      orderName: '포르투나 사주+점성 통합 리포트',
-      totalAmount: 39000,
-      currency: 'KRW',
-      payMethod: 'CARD',
-    });
-
-    if (response && response.code) {
-      btnCard.disabled=false; btnBank.disabled=false;
-      btnCard.innerHTML='카드로 결제하기 ✦'; btnBank.innerHTML='계좌이체 ✦';
-      if (response.code !== 'USER_CANCEL') showToast('결제 오류: ' + (response.message || response.code));
-      return;
-    }
-
-    // 결제 성공
-    window.location.href = '/success.html?MOID=' + encodeURIComponent(response.paymentId || orderId)
-      + '&TID=' + encodeURIComponent(response.txId || '')
-      + '&resultCode=0000&type=saju_premium';
-  } catch(err) {
+  IMP.request_pay({
+    pg: 'html5_inicis.MOI3302087',
+    pay_method: 'card',
+    merchant_uid: orderId,
+    name: '포르투나 프리미엄 리포트',
+    amount: 19900,
+    buyer_name: d.name,
+    buyer_email: d.email,
+    m_redirect_url: 'https://fortuna-silk.vercel.app/api/payment/return?type=premium'
+  }, function(rsp) {
+    if (rsp.success) {
+      window.location.href = '/success.html?MOID=' + encodeURIComponent(rsp.merchant_uid)
+        + '&TID=' + encodeURIComponent(rsp.imp_uid || '')
+        + '&resultCode=0000&type=premium';
+    } else {
     btnCard.disabled=false; btnBank.disabled=false;
     btnCard.innerHTML='카드로 결제하기 ✦'; btnBank.innerHTML='계좌이체 ✦';
-    showToast('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
-  }
+      if (rsp.error_msg && !rsp.error_msg.includes('취소')) showToast('결제 실패: ' + rsp.error_msg);
+    }
+  });
 }
 
 if(location.search.includes('fail=1')){
