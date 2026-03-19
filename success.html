@@ -243,6 +243,22 @@ async function processPayment(){
     // upsert: 이미 있으면 status만 업데이트
     await sb.from('orders').upsert([dbData], {onConflict:'order_id'});
 
+    // 구독 저장
+    try{
+      const { data: authData } = await sb.auth.getSession();
+      const userId = authData?.session?.user?.id || order.email || '';
+      const premiumUntil = new Date(Date.now() + 30*24*60*60*1000).toISOString();
+      await sb.from('subscriptions').upsert([{
+        user_id:       userId,
+        plan_type:     reportType,
+        is_premium:    true,
+        premium_until: premiumUntil,
+        payment_id:    orderId,
+        paid_at:       new Date().toISOString(),
+        created_at:    Date.now()
+      }], {onConflict:'payment_id'});
+    }catch(e){ console.error('[subscriptions] 저장 실패:', e); }
+
     // 마이페이지 즉시 표시용 - 직전 주문 저장 (localStorage + sessionStorage 둘 다)
     try{
       window._lastOrder = {...dbData, created_at: new Date().toISOString()};
