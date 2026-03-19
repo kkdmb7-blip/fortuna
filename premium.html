@@ -194,10 +194,10 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     <div class="card-title">✦ 결제</div>
     <div class="price-box">
       <div class="price-row">
-        <span class="price-label">사주+점성 통합 리포트</span>
-        <span class="amount">39,000원</span>
+        <span class="price-label">점성 프리미엄 리포트</span>
+        <span class="amount">29,000원</span>
       </div>
-      <div class="price-sub">프리미엄(29,000) + 사주분석 추가 · 동양·서양 통합 최고급</div>
+      <div class="price-sub">서양 점성술 심층 분석 · 행성 배치 & 운세 완전판</div>
     </div>
     <div class="pay-btns">
       <button class="submit-btn" id="payBtnCard" onclick="startPayment('CARD')">카드로 결제하기 ✦</button>
@@ -211,7 +211,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     <div style="margin-top:20px;padding:16px 18px;background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.3);border-radius:10px;text-align:center;">
       <div style="font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 입금 안내</div>
       <div style="font-size:16px;color:var(--text);letter-spacing:0.04em;margin-bottom:4px;">국민은행 013-21-0780-866</div>
-      <div style="font-size:13px;color:var(--text-dim);">예금주 오주영 · 39,000원</div>
+      <div style="font-size:13px;color:var(--text-dim);">예금주 오주영 · 29,000원</div>
     </div>
     <button class="btn-bank-confirm" id="bankConfirmBtn" onclick="submitBankOrder()">
       입금 완료 후 → 신청 완료하기
@@ -313,7 +313,7 @@ async function submitBankOrder(){
     if(error)throw error;
     try{ localStorage.setItem('fortuna_order_email', d.email); }catch(e){}
     try{
-      const lo = {order_id:rid,name:d.name,email:d.email,report_type:'saju_premium',status:'bank_transfer_pending',payment_amount:39000,created_at:new Date().toISOString()};
+      const lo = {order_id:rid,name:d.name,email:d.email,report_type:'saju_premium',status:'bank_transfer_pending',payment_amount:29000,created_at:new Date().toISOString()};
       localStorage.setItem('fortuna_last_order', JSON.stringify(lo));
     }catch(e){}
     btn.innerHTML='✦ 신청 완료!';
@@ -359,8 +359,8 @@ async function startPayment(method){
     pg: 'html5_inicis.MOI3302087',
     pay_method: 'card',
     merchant_uid: orderId,
-    name: '포르투나 프리미엄 리포트',
-    amount: 19900,
+    name: '포르투나 점성 프리미엄 리포트',
+    amount: 29000,
     buyer_name: d.name,
     buyer_email: d.email,
     m_redirect_url: 'https://fortuna-silk.vercel.app/api/payment/return?type=premium'

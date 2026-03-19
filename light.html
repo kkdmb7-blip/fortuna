@@ -280,7 +280,7 @@ async function submitBankOrder(){
     try{ localStorage.setItem('fortuna_order_email', email); }catch(e){}
     // 직전 주문 저장
     try{
-      const lo = {order_id:rid,name,email,report_type:'light',status:'bank_transfer_pending',payment_amount:19900,created_at:new Date().toISOString()};
+      const lo = {order_id:rid,name,email,report_type:'light',status:'bank_transfer_pending',payment_amount:9900,created_at:new Date().toISOString()};
       localStorage.setItem('fortuna_last_order', JSON.stringify(lo));
     }catch(e){}
     btn.textContent='✦ 신청 완료!';
@@ -346,7 +346,7 @@ async function startPayment(method){
     pg: 'html5_inicis.MOI3302087',
     pay_method: 'card',
     merchant_uid: orderId,
-    name: '포르투나 라이트 리포트',
+    name: '포르투나 점성 라이트 리포트',
     amount: 9900,
     buyer_name: name,
     buyer_email: email,
