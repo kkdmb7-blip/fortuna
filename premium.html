@@ -200,13 +200,12 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
     </div>
     <div class="pay-btns">
       <button class="submit-btn" id="payBtnCard" onclick="startPayment('CARD')">카드로 결제하기 ✦</button>
-      <button class="submit-btn" id="payBtnBank" onclick="startPayment('TRANSFER')" style="background:linear-gradient(135deg,#8a6fd8,#b482ff,#8a6fd8);background-size:200% 200%;animation:shimmer 3s ease infinite;color:#fff;">계좌이체 ✦</button>
+      <button class="submit-btn" id="payBtnBank" onclick="startPayment('TRANSFER')" style="display:none;">계좌이체 ✦</button>
     </div>
     <div class="pay-methods">
       <span class="pay-method">신용카드</span><span class="pay-method">체크카드</span>
       <span class="pay-method">카카오페이</span><span class="pay-method">네이버페이</span>
-      <span class="pay-method">삼성페이</span><span class="pay-method">계좌이체</span>
-    </div>
+      <span class="pay-method">삼성페이</span></div>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:rgba(155,143,176,0.5);">🔒 KG이니시스 보안 결제</div>
     <div style="margin-top:20px;padding:16px 18px;background:rgba(201,168,76,0.06);border:1px dashed rgba(201,168,76,0.3);border-radius:10px;text-align:center;">
       <div style="font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 입금 안내</div>
@@ -363,7 +362,7 @@ async function startPayment(method){
       orderName: '포르투나 사주+점성 통합 리포트',
       totalAmount: 39000,
       currency: 'KRW',
-      payMethod: method === 'CARD' ? 'CARD' : 'TRANSFER',
+      payMethod: 'CARD',
       redirectUrl: 'https://fortuna-silk.vercel.app/api/payment/return?type=saju_premium',
       customer: {
         fullName: d.name,
