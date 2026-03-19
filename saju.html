@@ -398,12 +398,7 @@ async function startPayment(method){
         email: email,
         phoneNumber: '01000000000',
       },
-      bypass: {
-        inicis_v2: {
-          acceptmethod: ['HPP(1)', 'no_receipt', 'SKIN(green)'],
-          P_UNAME: name,
-        },
-      },
+
     });
 
     if (response && response.code) {
