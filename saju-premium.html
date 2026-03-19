@@ -352,7 +352,17 @@ async function startPayment(method){
       currency: 'KRW',
       payMethod: method === 'CARD' ? 'CARD' : 'TRANSFER',
       redirectUrl: 'https://fortuna-silk.vercel.app/api/payment/return?type=saju_premium',
-      customer: { fullName: d.name, email: d.email },
+      customer: {
+        fullName: d.name,
+        email: d.email,
+        phoneNumber: '01000000000',
+      },
+      bypass: {
+        inicis_v2: {
+          acceptmethod: 'HPP(1):no_receipt:SKIN(green)',
+          P_UNAME: d.name,
+        },
+      },
     });
 
     if (response && response.code) {
