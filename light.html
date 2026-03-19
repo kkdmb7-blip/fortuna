@@ -345,7 +345,7 @@ async function startPayment(method){
   try{
     // KG이니시스 결제 요청 - Worker에서 서명값 생성
     const timestamp = String(Date.now()).slice(0,10);
-    const res = await fetch('https://fortuna.kkdmb7.workers.dev/inicis-sign',{
+    const res = await fetch('https://fortuna-silk.vercel.app/api/inicis-sign',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -366,7 +366,7 @@ async function startPayment(method){
       goodname:'포르투나 라이트 리포트',
       buyername:name, buyeremail:email, buyertel:'01000000000',
       currency:'WON', langWON:'ko',
-      returnUrl:'https://fortuna.kkdmb7.workers.dev/inicis-result?type=light',
+      returnUrl:'https://fortuna-silk.vercel.app/api/inicis-result?type=light',
       closeUrl:window.location.origin+'/close.html',
       acceptmethod:'HPP(1):no_receipt:SKIN(green)',
     };

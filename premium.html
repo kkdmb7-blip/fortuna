@@ -357,7 +357,7 @@ async function startPayment(method){
   else btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';
   try{
     const timestamp = String(Date.now()).slice(0,10);
-    const res = await fetch('https://fortuna.kkdmb7.workers.dev/inicis-sign',{
+    const res = await fetch('https://fortuna-silk.vercel.app/api/inicis-sign',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({mid:'MOI3302087', oid:orderId, price:39000, timestamp})
@@ -374,7 +374,7 @@ async function startPayment(method){
       goodname:'포르투나 사주+점성 통합 리포트',
       buyername:d.name, buyeremail:d.email, buyertel:'01000000000',
       currency:'WON', langWON:'ko',
-      returnUrl:'https://fortuna.kkdmb7.workers.dev/inicis-result?type=saju_premium',
+      returnUrl:'https://fortuna-silk.vercel.app/api/inicis-result?type=saju_premium',
       closeUrl:window.location.origin+'/close.html',
       acceptmethod:'HPP(1):no_receipt:SKIN(green)',
     };
