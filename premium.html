@@ -357,19 +357,12 @@ async function startPayment(method){
   try {
     const response = await PortOne.requestPayment({
       storeId: 'store-1139f195-d75f-44ca-bed6-c2c89c59e913',
-      channelKey: 'channel-key-c5bcaf2b-c653-40fd-bec0-085ca6e001a1', // 인증결제 채널 (카드/계좌이체 공용)
+      channelKey: 'channel-key-c5bcaf2b-c653-40fd-bec0-085ca6e001a1',
       paymentId: orderId,
       orderName: '포르투나 사주+점성 통합 리포트',
       totalAmount: 39000,
       currency: 'KRW',
       payMethod: 'CARD',
-      redirectUrl: 'https://fortuna-silk.vercel.app/api/payment/return?type=saju_premium',
-      customer: {
-        fullName: d.name,
-        email: d.email,
-        phoneNumber: '01000000000',
-      },
-
     });
 
     if (response && response.code) {
@@ -379,8 +372,10 @@ async function startPayment(method){
       return;
     }
 
-    window.location.href = '/api/payment/return?paymentId=' + encodeURIComponent(response.paymentId || orderId)
-      + '&txId=' + encodeURIComponent(response.txId || '') + '&type=saju_premium';
+    // 결제 성공
+    window.location.href = '/success.html?MOID=' + encodeURIComponent(response.paymentId || orderId)
+      + '&TID=' + encodeURIComponent(response.txId || '')
+      + '&resultCode=0000&type=saju_premium';
   } catch(err) {
     btnCard.disabled=false; btnBank.disabled=false;
     btnCard.innerHTML='카드로 결제하기 ✦'; btnBank.innerHTML='계좌이체 ✦';
