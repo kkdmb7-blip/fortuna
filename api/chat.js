@@ -9,6 +9,7 @@ const FREE_DAILY    = 999; // 이니시스 연동 후 3으로 변경
 // ─────────────────────────────────────────────────────────────
 // 카테고리 감지 → 한국어 도메인명으로 변경
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화 - memox 프롬프트만 적용
 function detectDomain(text) {
   const t = text || '';
   if (/재회|연락|속마음|좋아하|썸|고백|짝사랑|첫사랑|바람/.test(t)) return '연애';
@@ -23,10 +24,12 @@ function detectDomain(text) {
   if (/언제|시기|시운|올해|내년|대운|세운/.test(t)) return '시기운세';
   return '연애'; // 기본값
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // 키워드 추출
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 function extractKeywords(text) {
   const map = {
     '재회': ['재회', '다시', '복합'],
@@ -46,10 +49,12 @@ function extractKeywords(text) {
   }
   return found;
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ① 임베딩 생성
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function getEmbedding(text) {
   try {
     const res = await fetch('https://api.openai.com/v1/embeddings', {
@@ -67,10 +72,12 @@ async function getEmbedding(text) {
     return null;
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ② 지식 문서 검색 (pgvector)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function searchKnowledge(query, sbKey) {
   try {
     const embedding = await getEmbedding(query);
@@ -95,10 +102,12 @@ async function searchKnowledge(query, sbKey) {
     return [];
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ③ 사주 규칙 검색 (새 컬럼 기준)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function searchBaziRules(domain, query, sbKey) {
   try {
     const res = await fetch(
@@ -123,10 +132,12 @@ async function searchBaziRules(domain, query, sbKey) {
     return [];
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ④ 점성 규칙 검색 (새 컬럼 기준)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function searchAstrologyRules(domain, query, sbKey) {
   try {
     const res = await fetch(
@@ -151,10 +162,12 @@ async function searchAstrologyRules(domain, query, sbKey) {
     return [];
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ⑤ 도메인 가이드라인 조회 (신규)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function getDomainGuideline(domain, sbKey) {
   try {
     const res = await fetch(
@@ -168,10 +181,12 @@ async function getDomainGuideline(domain, sbKey) {
     return null;
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ⑥ 답변 스타일 조회 (신규)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function getAnswerStyle(domain, sbKey) {
   const styleMap = {
     '연애': '연애공감형',
@@ -196,10 +211,12 @@ async function getAnswerStyle(domain, sbKey) {
     return null;
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ⑦ 충돌 예외 조회 (신규)
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 async function getRuleExceptions(baziRules, sbKey) {
   if (!baziRules || baziRules.length === 0) return [];
   try {
@@ -219,10 +236,12 @@ async function getRuleExceptions(baziRules, sbKey) {
     return [];
   }
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // ⑧ 프롬프트 블록 생성
 // ─────────────────────────────────────────────────────────────
+/* RAG 비활성화
 function buildGuidelineBlock(guideline, style) {
   if (!guideline && !style) return '';
   let block = '\n\n【해석 기준】\n';
@@ -285,6 +304,7 @@ function buildRulesBlock(baziRules, astroRules, exceptions) {
   block += '【규칙 DB 끝】\n';
   return block;
 }
+*/
 
 // ─────────────────────────────────────────────────────────────
 // 메인 핸들러
@@ -321,37 +341,37 @@ export default async function handler(req, res) {
     const canUse   = freeLeft > 0 || paidCount > 0;
     if (!canUse) return res.status(429).json({ error: 'limit_exceeded', free_left: 0, paid_left: paidCount });
 
-    // ── RAG: 전체 조회 병렬 실행 ─────────────────────────────
-    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
-    const queryText   = lastUserMsg ? lastUserMsg.content : '';
-    const domain      = detectDomain(queryText);
-
-    const [knowledgeDocs, baziRules, astroRules, guideline, style] = await Promise.all([
-      searchKnowledge(queryText, SB_KEY),
-      searchBaziRules(domain, queryText, SB_KEY),
-      searchAstrologyRules(domain, queryText, SB_KEY),
-      getDomainGuideline(domain, SB_KEY),
-      getAnswerStyle(domain, SB_KEY)
-    ]);
-
-    // 예외는 bazi 결과 나온 후 조회
-    const exceptions = await getRuleExceptions(baziRules, SB_KEY);
-
-    // ── 프롬프트 주입 ─────────────────────────────────────────
-    let enrichedPrompt = system_prompt || '';
-    const injection =
-      buildGuidelineBlock(guideline, style) +
-      buildRulesBlock(baziRules, astroRules, exceptions) +
-      buildKnowledgeBlock(knowledgeDocs);
-
-    if (injection) {
-      const insertPoint = enrichedPrompt.indexOf('【추가 지침】');
-      enrichedPrompt = insertPoint !== -1
-        ? enrichedPrompt.slice(0, insertPoint) + injection + enrichedPrompt.slice(insertPoint)
-        : enrichedPrompt + injection;
-    }
-
-    console.log(`🔍 도메인:${domain} | 지식:${knowledgeDocs.length} 사주:${baziRules.length} 점성:${astroRules.length} 예외:${exceptions.length}`);
+    // ── RAG: 전체 조회 병렬 실행 (비활성화) ──────────────────
+    // const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+    // const queryText   = lastUserMsg ? lastUserMsg.content : '';
+    // const domain      = detectDomain(queryText);
+    //
+    // const [knowledgeDocs, baziRules, astroRules, guideline, style] = await Promise.all([
+    //   searchKnowledge(queryText, SB_KEY),
+    //   searchBaziRules(domain, queryText, SB_KEY),
+    //   searchAstrologyRules(domain, queryText, SB_KEY),
+    //   getDomainGuideline(domain, SB_KEY),
+    //   getAnswerStyle(domain, SB_KEY)
+    // ]);
+    //
+    // // 예외는 bazi 결과 나온 후 조회
+    // const exceptions = await getRuleExceptions(baziRules, SB_KEY);
+    //
+    // // ── 프롬프트 주입 ───────────────────────────────────────
+    // let enrichedPrompt = system_prompt || '';
+    // const injection =
+    //   buildGuidelineBlock(guideline, style) +
+    //   buildRulesBlock(baziRules, astroRules, exceptions) +
+    //   buildKnowledgeBlock(knowledgeDocs);
+    //
+    // if (injection) {
+    //   const insertPoint = enrichedPrompt.indexOf('【추가 지침】');
+    //   enrichedPrompt = insertPoint !== -1
+    //     ? enrichedPrompt.slice(0, insertPoint) + injection + enrichedPrompt.slice(insertPoint)
+    //     : enrichedPrompt + injection;
+    // }
+    //
+    // console.log(`🔍 도메인:${domain} | 지식:${knowledgeDocs.length} 사주:${baziRules.length} 점성:${astroRules.length} 예외:${exceptions.length}`);
 
     // ── Claude Haiku 호출 ─────────────────────────────────────
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
@@ -364,7 +384,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 2000,
-        system: enrichedPrompt,
+        system: system_prompt || '',
         messages: messages,
       })
     });
