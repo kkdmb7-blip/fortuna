@@ -7,9 +7,18 @@ const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (req.method === 'DELETE') {
+    const { user_id } = req.body || {};
+    const SB_KEY2 = process.env.SB_SERVICE_KEY;
+    await fetch(`${SB_URL}/rest/v1/chat_messages?user_id=eq.${user_id}`, { method: 'DELETE', headers: { 'apikey': SB_KEY2, 'Authorization': `Bearer ${SB_KEY2}` } });
+    await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${user_id}`, { method: 'DELETE', headers: { 'apikey': SB_KEY2, 'Authorization': `Bearer ${SB_KEY2}` } });
+    return res.json({ ok: true });
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { email, name } = req.body || {};

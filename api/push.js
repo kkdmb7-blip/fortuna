@@ -9,7 +9,28 @@ const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 export default async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // POST: 구독 저장 (save-push-sub 통합)
+  if (req.method === 'POST') {
+    const { user_id, subscription } = req.body || {};
+    if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
+    const SB_KEY0 = process.env.SB_SERVICE_KEY;
+    const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal',
+        'on-conflict': 'user_id'
+      },
+      body: JSON.stringify({ user_id, subscription, created_at: Date.now() })
+    });
+    if (!resp.ok) { const err = await resp.json().catch(() => ({})); return res.status(500).json({ error: err.message || 'upsert failed' }); }
+    return res.json({ ok: true });
+  }
 
   // Cron 인증 (Vercel Cron은 Authorization 헤더로 CRON_SECRET 전달)
   const authHeader = req.headers['authorization'];
