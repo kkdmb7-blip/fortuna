@@ -7,19 +7,22 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const { user_id, id, role, content, created_at } = req.body || {};
-  if (req.method === 'POST') {
-    const { error } = await sb.from('chat_messages').insert({ id, user_id, role, content, created_at });
-    if (error) return res.status(500).json({ error: error.message });
-    return res.json({ ok: true });
-  }
   if (req.method === 'GET') {
     const uid = req.query.user_id;
+    if (!uid) return res.status(400).json({ error: 'user_id required' });
     const { data, error } = await sb.from('chat_messages')
       .select('*').eq('user_id', uid)
       .order('created_at', { ascending: false }).limit(50);
     if (error) return res.status(500).json({ error: error.message });
     return res.json({ messages: data || [] });
   }
+
+  if (req.method === 'POST') {
+    const { user_id, id, role, content, created_at } = req.body || {};
+    const { error } = await sb.from('chat_messages').insert({ id, user_id, role, content, created_at });
+    if (error) return res.status(500).json({ error: error.message });
+    return res.json({ ok: true });
+  }
+
   res.status(405).end();
 }

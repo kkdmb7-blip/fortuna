@@ -14,8 +14,14 @@ export default async function handler(req, res) {
   if (req.method === 'DELETE') {
     const { user_id } = req.body || {};
     const SB_KEY2 = process.env.SB_SERVICE_KEY;
-    await fetch(`${SB_URL}/rest/v1/chat_messages?user_id=eq.${user_id}`, { method: 'DELETE', headers: { 'apikey': SB_KEY2, 'Authorization': `Bearer ${SB_KEY2}` } });
-    await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${user_id}`, { method: 'DELETE', headers: { 'apikey': SB_KEY2, 'Authorization': `Bearer ${SB_KEY2}` } });
+    await fetch(SB_URL + '/rest/v1/chat_messages?user_id=eq.' + user_id, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY2, 'Authorization': 'Bearer ' + SB_KEY2 }
+    });
+    await fetch(SB_URL + '/rest/v1/chat_users?id=eq.' + user_id, {
+      method: 'DELETE',
+      headers: { 'apikey': SB_KEY2, 'Authorization': 'Bearer ' + SB_KEY2 }
+    });
     return res.json({ ok: true });
   }
 
