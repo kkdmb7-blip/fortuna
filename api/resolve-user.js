@@ -1,5 +1,5 @@
 // fortuna-silk.vercel.app/api/resolve-user
-// 카카오 이메일로 기존 Supabase 유저 id 조회 (서비스 키 사용, RLS 우회)
+// 이메일로 기존 유저 프로필 조회 (서비스 키 사용, RLS 우회)
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
@@ -18,13 +18,13 @@ export default async function handler(req, res) {
 
   try {
     const resp = await fetch(
-      `${SB_URL}/rest/v1/chat_users?email=eq.${encodeURIComponent(email)}&select=id&limit=1`,
+      `${SB_URL}/rest/v1/chat_users?email=eq.${encodeURIComponent(email)}&select=*&limit=1`,
       { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
     );
     const data = await resp.json();
     const found = Array.isArray(data) && data[0];
-    return res.status(200).json({ id: found ? found.id : null });
+    return res.status(200).json({ profile: found || null });
   } catch (e) {
-    return res.status(200).json({ id: null });
+    return res.status(200).json({ profile: null });
   }
 }
