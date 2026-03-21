@@ -13,6 +13,10 @@
     {
       "path": "/api/push",
       "schedule": "30 22 * * *"
+    },
+    {
+      "path": "/api/send-push",
+      "schedule": "30 22 * * *"
     }
   ]
 }
