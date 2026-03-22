@@ -73,13 +73,15 @@ export default async function handler(req, res) {
 
   await Promise.allSettled(
     subscriptions.map(async (row) => {
-      const sub = row.subscription;
+      const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
       if (!sub || !sub.endpoint) return;
       try {
-        await webpush.sendNotification(sub, payload);
+        const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
+        await webpush.sendNotification(parsedSub, payload);
         results.sent++;
       } catch (e) {
         results.failed++;
+        console.error('푸시 실패 상세:', e.statusCode, e.message, JSON.stringify(e.body));
         // 410 Gone = 구독 만료 → 삭제 처리
         if (e.statusCode === 410 || e.statusCode === 404) {
           results.expired.push(row.user_id);
