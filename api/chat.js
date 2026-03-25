@@ -374,8 +374,9 @@ export default async function handler(req, res) {
     // console.log(`🔍 도메인:${domain} | 지식:${knowledgeDocs.length} 사주:${baziRules.length} 점성:${astroRules.length} 예외:${exceptions.length}`);
 
     // ── Claude Haiku 호출 ─────────────────────────────────────
+    const tomorrowKST = new Date(kstNow.getTime() + 86400000).toISOString().slice(0, 10);
     const enrichedSystem = (system_prompt || '')
-      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n이 값이 절대 기준이며 다른 날짜 계산 무시`;
+      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n향후 일진 표는 ${todayKST} 다음날인 ${tomorrowKST}부터 시작함\n절대 혼동하지 말 것`;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
