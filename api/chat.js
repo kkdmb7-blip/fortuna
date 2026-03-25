@@ -376,13 +376,8 @@ export default async function handler(req, res) {
     // ── Claude Haiku 호출 ─────────────────────────────────────
     const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const todayKST = kstNow.toISOString().slice(0, 10);
-    const injectedMessages = [
-      ...messages,
-      {
-        role: 'user',
-        content: `[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n이 값이 절대 기준이며 다른 날짜 계산 무시`
-      }
-    ];
+    const enrichedSystem = (system_prompt || '')
+      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n이 값이 절대 기준이며 다른 날짜 계산 무시`;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -394,8 +389,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 2000,
-        system: system_prompt || '',
-        messages: injectedMessages,
+        system: enrichedSystem,
+        messages: messages,
       })
     });
 
