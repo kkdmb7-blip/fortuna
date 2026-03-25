@@ -374,8 +374,6 @@ export default async function handler(req, res) {
     // console.log(`🔍 도메인:${domain} | 지식:${knowledgeDocs.length} 사주:${baziRules.length} 점성:${astroRules.length} 예외:${exceptions.length}`);
 
     // ── Claude Haiku 호출 ─────────────────────────────────────
-    const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
-    const todayKST = kstNow.toISOString().slice(0, 10);
     const enrichedSystem = (system_prompt || '')
       + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n이 값이 절대 기준이며 다른 날짜 계산 무시`;
 
