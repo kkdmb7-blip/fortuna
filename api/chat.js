@@ -376,7 +376,7 @@ export default async function handler(req, res) {
     // ── Claude Haiku 호출 ─────────────────────────────────────
     const tomorrowKST = new Date(kstNow.getTime() + 86400000).toISOString().slice(0, 10);
     const enrichedSystem = (system_prompt || '')
-      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘 날짜: ${todayKST}\n향후 일진 표는 ${todayKST} 다음날인 ${tomorrowKST}부터 시작함\n절대 혼동하지 말 것`;
+      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
