@@ -326,9 +326,9 @@ async function getHoroscope(){
 
   try{
     // 1. 행성 위치 가져오기
-    const res=await fetch('https://json.astrologyapi.com/v1/planets/tropical',{
+    const res=await fetch('https://fortuna.kkdmb7.workers.dev/astro',{
       method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Basic '+btoa('650365:2f0f8ed601443fd86eb24b9e503b4cabd3aec6b8')},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({day:bd.day,month:bd.month,year:bd.year,hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,tzone:9.0})
     });
     const pData=await res.json();
