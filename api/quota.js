@@ -11,8 +11,7 @@ export default async function handler(req, res) {
   const { user_id } = req.query;
   if (!user_id) return res.status(400).json({ error: 'missing user_id' });
 
-  const todayKST = new Date().toLocaleDateString('ko-KR', { timeZone: 'Asia/Seoul' })
-    .replace(/\. /g, '-').replace('.', '').trim();
+  const todayKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 
   const { data, error } = await sb.from('chat_users')
     .select('daily_count, daily_reset_at, paid_count')
