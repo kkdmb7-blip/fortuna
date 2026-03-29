@@ -10,18 +10,28 @@ export default async function handler(req, res) {
 
   const { referrer_id, referee_id } = req.body || {};
   if (!referrer_id || !referee_id) return res.status(400).json({ error: 'missing fields' });
+  if (referrer_id === referee_id) return res.status(400).json({ error: 'self_referral' });
 
+  // 중복 확인 (동일 referee가 이미 referral 완료한 경우)
+  const { data: existing } = await sb.from('referrals')
+    .select('id').eq('referee_id', referee_id).limit(1);
+  if (existing && existing.length > 0) return res.status(409).json({ error: 'already_referred' });
+
+  // referrals 기록
   const { error: e1 } = await sb.from('referrals').insert({
-    referrer_id, referee_id, rewarded: false, created_at: Date.now()
+    referrer_id, referee_id, rewarded: true, created_at: Date.now()
   });
   if (e1) return res.status(500).json({ error: e1.message });
 
-  const { error: e2 } = await sb.from('question_charges').insert({
-    user_id: referrer_id, amount: 3,
-    payment_id: 'referral_' + referee_id,
-    type: 'referral', created_at: Date.now()
-  });
+  // referrer의 chat_users.paid_count += 3
+  const { data: referrer } = await sb.from('chat_users')
+    .select('paid_count').eq('id', referrer_id).single();
+  if (!referrer) return res.status(404).json({ error: 'referrer_not_found' });
+
+  const { error: e2 } = await sb.from('chat_users')
+    .update({ paid_count: (referrer.paid_count || 0) + 3 })
+    .eq('id', referrer_id);
   if (e2) return res.status(500).json({ error: e2.message });
 
-  res.json({ ok: true });
+  res.json({ ok: true, added: 3 });
 }
