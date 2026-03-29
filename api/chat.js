@@ -4,7 +4,7 @@
 const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY;
 const OPENAI_KEY    = process.env.OPENAI_API_KEY;
 const SB_URL        = 'https://ymghmfkqctckxxysxkvy.supabase.co';
-const FREE_DAILY    = 999; // 이니시스 연동 후 3으로 변경
+const FREE_DAILY    = parseInt(process.env.FREE_DAILY || '3', 10);
 
 // ─────────────────────────────────────────────────────────────
 // 카테고리 감지 → 한국어 도메인명으로 변경
