@@ -382,9 +382,35 @@ export default async function handler(req, res) {
       vedic: '베딕점성술 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
     };
     const modeAppend = modeInstructions[mode] ? `\n\n${modeInstructions[mode]}` : '';
+
+    // ── mode별 DB 룰셋 조회 ──────────────────────────────────
+    let rulesBlock = '';
+    if (mode === 'saju') {
+      try {
+        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?select=*&order=id.asc`,
+          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+        const rules = await r.json();
+        if (Array.isArray(rules) && rules.length > 0) {
+          rulesBlock = '\n\n【사주 해석 규칙】\n' +
+            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+        }
+      } catch(e) { console.warn('[saju rules fetch fail]', e.message); }
+    } else if (mode === 'astro') {
+      try {
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?select=*&order=id.asc`,
+          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+        const rules = await r.json();
+        if (Array.isArray(rules) && rules.length > 0) {
+          rulesBlock = '\n\n【점성술 해석 규칙】\n' +
+            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+        }
+      } catch(e) { console.warn('[astro rules fetch fail]', e.message); }
+    }
+
     const enrichedSystem = (system_prompt || '')
       + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
-      + modeAppend;
+      + modeAppend
+      + rulesBlock;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
