@@ -18,20 +18,28 @@ export default async function handler(req, res) {
   if (existing && existing.length > 0) return res.status(409).json({ error: 'already_referred' });
 
   // referrals 기록
-  const { error: e1 } = await sb.from('referrals').insert({
+  const { data: inserted, error: e1 } = await sb.from('referrals').insert({
     referrer_id, referee_id, rewarded: true, created_at: Date.now()
-  });
+  }).select('id').single();
   if (e1) return res.status(500).json({ error: e1.message });
 
   // referrer의 chat_users.paid_count += 3
   const { data: referrer } = await sb.from('chat_users')
     .select('paid_count').eq('id', referrer_id).single();
-  if (!referrer) return res.status(404).json({ error: 'referrer_not_found' });
+  if (!referrer) {
+    // 롤백: referrals 레코드 삭제
+    await sb.from('referrals').delete().eq('id', inserted.id);
+    return res.status(404).json({ error: 'referrer_not_found' });
+  }
 
   const { error: e2 } = await sb.from('chat_users')
     .update({ paid_count: (referrer.paid_count || 0) + 3 })
     .eq('id', referrer_id);
-  if (e2) return res.status(500).json({ error: e2.message });
+  if (e2) {
+    // 롤백: referrals 레코드 삭제
+    await sb.from('referrals').delete().eq('id', inserted.id);
+    return res.status(500).json({ error: e2.message });
+  }
 
   res.json({ ok: true, added: 3 });
 }
