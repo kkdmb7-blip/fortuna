@@ -397,7 +397,7 @@ export default async function handler(req, res) {
       } catch(e) { console.warn('[saju rules fetch fail]', e.message); }
     } else if (mode === 'astro') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?select=*&order=id.asc`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&select=*&order=id.asc`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
@@ -405,6 +405,26 @@ export default async function handler(req, res) {
             rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
         }
       } catch(e) { console.warn('[astro rules fetch fail]', e.message); }
+    } else if (mode === 'vedic') {
+      try {
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&select=*&order=id.asc`,
+          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+        const rules = await r.json();
+        if (Array.isArray(rules) && rules.length > 0) {
+          rulesBlock = '\n\n【베딕점성술 해석 규칙】\n' +
+            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+        }
+      } catch(e) { console.warn('[vedic rules fetch fail]', e.message); }
+    } else if (mode === 'ziwei') {
+      try {
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&select=*&order=id.asc`,
+          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
+        const rules = await r.json();
+        if (Array.isArray(rules) && rules.length > 0) {
+          rulesBlock = '\n\n【자미두수 해석 규칙】\n' +
+            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+        }
+      } catch(e) { console.warn('[ziwei rules fetch fail]', e.message); }
     }
 
     const enrichedSystem = (system_prompt || '')
