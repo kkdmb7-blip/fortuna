@@ -316,7 +316,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { user_id, messages, system_prompt, sb_key } = req.body;
+  const { user_id, messages, system_prompt, sb_key, mode } = req.body;
   if (!user_id || !messages) return res.status(400).json({ error: 'missing params' });
 
   const SB_KEY = sb_key || process.env.SB_SERVICE_KEY;
@@ -375,8 +375,16 @@ export default async function handler(req, res) {
 
     // ── Claude Haiku 호출 ─────────────────────────────────────
     const tomorrowKST = new Date(kstNow.getTime() + 86400000).toISOString().slice(0, 10);
+    const modeInstructions = {
+      saju: '사주팔자 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
+      astro: '서양점성술 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
+      ziwei: '자미두수 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
+      vedic: '베딕점성술 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
+    };
+    const modeAppend = modeInstructions[mode] ? `\n\n${modeInstructions[mode]}` : '';
     const enrichedSystem = (system_prompt || '')
-      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`;
+      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
+      + modeAppend;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
