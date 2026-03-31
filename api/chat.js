@@ -395,7 +395,7 @@ export default async function handler(req, res) {
     let rulesBlock = '';
     if (mode === 'saju') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?select=*&order=id.asc&limit=50`,
+        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?importance=gte.4&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
@@ -404,7 +404,7 @@ export default async function handler(req, res) {
       } catch(e) { console.warn('[saju rules fetch fail]', e.message); }
     } else if (mode === 'astro') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&select=*&order=id.asc&limit=50`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&importance=gte.4&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
@@ -413,7 +413,7 @@ export default async function handler(req, res) {
       } catch(e) { console.warn('[astro rules fetch fail]', e.message); }
     } else if (mode === 'vedic') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&select=*&order=id.asc&limit=50`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&importance=gte.4&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
@@ -422,7 +422,7 @@ export default async function handler(req, res) {
       } catch(e) { console.warn('[vedic rules fetch fail]', e.message); }
     } else if (mode === 'ziwei') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&select=*&order=id.asc&limit=50`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&importance=gte.4&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
