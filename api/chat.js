@@ -384,45 +384,49 @@ export default async function handler(req, res) {
     const modeAppend = modeInstructions[mode] ? `\n\n${modeInstructions[mode]}` : '';
 
     // ── mode별 DB 룰셋 조회 ──────────────────────────────────
+    const formatRules = (rules) => rules.slice(0, 50).map(r => {
+      let s = `[${r.category || '일반'} - ${r.concept || ''}]`;
+      if (r.condition) s += `\n조건: ${r.condition}`;
+      if (r.interpretation) s += `\n해석: ${r.interpretation}`;
+      if (r.exception) s += `\n예외: ${r.exception}`;
+      return s;
+    }).join('\n\n');
+
     let rulesBlock = '';
     if (mode === 'saju') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?select=*&order=id.asc`,
+        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【사주 해석 규칙】\n' +
-            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+          rulesBlock = '\n\n【사주 해석 규칙】\n' + formatRules(rules);
         }
       } catch(e) { console.warn('[saju rules fetch fail]', e.message); }
     } else if (mode === 'astro') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&select=*&order=id.asc`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【점성술 해석 규칙】\n' +
-            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+          rulesBlock = '\n\n【점성술 해석 규칙】\n' + formatRules(rules);
         }
       } catch(e) { console.warn('[astro rules fetch fail]', e.message); }
     } else if (mode === 'vedic') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&select=*&order=id.asc`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【베딕점성술 해석 규칙】\n' +
-            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+          rulesBlock = '\n\n【베딕점성술 해석 규칙】\n' + formatRules(rules);
         }
       } catch(e) { console.warn('[vedic rules fetch fail]', e.message); }
     } else if (mode === 'ziwei') {
       try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&select=*&order=id.asc`,
+        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&select=*&order=id.asc&limit=50`,
           { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
         const rules = await r.json();
         if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【자미두수 해석 규칙】\n' +
-            rules.map(r => `- ${r.rule || r.content || r.title || JSON.stringify(r)}`).join('\n');
+          rulesBlock = '\n\n【자미두수 해석 규칙】\n' + formatRules(rules);
         }
       } catch(e) { console.warn('[ziwei rules fetch fail]', e.message); }
     }
