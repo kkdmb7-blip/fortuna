@@ -79,6 +79,28 @@
   .rv-input:focus,.rv-textarea:focus,.rv-select:focus{border-color:var(--gold);}
   .rv-textarea{resize:vertical;min-height:90px;}
   .rv-select option{background:#1a1030;}
+  /* ── 사주 프리뷰 ── */
+  #sajuPreview{display:none;background:linear-gradient(135deg,rgba(45,31,78,0.5),rgba(10,6,18,0.7));border:1px solid rgba(201,168,76,0.35);border-radius:16px;padding:28px 24px;margin-bottom:28px;animation:fadeUp 0.8s ease forwards;}
+  .sj-head{font-family:var(--font-display);font-size:12px;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
+  .sj-pillars{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+  .sj-pillar{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.18);border-radius:10px;padding:12px 6px;text-align:center;}
+  .sj-p-lbl{font-size:10px;color:var(--text-dim);letter-spacing:.12em;margin-bottom:6px;}
+  .sj-p-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:.04em;}
+  .sj-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(201,168,76,0.08);font-size:13px;}
+  .sj-row:last-child{border-bottom:none;}
+  .sj-row-lbl{color:var(--text-dim);letter-spacing:.04em;}
+  .sj-row-val{color:var(--text);}
+  .sj-five{display:flex;gap:6px;margin:16px 0;flex-wrap:nowrap;}
+  .sj-el{flex:1;background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 4px;text-align:center;}
+  .sj-el-nm{font-size:11px;color:var(--text-dim);margin-bottom:4px;}
+  .sj-el-pct{font-size:14px;font-weight:700;}
+  .sj-el-wood{color:#6dbf6d;}.sj-el-fire{color:#e87070;}.sj-el-earth{color:#c9a84c;}.sj-el-metal{color:#b0b8c8;}.sj-el-water{color:#6aaee8;}
+  .sj-luck{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+  .sj-luck-item{display:flex;align-items:center;gap:10px;padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:8px;font-size:13px;}
+  .sj-luck-period{color:var(--text-dim);font-size:11px;min-width:80px;}
+  .sj-luck-pillar{color:var(--text);font-weight:600;}
+  .sj-note{font-size:11px;color:rgba(155,143,176,0.4);text-align:center;margin-top:16px;letter-spacing:.04em;}
+  .sj-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(201,168,76,0.25),transparent);margin:16px 0;}
   .star-row{display:flex;gap:8px;margin-top:4px;}
   .star-pick{font-size:22px;cursor:pointer;color:rgba(201,168,76,0.2);transition:color 0.15s;background:none;border:none;padding:0;}
   .star-pick.on{color:var(--gold);}
@@ -101,6 +123,27 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 <div class="toast" id="toast"></div>
 
 <div class="container" id="mainForm">
+
+  <!-- ✦ 사주 프리뷰 (URL 파라미터 있을 때 표시) -->
+  <div id="sajuPreview">
+    <div class="sj-head">✦ 사주팔자 미리보기</div>
+    <div class="sj-pillars">
+      <div class="sj-pillar"><div class="sj-p-lbl">年柱</div><div class="sj-p-val" id="sj-year">—</div></div>
+      <div class="sj-pillar"><div class="sj-p-lbl">月柱</div><div class="sj-p-val" id="sj-month">—</div></div>
+      <div class="sj-pillar"><div class="sj-p-lbl">日柱</div><div class="sj-p-val" id="sj-day">—</div></div>
+      <div class="sj-pillar"><div class="sj-p-lbl">時柱</div><div class="sj-p-val" id="sj-hour">—</div></div>
+    </div>
+    <div class="sj-divider"></div>
+    <div class="sj-five" id="sj-five"></div>
+    <div class="sj-row"><span class="sj-row-lbl">일간 강약</span><span class="sj-row-val" id="sj-strength">—</span></div>
+    <div class="sj-row"><span class="sj-row-lbl">용신 (도움되는 기운)</span><span class="sj-row-val" id="sj-yongshin">—</span></div>
+    <div class="sj-row"><span class="sj-row-lbl">격국</span><span class="sj-row-val" id="sj-geok">—</span></div>
+    <div class="sj-divider"></div>
+    <div style="font-family:var(--font-display);font-size:12px;letter-spacing:.22em;color:var(--gold);margin-bottom:10px;">대운 흐름</div>
+    <div class="sj-luck" id="sj-luck"></div>
+    <div class="sj-note">✦ 완전한 해석은 사주 리포트에서 확인하세요</div>
+  </div>
+
   <div class="header">
     <div class="brand">FORTUNA</div>
     <h1 class="title">내 사주팔자 완전 분석<br>사주 리포트</h1>
@@ -444,6 +487,66 @@ function openRvModal(i){
   document.getElementById('rvModal').style.cssText='display:flex;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.78);backdrop-filter:blur(10px);align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;';
 }
 renderRv();
+</script>
+
+<script>
+// ── 사주 프리뷰: URL 파라미터 → /saju-test GET → 결과 표시 ──
+(async function(){
+  const p = new URLSearchParams(location.search);
+  const year = p.get('year'), month = p.get('month'), day = p.get('day');
+  if (!year || !month || !day) return;
+
+  const hour     = p.get('hour')     || '0';
+  const minute   = p.get('minute')   || '0';
+  const gender   = p.get('gender')   || 'male';
+  const calendar = p.get('calendar') || 'solar';
+  const midnightType = p.get('midnightType') || '0';
+
+  const preview = document.getElementById('sajuPreview');
+  preview.style.display = 'block';
+
+  try {
+    const qs = new URLSearchParams({year,month,day,hour,minute,gender,calendar,midnightType});
+    const res = await fetch('https://fortuna.kkdmb7.workers.dev/saju-test?' + qs);
+    const d = await res.json();
+    if (d.error) { preview.innerHTML = `<div style="color:var(--text-dim);font-size:14px;text-align:center;padding:20px;">${d.error}</div>`; return; }
+
+    // 4주
+    const pl = d.summary?.pillars || {};
+    document.getElementById('sj-year').textContent  = pl.year  || '—';
+    document.getElementById('sj-month').textContent = pl.month || '—';
+    document.getElementById('sj-day').textContent   = pl.day   || '—';
+    document.getElementById('sj-hour').textContent  = pl.hour  || '—';
+
+    // 오행
+    const fp = d.five_pct || {};
+    const elMap = [
+      {k:'wood', nm:'목(木)', cls:'sj-el-wood'},
+      {k:'fire', nm:'화(火)', cls:'sj-el-fire'},
+      {k:'earth',nm:'토(土)', cls:'sj-el-earth'},
+      {k:'metal',nm:'금(金)', cls:'sj-el-metal'},
+      {k:'water',nm:'수(水)', cls:'sj-el-water'},
+    ];
+    document.getElementById('sj-five').innerHTML = elMap.map(e =>
+      `<div class="sj-el"><div class="sj-el-nm">${e.nm}</div><div class="sj-el-pct ${e.cls}">${fp[e.k]??0}%</div></div>`
+    ).join('');
+
+    // 강약 / 용신 / 격국
+    document.getElementById('sj-strength').textContent  = d.summary?.strength || '—';
+    const yn = d.yongshin;
+    document.getElementById('sj-yongshin').textContent  = yn ? `${yn.primary_kor}` + (yn.secondary_kor ? ` · ${yn.secondary_kor}` : '') : '—';
+    document.getElementById('sj-geok').textContent      = d.geokguk?.geok_kor || '—';
+
+    // 대운 (처음 5개)
+    const luck = (d.big_luck || []).slice(0, 5);
+    document.getElementById('sj-luck').innerHTML = luck.map(l =>
+      `<div class="sj-luck-item"><span class="sj-luck-period">${l.age_range} (${l.year_range})</span><span class="sj-luck-pillar">${l.pillar_kor}</span><span style="font-size:11px;color:var(--text-dim);">${l.element}</span></div>`
+    ).join('');
+
+  } catch(e) {
+    preview.innerHTML = `<div style="color:var(--text-dim);font-size:14px;text-align:center;padding:20px;">사주 계산 중 오류가 발생했습니다.</div>`;
+  }
+})();
 </script>
 </body>
 </html>

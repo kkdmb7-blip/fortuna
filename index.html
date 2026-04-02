@@ -372,7 +372,7 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
       </div>
     </a>
     <!-- 사주 -->
-    <a href="#" onclick="requireLogin('saju.html')" class="pcard pc-saju">
+    <a href="#" onclick="return showSajuForm()" class="pcard pc-saju">
       <div class="pcard-in">
         <div class="pc-top"><span class="pc-tag" style="background:rgba(160,100,220,0.12);color:#c4a0f0;border:1px solid rgba(160,100,220,0.3);">Saju</span><span class="pc-emoji">&#x262F;&#xFE0F;</span></div>
         <span class="pc-for">사주팔자로 타고난 기질 보기</span>
@@ -848,6 +848,73 @@ async function loadReviews(){
   }catch(e){ console.error(e); }
 }
 loadReviews();
+</script>
+
+<!-- ✦ 사주 입력 모달 -->
+<div id="sajuModal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;background:rgba(6,3,15,0.88);z-index:200;backdrop-filter:blur(14px);justify-content:center;align-items:center;padding:20px;">
+  <div style="background:linear-gradient(135deg,rgba(45,31,78,0.97),rgba(10,6,18,0.99));border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:28px 24px;width:100%;max-width:400px;position:relative;">
+    <button onclick="document.getElementById('sajuModal').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#9b8fb0;font-size:22px;cursor:pointer;">✕</button>
+    <div style="font-size:11px;letter-spacing:.38em;color:var(--gold);text-transform:uppercase;margin-bottom:18px;">✦ 사주 미리보기</div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px;letter-spacing:.04em;">생년월일</label>
+      <input type="text" id="sjBirth" placeholder="예: 1990.05.15" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.22);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--fn);outline:none;">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div>
+        <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px;letter-spacing:.04em;">출생시간</label>
+        <input type="text" id="sjTime" placeholder="예: 07:30" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(201,168,76,0.22);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--fn);outline:none;">
+      </div>
+      <div>
+        <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px;letter-spacing:.04em;">성별</label>
+        <select id="sjGender" style="width:100%;background:rgba(20,10,40,0.9);border:1px solid rgba(201,168,76,0.22);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--fn);outline:none;-webkit-appearance:none;">
+          <option value="male">남성</option>
+          <option value="female">여성</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+      <div>
+        <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px;letter-spacing:.04em;">음양력</label>
+        <select id="sjCal" style="width:100%;background:rgba(20,10,40,0.9);border:1px solid rgba(201,168,76,0.22);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--fn);outline:none;-webkit-appearance:none;">
+          <option value="solar">양력</option>
+          <option value="lunar">음력</option>
+          <option value="leap">음력 윤달</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:13px;color:var(--dim);margin-bottom:7px;letter-spacing:.04em;">야자시</label>
+        <select id="sjMidnight" style="width:100%;background:rgba(20,10,40,0.9);border:1px solid rgba(201,168,76,0.22);border-radius:8px;padding:12px 14px;color:var(--text);font-size:15px;font-family:var(--fn);outline:none;-webkit-appearance:none;">
+          <option value="0">미적용</option>
+          <option value="1">야자시 적용</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="goSaju()" style="width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;border:none;border-radius:12px;padding:16px;color:#0a0612;font-size:15px;font-weight:700;letter-spacing:.06em;cursor:pointer;font-family:var(--fn);">사주 보기 ✦</button>
+    <p style="font-size:12px;color:rgba(155,143,176,0.4);text-align:center;margin-top:10px;letter-spacing:.04em;">미리보기 후 전체 리포트 신청 가능합니다</p>
+  </div>
+</div>
+<script>
+function showSajuForm(){
+  document.getElementById('sajuModal').style.display='flex';
+  return false;
+}
+function goSaju(){
+  const raw = document.getElementById('sjBirth').value.trim();
+  const nums = raw.replace(/[^\d]/g,'');
+  if(nums.length < 8){ alert('생년월일을 입력해주세요 (예: 1990.05.15)'); return; }
+  const year=nums.slice(0,4), month=nums.slice(4,6), day=nums.slice(6,8);
+  const timeRaw = document.getElementById('sjTime').value.trim();
+  let hour='0', minute='0';
+  if(timeRaw){
+    const tp = timeRaw.replace(/[^\d:]/g,'').split(':');
+    hour = tp[0]||'0'; minute = tp[1]||'0';
+  }
+  const gender   = document.getElementById('sjGender').value;
+  const calendar = document.getElementById('sjCal').value;
+  const midnight = document.getElementById('sjMidnight').value;
+  const params = new URLSearchParams({year,month,day,hour,minute,gender,calendar,midnightType:midnight});
+  location.href = 'saju.html?' + params;
+}
 </script>
 </body>
 </html>
