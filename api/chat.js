@@ -324,7 +324,7 @@ export default async function handler(req, res) {
   try {
     // ── 카운트 체크 ──────────────────────────────────────────
     const userRes = await fetch(
-      `${SB_URL}/rest/v1/chat_users?id=eq.${user_id}&select=daily_count,daily_reset_at,paid_count`,
+      `${SB_URL}/rest/v1/chat_users?id=eq.${user_id}&select=daily_count,paid_count`,
       { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
     );
     const users = await userRes.json();
@@ -333,11 +333,10 @@ export default async function handler(req, res) {
 
     const kstNow   = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const todayKST = kstNow.toISOString().slice(0, 10);
-    let dailyCount = user.daily_count || 0;
+    let dailyCount = user.daily_count || 0; // 잔여 무료 질문 수
     let paidCount  = user.paid_count  || 0;
-    if ((user.daily_reset_at || '') !== todayKST) dailyCount = 0;
 
-    const freeLeft = Math.max(0, FREE_DAILY - dailyCount);
+    const freeLeft = Math.max(0, dailyCount);
     const canUse   = freeLeft > 0 || paidCount > 0;
     if (!canUse) return res.status(429).json({ error: 'limit_exceeded', free_left: 0, paid_left: paidCount });
 
@@ -461,7 +460,7 @@ export default async function handler(req, res) {
     const reply = claudeData.content?.[0]?.text || '';
 
     // ── 카운트 업데이트 ───────────────────────────────────────
-    const newDailyCount = freeLeft > 0 ? dailyCount + 1 : dailyCount;
+    const newDailyCount = freeLeft > 0 ? dailyCount - 1 : dailyCount; // 잔여 감소
     const newPaidCount  = freeLeft > 0 ? paidCount : paidCount - 1;
     await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${user_id}`, {
       method: 'PATCH',
@@ -473,7 +472,6 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         daily_count: newDailyCount,
-        daily_reset_at: todayKST,
         paid_count: newPaidCount,
         updated_at: Date.now()
       })
@@ -481,7 +479,7 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       reply,
-      free_left: Math.max(0, FREE_DAILY - newDailyCount),
+      free_left: Math.max(0, newDailyCount),
       paid_left: newPaidCount
     });
 
