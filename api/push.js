@@ -31,12 +31,14 @@ export default async function handler(req, res) {
     return res.json({ ok: true });
   }
 
-  // Cron 인증 (Vercel Cron은 Authorization 헤더로 CRON_SECRET 전달)
-  // TEST_MODE=1 이면 인증 없이 통과 (테스트용, 확인 후 제거)
+  // Cron 인증: Authorization 헤더 또는 ?secret= 쿼리파라미터 둘 다 허용
   const authHeader = req.headers['authorization'];
+  const querySecret = req.query.secret;
   const cronSecret = process.env.CRON_SECRET;
-  if (!process.env.TEST_MODE && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (cronSecret) {
+    const headerOk = authHeader === `Bearer ${cronSecret}`;
+    const queryOk  = querySecret === cronSecret;
+    if (!headerOk && !queryOk) return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const VAPID_PUBLIC_KEY  = process.env.VAPID_PUBLIC_KEY;
