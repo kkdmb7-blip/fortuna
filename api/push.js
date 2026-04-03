@@ -32,9 +32,10 @@ export default async function handler(req, res) {
   }
 
   // Cron 인증 (Vercel Cron은 Authorization 헤더로 CRON_SECRET 전달)
+  // TEST_MODE=1 이면 인증 없이 통과 (테스트용, 확인 후 제거)
   const authHeader = req.headers['authorization'];
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!process.env.TEST_MODE && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
