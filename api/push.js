@@ -18,15 +18,14 @@ export default async function handler(req, res) {
     const { user_id, subscription } = req.body || {};
     if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
-    const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
+    const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions?on_conflict=user_id`, {
       method: 'POST',
       headers: {
         'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`,
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates,return=minimal',
-        'on-conflict': 'user_id'
       },
-      body: JSON.stringify({ user_id, subscription, created_at: Date.now() })
+      body: JSON.stringify({ user_id, subscription, updated_at: new Date().toISOString() })
     });
     if (!resp.ok) { const err = await resp.json().catch(() => ({})); return res.status(500).json({ error: err.message || 'upsert failed' }); }
     return res.json({ ok: true });
