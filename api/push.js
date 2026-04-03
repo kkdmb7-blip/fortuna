@@ -49,7 +49,7 @@ export default async function handler(req, res) {
 
   webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-  // Supabase에서 모든 구독 조회
+  // Supabase에서 구독 + 프로필 이름 함께 조회
   let subscriptions = [];
   try {
     const sbRes = await fetch(
@@ -62,11 +62,21 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Supabase 조회 실패', detail: e.message });
   }
 
-  const payload = JSON.stringify({
-    title: '🔮 포르투나',
-    body: '오늘의 운세가 도착했어요. 확인해보세요!',
-    url: '/memox/?daily=1'
-  });
+  // 사용자 이름 일괄 조회 (user_id 목록으로)
+  const userIds = subscriptions.map(s => s.user_id).filter(Boolean);
+  let nameMap = {};
+  if (userIds.length > 0) {
+    try {
+      const profileRes = await fetch(
+        `${SB_URL}/rest/v1/chat_users?select=id,name&id=in.(${userIds.map(id => `"${id}"`).join(',')})`,
+        { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+      );
+      const profiles = await profileRes.json();
+      if (Array.isArray(profiles)) {
+        profiles.forEach(p => { if (p.id && p.name) nameMap[p.id] = p.name; });
+      }
+    } catch (e) { /* 이름 조회 실패해도 발송은 계속 */ }
+  }
 
   const results = { sent: 0, failed: 0, expired: [] };
 
@@ -74,6 +84,12 @@ export default async function handler(req, res) {
     subscriptions.map(async (row) => {
       const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
       if (!sub || !sub.endpoint) return;
+      const name = nameMap[row.user_id];
+      const payload = JSON.stringify({
+        title: '🔮 포르투나',
+        body: name ? `${name}님의 오늘 운세가 도착했어요 ✨` : '오늘의 운세가 도착했어요. 확인해보세요!',
+        url: '/memox/?daily=1'
+      });
       try {
         const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
         await webpush.sendNotification(parsedSub, payload);
