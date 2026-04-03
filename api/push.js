@@ -71,7 +71,7 @@ export default async function handler(req, res) {
   if (userIds.length > 0) {
     try {
       const profileRes = await fetch(
-        `${SB_URL}/rest/v1/chat_users?select=id,name&id=in.(${userIds.map(id => `"${id}"`).join(',')})`,
+        `${SB_URL}/rest/v1/chat_users?select=id,name&id=in.(${userIds.join(',')})`,
         { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
       );
       const profiles = await profileRes.json();
