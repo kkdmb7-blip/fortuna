@@ -18,16 +18,15 @@ export default async function handler(req, res) {
     const { user_id, subscription } = req.body || {};
     if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
-    const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions?on_conflict=user_id`, {
+    const headers0 = { 'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`, 'Content-Type': 'application/json' };
+    // 기존 구독 삭제 후 새로 삽입 (unique 제약 없어도 동작)
+    await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${user_id}`, { method: 'DELETE', headers: headers0 });
+    const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
       method: 'POST',
-      headers: {
-        'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal',
-      },
+      headers: { ...headers0, 'Prefer': 'return=minimal' },
       body: JSON.stringify({ user_id, subscription })
     });
-    if (!resp.ok) { const err = await resp.json().catch(() => ({})); return res.status(500).json({ error: err.message || 'upsert failed' }); }
+    if (!resp.ok) { const err = await resp.json().catch(() => ({})); return res.status(500).json({ error: err.message || 'insert failed' }); }
     return res.json({ ok: true });
   }
 
