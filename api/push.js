@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates,return=minimal',
       },
-      body: JSON.stringify({ user_id, subscription, updated_at: new Date().toISOString() })
+      body: JSON.stringify({ user_id, subscription })
     });
     if (!resp.ok) { const err = await resp.json().catch(() => ({})); return res.status(500).json({ error: err.message || 'upsert failed' }); }
     return res.json({ ok: true });
