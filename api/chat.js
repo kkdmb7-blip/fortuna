@@ -328,8 +328,21 @@ export default async function handler(req, res) {
       { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
     );
     const users = await userRes.json();
-    const user  = users && users[0];
-    if (!user) return res.status(404).json({ error: 'user not found' });
+    let user  = users && users[0];
+    if (!user) {
+      // 신규 유저(pico 등 외부 로그인) 자동 생성
+      await fetch(`${SB_URL}/rest/v1/chat_users`, {
+        method: 'POST',
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': `Bearer ${SB_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({ id: user_id, daily_count: FREE_DAILY, paid_count: 0, updated_at: Date.now() })
+      });
+      user = { daily_count: FREE_DAILY, paid_count: 0 };
+    }
 
     const kstNow   = new Date(Date.now() + 9 * 60 * 60 * 1000);
     const todayKST = kstNow.toISOString().slice(0, 10);
