@@ -23,23 +23,41 @@ export default async function handler(req, res) {
   }).select('id').single();
   if (e1) return res.status(500).json({ error: e1.message });
 
-  // referrer의 chat_users.paid_count += 3
-  const { data: referrer } = await sb.from('chat_users')
-    .select('paid_count').eq('id', referrer_id).single();
-  if (!referrer) {
-    // 롤백: referrals 레코드 삭제
+  const now = new Date().toISOString();
+
+  // referrer에게 50 Orb 지급
+  const { data: refData } = await sb.from('orb_balance')
+    .select('balance').eq('user_id', referrer_id).maybeSingle();
+  if (!refData) {
     await sb.from('referrals').delete().eq('id', inserted.id);
     return res.status(404).json({ error: 'referrer_not_found' });
   }
-
-  const { error: e2 } = await sb.from('chat_users')
-    .update({ paid_count: (referrer.paid_count || 0) + 3 })
-    .eq('id', referrer_id);
+  const refNewBal = (refData.balance || 0) + 50;
+  const { error: e2 } = await sb.from('orb_balance')
+    .update({ balance: refNewBal, updated_at: now })
+    .eq('user_id', referrer_id);
   if (e2) {
-    // 롤백: referrals 레코드 삭제
     await sb.from('referrals').delete().eq('id', inserted.id);
     return res.status(500).json({ error: e2.message });
   }
+  await sb.from('orb_transactions').insert({
+    user_id: referrer_id, type: 'referral_reward', amount: 50,
+    description: '친구 초대 보상', balance_after: refNewBal, created_at: now,
+  });
 
-  res.json({ ok: true, added: 3 });
+  // referee에게 50 Orb 지급 (이미 가입 시 60 Orb 받았으므로 추가 지급)
+  const { data: eeData } = await sb.from('orb_balance')
+    .select('balance').eq('user_id', referee_id).maybeSingle();
+  if (eeData) {
+    const eeNewBal = (eeData.balance || 0) + 50;
+    await sb.from('orb_balance')
+      .update({ balance: eeNewBal, updated_at: now })
+      .eq('user_id', referee_id);
+    await sb.from('orb_transactions').insert({
+      user_id: referee_id, type: 'referral_bonus', amount: 50,
+      description: '초대받기 보상', balance_after: eeNewBal, created_at: now,
+    });
+  }
+
+  res.json({ ok: true, added: 50 });
 }
