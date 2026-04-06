@@ -475,8 +475,8 @@ export default async function handler(req, res) {
     const reply = claudeData.content?.[0]?.text || '';
 
     // ── 카운트 업데이트 ───────────────────────────────────────
-    const newDailyCount = freeLeft > 0 ? dailyCount - 1 : dailyCount; // 잔여 감소
-    const newPaidCount  = freeLeft > 0 ? paidCount : paidCount - 1;
+    const newDailyCount = isAdmin ? dailyCount : (freeLeft > 0 ? dailyCount - 1 : dailyCount);
+    const newPaidCount  = isAdmin ? paidCount  : (freeLeft > 0 ? paidCount : paidCount - 1);
     await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${user_id}`, {
       method: 'PATCH',
       headers: {
