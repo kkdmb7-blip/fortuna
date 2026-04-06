@@ -349,8 +349,10 @@ export default async function handler(req, res) {
     let dailyCount = user.daily_count || 0; // 잔여 무료 질문 수
     let paidCount  = user.paid_count  || 0;
 
-    const freeLeft = Math.max(0, dailyCount);
-    const canUse   = freeLeft > 0 || paidCount > 0;
+    const ADMIN_UUID = '3d7633bc-3351-4f22-bc10-10cd1bfc5c28';
+    const isAdmin = user_id === ADMIN_UUID;
+    const freeLeft = isAdmin ? 9999 : Math.max(0, dailyCount);
+    const canUse   = isAdmin || freeLeft > 0 || paidCount > 0;
     if (!canUse) return res.status(429).json({ error: 'limit_exceeded', free_left: 0, paid_left: paidCount });
 
     // ── RAG: 전체 조회 병렬 실행 (비활성화) ──────────────────
