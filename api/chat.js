@@ -316,7 +316,8 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { user_id, messages, system_prompt, sb_key, mode } = req.body;
+  const body = req.body || {};
+  const { user_id, messages, system_prompt, sb_key, mode } = body;
   if (!user_id || !messages) return res.status(400).json({ error: 'missing params' });
 
   const SB_KEY = sb_key || process.env.SB_SERVICE_KEY;
