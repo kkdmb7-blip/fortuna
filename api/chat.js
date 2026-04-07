@@ -322,38 +322,28 @@ export default async function handler(req, res) {
   const SB_KEY = sb_key || process.env.SB_SERVICE_KEY;
 
   try {
-    // ── 카운트 체크 ──────────────────────────────────────────
-    const userRes = await fetch(
-      `${SB_URL}/rest/v1/chat_users?id=eq.${user_id}&select=daily_count,paid_count`,
+    // ── Orb 잔액 체크 ────────────────────────────────────────
+    const ORB_COST = 20;
+    const orbRes = await fetch(
+      `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
       { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
     );
-    const users = await userRes.json();
-    let user  = users && users[0];
-    if (!user) {
-      // 신규 유저(pico 등 외부 로그인) 자동 생성
-      await fetch(`${SB_URL}/rest/v1/chat_users`, {
+    const orbRows = await orbRes.json();
+    let orbBalance = (orbRows && orbRows[0]) ? (orbRows[0].balance || 0) : null;
+
+    // orb_balance 레코드 없으면 신규 생성 (balance=0)
+    if (orbBalance === null) {
+      await fetch(`${SB_URL}/rest/v1/orb_balance`, {
         method: 'POST',
-        headers: {
-          'apikey': SB_KEY,
-          'Authorization': `Bearer ${SB_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify({ id: user_id, daily_count: FREE_DAILY, paid_count: 0, updated_at: Date.now() })
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id, balance: 0, legacy_user: false })
       });
-      user = { daily_count: FREE_DAILY, paid_count: 0 };
+      orbBalance = 0;
     }
 
-    const kstNow   = new Date(Date.now() + 9 * 60 * 60 * 1000);
-    const todayKST = kstNow.toISOString().slice(0, 10);
-    let dailyCount = user.daily_count || 0; // 잔여 무료 질문 수
-    let paidCount  = user.paid_count  || 0;
-
-    const ADMIN_UUID = '3d7633bc-3351-4f22-bc10-10cd1bfc5c28';
-    const isAdmin = user_id === ADMIN_UUID;
-    const freeLeft = isAdmin ? 9999 : Math.max(0, dailyCount);
-    const canUse   = isAdmin || freeLeft > 0 || paidCount > 0;
-    if (!canUse) return res.status(429).json({ error: 'limit_exceeded', free_left: 0, paid_left: paidCount });
+    if (orbBalance < ORB_COST) {
+      return res.status(429).json({ error: 'orb_insufficient', orb_balance: orbBalance, orb_cost: ORB_COST });
+    }
 
     // ── RAG: 전체 조회 병렬 실행 (비활성화) ──────────────────
     // const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
@@ -474,28 +464,23 @@ export default async function handler(req, res) {
     const claudeData = await claudeRes.json();
     const reply = claudeData.content?.[0]?.text || '';
 
-    // ── 카운트 업데이트 ───────────────────────────────────────
-    const newDailyCount = isAdmin ? dailyCount : (freeLeft > 0 ? dailyCount - 1 : dailyCount);
-    const newPaidCount  = isAdmin ? paidCount  : (freeLeft > 0 ? paidCount : paidCount - 1);
-    await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${user_id}`, {
+    // ── Orb 차감 ─────────────────────────────────────────────
+    const newOrbBalance = orbBalance - ORB_COST;
+    await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
       method: 'PATCH',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': `Bearer ${SB_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        daily_count: newDailyCount,
-        paid_count: newPaidCount,
-        updated_at: Date.now()
-      })
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
+    });
+    // 거래 기록
+    await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: '채팅 사용', balance_after: newOrbBalance, created_at: new Date().toISOString() })
     });
 
     return res.status(200).json({
       reply,
-      free_left: Math.max(0, newDailyCount),
-      paid_left: newPaidCount
+      orb_balance: newOrbBalance
     });
 
   } catch (e) {
