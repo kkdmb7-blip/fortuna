@@ -378,6 +378,8 @@ export default async function handler(req, res) {
     // console.log(`🔍 도메인:${domain} | 지식:${knowledgeDocs.length} 사주:${baziRules.length} 점성:${astroRules.length} 예외:${exceptions.length}`);
 
     // ── Claude Haiku 호출 ─────────────────────────────────────
+    const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+    const todayKST = kstNow.toISOString().slice(0, 10);
     const tomorrowKST = new Date(kstNow.getTime() + 86400000).toISOString().slice(0, 10);
     const modeInstructions = {
       saju: '사주팔자 관점에서만 해석하세요. 다른 시스템은 언급하지 마세요.',
