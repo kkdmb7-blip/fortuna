@@ -323,26 +323,30 @@ export default async function handler(req, res) {
 
   try {
     // ── Orb 잔액 체크 ────────────────────────────────────────
-    const ORB_COST = (body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20;
-    const orbRes = await fetch(
-      `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
-      { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
-    );
-    const orbRows = await orbRes.json();
-    let orbBalance = (orbRows && orbRows[0]) ? (orbRows[0].balance || 0) : null;
+    const skipOrb = body.skip_orb === true;
+    const ORB_COST = skipOrb ? 0 : ((body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20);
+    let orbBalance = 0;
 
-    // orb_balance 레코드 없으면 신규 생성 (balance=0)
-    if (orbBalance === null) {
-      await fetch(`${SB_URL}/rest/v1/orb_balance`, {
-        method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ user_id, balance: 0, legacy_user: false })
-      });
-      orbBalance = 0;
-    }
+    if (!skipOrb) {
+      const orbRes = await fetch(
+        `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
+        { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+      );
+      const orbRows = await orbRes.json();
+      orbBalance = (orbRows && orbRows[0]) ? (orbRows[0].balance || 0) : null;
 
-    if (orbBalance < ORB_COST) {
-      return res.status(429).json({ error: 'orb_insufficient', orb_balance: orbBalance, orb_cost: ORB_COST });
+      if (orbBalance === null) {
+        await fetch(`${SB_URL}/rest/v1/orb_balance`, {
+          method: 'POST',
+          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ user_id, balance: 0, legacy_user: false })
+        });
+        orbBalance = 0;
+      }
+
+      if (orbBalance < ORB_COST) {
+        return res.status(429).json({ error: 'orb_insufficient', orb_balance: orbBalance, orb_cost: ORB_COST });
+      }
     }
 
     // ── RAG: 전체 조회 병렬 실행 (비활성화) ──────────────────
@@ -467,18 +471,20 @@ export default async function handler(req, res) {
     const reply = claudeData.content?.[0]?.text || '';
 
     // ── Orb 차감 ─────────────────────────────────────────────
-    const newOrbBalance = orbBalance - ORB_COST;
-    await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
-      method: 'PATCH',
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
-    });
-    // 거래 기록
-    await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
-      method: 'POST',
-      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: '채팅 사용', balance_after: newOrbBalance, created_at: new Date().toISOString() })
-    });
+    let newOrbBalance = orbBalance;
+    if (!skipOrb && ORB_COST > 0) {
+      newOrbBalance = orbBalance - ORB_COST;
+      await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
+        method: 'PATCH',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
+      });
+      await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: '궁합 정밀분석', balance_after: newOrbBalance, created_at: new Date().toISOString() })
+      });
+    }
 
     return res.status(200).json({
       reply,
