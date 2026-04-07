@@ -323,7 +323,7 @@ export default async function handler(req, res) {
 
   try {
     // ── Orb 잔액 체크 ────────────────────────────────────────
-    const ORB_COST = 20;
+    const ORB_COST = (body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20;
     const orbRes = await fetch(
       `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
       { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
