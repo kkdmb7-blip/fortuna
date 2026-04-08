@@ -12,16 +12,20 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method === 'DELETE') {
-    const { user_id } = req.body || {};
+    const { user_id, messages_only } = req.body || {};
     const SB_KEY2 = process.env.SB_SERVICE_KEY;
+    // 대화 내역 삭제
     await fetch(SB_URL + '/rest/v1/chat_messages?user_id=eq.' + user_id, {
       method: 'DELETE',
       headers: { 'apikey': SB_KEY2, 'Authorization': 'Bearer ' + SB_KEY2 }
     });
-    await fetch(SB_URL + '/rest/v1/chat_users?id=eq.' + user_id, {
-      method: 'DELETE',
-      headers: { 'apikey': SB_KEY2, 'Authorization': 'Bearer ' + SB_KEY2 }
-    });
+    // messages_only가 아닐 때만 chat_users도 삭제 (하위 호환)
+    if (!messages_only) {
+      await fetch(SB_URL + '/rest/v1/chat_users?id=eq.' + user_id, {
+        method: 'DELETE',
+        headers: { 'apikey': SB_KEY2, 'Authorization': 'Bearer ' + SB_KEY2 }
+      });
+    }
     return res.json({ ok: true });
   }
 
