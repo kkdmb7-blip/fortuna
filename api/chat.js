@@ -328,21 +328,26 @@ export default async function handler(req, res) {
     const ORB_COST = skipOrb ? 0 : ((body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20);
     let orbBalance = 0;
 
+    let orbFreeBalance = 0, orbPaidBalance = 0;
     if (!skipOrb) {
       const orbRes = await fetch(
-        `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
+        `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance,free_balance,paid_balance`,
         { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
       );
       const orbRows = await orbRes.json();
-      orbBalance = (orbRows && orbRows[0]) ? (orbRows[0].balance || 0) : null;
+      const orbRow = orbRows && orbRows[0];
 
-      if (orbBalance === null) {
+      if (!orbRow) {
         await fetch(`${SB_URL}/rest/v1/orb_balance`, {
           method: 'POST',
           headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ user_id, balance: 0, legacy_user: false })
+          body: JSON.stringify({ user_id, balance: 0, free_balance: 0, paid_balance: 0, legacy_user: false })
         });
         orbBalance = 0;
+      } else {
+        orbFreeBalance = orbRow.free_balance || 0;
+        orbPaidBalance = orbRow.paid_balance || 0;
+        orbBalance = orbRow.balance || (orbFreeBalance + orbPaidBalance);
       }
 
       if (orbBalance < ORB_COST) {
@@ -471,14 +476,18 @@ export default async function handler(req, res) {
     const claudeData = await claudeRes.json();
     const reply = claudeData.content?.[0]?.text || '';
 
-    // ── Orb 차감 ─────────────────────────────────────────────
+    // ── Orb 차감 (free_balance 먼저, 부족하면 paid_balance) ──
     let newOrbBalance = orbBalance;
     if (!skipOrb && ORB_COST > 0) {
-      newOrbBalance = orbBalance - ORB_COST;
+      const freeUsed = Math.min(orbFreeBalance, ORB_COST);
+      const paidUsed = ORB_COST - freeUsed;
+      const newFree = orbFreeBalance - freeUsed;
+      const newPaid = orbPaidBalance - paidUsed;
+      newOrbBalance = newFree + newPaid;
       await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
         method: 'PATCH',
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
+        body: JSON.stringify({ balance: newOrbBalance, free_balance: newFree, paid_balance: newPaid, updated_at: new Date().toISOString() })
       });
       await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
         method: 'POST',
