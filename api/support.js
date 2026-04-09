@@ -9,6 +9,53 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // GET: 관리자 통계 / 문의 목록 / 본인 문의
+  if (req.method === 'GET') {
+    const { admin_id, user_id, action } = req.query;
+
+    // 공개 통계 (총 상담수)
+    if (action === 'public-stats') {
+      const { count, error } = await sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user');
+      if (error) return res.status(500).json({ error: error.message });
+      return res.json({ total_consultations: count || 0 });
+    }
+
+    // 관리자 통계
+    if (action === 'stats' && admin_id === ADMIN_ID) {
+      const todayKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      const [
+        { count: totalUsers },
+        { count: todayUsers },
+        { count: totalMessages },
+        { count: todayMessages },
+        { count: totalPayers }
+      ] = await Promise.all([
+        sb.from('chat_users').select('*', { count: 'exact', head: true }),
+        sb.from('chat_users').select('*', { count: 'exact', head: true }).eq('daily_reset_at', todayKST),
+        sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user'),
+        sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user').gte('created_at', new Date(todayKST).getTime()),
+        sb.from('orb_balance').select('*', { count: 'exact', head: true }).gt('total_charged', 0)
+      ]);
+      return res.json({ totalUsers, todayUsers, totalMessages, todayMessages, totalPayers });
+    }
+
+    // 관리자 문의 목록
+    if (admin_id === ADMIN_ID) {
+      const { data, error } = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(50);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.json({ tickets: data });
+    }
+
+    // 본인 문의
+    if (user_id) {
+      const { data, error } = await sb.from('support_tickets').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(20);
+      if (error) return res.status(500).json({ error: error.message });
+      return res.json({ tickets: data });
+    }
+
+    return res.status(400).json({ error: 'admin_id 또는 user_id 필요' });
+  }
+
   // POST: 문의 등록
   if (req.method === 'POST') {
     const { user_id, user_name, user_email, category, message } = req.body || {};
@@ -43,25 +90,6 @@ export default async function handler(req, res) {
     } catch(e) { console.warn('push failed', e.message); }
 
     return res.json({ ok: true, ticket: data });
-  }
-
-  // GET: 문의 목록 (관리자) 또는 본인 문의
-  if (req.method === 'GET') {
-    const { admin_id, user_id } = req.query;
-
-    if (admin_id === ADMIN_ID) {
-      const { data, error } = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(50);
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json({ tickets: data });
-    }
-
-    if (user_id) {
-      const { data, error } = await sb.from('support_tickets').select('*').eq('user_id', user_id).order('created_at', { ascending: false }).limit(20);
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json({ tickets: data });
-    }
-
-    return res.status(400).json({ error: 'admin_id 또는 user_id 필요' });
   }
 
   // PATCH: 관리자 답변
