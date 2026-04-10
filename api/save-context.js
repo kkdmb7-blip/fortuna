@@ -5,9 +5,28 @@ const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const SB_KEY = process.env.SB_SERVICE_KEY;
+  if (!SB_KEY) return res.status(500).json({ error: 'Server config error' });
+
+  // GET: 유저 맥락 조회
+  if (req.method === 'GET') {
+    const user_id = req.query.user_id;
+    if (!user_id) return res.status(400).json({ error: 'user_id required' });
+    try {
+      const resp = await fetch(`${SB_URL}/rest/v1/user_context?user_id=eq.${encodeURIComponent(user_id)}&limit=1`, {
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+      });
+      const data = await resp.json();
+      return res.status(200).json({ data: data[0] || null });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { user_id, people, situations, concerns, last_topics, emotion_pattern } = req.body;
