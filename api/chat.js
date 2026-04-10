@@ -433,7 +433,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: user_id === '99f9f77a-2f2a-4055-ab44-421d1c070341' ? 'claude-sonnet-4-6' : 'claude-haiku-4-5-20251001',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: (body.max_tokens && Number(body.max_tokens) > 0 && Number(body.max_tokens) <= 4000) ? Number(body.max_tokens) : 2000,
         system: enrichedSystem,
         messages: trimmedMessages,
