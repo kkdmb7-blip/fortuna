@@ -399,58 +399,31 @@ export default async function handler(req, res) {
     };
     const modeAppend = modeInstructions[mode] ? `\n\n${modeInstructions[mode]}` : '';
 
-    // ── mode별 DB 룰셋 조회 ──────────────────────────────────
-    const formatRules = (rules) => rules.slice(0, 50).map(r => {
-      let s = `[${r.category || '일반'} - ${r.concept || ''}]`;
-      if (r.condition) s += `\n조건: ${r.condition}`;
-      if (r.interpretation) s += `\n해석: ${r.interpretation}`;
-      if (r.exception) s += `\n예외: ${r.exception}`;
-      return s;
-    }).join('\n\n');
+    // ── 룰셋 조회 비활성화 (토큰 절감) ──────────────────────
+    const rulesBlock = '';
 
-    let rulesBlock = '';
-    if (mode === 'saju') {
-      try {
-        const r = await fetch(`${SB_URL}/rest/v1/bazi_rules?importance=gte.4&select=*&order=id.asc&limit=50`,
-          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-        const rules = await r.json();
-        if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【사주 해석 규칙】\n' + formatRules(rules);
-        }
-      } catch(e) { console.warn('[saju rules fetch fail]', e.message); }
-    } else if (mode === 'astro') {
-      try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=eq.${encodeURIComponent('서양점성술')}&importance=gte.4&select=*&order=id.asc&limit=50`,
-          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-        const rules = await r.json();
-        if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【점성술 해석 규칙】\n' + formatRules(rules);
-        }
-      } catch(e) { console.warn('[astro rules fetch fail]', e.message); }
-    } else if (mode === 'vedic') {
-      try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('Parashari,Jaimini')})&importance=gte.4&select=*&order=id.asc&limit=50`,
-          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-        const rules = await r.json();
-        if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【베딕점성술 해석 규칙】\n' + formatRules(rules);
-        }
-      } catch(e) { console.warn('[vedic rules fetch fail]', e.message); }
-    } else if (mode === 'ziwei') {
-      try {
-        const r = await fetch(`${SB_URL}/rest/v1/astrology_rules?tradition=in.(${encodeURIComponent('자미두수,자미두수(비전)')})&importance=gte.4&select=*&order=id.asc&limit=50`,
-          { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } });
-        const rules = await r.json();
-        if (Array.isArray(rules) && rules.length > 0) {
-          rulesBlock = '\n\n【자미두수 해석 규칙】\n' + formatRules(rules);
-        }
-      } catch(e) { console.warn('[ziwei rules fetch fail]', e.message); }
+    // ── 대화 히스토리 최근 10개 제한 + 요약 처리 ─────────────
+    const HISTORY_LIMIT = 10;
+    let trimmedMessages = messages;
+    if (Array.isArray(messages) && messages.length > HISTORY_LIMIT) {
+      const older = messages.slice(0, messages.length - HISTORY_LIMIT);
+      const recent = messages.slice(messages.length - HISTORY_LIMIT);
+      const summaryLines = older
+        .filter(m => m.role === 'user')
+        .map(m => typeof m.content === 'string' ? m.content.slice(0, 80) : '')
+        .filter(Boolean)
+        .join(' / ');
+      const summaryMsg = {
+        role: 'user',
+        content: `[이전 대화 요약 (${older.length}개)] ${summaryLines}`
+      };
+      const summaryAck = { role: 'assistant', content: '이전 대화 내용을 파악했습니다. 계속 진행하겠습니다.' };
+      trimmedMessages = [summaryMsg, summaryAck, ...recent];
     }
 
     const enrichedSystem = (system_prompt || '')
       + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
-      + modeAppend
-      + rulesBlock;
+      + modeAppend;
 
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -463,7 +436,7 @@ export default async function handler(req, res) {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: (body.max_tokens && Number(body.max_tokens) > 0 && Number(body.max_tokens) <= 4000) ? Number(body.max_tokens) : 2000,
         system: enrichedSystem,
-        messages: messages,
+        messages: trimmedMessages,
       })
     });
 
