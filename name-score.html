@@ -660,6 +660,15 @@ function showToast(msg, isError) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2500);
 }
+
+// URL 파라미터로 성/이름 자동 채우기 (피코랩 위젯에서 이동 시)
+(function() {
+  var p = new URLSearchParams(window.location.search);
+  var sur = p.get('sur'), nm = p.get('name');
+  if (sur) document.getElementById('inputSur').value = sur;
+  if (nm)  document.getElementById('inputName').value = nm;
+  if (sur && nm) { renderStrokeArea(); setTimeout(calcScore, 100); }
+})();
 </script>
 </body>
 </html>
