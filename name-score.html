@@ -36,12 +36,17 @@ body {
 @keyframes twinkle { 0%,100%{opacity:var(--o,0.3)}50%{opacity:calc(var(--o,0.3)*0.2)} }
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
-  padding: 16px 32px;
+  padding: 14px 20px;
   display: flex; align-items:center; justify-content:space-between;
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(212,175,55,0.07);
 }
-.nav-brand { font-size:15px; letter-spacing:0.25em; color:var(--gold); text-decoration:none; font-weight:300; }
+.nav-brand {
+  display:flex; align-items:center; gap:8px;
+  text-decoration:none; color:var(--gold);
+  font-size:14px; letter-spacing:0.2em; font-weight:300;
+}
+.nav-brand svg { width:28px; height:28px; flex-shrink:0; }
 .nav-back {
   font-size:11px; color:var(--text-dim); text-decoration:none;
   letter-spacing:0.1em; transition:color 0.2s; cursor:pointer;
@@ -242,8 +247,14 @@ nav {
 <div class="toast" id="toast"></div>
 
 <nav>
-  <a href="/" class="nav-brand">FORTUNA</a>
-  <button class="nav-back" onclick="history.back()">← 뒤로</button>
+  <a href="https://picolab.kr" class="nav-brand">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <circle cx="256" cy="240" r="210" fill="none" stroke="#c9a84c" stroke-width="2" opacity="0.3"/>
+      <polygon points="256,80 284,186 396,186 308,252 340,360 256,292 172,360 204,252 116,186 228,186" fill="#c9a84c"/>
+    </svg>
+    FORTUNA
+  </a>
+  <a href="https://picolab.kr" class="nav-back">← 피코랩</a>
 </nav>
 
 <div class="wrap">
