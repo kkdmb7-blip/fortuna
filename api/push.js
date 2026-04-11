@@ -89,8 +89,8 @@ export default async function handler(req, res) {
       const name = nameMap[row.user_id];
       const payload = JSON.stringify({
         title: '🔮 포르투나',
-        body: name ? `${name}님의 오늘 운세가 도착했어요 ✨` : '오늘의 운세가 도착했어요. 확인해보세요!',
-        url: '/memox/?daily=1'
+        body: name ? `${name}님, 오늘 하루 어떤 흐름인지 포르투나에게 물어보세요` : '오늘 하루 어떤 흐름인지 포르투나에게 물어보세요',
+        url: '/memox/'
       });
       try {
         const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
