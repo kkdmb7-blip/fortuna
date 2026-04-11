@@ -23,7 +23,8 @@
   .star{position:absolute;border-radius:50%;background:#fff;}
 
   nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
-  .nav-brand{font-size:15px;letter-spacing:0.25em;color:var(--gold);text-decoration:none;font-weight:300;}
+    .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
+  .nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
   .nav-back{font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;transition:color 0.2s;}
   .nav-back:hover{color:var(--gold);}
 
@@ -108,8 +109,8 @@
 <div class="toast" id="toast"></div>
 
 <nav>
-  <a href="/" class="nav-brand">FORTUNA</a>
-  <a href="/" class="nav-back">← 메인으로</a>
+  <a href="https://picolab.kr" class="nav-brand"><img src="https://raw.githubusercontent.com/kkdmb7-blip/pico/main/img/goddess.png" alt="FORTUNA">FORTUNA</a>
+  <a href="https://picolab.kr" class="nav-back">← 피코랩</a>
 </nav>
 
 <div class="wrap">

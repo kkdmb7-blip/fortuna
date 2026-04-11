@@ -12,7 +12,8 @@
   .nebula{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 20% 30%,rgba(45,31,78,0.5) 0%,transparent 70%),radial-gradient(ellipse 80% 50% at 50% 50%,rgba(10,6,18,0.9) 0%,transparent 100%);}
   .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
   nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.08);}
-  .nav-brand{font-size:16px;letter-spacing:0.2em;color:var(--gold);text-decoration:none;}
+    .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
+  .nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
   .nav-back{font-size:12px;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
   .nav-back:hover{color:var(--gold);}
   .wrap{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:120px 24px 80px;}
@@ -63,8 +64,8 @@
 <div class="toast" id="toast"></div>
 
 <nav>
-  <a href="/" class="nav-brand">FORTUNA</a>
-  <a href="/" class="nav-back">← 메인으로</a>
+  <a href="https://picolab.kr" class="nav-brand"><img src="https://raw.githubusercontent.com/kkdmb7-blip/pico/main/img/goddess.png" alt="FORTUNA">FORTUNA</a>
+  <a href="https://picolab.kr" class="nav-back">← 피코랩</a>
 </nav>
 
 <div class="wrap">
