@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이름 점수 확인 - 포르투나</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void: #0a0a1a;
+  --gold: #d4af37;
+  --gold-dim: rgba(212,175,55,0.15);
+  --gold-border: rgba(212,175,55,0.25);
+  --text: #ede6f8;
+  --text-dim: #9b8fb0;
+  --card: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.07);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'Noto Serif KR', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* 배경 */
+.bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
+.bg-nebula {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(60,20,100,0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 70% at 85% 80%, rgba(20,8,50,0.65) 0%, transparent 65%);
+}
+.star { position:absolute; border-radius:50%; background:#fff; animation:twinkle var(--d,3s) ease-in-out infinite; }
+@keyframes twinkle { 0%,100%{opacity:var(--o,0.3)}50%{opacity:calc(var(--o,0.3)*0.2)} }
+
+/* 네비 */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  padding: 16px 20px;
+  display: flex; align-items:center; gap:16px;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212,175,55,0.07);
+}
+.nav-back {
+  font-size:20px; color:var(--gold); cursor:pointer; line-height:1;
+  background:none; border:none; padding:4px 8px; border-radius:8px;
+  transition: background 0.2s;
+}
+.nav-back:hover { background: var(--gold-dim); }
+.nav-title { font-size:14px; letter-spacing:0.12em; color:var(--text); font-weight:400; }
+
+/* 래퍼 */
+.wrap {
+  position:relative; z-index:1;
+  max-width: 480px; margin:0 auto;
+  padding: 90px 20px 80px;
+}
+
+/* 섹션 헤더 */
+.section-label {
+  font-size:10px; letter-spacing:0.4em; color:var(--gold);
+  text-transform:uppercase; margin-bottom:20px; opacity:0.7;
+}
+
+/* 입력 모드 탭 */
+.mode-tabs {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:6px; margin-bottom:18px;
+}
+.mode-tab {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:10px; padding:10px 6px;
+  text-align:center; cursor:pointer;
+  font-family:'Noto Serif KR',serif; font-size:12px;
+  color:var(--text-dim); transition:all 0.22s; letter-spacing:0.04em;
+}
+.mode-tab:hover { border-color:var(--gold-border); color:var(--text); }
+.mode-tab.active {
+  background:var(--gold-dim); border-color:var(--gold); color:var(--gold);
+}
+
+/* 입력 카드 */
+.input-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:18px; padding:24px; margin-bottom:14px;
+  backdrop-filter:blur(10px);
+}
+
+.name-row { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:18px; }
+
+.field-label { font-size:11px; color:var(--text-dim); margin-bottom:8px; letter-spacing:0.08em; display:block; }
+.name-input {
+  width:100%; background:rgba(255,255,255,0.04);
+  border:1px solid var(--gold-border); border-radius:10px;
+  padding:12px 14px; color:var(--text);
+  font-family:'Noto Serif KR',serif; font-size:16px;
+  outline:none; transition:border-color 0.25s; -webkit-appearance:none;
+}
+.name-input:focus { border-color:var(--gold); background:rgba(212,175,55,0.04); }
+
+/* 한자 수동: 획수 스피너 */
+.stroke-grid { display:grid; gap:10px; }
+.stroke-row { display:flex; align-items:center; gap:10px; }
+.stroke-char { font-size:20px; color:var(--gold); min-width:28px; text-align:center; }
+.stroke-label { font-size:11px; color:var(--text-dim); flex:1; }
+.stroke-spin {
+  display:flex; align-items:center; gap:6px;
+}
+.spin-btn {
+  width:30px; height:30px; border-radius:8px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  color:var(--gold); font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s;
+}
+.spin-btn:hover { background:rgba(212,175,55,0.25); }
+.spin-val {
+  width:36px; text-align:center; font-size:15px;
+  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  border-radius:8px; padding:4px 0; color:var(--text);
+  font-family:'Noto Serif KR',serif;
+}
+
+/* 확인 버튼 */
+.btn-gold {
+  width:100%; padding:15px;
+  background:linear-gradient(135deg,#d4af37 0%,#f0d060 50%,#d4af37 100%);
+  background-size:200% 200%;
+  border:none; border-radius:12px;
+  color:#06020f; font-family:'Noto Serif KR',serif;
+  font-size:14px; font-weight:600; letter-spacing:0.1em;
+  cursor:pointer; transition:all 0.3s;
+  animation:shimmer 3s ease infinite;
+}
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(212,175,55,0.35); }
+.btn-gold:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+@keyframes shimmer { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
+
+/* 결과 영역 */
+.result-area { display:none; margin-top:24px; }
+.result-area.show { display:block; animation:fadeUp 0.5s ease; }
+
+/* 4격 그리드 */
+.score-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+.score-card {
+  background:var(--card); border-radius:16px; padding:18px 14px;
+  text-align:center; border:1px solid var(--border);
+  backdrop-filter:blur(10px);
+}
+.score-gye { font-size:10px; color:var(--text-dim); letter-spacing:0.15em; margin-bottom:6px; }
+.score-num { font-size:40px; font-weight:300; line-height:1; margin-bottom:8px; }
+.score-badge {
+  display:inline-block; font-size:11px; font-weight:600;
+  padding:3px 10px; border-radius:20px; margin-bottom:6px; letter-spacing:0.06em;
+}
+.score-name { font-size:11px; color:var(--text-dim); }
+
+/* 등급 색상 */
+.grade-대길 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
+.score-card.grade-대길 .score-num { color:#d4af37; }
+.grade-길 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
+.score-card.grade-길 .score-num { color:#4caf7a; }
+.grade-반길 { color:#ff9800; border:1px solid rgba(255,152,0,0.5); background:rgba(255,152,0,0.12); }
+.score-card.grade-반길 .score-num { color:#ff9800; }
+.grade-흉 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.1); }
+.score-card.grade-흉 .score-num { color:#f44336; }
+.grade-대흉 { color:#e91e63; border:1px solid rgba(233,30,99,0.4); background:rgba(233,30,99,0.1); }
+.score-card.grade-대흉 .score-num { color:#e91e63; }
+
+/* 총평 */
+.summary-card {
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  border-radius:14px; padding:18px 16px; margin-bottom:20px;
+  font-size:13px; line-height:1.9; color:var(--text);
+}
+
+/* AI 분석 버튼 */
+.btn-ai {
+  width:100%; padding:16px;
+  background:linear-gradient(135deg,#7b5ea7,#a07fd4);
+  border:none; border-radius:12px;
+  color:#fff; font-family:'Noto Serif KR',serif;
+  font-size:14px; font-weight:600; letter-spacing:0.06em;
+  cursor:pointer; transition:all 0.3s; margin-bottom:14px;
+}
+.btn-ai:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(123,94,167,0.4); }
+.btn-ai:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+/* AI 결과 */
+.ai-result {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:22px 18px;
+  font-size:14px; line-height:2; color:var(--text);
+  display:none;
+}
+.ai-result.show { display:block; animation:fadeUp 0.4s ease; }
+
+/* 로딩 */
+.ai-loading {
+  text-align:center; padding:32px 0; display:none;
+}
+.ai-loading.show { display:block; }
+.spin-orb {
+  width:40px; height:40px; border-radius:50%;
+  border:2px solid rgba(212,175,55,0.15); border-top-color:var(--gold);
+  animation:spin 1s linear infinite; margin:0 auto 12px;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.ai-loading-text { font-size:12px; color:var(--text-dim); letter-spacing:0.1em; }
+
+/* 토스트 */
+.toast {
+  position:fixed; top:20px; left:50%;
+  transform:translateX(-50%) translateY(-80px);
+  background:rgba(212,175,55,0.12); border:1px solid var(--gold);
+  border-radius:50px; padding:11px 24px;
+  color:var(--gold); font-size:12px; z-index:9999;
+  transition:transform 0.3s; backdrop-filter:blur(10px);
+  white-space:nowrap; letter-spacing:0.06em;
+}
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.error { border-color:#f44336; color:#f44336; background:rgba(244,67,54,0.1); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="bg-nebula"></div>
+  <div id="bgStars"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <button class="nav-back" onclick="history.back()">←</button>
+  <span class="nav-title">이름 점수 확인</span>
+</nav>
+
+<div class="wrap">
+
+  <!-- 입력 모드 탭 -->
+  <div class="mode-tabs">
+    <div class="mode-tab active" id="tabAuto" onclick="setMode('auto')">한글 자동</div>
+    <div class="mode-tab" id="tabManual" onclick="setMode('manual')">한자 수동</div>
+    <div class="mode-tab" id="tabMix" onclick="setMode('mix')">혼용</div>
+  </div>
+
+  <!-- 입력 카드 -->
+  <div class="input-card">
+    <div class="name-row">
+      <div>
+        <label class="field-label">성(姓)</label>
+        <input class="name-input" id="inputSur" type="text" maxlength="3" placeholder="김" oninput="onNameInput()">
+      </div>
+      <div>
+        <label class="field-label">이름</label>
+        <input class="name-input" id="inputName" type="text" maxlength="4" placeholder="민준" oninput="onNameInput()">
+      </div>
+    </div>
+
+    <!-- 한자 수동 스피너 (mode=manual or mix) -->
+    <div id="strokeArea" style="display:none; margin-bottom:18px;">
+      <div class="stroke-grid" id="strokeGrid"></div>
+    </div>
+
+    <button class="btn-gold" id="btnCalc" onclick="calcScore()">점수 확인</button>
+  </div>
+
+  <!-- 결과 -->
+  <div class="result-area" id="resultArea">
+
+    <div class="section-label">4격 수리 결과</div>
+
+    <div class="score-grid" id="scoreGrid"></div>
+
+    <div class="summary-card" id="summaryCard"></div>
+
+    <button class="btn-ai" id="btnAi" onclick="requestAI()">✨ AI 상세 분석 받기 (30 Orb)</button>
+
+    <div class="ai-loading" id="aiLoading">
+      <div class="spin-orb"></div>
+      <div class="ai-loading-text">AI가 이름의 기운을 읽고 있습니다...</div>
+    </div>
+
+    <div class="ai-result" id="aiResult"></div>
+
+  </div>
+</div>
+
+<script>
+// ── 배경 별 ──────────────────────────────────────────────────────
+(function() {
+  var c = document.getElementById('bgStars');
+  for (var i = 0; i < 60; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size = Math.random() * 1.8 + 0.4;
+    s.style.cssText = 'width:'+size+'px;height:'+size+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;--o:'+(Math.random()*0.25+0.05)+';--d:'+(Math.random()*4+2)+'s;';
+    c.appendChild(s);
+  }
+})();
+
+// ── 81수리 등급표 ────────────────────────────────────────────────
+var SURI_TABLE = {
+  1:"대길", 2:"흉",  3:"길",  4:"대흉",5:"길",
+  6:"길",  7:"길",  8:"길",  9:"흉",  10:"흉",
+  11:"길", 12:"흉", 13:"길", 14:"흉", 15:"대길",
+  16:"길", 17:"길", 18:"길", 19:"흉", 20:"흉",
+  21:"대길",22:"흉",23:"길", 24:"길", 25:"길",
+  26:"반길",27:"흉",28:"흉", 29:"길", 30:"반길",
+  31:"대길",32:"길",33:"길", 34:"대흉",35:"길",
+  36:"흉", 37:"길", 38:"반길",39:"길",40:"흉",
+  41:"대길",42:"흉",43:"흉", 44:"대흉",45:"길",
+  46:"흉", 47:"길", 48:"길", 49:"반길",50:"흉",
+  51:"반길",52:"길",53:"흉", 54:"흉", 55:"반길",
+  56:"흉", 57:"길", 58:"길", 59:"흉", 60:"대흉",
+  61:"길", 62:"흉", 63:"길", 64:"흉", 65:"길",
+  66:"흉", 67:"길", 68:"길", 69:"흉", 70:"흉",
+  71:"반길",72:"흉",73:"반길",74:"흉",75:"반길",
+  76:"반길",77:"반길",78:"반길",79:"흉",80:"흉",
+  81:"대길"
+};
+
+var SURI_NAME = {
+  1:"태극수",2:"분리수",3:"명예수",4:"사망수",5:"중앙수",
+  6:"안태수",7:"독립수",8:"발전수",9:"종국수",10:"허무수",
+  11:"신성수",12:"박약수",13:"지모수",14:"이산수",15:"통솔수",
+  16:"덕망수",17:"건창수",18:"발전수",19:"고난수",20:"허망수",
+  21:"두령수",22:"중절수",23:"공명수",24:"입신수",25:"안강수",
+  26:"영웅수",27:"중절수",28:"파란수",29:"성공수",30:"허무수",
+  31:"두령수",32:"요행수",33:"왕성수",34:"파멸수",35:"태평수",
+  36:"영웅수",37:"인덕수",38:"문학수",39:"장성수",40:"무상수",
+  41:"대공수",42:"고난수",43:"산란수",44:"마장수",45:"대지수",
+  46:"비운수",47:"출세수",48:"유덕수",49:"은둔수",50:"공허수",
+  51:"공성수",52:"중흥수",53:"내우수",54:"고난수",55:"불완전수",
+  56:"불만수",57:"칠복수",58:"후영수",59:"불안수",60:"암흑수",
+  61:"명철수",62:"쇠퇴수",63:"성공수",64:"상실수",65:"청운수",
+  66:"침체수",67:"천복수",68:"발전수",69:"불안수",70:"공허수",
+  71:"발전수",72:"상반수",73:"평길수",74:"부정수",75:"평화수",
+  76:"선후길수",77:"반길반흉",78:"선후길수",79:"불안수",80:"공허수",
+  81:"환원수"
+};
+
+// ── 한글 자모 획수 ────────────────────────────────────────────────
+var CHO = {
+  'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,
+  'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3
+};
+var JUNG = {
+  'ㅏ':2,'ㅑ':3,'ㅓ':2,'ㅕ':3,'ㅗ':2,'ㅛ':3,'ㅜ':2,'ㅠ':3,'ㅡ':1,'ㅣ':1,
+  'ㅐ':3,'ㅒ':4,'ㅔ':3,'ㅖ':4,
+  'ㅘ':4,'ㅙ':5,'ㅚ':3,'ㅝ':4,'ㅞ':5,'ㅟ':3,'ㅢ':2
+};
+var JONG = {
+  '':0,'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,
+  'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3,
+  'ㄳ':4,'ㄵ':5,'ㄶ':5,'ㄺ':7,'ㄻ':9,'ㄼ':9,'ㄽ':7,'ㄾ':8,'ㄿ':8,'ㅀ':8,'ㅄ':6
+};
+var JONG_LIST = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+var CHO_LIST  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+var JUNG_LIST = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+
+function charStrokes(ch) {
+  var code = ch.charCodeAt(0);
+  if (code < 0xAC00 || code > 0xD7A3) return 0;
+  var idx = code - 0xAC00;
+  var jong = JONG_LIST[idx % 28];
+  var jung = JUNG_LIST[Math.floor((idx % (28*21)) / 28)];
+  var cho  = CHO_LIST[Math.floor(idx / (28*21))];
+  return (CHO[cho] || 0) + (JUNG[jung] || 0) + (JONG[jong] || 0);
+}
+
+function wordStrokes(word) {
+  var total = 0;
+  for (var i = 0; i < word.length; i++) total += charStrokes(word[i]);
+  return total;
+}
+
+// ── 격 계산 ───────────────────────────────────────────────────────
+function normalize81(n) {
+  if (n <= 0) return 0;
+  if (n <= 81) return n;
+  var r = n % 81;
+  return r === 0 ? 81 : r;
+}
+
+function calcGyek(A, B, C) {
+  // A=성 획수합, B=이름첫자, C=이름둘째(없으면0)
+  var won  = normalize81(B + C);         // 원격
+  var hyun = normalize81(A + B);         // 형격
+  var yi   = normalize81(C > 0 ? A + C : A + B); // 이격
+  var jung = normalize81(A + B + C);     // 정격
+  return { won, hyun, yi, jung };
+}
+
+// ── 입력 모드 ─────────────────────────────────────────────────────
+var currentMode = 'auto';
+var manualStrokes = {}; // { 'sur0':8, 'name0':5, 'name1':4 }
+
+function setMode(m) {
+  currentMode = m;
+  ['auto','manual','mix'].forEach(function(id) {
+    document.getElementById('tab' + id.charAt(0).toUpperCase() + id.slice(1))
+      .classList.toggle('active', id === m);
+  });
+  renderStrokeArea();
+}
+
+function onNameInput() {
+  renderStrokeArea();
+}
+
+function renderStrokeArea() {
+  var surVal  = document.getElementById('inputSur').value.trim();
+  var nameVal = document.getElementById('inputName').value.trim();
+
+  if (currentMode === 'auto') {
+    document.getElementById('strokeArea').style.display = 'none';
+    return;
+  }
+
+  var showSur  = currentMode === 'manual';  // manual: 성도 수동
+  var showName = true;                       // manual/mix: 이름 수동
+
+  // 글자 분리
+  var surChars  = surVal  ? surVal.split('')  : ['성'];
+  var nameChars = nameVal ? nameVal.split('') : (nameVal.length === 0 ? ['이름'] : nameVal.split(''));
+
+  var grid = document.getElementById('strokeGrid');
+  grid.innerHTML = '';
+  document.getElementById('strokeArea').style.display = 'block';
+
+  function makeRow(key, label, charDisp, defaultVal) {
+    if (!(key in manualStrokes)) manualStrokes[key] = defaultVal;
+    var row = document.createElement('div');
+    row.className = 'stroke-row';
+    row.innerHTML =
+      '<span class="stroke-char">'+charDisp+'</span>' +
+      '<span class="stroke-label">'+label+'</span>' +
+      '<div class="stroke-spin">' +
+        '<button class="spin-btn" onclick="adjustStroke(\''+key+'\',-1)">−</button>' +
+        '<div class="spin-val" id="sv_'+key+'">'+manualStrokes[key]+'</div>' +
+        '<button class="spin-btn" onclick="adjustStroke(\''+key+'\',1)">+</button>' +
+      '</div>';
+    grid.appendChild(row);
+  }
+
+  if (showSur) {
+    surChars.forEach(function(ch, i) {
+      makeRow('sur'+i, '성 '+i+'번째 획수', ch || '？', charStrokes(ch) || 1);
+    });
+  }
+  if (showName) {
+    nameChars.forEach(function(ch, i) {
+      makeRow('name'+i, '이름 '+i+'번째 획수', ch || '？', charStrokes(ch) || 1);
+    });
+  }
+}
+
+function adjustStroke(key, delta) {
+  manualStrokes[key] = Math.max(1, (manualStrokes[key] || 1) + delta);
+  var el = document.getElementById('sv_'+key);
+  if (el) el.textContent = manualStrokes[key];
+}
+
+// ── 획수 가져오기 ─────────────────────────────────────────────────
+function getStrokesFor(prefix, chars) {
+  // auto: 자동 계산, manual/mix: 스피너 값
+  return chars.map(function(ch, i) {
+    var key = prefix + i;
+    if (currentMode === 'auto' || (currentMode === 'mix' && prefix === 'sur')) {
+      return charStrokes(ch) || 0;
+    }
+    return manualStrokes[key] || charStrokes(ch) || 1;
+  });
+}
+
+// ── 점수 계산 ─────────────────────────────────────────────────────
+var lastScores = null;
+
+function calcScore() {
+  var sur  = document.getElementById('inputSur').value.trim();
+  var name = document.getElementById('inputName').value.trim();
+  if (!sur || !name) { showToast('성과 이름을 모두 입력해주세요', true); return; }
+
+  var surChars  = sur.split('');
+  var nameChars = name.split('');
+
+  // 성 총 획수
+  var surStrokes  = getStrokesFor('sur', surChars);
+  var nameStrokes = getStrokesFor('name', nameChars);
+
+  var A = surStrokes.reduce(function(a,b){return a+b;}, 0);
+  var B = nameStrokes[0] || 0;
+  var C = nameStrokes[1] || 0;
+
+  var gyek = calcGyek(A, B, C);
+  lastScores = gyek;
+  lastName   = sur + name;
+
+  renderResult(sur + name, gyek);
+}
+
+var lastName = '';
+
+function renderResult(fullName, gyek) {
+  var cards = [
+    { key:'jung', label:'정격', val:gyek.jung, desc:'전체운' },
+    { key:'hyun', label:'형격', val:gyek.hyun, desc:'사회운' },
+    { key:'won',  label:'원격', val:gyek.won,  desc:'내면·재능' },
+    { key:'yi',   label:'이격', val:gyek.yi,   desc:'가정·말년' },
+  ];
+
+  var grid = document.getElementById('scoreGrid');
+  grid.innerHTML = '';
+  cards.forEach(function(c) {
+    var grade = SURI_TABLE[c.val] || '흉';
+    var sname = SURI_NAME[c.val] || '';
+    var el = document.createElement('div');
+    el.className = 'score-card grade-'+grade;
+    el.innerHTML =
+      '<div class="score-gye">'+c.label+' · '+c.desc+'</div>' +
+      '<div class="score-num">'+c.val+'</div>' +
+      '<span class="score-badge grade-'+grade+'">'+grade+'</span>' +
+      '<div class="score-name">'+sname+'</div>';
+    grid.appendChild(el);
+  });
+
+  // 총평
+  var grades = [gyek.jung, gyek.hyun, gyek.won, gyek.yi].map(function(v){ return SURI_TABLE[v]||'흉'; });
+  var goodCount = grades.filter(function(g){ return g==='대길'||g==='길'; }).length;
+  var badCount  = grades.filter(function(g){ return g==='대흉'||g==='흉'; }).length;
+  var jungGrade = SURI_TABLE[gyek.jung]||'흉';
+  var summary = '';
+  if (goodCount >= 3) summary = '이 이름은 전반적으로 좋은 수리 배합을 이루고 있습니다. 특히 정격('+gyek.jung+'/'+jungGrade+')이 이름 전체의 운을 이끕니다.';
+  else if (badCount >= 3) summary = '이 이름은 수리 배합에 주의가 필요합니다. 정격('+gyek.jung+'/'+jungGrade+')을 중심으로 전문 작명가와 상담하시길 권합니다.';
+  else summary = '이 이름은 길흉이 혼재합니다. 정격('+gyek.jung+'/'+jungGrade+')이 핵심 운의 방향을 결정합니다. AI 분석으로 상세 해석을 받아보세요.';
+
+  document.getElementById('summaryCard').textContent = summary;
+  document.getElementById('resultArea').classList.add('show');
+  document.getElementById('aiResult').classList.remove('show');
+  document.getElementById('aiResult').innerHTML = '';
+  document.getElementById('aiLoading').classList.remove('show');
+  document.getElementById('btnAi').style.display = '';
+}
+
+// ── AI 분석 ───────────────────────────────────────────────────────
+async function requestAI() {
+  // 카카오 로그인 체크
+  var kakaoUser = null;
+  try { kakaoUser = JSON.parse(localStorage.getItem('fortuna_kakao_user') || 'null'); } catch(e) {}
+  if (!kakaoUser || !kakaoUser.id) {
+    showToast('카카오 로그인 후 이용 가능합니다', true);
+    return;
+  }
+
+  var userId = kakaoUser.id;
+
+  // orb 잔액 확인 (worker에서 차감하므로 먼저 표시 확인용)
+  document.getElementById('btnAi').disabled = true;
+  document.getElementById('aiLoading').classList.add('show');
+  document.getElementById('aiResult').classList.remove('show');
+
+  try {
+    var res = await fetch('https://fortuna.kkdmb7.workers.dev/name-score-ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: lastName,
+        scores: { 원격: lastScores.won, 형격: lastScores.hyun, 이격: lastScores.yi, 정격: lastScores.jung },
+        user_id: userId
+      })
+    });
+
+    if (res.status === 402) {
+      var errData = await res.json();
+      document.getElementById('aiLoading').classList.remove('show');
+      document.getElementById('btnAi').disabled = false;
+      showToast('Orb가 부족합니다 (잔액: '+(errData.orb_balance||0)+')', true);
+      setTimeout(function() { window.location.href = '/payment.html'; }, 1500);
+      return;
+    }
+
+    if (!res.ok) {
+      throw new Error('서버 오류: ' + res.status);
+    }
+
+    // 스트리밍 읽기
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var fullText = '';
+
+    document.getElementById('aiLoading').classList.remove('show');
+    document.getElementById('aiResult').classList.add('show');
+    document.getElementById('btnAi').style.display = 'none';
+
+    while (true) {
+      var _ref = await reader.read();
+      var done = _ref.done, value = _ref.value;
+      if (done) break;
+
+      var chunk = decoder.decode(value, { stream: true });
+      var lines = chunk.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line.startsWith('data: ')) continue;
+        var data = line.slice(6);
+        if (data === '[DONE]') break;
+        try {
+          var parsed = JSON.parse(data);
+          var delta = parsed.delta && parsed.delta.type === 'text_delta' ? parsed.delta.text : '';
+          if (!delta && parsed.type === 'content_block_delta') {
+            delta = (parsed.delta && parsed.delta.text) || '';
+          }
+          if (delta) {
+            fullText += delta;
+            document.getElementById('aiResult').innerHTML = renderMarkdown(fullText);
+          }
+        } catch(e) {}
+      }
+    }
+
+    document.getElementById('aiResult').innerHTML = renderMarkdown(fullText);
+
+  } catch(e) {
+    document.getElementById('aiLoading').classList.remove('show');
+    document.getElementById('btnAi').disabled = false;
+    showToast('분석 중 오류가 발생했습니다', true);
+    console.error(e);
+  }
+}
+
+// ── renderMarkdown ────────────────────────────────────────────────
+function renderMarkdown(text) {
+  // # 헤더 → 볼드
+  var t = text.replace(/^#{1,3}\s+(.+)$/gm, '<strong style="color:#d4af37">$1</strong>');
+  // **볼드**
+  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#d4af37">$1</strong>');
+  // 빈줄 → 문단 간격
+  t = t.replace(/\n{2,}/g, '<br><br>');
+  // 단순 줄바꿈
+  t = t.replace(/\n/g, '<br>');
+  return t;
+}
+
+// ── 토스트 ────────────────────────────────────────────────────────
+var toastTimer = null;
+function showToast(msg, isError) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '');
+  void el.offsetWidth;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2500);
+}
+</script>
+</body>
+</html>
