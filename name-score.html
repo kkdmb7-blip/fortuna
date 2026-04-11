@@ -36,18 +36,18 @@ body {
 @keyframes twinkle { 0%,100%{opacity:var(--o,0.3)}50%{opacity:calc(var(--o,0.3)*0.2)} }
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
-  padding: 16px 20px;
-  display: flex; align-items:center; gap:16px;
+  padding: 16px 32px;
+  display: flex; align-items:center; justify-content:space-between;
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(212,175,55,0.07);
 }
+.nav-brand { font-size:15px; letter-spacing:0.25em; color:var(--gold); text-decoration:none; font-weight:300; }
 .nav-back {
-  font-size:20px; color:var(--gold); cursor:pointer; line-height:1;
-  background:none; border:none; padding:4px 8px; border-radius:8px;
-  transition: background 0.2s;
+  font-size:11px; color:var(--text-dim); text-decoration:none;
+  letter-spacing:0.1em; transition:color 0.2s; cursor:pointer;
+  background:none; border:none; font-family:inherit;
 }
-.nav-back:hover { background: var(--gold-dim); }
-.nav-title { font-size:14px; letter-spacing:0.12em; color:var(--text); font-weight:400; }
+.nav-back:hover { color:var(--gold); }
 .wrap {
   position:relative; z-index:1;
   max-width: 480px; margin:0 auto;
@@ -242,8 +242,8 @@ nav {
 <div class="toast" id="toast"></div>
 
 <nav>
-  <button class="nav-back" onclick="history.back()">←</button>
-  <span class="nav-title">이름 점수 확인</span>
+  <a href="/" class="nav-brand">FORTUNA</a>
+  <button class="nav-back" onclick="history.back()">← 뒤로</button>
 </nav>
 
 <div class="wrap">
