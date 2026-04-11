@@ -25,8 +25,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
-/* 배경 */
 .bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
 .bg-nebula {
   position:absolute; inset:0;
@@ -36,8 +34,6 @@ body {
 }
 .star { position:absolute; border-radius:50%; background:#fff; animation:twinkle var(--d,3s) ease-in-out infinite; }
 @keyframes twinkle { 0%,100%{opacity:var(--o,0.3)}50%{opacity:calc(var(--o,0.3)*0.2)} }
-
-/* 네비 */
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
   padding: 16px 20px;
@@ -52,21 +48,15 @@ nav {
 }
 .nav-back:hover { background: var(--gold-dim); }
 .nav-title { font-size:14px; letter-spacing:0.12em; color:var(--text); font-weight:400; }
-
-/* 래퍼 */
 .wrap {
   position:relative; z-index:1;
   max-width: 480px; margin:0 auto;
   padding: 90px 20px 80px;
 }
-
-/* 섹션 헤더 */
 .section-label {
   font-size:10px; letter-spacing:0.4em; color:var(--gold);
   text-transform:uppercase; margin-bottom:20px; opacity:0.7;
 }
-
-/* 입력 모드 탭 */
 .mode-tabs {
   display:grid; grid-template-columns:repeat(3,1fr);
   gap:6px; margin-bottom:18px;
@@ -79,19 +69,13 @@ nav {
   color:var(--text-dim); transition:all 0.22s; letter-spacing:0.04em;
 }
 .mode-tab:hover { border-color:var(--gold-border); color:var(--text); }
-.mode-tab.active {
-  background:var(--gold-dim); border-color:var(--gold); color:var(--gold);
-}
-
-/* 입력 카드 */
+.mode-tab.active { background:var(--gold-dim); border-color:var(--gold); color:var(--gold); }
 .input-card {
   background: var(--card); border:1px solid var(--border);
   border-radius:18px; padding:24px; margin-bottom:14px;
   backdrop-filter:blur(10px);
 }
-
 .name-row { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:18px; }
-
 .field-label { font-size:11px; color:var(--text-dim); margin-bottom:8px; letter-spacing:0.08em; display:block; }
 .name-input {
   width:100%; background:rgba(255,255,255,0.04);
@@ -101,13 +85,8 @@ nav {
   outline:none; transition:border-color 0.25s; -webkit-appearance:none;
 }
 .name-input:focus { border-color:var(--gold); background:rgba(212,175,55,0.04); }
-
-/* 한자 선택 버튼 */
 .hanja-section { margin-bottom:16px; }
-.hanja-section-label {
-  font-size:11px; color:var(--text-dim); letter-spacing:0.08em;
-  margin-bottom:8px; display:block;
-}
+.hanja-section-label { font-size:11px; color:var(--text-dim); letter-spacing:0.08em; margin-bottom:8px; display:block; }
 .hanja-btns { display:flex; flex-wrap:wrap; gap:7px; }
 .hanja-btn {
   background:rgba(255,255,255,0.04); border:1px solid var(--gold-border);
@@ -116,23 +95,17 @@ nav {
   transition:all 0.2s; min-width:60px;
 }
 .hanja-btn:hover { border-color:var(--gold); background:var(--gold-dim); }
-.hanja-btn.selected {
-  background:var(--gold); border-color:var(--gold); color:#06020f;
-}
+.hanja-btn.selected { background:var(--gold); border-color:var(--gold); color:#06020f; }
 .hanja-btn .hb-char { font-size:22px; display:block; line-height:1.2; }
 .hanja-btn .hb-info { font-size:10px; color:var(--text-dim); margin-top:3px; }
 .hanja-btn.selected .hb-info { color:rgba(6,2,15,0.6); }
 .hanja-manual-row { display:flex; align-items:center; gap:10px; margin-top:8px; }
 .hanja-manual-label { font-size:11px; color:var(--text-dim); flex:1; }
-
-/* 한자 수동: 획수 스피너 */
 .stroke-grid { display:grid; gap:10px; }
 .stroke-row { display:flex; align-items:center; gap:10px; }
 .stroke-char { font-size:20px; color:var(--gold); min-width:28px; text-align:center; }
 .stroke-label { font-size:11px; color:var(--text-dim); flex:1; }
-.stroke-spin {
-  display:flex; align-items:center; gap:6px;
-}
+.stroke-spin { display:flex; align-items:center; gap:6px; }
 .spin-btn {
   width:30px; height:30px; border-radius:8px;
   background:var(--gold-dim); border:1px solid var(--gold-border);
@@ -147,8 +120,6 @@ nav {
   border-radius:8px; padding:4px 0; color:var(--text);
   font-family:'Noto Serif KR',serif;
 }
-
-/* 확인 버튼 */
 .btn-gold {
   width:100%; padding:15px;
   background:linear-gradient(135deg,#d4af37 0%,#f0d060 50%,#d4af37 100%);
@@ -162,17 +133,12 @@ nav {
 .btn-gold:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(212,175,55,0.35); }
 .btn-gold:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
 @keyframes shimmer { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
-
-/* 결과 영역 */
 .result-area { display:none; margin-top:24px; }
 .result-area.show { display:block; animation:fadeUp 0.5s ease; }
-
-/* 4격 그리드 */
 .score-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
 .score-card {
   background:var(--card); border-radius:16px; padding:18px 14px;
-  text-align:center; border:1px solid var(--border);
-  backdrop-filter:blur(10px);
+  text-align:center; border:1px solid var(--border); backdrop-filter:blur(10px);
 }
 .score-gye { font-size:10px; color:var(--text-dim); letter-spacing:0.15em; margin-bottom:6px; }
 .score-num { font-size:40px; font-weight:300; line-height:1; margin-bottom:8px; }
@@ -181,8 +147,6 @@ nav {
   padding:3px 10px; border-radius:20px; margin-bottom:6px; letter-spacing:0.06em;
 }
 .score-name { font-size:11px; color:var(--text-dim); }
-
-/* 등급 색상 */
 .grade-대길 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
 .score-card.grade-대길 .score-num { color:#d4af37; }
 .grade-길 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
@@ -193,49 +157,67 @@ nav {
 .score-card.grade-흉 .score-num { color:#f44336; }
 .grade-대흉 { color:#e91e63; border:1px solid rgba(233,30,99,0.4); background:rgba(233,30,99,0.1); }
 .score-card.grade-대흉 .score-num { color:#e91e63; }
-
-/* 총평 */
+.analysis-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:20px; margin-bottom:16px;
+}
+.analysis-title {
+  font-size:10px; letter-spacing:0.3em; color:var(--gold);
+  margin-bottom:16px; opacity:0.7; text-transform:uppercase;
+}
+.ohaeng-flow {
+  display:flex; align-items:center; justify-content:center;
+  gap:8px; margin-bottom:14px; flex-wrap:wrap;
+}
+.oh-node { text-align:center; }
+.oh-char { font-size:18px; color:var(--text); display:block; margin-bottom:4px; }
+.oh-badge {
+  display:inline-block; font-size:11px; font-weight:600;
+  padding:3px 10px; border-radius:20px; letter-spacing:0.06em;
+}
+.oh-badge.木 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
+.oh-badge.火 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.1); }
+.oh-badge.土 { color:#ff9800; border:1px solid rgba(255,152,0,0.5); background:rgba(255,152,0,0.12); }
+.oh-badge.金 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
+.oh-badge.水 { color:#2196f3; border:1px solid rgba(33,150,243,0.5); background:rgba(33,150,243,0.12); }
+.oh-arrow { font-size:16px; color:var(--text-dim); line-height:1; margin-top:8px; }
+.oh-arrow.상생 { color:#4caf7a; }
+.oh-arrow.상극 { color:#f44336; }
+.oh-result {
+  text-align:center; font-size:12px; padding:8px 14px;
+  border-radius:10px; letter-spacing:0.04em; line-height:1.6;
+}
+.oh-result.all-good { background:rgba(76,175,122,0.1); color:#4caf7a; border:1px solid rgba(76,175,122,0.3); }
+.oh-result.has-bad { background:rgba(244,67,54,0.08); color:#f44336; border:1px solid rgba(244,67,54,0.25); }
+.oh-result.mixed { background:rgba(255,152,0,0.08); color:#ff9800; border:1px solid rgba(255,152,0,0.25); }
+.eumyang-row { display:flex; gap:8px; justify-content:center; margin-bottom:14px; }
+.ey-node { text-align:center; flex:1; }
+.ey-char { font-size:16px; color:var(--text); display:block; margin-bottom:4px; }
+.ey-badge {
+  display:inline-block; font-size:11px; font-weight:600;
+  padding:4px 6px; border-radius:20px; letter-spacing:0.04em; width:100%;
+}
+.ey-badge.양 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.08); }
+.ey-badge.음 { color:#2196f3; border:1px solid rgba(33,150,243,0.5); background:rgba(33,150,243,0.1); }
+.jawon-row { display:flex; gap:8px; justify-content:center; margin-bottom:8px; }
+.jw-node { text-align:center; flex:1; }
+.jw-hanja { font-size:24px; color:var(--gold); display:block; margin-bottom:6px; }
 .summary-card {
   background:var(--gold-dim); border:1px solid var(--gold-border);
   border-radius:14px; padding:18px 16px; margin-bottom:20px;
   font-size:13px; line-height:1.9; color:var(--text);
 }
-
-/* AI 분석 버튼 */
-.btn-ai {
-  width:100%; padding:16px;
-  background:linear-gradient(135deg,#7b5ea7,#a07fd4);
-  border:none; border-radius:12px;
-  color:#fff; font-family:'Noto Serif KR',serif;
-  font-size:14px; font-weight:600; letter-spacing:0.06em;
-  cursor:pointer; transition:all 0.3s; margin-bottom:14px;
-}
-.btn-ai:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(123,94,167,0.4); }
-.btn-ai:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
-
-/* AI 결과 */
-.ai-result {
+.interpret-card {
   background:var(--card); border:1px solid var(--border);
-  border-radius:16px; padding:22px 18px;
-  font-size:14px; line-height:2; color:var(--text);
-  display:none;
+  border-radius:16px; padding:22px 18px; margin-bottom:16px;
+  font-size:13px; line-height:2; color:var(--text);
 }
-.ai-result.show { display:block; animation:fadeUp 0.4s ease; }
-
-/* 로딩 */
-.ai-loading {
-  text-align:center; padding:32px 0; display:none;
+.interpret-section { margin-bottom:14px; }
+.interpret-section:last-child { margin-bottom:0; }
+.interpret-label {
+  font-size:10px; letter-spacing:0.25em; color:var(--gold);
+  margin-bottom:6px; display:block; opacity:0.8;
 }
-.ai-loading.show { display:block; }
-.spin-orb {
-  width:40px; height:40px; border-radius:50%;
-  border:2px solid rgba(212,175,55,0.15); border-top-color:var(--gold);
-  animation:spin 1s linear infinite; margin:0 auto 12px;
-}
-@keyframes spin { to{transform:rotate(360deg)} }
-.ai-loading-text { font-size:12px; color:var(--text-dim); letter-spacing:0.1em; }
-
-/* 토스트 */
 .toast {
   position:fixed; top:20px; left:50%;
   transform:translateX(-50%) translateY(-80px);
@@ -247,7 +229,6 @@ nav {
 }
 .toast.show { transform:translateX(-50%) translateY(0); }
 .toast.error { border-color:#f44336; color:#f44336; background:rgba(244,67,54,0.1); }
-
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
@@ -257,7 +238,6 @@ nav {
   <div class="bg-nebula"></div>
   <div id="bgStars"></div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <nav>
@@ -266,15 +246,12 @@ nav {
 </nav>
 
 <div class="wrap">
-
-  <!-- 입력 모드 탭 -->
   <div class="mode-tabs">
     <div class="mode-tab active" id="tabAuto" onclick="setMode('auto')">한글 자동</div>
     <div class="mode-tab" id="tabSelect" onclick="setMode('select')">한자 선택</div>
     <div class="mode-tab" id="tabManual" onclick="setMode('manual')">한자 수동</div>
   </div>
 
-  <!-- 입력 카드 -->
   <div class="input-card">
     <div class="name-row">
       <div>
@@ -286,43 +263,42 @@ nav {
         <input class="name-input" id="inputName" type="text" maxlength="4" placeholder="민준" oninput="onNameInput()">
       </div>
     </div>
-
-    <!-- 한자 선택 (mode=select) -->
     <div id="hanjaArea" style="display:none; margin-bottom:18px;">
       <div id="hanjaGrid"></div>
     </div>
-
-    <!-- 한자 수동 스피너 (mode=manual) -->
     <div id="strokeArea" style="display:none; margin-bottom:18px;">
       <div class="stroke-grid" id="strokeGrid"></div>
     </div>
-
     <button class="btn-gold" id="btnCalc" onclick="calcScore()">점수 확인</button>
   </div>
 
-  <!-- 결과 -->
   <div class="result-area" id="resultArea">
-
     <div class="section-label">4격 수리 결과</div>
-
     <div class="score-grid" id="scoreGrid"></div>
-
     <div class="summary-card" id="summaryCard"></div>
 
-    <button class="btn-ai" id="btnAi" onclick="requestAI()">✨ AI 상세 분석 받기 (30 Orb)</button>
-
-    <div class="ai-loading" id="aiLoading">
-      <div class="spin-orb"></div>
-      <div class="ai-loading-text">AI가 이름의 기운을 읽고 있습니다...</div>
+    <div class="analysis-card">
+      <div class="analysis-title">음오행 · 발음 흐름</div>
+      <div class="ohaeng-flow" id="ohaengFlow"></div>
+      <div class="oh-result" id="ohaengResult"></div>
     </div>
 
-    <div class="ai-result" id="aiResult"></div>
+    <div class="analysis-card">
+      <div class="analysis-title">음양 배합</div>
+      <div class="eumyang-row" id="eumyangRow"></div>
+      <div class="oh-result" id="eumyangResult"></div>
+    </div>
 
+    <div class="analysis-card" id="jawonCard" style="display:none;">
+      <div class="analysis-title">자원오행 · 한자 기운</div>
+      <div class="jawon-row" id="jawonRow"></div>
+    </div>
+
+    <div class="interpret-card" id="interpretCard"></div>
   </div>
 </div>
 
 <script>
-// ── 배경 별 ──────────────────────────────────────────────────────
 (function() {
   var c = document.getElementById('bgStars');
   for (var i = 0; i < 60; i++) {
@@ -334,60 +310,37 @@ nav {
   }
 })();
 
-// ── 81수리 등급표 ────────────────────────────────────────────────
 var SURI_TABLE = {
-  1:"대길", 2:"흉",  3:"길",  4:"대흉",5:"길",
-  6:"길",  7:"길",  8:"길",  9:"흉",  10:"흉",
-  11:"길", 12:"흉", 13:"길", 14:"흉", 15:"대길",
-  16:"길", 17:"길", 18:"길", 19:"흉", 20:"흉",
-  21:"대길",22:"흉",23:"길", 24:"길", 25:"길",
-  26:"반길",27:"흉",28:"흉", 29:"길", 30:"반길",
-  31:"대길",32:"길",33:"길", 34:"대흉",35:"길",
-  36:"흉", 37:"길", 38:"반길",39:"길",40:"흉",
-  41:"대길",42:"흉",43:"흉", 44:"대흉",45:"길",
-  46:"흉", 47:"길", 48:"길", 49:"반길",50:"흉",
-  51:"반길",52:"길",53:"흉", 54:"흉", 55:"반길",
-  56:"흉", 57:"길", 58:"길", 59:"흉", 60:"대흉",
-  61:"길", 62:"흉", 63:"길", 64:"흉", 65:"길",
-  66:"흉", 67:"길", 68:"길", 69:"흉", 70:"흉",
-  71:"반길",72:"흉",73:"반길",74:"흉",75:"반길",
-  76:"반길",77:"반길",78:"반길",79:"흉",80:"흉",
+  1:"대길",2:"흉",3:"길",4:"대흉",5:"길",6:"길",7:"길",8:"길",9:"흉",10:"흉",
+  11:"길",12:"흉",13:"길",14:"흉",15:"대길",16:"길",17:"길",18:"길",19:"흉",20:"흉",
+  21:"대길",22:"흉",23:"길",24:"길",25:"길",26:"반길",27:"흉",28:"흉",29:"길",30:"반길",
+  31:"대길",32:"길",33:"길",34:"대흉",35:"길",36:"흉",37:"길",38:"반길",39:"길",40:"흉",
+  41:"대길",42:"흉",43:"흉",44:"대흉",45:"길",46:"흉",47:"길",48:"길",49:"반길",50:"흉",
+  51:"반길",52:"길",53:"흉",54:"흉",55:"반길",56:"흉",57:"길",58:"길",59:"흉",60:"대흉",
+  61:"길",62:"흉",63:"길",64:"흉",65:"길",66:"흉",67:"길",68:"길",69:"흉",70:"흉",
+  71:"반길",72:"흉",73:"반길",74:"흉",75:"반길",76:"반길",77:"반길",78:"반길",79:"흉",80:"흉",
   81:"대길"
 };
 
 var SURI_NAME = {
-  1:"태극수",2:"분리수",3:"명예수",4:"사망수",5:"중앙수",
-  6:"안태수",7:"독립수",8:"발전수",9:"종국수",10:"허무수",
-  11:"신성수",12:"박약수",13:"지모수",14:"이산수",15:"통솔수",
-  16:"덕망수",17:"건창수",18:"발전수",19:"고난수",20:"허망수",
-  21:"두령수",22:"중절수",23:"공명수",24:"입신수",25:"안강수",
-  26:"영웅수",27:"중절수",28:"파란수",29:"성공수",30:"허무수",
-  31:"두령수",32:"요행수",33:"왕성수",34:"파멸수",35:"태평수",
-  36:"영웅수",37:"인덕수",38:"문학수",39:"장성수",40:"무상수",
-  41:"대공수",42:"고난수",43:"산란수",44:"마장수",45:"대지수",
-  46:"비운수",47:"출세수",48:"유덕수",49:"은둔수",50:"공허수",
-  51:"공성수",52:"중흥수",53:"내우수",54:"고난수",55:"불완전수",
-  56:"불만수",57:"칠복수",58:"후영수",59:"불안수",60:"암흑수",
-  61:"명철수",62:"쇠퇴수",63:"성공수",64:"상실수",65:"청운수",
-  66:"침체수",67:"천복수",68:"발전수",69:"불안수",70:"공허수",
-  71:"발전수",72:"상반수",73:"평길수",74:"부정수",75:"평화수",
-  76:"선후길수",77:"반길반흉",78:"선후길수",79:"불안수",80:"공허수",
+  1:"태극수",2:"분리수",3:"명예수",4:"사망수",5:"중앙수",6:"안태수",7:"독립수",8:"발전수",9:"종국수",10:"허무수",
+  11:"신성수",12:"박약수",13:"지모수",14:"이산수",15:"통솔수",16:"덕망수",17:"건창수",18:"발전수",19:"고난수",20:"허망수",
+  21:"두령수",22:"중절수",23:"공명수",24:"입신수",25:"안강수",26:"영웅수",27:"중절수",28:"파란수",29:"성공수",30:"허무수",
+  31:"두령수",32:"요행수",33:"왕성수",34:"파멸수",35:"태평수",36:"영웅수",37:"인덕수",38:"문학수",39:"장성수",40:"무상수",
+  41:"대공수",42:"고난수",43:"산란수",44:"마장수",45:"대지수",46:"비운수",47:"출세수",48:"유덕수",49:"은둔수",50:"공허수",
+  51:"공성수",52:"중흥수",53:"내우수",54:"고난수",55:"불완전수",56:"불만수",57:"칠복수",58:"후영수",59:"불안수",60:"암흑수",
+  61:"명철수",62:"쇠퇴수",63:"성공수",64:"상실수",65:"청운수",66:"침체수",67:"천복수",68:"발전수",69:"불안수",70:"공허수",
+  71:"발전수",72:"상반수",73:"평길수",74:"부정수",75:"평화수",76:"선후길수",77:"반길반흉",78:"선후길수",79:"불안수",80:"공허수",
   81:"환원수"
 };
 
-// ── 한글 자모 획수 ────────────────────────────────────────────────
-var CHO = {
-  'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,
-  'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3
-};
+var CHO = {'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3};
 var JUNG = {
   'ㅏ':2,'ㅑ':3,'ㅓ':2,'ㅕ':3,'ㅗ':2,'ㅛ':3,'ㅜ':2,'ㅠ':3,'ㅡ':1,'ㅣ':1,
-  'ㅐ':3,'ㅒ':4,'ㅔ':3,'ㅖ':4,
-  'ㅘ':4,'ㅙ':5,'ㅚ':3,'ㅝ':4,'ㅞ':5,'ㅟ':3,'ㅢ':2
+  'ㅐ':3,'ㅒ':4,'ㅔ':3,'ㅖ':4,'ㅘ':4,'ㅙ':5,'ㅚ':3,'ㅝ':4,'ㅞ':5,'ㅟ':3,'ㅢ':2
 };
 var JONG = {
-  '':0,'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,
-  'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3,
+  '':0,'ㄱ':2,'ㄴ':2,'ㄷ':3,'ㄹ':5,'ㅁ':4,'ㅂ':4,'ㅅ':2,'ㅇ':1,'ㅈ':3,'ㅊ':4,'ㅋ':3,'ㅌ':4,'ㅍ':4,'ㅎ':3,
   'ㄳ':4,'ㄵ':5,'ㄶ':5,'ㄺ':7,'ㄻ':9,'ㄼ':9,'ㄽ':7,'ㄾ':8,'ㄿ':8,'ㅀ':8,'ㅄ':6
 };
 var JONG_LIST = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
@@ -401,16 +354,9 @@ function charStrokes(ch) {
   var jong = JONG_LIST[idx % 28];
   var jung = JUNG_LIST[Math.floor((idx % (28*21)) / 28)];
   var cho  = CHO_LIST[Math.floor(idx / (28*21))];
-  return (CHO[cho] || 0) + (JUNG[jung] || 0) + (JONG[jong] || 0);
+  return (CHO[cho]||0) + (JUNG[jung]||0) + (JONG[jong]||0);
 }
 
-function wordStrokes(word) {
-  var total = 0;
-  for (var i = 0; i < word.length; i++) total += charStrokes(word[i]);
-  return total;
-}
-
-// ── 격 계산 ───────────────────────────────────────────────────────
 function normalize81(n) {
   if (n <= 0) return 0;
   if (n <= 81) return n;
@@ -419,143 +365,182 @@ function normalize81(n) {
 }
 
 function calcGyek(A, B, C) {
-  // A=성 획수합, B=이름첫자, C=이름둘째(없으면0)
-  var won  = normalize81(B + C);         // 원격
-  var hyun = normalize81(A + B);         // 형격
-  var yi   = normalize81(C > 0 ? A + C : A + B); // 이격
-  var jung = normalize81(A + B + C);     // 정격
-  return { won, hyun, yi, jung };
+  return {
+    won:  normalize81(B + C),
+    hyun: normalize81(A + B),
+    yi:   normalize81(C > 0 ? A + C : A + B),
+    jung: normalize81(A + B + C)
+  };
 }
 
-// ── 한자 데이터 ───────────────────────────────────────────────────
+// ── 음오행 ───────────────────────────────────────────────────────
+var EUM_OHAENG = {
+  'ㄱ':'木','ㄲ':'木','ㅋ':'木',
+  'ㄴ':'火','ㄷ':'火','ㄸ':'火','ㄹ':'火','ㅌ':'火',
+  'ㅇ':'土','ㅎ':'土',
+  'ㅅ':'金','ㅆ':'金','ㅈ':'金','ㅉ':'金','ㅊ':'金',
+  'ㅁ':'水','ㅂ':'水','ㅃ':'水','ㅍ':'水'
+};
+var OHAENG_SANGSAENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'};
+var OHAENG_SANGGEUK  = {'木':'土','火':'金','土':'水','金':'木','水':'火'};
+
+function getChosung(ch) {
+  var code = ch.charCodeAt(0);
+  if (code < 0xAC00 || code > 0xD7A3) return null;
+  return CHO_LIST[Math.floor((code - 0xAC00) / (28*21))];
+}
+function getEumOhaeng(ch) {
+  var cho = getChosung(ch);
+  return cho ? (EUM_OHAENG[cho] || null) : null;
+}
+function checkRelation(o1, o2) {
+  if (!o1 || !o2) return '중화';
+  if (o1 === o2) return '비화';
+  if (OHAENG_SANGSAENG[o1] === o2) return '상생';
+  if (OHAENG_SANGGEUK[o1] === o2) return '상극';
+  return '중화';
+}
+function getEumyang(strokes) { return strokes % 2 === 1 ? '양' : '음'; }
+
+// ── 성씨 한자 데이터 [한자, 획수, 오행] ──────────────────────────
 var SURNAME_HANJA = {
-  "가":[["賈",13]],"강":[["姜",9],["康",11],["江",6],["剛",10]],"경":[["慶",15]],
-  "고":[["高",10]],"공":[["孔",4]],"곽":[["郭",10]],"구":[["具",8],["丘",5]],
-  "권":[["權",22]],"금":[["琴",13]],"기":[["奇",8]],"길":[["吉",6]],"김":[["金",8]],
-  "나":[["羅",20]],"남":[["南",9]],"노":[["盧",16],["魯",15]],"도":[["都",12]],
-  "두":[["杜",7]],"류":[["柳",9],["劉",15]],"마":[["馬",10]],"명":[["明",8]],
-  "모":[["牟",6]],"문":[["文",4]],"민":[["閔",12]],"박":[["朴",6]],"반":[["潘",15]],
-  "방":[["方",4],["房",8]],"배":[["裴",14]],"백":[["白",5]],"변":[["卞",5]],
-  "서":[["徐",10]],"석":[["石",5]],"선":[["宣",9]],"설":[["薛",17]],
-  "성":[["成",7],["盛",12]],"소":[["蘇",22],["邵",12]],"손":[["孫",10]],
-  "송":[["宋",7]],"신":[["申",5],["辛",7]],"심":[["沈",7]],"안":[["安",6]],
-  "양":[["梁",11],["楊",13]],"어":[["魚",11]],"엄":[["嚴",20]],
-  "여":[["呂",7],["余",7]],"염":[["廉",13]],"오":[["吳",7]],"왕":[["王",4]],
-  "우":[["禹",9]],"원":[["元",4],["袁",10]],"위":[["魏",18]],
-  "유":[["柳",9],["劉",15],["俞",9]],"윤":[["尹",4]],"은":[["殷",10]],
-  "이":[["李",7]],"임":[["林",8],["任",6]],"장":[["張",11],["章",11],["蔣",15]],
-  "전":[["全",6],["田",5],["錢",16]],"정":[["鄭",15],["丁",2],["程",13]],
-  "조":[["趙",14],["曹",11]],"주":[["朱",6],["周",8]],"지":[["池",6]],
-  "진":[["陳",16],["秦",10]],"차":[["車",7]],"채":[["蔡",17]],"천":[["千",3]],
-  "최":[["崔",11]],"추":[["秋",9]],"한":[["韓",17],["漢",14]],"함":[["咸",9]],
-  "허":[["許",11]],"현":[["玄",5]],"홍":[["洪",10]],"황":[["黃",12]]
+  "가":[["賈",13,"土"]],"강":[["姜",9,"土"],["康",11,"土"],["江",6,"水"],["剛",10,"金"]],
+  "경":[["慶",15,"火"]],"고":[["高",10,"土"]],"공":[["孔",4,"水"]],"곽":[["郭",10,"土"]],
+  "구":[["具",8,"金"],["丘",5,"土"]],"권":[["權",22,"木"]],"금":[["琴",13,"金"]],
+  "기":[["奇",8,"土"]],"길":[["吉",6,"土"]],"김":[["金",8,"金"]],
+  "나":[["羅",20,"木"]],"남":[["南",9,"火"]],"노":[["盧",16,"火"],["魯",15,"水"]],
+  "도":[["都",12,"土"]],"두":[["杜",7,"木"]],"류":[["柳",9,"木"],["劉",15,"金"]],
+  "마":[["馬",10,"火"]],"명":[["明",8,"火"]],"모":[["牟",6,"水"]],"문":[["文",4,"木"]],
+  "민":[["閔",12,"木"]],"박":[["朴",6,"木"]],"반":[["潘",15,"水"]],
+  "방":[["方",4,"土"],["房",8,"土"]],"배":[["裴",14,"土"]],"백":[["白",5,"金"]],
+  "변":[["卞",5,"水"]],"서":[["徐",10,"土"]],"석":[["石",5,"土"]],"선":[["宣",9,"土"]],
+  "설":[["薛",17,"木"]],"성":[["成",7,"土"],["盛",12,"火"]],"소":[["蘇",22,"木"],["邵",12,"土"]],
+  "손":[["孫",10,"木"]],"송":[["宋",7,"木"]],"신":[["申",5,"土"],["辛",7,"金"]],
+  "심":[["沈",7,"水"]],"안":[["安",6,"土"]],"양":[["梁",11,"木"],["楊",13,"木"]],
+  "어":[["魚",11,"水"]],"엄":[["嚴",20,"土"]],"여":[["呂",7,"土"],["余",7,"土"]],
+  "염":[["廉",13,"水"]],"오":[["吳",7,"土"]],"왕":[["王",4,"土"]],"우":[["禹",9,"土"]],
+  "원":[["元",4,"土"],["袁",10,"木"]],"위":[["魏",18,"土"]],
+  "유":[["柳",9,"木"],["劉",15,"金"],["俞",9,"土"]],"윤":[["尹",4,"土"]],"은":[["殷",10,"金"]],
+  "이":[["李",7,"木"]],"임":[["林",8,"木"],["任",6,"土"]],
+  "장":[["張",11,"木"],["章",11,"木"],["蔣",15,"木"]],
+  "전":[["全",6,"土"],["田",5,"土"],["錢",16,"金"]],
+  "정":[["鄭",15,"土"],["丁",2,"火"],["程",13,"土"]],
+  "조":[["趙",14,"火"],["曹",11,"木"]],"주":[["朱",6,"木"],["周",8,"土"]],
+  "지":[["池",6,"水"]],"진":[["陳",16,"土"],["秦",10,"木"]],"차":[["車",7,"土"]],
+  "채":[["蔡",17,"木"]],"천":[["千",3,"木"]],"최":[["崔",11,"土"]],"추":[["秋",9,"金"]],
+  "한":[["韓",17,"木"],["漢",14,"水"]],"함":[["咸",9,"土"]],"허":[["許",11,"金"]],
+  "현":[["玄",5,"水"]],"홍":[["洪",10,"水"]],"황":[["黃",12,"土"]]
 };
 
+// ── 이름 한자 데이터 [한자, 획수, 의미, 오행] ────────────────────
 var NAME_HANJA = {
-  "가":[["佳",8,"아름답다"],["嘉",14,"아름답다"],["珂",9,"옥"],["可",5,"옳다"]],
-  "강":[["剛",10,"굳세다"],["康",11,"편안하다"],["江",6,"강"],["綱",14,"벼리"],["强",12,"강하다"]],
-  "건":[["健",11,"건강하다"],["建",9,"세우다"],["乾",11,"하늘"]],
-  "경":[["慶",15,"경사"],["敬",13,"공경하다"],["景",12,"경치"],["璟",17,"옥빛"],["炅",9,"빛나다"],["暻",13,"빛나다"],["京",8,"서울"],["耕",10,"밭갈다"]],
-  "계":[["桂",10,"계수나무"],["溪",13,"시냇물"],["啓",11,"열다"]],
-  "관":[["寬",15,"너그럽다"],["管",14,"대롱"],["冠",9,"갓"]],
-  "광":[["光",6,"빛"],["廣",15,"넓다"]],
-  "국":[["國",11,"나라"],["菊",11,"국화"]],
-  "군":[["君",7,"임금"],["軍",9,"군사"]],
-  "규":[["奎",9,"별이름"],["圭",6,"홀"],["揆",13,"헤아리다"],["珪",10,"옥홀"]],
-  "근":[["根",10,"뿌리"],["謹",18,"삼가다"],["勤",13,"부지런하다"]],
-  "기":[["基",11,"터"],["祺",12,"복"],["琦",12,"옥"],["麒",19,"기린"],["起",10,"일어나다"]],
-  "길":[["吉",6,"길하다"],["佶",8,"건장하다"]],
-  "남":[["南",9,"남쪽"],["楠",13,"녹나무"]],
-  "단":[["丹",4,"붉다"],["端",14,"단정하다"]],
-  "대":[["大",3,"크다"],["戴",18,"받들다"]],
-  "덕":[["德",15,"덕"]],
-  "도":[["道",13,"길"],["導",16,"인도하다"],["燾",18,"덮다"]],
-  "동":[["東",8,"동쪽"],["棟",12,"마루대"],["童",12,"아이"],["銅",14,"구리"]],
-  "두":[["斗",4,"말"],["杜",7,"막다"]],
-  "란":[["蘭",23,"난초"]],"련":[["蓮",16,"연꽃"],["連",11,"잇다"]],
-  "령":[["令",5,"명령"],["嶺",17,"고개"]],"록":[["祿",13,"복록"]],
-  "룡":[["龍",16,"용"],["鏞",23,"큰종"]],
-  "만":[["萬",13,"일만"],["滿",14,"가득하다"],["曼",11,"아름답다"]],
-  "명":[["明",8,"밝다"],["命",8,"목숨"],["銘",14,"새기다"]],
-  "무":[["武",8,"무예"],["茂",8,"무성하다"]],
-  "문":[["文",4,"글"],["汶",7,"물이름"],["紋",10,"무늬"]],
-  "민":[["敏",11,"민첩하다"],["珉",10,"옥돌"],["旻",8,"하늘"],["民",5,"백성"],["玟",8,"옥"],["旼",8,"온화하다"]],
-  "박":[["博",12,"넓다"]],
-  "방":[["芳",7,"꽃답다"],["邦",7,"나라"],["昉",8,"새벽"]],
-  "범":[["範",15,"법"],["梵",11,"범어"]],
-  "보":[["寶",20,"보배"],["普",12,"넓다"],["甫",7,"클"],["輔",14,"돕다"]],
-  "봉":[["鳳",14,"봉황"],["奉",8,"받들다"],["峰",10,"봉우리"]],
-  "빈":[["彬",11,"빛나다"],["斌",12,"빛나다"],["賓",14,"손님"]],
-  "상":[["尙",8,"오히려"],["相",9,"서로"],["祥",11,"상서롭다"],["翔",12,"날다"],["湘",12,"강이름"]],
-  "서":[["瑞",14,"상서롭다"],["緖",14,"실마리"],["書",10,"글"],["曙",17,"새벽"]],
-  "석":[["錫",16,"주석"],["碩",14,"크다"],["石",5,"돌"]],
-  "선":[["善",12,"착하다"],["宣",9,"베풀다"],["仙",5,"신선"],["璿",19,"옥"],["瑄",13,"옥"]],
-  "성":[["成",7,"이루다"],["聖",13,"성스럽다"],["星",9,"별"],["誠",14,"정성"],["城",10,"성"]],
-  "세":[["世",5,"세상"],["歲",13,"해"]],
-  "수":[["秀",7,"빼어나다"],["修",10,"닦다"],["壽",14,"목숨"],["洙",9,"물이름"],["樹",16,"나무"],["粹",15,"순수하다"],["琇",11,"옥"]],
-  "숙":[["淑",11,"맑다"],["肅",13,"엄숙하다"]],
-  "순":[["順",12,"순하다"],["淳",11,"순박하다"],["舜",13,"순임금"],["珣",10,"옥"]],
-  "승":[["承",8,"받들다"],["昇",8,"오르다"],["勝",12,"이기다"]],
-  "시":[["始",8,"시작하다"],["時",10,"때"]],
-  "신":[["信",9,"믿다"],["晨",11,"새벽"],["辛",7,"맵다"]],
-  "아":[["雅",13,"우아하다"]],
-  "안":[["安",6,"편안하다"],["晏",10,"맑다"]],
-  "양":[["陽",12,"볕"],["楊",13,"버드나무"],["洋",9,"바다"],["亮",9,"밝다"],["良",7,"착하다"]],
-  "언":[["彦",9,"선비"]],
-  "연":[["妍",8,"예쁘다"],["淵",12,"못"],["延",7,"늘이다"],["硯",12,"벼루"],["燕",16,"제비"]],
-  "영":[["永",5,"길다"],["英",9,"꽃부리"],["瑛",13,"옥"],["映",9,"비치다"],["榮",14,"영화"],["泳",8,"헤엄치다"],["寧",14,"편안하다"],["瑩",15,"옥빛"],["穎",16,"이삭끝"]],
-  "예":[["叡",16,"밝다"],["銳",15,"날카롭다"],["睿",13,"밝다"]],
-  "오":[["悟",10,"깨닫다"]],
-  "옥":[["玉",5,"구슬"],["鈺",13,"보배"]],
-  "요":[["瑤",15,"아름다운옥"],["堯",12,"요임금"],["曜",18,"빛나다"]],
-  "우":[["宇",6,"집"],["佑",7,"돕다"],["祐",10,"복"],["雨",8,"비"],["羽",6,"깃"]],
-  "욱":[["旭",6,"아침해"],["昱",9,"빛나다"],["煜",13,"빛나다"],["彧",11,"문채"]],
-  "운":[["雲",12,"구름"],["運",13,"운수"]],
-  "웅":[["熊",14,"곰"],["雄",12,"수컷"]],
-  "원":[["元",4,"으뜸"],["源",13,"근원"],["遠",14,"멀다"]],
-  "유":[["裕",12,"넉넉하다"],["維",14,"맬"],["瑜",14,"아름다운옥"],["俞",9,"그렇다"]],
-  "윤":[["潤",15,"윤택하다"],["胤",9,"이을"],["倫",10,"인륜"]],
-  "은":[["銀",14,"은"],["恩",10,"은혜"],["垠",9,"언덕"]],
-  "의":[["義",13,"의롭다"],["儀",15,"거동"],["毅",15,"굳세다"],["宜",8,"마땅하다"]],
-  "인":[["仁",4,"어질다"],["寅",11,"범"],["麟",23,"기린"]],
-  "일":[["逸",12,"편안하다"],["溢",13,"넘치다"],["一",1,"하나"]],
-  "자":[["慈",14,"사랑"]],
-  "재":[["在",6,"있다"],["才",3,"재주"],["宰",10,"재상"],["載",13,"실다"],["材",7,"재목"],["財",10,"재물"],["哉",9,"어조사"],["栽",10,"심다"]],
-  "전":[["全",6,"온전하다"],["典",8,"법"],["展",10,"펼치다"]],
-  "정":[["正",5,"바르다"],["貞",9,"곧다"],["靖",13,"편안하다"],["定",8,"정하다"],["廷",7,"뜰"],["禎",13,"상서롭다"],["晶",12,"수정"],["精",14,"정밀하다"],["庭",10,"뜰"]],
-  "제":[["濟",18,"건너다"],["齊",14,"가지런하다"]],
-  "조":[["祚",10,"복"],["朝",12,"아침"],["照",13,"비추다"]],
-  "종":[["鍾",17,"쇠북"],["宗",8,"마루"]],
-  "주":[["柱",9,"기둥"],["珠",10,"구슬"],["周",8,"두루"]],
-  "준":[["俊",9,"뛰어나다"],["峻",10,"높다"],["晙",11,"밝다"],["浚",10,"깊다"],["駿",17,"준마"]],
-  "지":[["智",12,"지혜"],["志",7,"뜻"],["知",8,"알다"],["芝",7,"지초"],["池",6,"못"],["祉",9,"복"]],
-  "진":[["眞",10,"참"],["珍",9,"보배"],["振",10,"떨치다"],["辰",7,"별"],["晉",10,"나아가다"]],
-  "찬":[["燦",17,"빛나다"],["璨",17,"빛나다"],["粲",13,"빛나다"],["瓚",23,"옥잔"]],
-  "창":[["昌",8,"창성하다"],["彰",14,"드러나다"],["暢",14,"통하다"]],
-  "채":[["彩",11,"채색"],["採",11,"따다"]],
-  "천":[["天",4,"하늘"],["川",3,"내"]],
-  "철":[["哲",10,"밝다"],["喆",12,"밝다"]],
-  "청":[["淸",11,"맑다"],["晴",12,"갤"]],
-  "태":[["太",4,"크다"],["泰",10,"크다"]],"택":[["澤",17,"연못"]],
-  "하":[["夏",10,"여름"],["河",8,"강"],["賀",12,"하례"],["霞",17,"노을"]],
-  "한":[["漢",14,"한수"],["翰",16,"깃"],["瀚",19,"넓다"]],
-  "혁":[["赫",14,"빛나다"],["爀",20,"빛나다"],["奕",9,"크다"]],
-  "현":[["賢",15,"어질다"],["鉉",13,"쇠"],["炫",9,"빛나다"],["顯",23,"나타나다"],["弦",8,"시위"],["晛",11,"햇빛"]],
-  "호":[["昊",8,"하늘"],["皓",12,"희다"],["浩",10,"넓다"],["豪",14,"호걸"],["虎",8,"범"],["晧",11,"희다"]],
-  "홍":[["洪",10,"넓다"],["弘",5,"크다"],["泓",8,"깊다"]],
-  "화":[["和",8,"화하다"],["花",7,"꽃"],["華",10,"빛나다"]],
-  "환":[["煥",13,"빛나다"],["桓",10,"굳세다"],["渙",12,"흩어지다"]],
-  "황":[["煌",13,"빛나다"],["晃",10,"밝다"],["璜",17,"반달옥"]],
-  "효":[["孝",7,"효도"],["曉",16,"새벽"]],
-  "훈":[["薰",17,"향기롭다"],["勳",16,"공훈"],["訓",10,"가르치다"]],
-  "희":[["熙",14,"빛나다"],["喜",12,"기쁘다"],["希",7,"바라다"],["羲",20,"복희씨"],["姬",10,"아름답다"],["熹",16,"빛나다"]]
+  "가":[["佳",8,"아름답다","土"],["嘉",14,"아름답다","木"],["珂",9,"옥","金"],["可",5,"옳다","土"]],
+  "강":[["剛",10,"굳세다","金"],["康",11,"편안하다","土"],["江",6,"강","水"],["綱",14,"벼리","木"],["强",12,"강하다","金"]],
+  "건":[["健",11,"건강하다","土"],["建",9,"세우다","木"],["乾",11,"하늘","木"]],
+  "경":[["慶",15,"경사","火"],["敬",13,"공경하다","金"],["景",12,"경치","火"],["璟",17,"옥빛","金"],["炅",9,"빛나다","火"],["暻",13,"빛나다","火"],["京",8,"서울","土"],["耕",10,"밭갈다","木"]],
+  "계":[["桂",10,"계수나무","木"],["溪",13,"시냇물","水"],["啓",11,"열다","土"]],
+  "관":[["寬",15,"너그럽다","土"],["管",14,"대롱","木"],["冠",9,"갓","土"]],
+  "광":[["光",6,"빛","火"],["廣",15,"넓다","土"]],
+  "국":[["國",11,"나라","土"],["菊",11,"국화","木"]],
+  "군":[["君",7,"임금","土"],["軍",9,"군사","金"]],
+  "규":[["奎",9,"별이름","土"],["圭",6,"홀","土"],["揆",13,"헤아리다","木"],["珪",10,"옥홀","金"]],
+  "근":[["根",10,"뿌리","木"],["謹",18,"삼가다","金"],["勤",13,"부지런하다","土"]],
+  "기":[["基",11,"터","土"],["祺",12,"복","土"],["琦",12,"옥","金"],["麒",19,"기린","土"],["起",10,"일어나다","土"]],
+  "길":[["吉",6,"길하다","土"],["佶",8,"건장하다","土"]],
+  "남":[["南",9,"남쪽","火"],["楠",13,"녹나무","木"]],
+  "단":[["丹",4,"붉다","火"],["端",14,"단정하다","土"]],
+  "대":[["大",3,"크다","土"],["戴",18,"받들다","土"]],
+  "덕":[["德",15,"덕","土"]],
+  "도":[["道",13,"길","土"],["導",16,"인도하다","火"],["燾",18,"덮다","火"]],
+  "동":[["東",8,"동쪽","木"],["棟",12,"마루대","木"],["童",12,"아이","土"],["銅",14,"구리","金"]],
+  "두":[["斗",4,"말","土"],["杜",7,"막다","木"]],
+  "란":[["蘭",23,"난초","木"]],
+  "련":[["蓮",16,"연꽃","木"],["連",11,"잇다","水"]],
+  "령":[["令",5,"명령","土"],["嶺",17,"고개","土"]],
+  "록":[["祿",13,"복록","土"]],
+  "룡":[["龍",16,"용","土"],["鏞",23,"큰종","金"]],
+  "만":[["萬",13,"일만","木"],["滿",14,"가득하다","水"],["曼",11,"아름답다","火"]],
+  "명":[["明",8,"밝다","火"],["命",8,"목숨","土"],["銘",14,"새기다","金"]],
+  "무":[["武",8,"무예","土"],["茂",8,"무성하다","木"]],
+  "문":[["文",4,"글","木"],["汶",7,"물이름","水"],["紋",10,"무늬","木"]],
+  "민":[["敏",11,"민첩하다","金"],["珉",10,"옥돌","金"],["旻",8,"하늘","火"],["民",5,"백성","土"],["玟",8,"옥","金"],["旼",8,"온화하다","火"]],
+  "박":[["博",12,"넓다","土"]],
+  "방":[["芳",7,"꽃답다","木"],["邦",7,"나라","土"],["昉",8,"새벽","火"]],
+  "범":[["範",15,"법","木"],["梵",11,"범어","木"]],
+  "보":[["寶",20,"보배","金"],["普",12,"넓다","火"],["甫",7,"클","土"],["輔",14,"돕다","土"]],
+  "봉":[["鳳",14,"봉황","火"],["奉",8,"받들다","土"],["峰",10,"봉우리","土"]],
+  "빈":[["彬",11,"빛나다","木"],["斌",12,"빛나다","木"],["賓",14,"손님","金"]],
+  "상":[["尙",8,"오히려","土"],["相",9,"서로","木"],["祥",11,"상서롭다","土"],["翔",12,"날다","土"],["湘",12,"강이름","水"]],
+  "서":[["瑞",14,"상서롭다","金"],["緖",14,"실마리","木"],["書",10,"글","火"],["曙",17,"새벽","火"]],
+  "석":[["錫",16,"주석","金"],["碩",14,"크다","土"],["石",5,"돌","土"]],
+  "선":[["善",12,"착하다","土"],["宣",9,"베풀다","土"],["仙",5,"신선","土"],["璿",19,"옥","金"],["瑄",13,"옥","金"]],
+  "성":[["成",7,"이루다","土"],["聖",13,"성스럽다","土"],["星",9,"별","火"],["誠",14,"정성","金"],["城",10,"성","土"]],
+  "세":[["世",5,"세상","土"],["歲",13,"해","土"]],
+  "수":[["秀",7,"빼어나다","木"],["修",10,"닦다","土"],["壽",14,"목숨","土"],["洙",9,"물이름","水"],["樹",16,"나무","木"],["粹",15,"순수하다","金"],["琇",11,"옥","金"]],
+  "숙":[["淑",11,"맑다","水"],["肅",13,"엄숙하다","金"]],
+  "순":[["順",12,"순하다","土"],["淳",11,"순박하다","水"],["舜",13,"순임금","土"],["珣",10,"옥","金"]],
+  "승":[["承",8,"받들다","水"],["昇",8,"오르다","火"],["勝",12,"이기다","土"]],
+  "시":[["始",8,"시작하다","土"],["時",10,"때","火"]],
+  "신":[["信",9,"믿다","土"],["晨",11,"새벽","火"],["辛",7,"맵다","金"]],
+  "아":[["雅",13,"우아하다","土"]],
+  "안":[["安",6,"편안하다","土"],["晏",10,"맑다","火"]],
+  "양":[["陽",12,"볕","土"],["楊",13,"버드나무","木"],["洋",9,"바다","水"],["亮",9,"밝다","火"],["良",7,"착하다","土"]],
+  "언":[["彦",9,"선비","木"]],
+  "연":[["妍",8,"예쁘다","土"],["淵",12,"못","水"],["延",7,"늘이다","木"],["硯",12,"벼루","土"],["燕",16,"제비","火"]],
+  "영":[["永",5,"길다","水"],["英",9,"꽃부리","木"],["瑛",13,"옥","金"],["映",9,"비치다","火"],["榮",14,"영화","木"],["泳",8,"헤엄치다","水"],["寧",14,"편안하다","土"],["瑩",15,"옥빛","金"],["穎",16,"이삭끝","木"]],
+  "예":[["叡",16,"밝다","火"],["銳",15,"날카롭다","金"],["睿",13,"밝다","火"]],
+  "오":[["悟",10,"깨닫다","火"]],
+  "옥":[["玉",5,"구슬","金"],["鈺",13,"보배","金"]],
+  "요":[["瑤",15,"아름다운옥","金"],["堯",12,"요임금","土"],["曜",18,"빛나다","火"]],
+  "우":[["宇",6,"집","土"],["佑",7,"돕다","土"],["祐",10,"복","土"],["雨",8,"비","水"],["羽",6,"깃","木"]],
+  "욱":[["旭",6,"아침해","火"],["昱",9,"빛나다","火"],["煜",13,"빛나다","火"],["彧",11,"문채","木"]],
+  "운":[["雲",12,"구름","水"],["運",13,"운수","水"]],
+  "웅":[["熊",14,"곰","火"],["雄",12,"수컷","土"]],
+  "원":[["元",4,"으뜸","土"],["源",13,"근원","水"],["遠",14,"멀다","水"]],
+  "유":[["裕",12,"넉넉하다","土"],["維",14,"맬","木"],["瑜",14,"아름다운옥","金"],["俞",9,"그렇다","土"]],
+  "윤":[["潤",15,"윤택하다","水"],["胤",9,"이을","土"],["倫",10,"인륜","土"]],
+  "은":[["銀",14,"은","金"],["恩",10,"은혜","火"],["垠",9,"언덕","土"]],
+  "의":[["義",13,"의롭다","土"],["儀",15,"거동","土"],["毅",15,"굳세다","金"],["宜",8,"마땅하다","土"]],
+  "인":[["仁",4,"어질다","土"],["寅",11,"범","土"],["麟",23,"기린","土"]],
+  "일":[["逸",12,"편안하다","水"],["溢",13,"넘치다","水"],["一",1,"하나","土"]],
+  "자":[["慈",14,"사랑","火"]],
+  "재":[["在",6,"있다","土"],["才",3,"재주","木"],["宰",10,"재상","土"],["載",13,"실다","土"],["材",7,"재목","木"],["財",10,"재물","金"],["哉",9,"어조사","土"],["栽",10,"심다","木"]],
+  "전":[["全",6,"온전하다","土"],["典",8,"법","金"],["展",10,"펼치다","土"]],
+  "정":[["正",5,"바르다","土"],["貞",9,"곧다","金"],["靖",13,"편안하다","土"],["定",8,"정하다","土"],["廷",7,"뜰","木"],["禎",13,"상서롭다","土"],["晶",12,"수정","火"],["精",14,"정밀하다","木"],["庭",10,"뜰","土"]],
+  "제":[["濟",18,"건너다","水"],["齊",14,"가지런하다","金"]],
+  "조":[["祚",10,"복","土"],["朝",12,"아침","火"],["照",13,"비추다","火"]],
+  "종":[["鍾",17,"쇠북","金"],["宗",8,"마루","土"]],
+  "주":[["柱",9,"기둥","木"],["珠",10,"구슬","金"],["周",8,"두루","土"]],
+  "준":[["俊",9,"뛰어나다","土"],["峻",10,"높다","土"],["晙",11,"밝다","火"],["浚",10,"깊다","水"],["駿",17,"준마","火"]],
+  "지":[["智",12,"지혜","火"],["志",7,"뜻","火"],["知",8,"알다","金"],["芝",7,"지초","木"],["池",6,"못","水"],["祉",9,"복","土"]],
+  "진":[["眞",10,"참","土"],["珍",9,"보배","金"],["振",10,"떨치다","木"],["辰",7,"별","土"],["晉",10,"나아가다","火"]],
+  "찬":[["燦",17,"빛나다","火"],["璨",17,"빛나다","金"],["粲",13,"빛나다","金"],["瓚",23,"옥잔","金"]],
+  "창":[["昌",8,"창성하다","火"],["彰",14,"드러나다","火"],["暢",14,"통하다","火"]],
+  "채":[["彩",11,"채색","火"],["採",11,"따다","木"]],
+  "천":[["天",4,"하늘","土"],["川",3,"내","水"]],
+  "철":[["哲",10,"밝다","土"],["喆",12,"밝다","土"]],
+  "청":[["淸",11,"맑다","水"],["晴",12,"갤","火"]],
+  "태":[["太",4,"크다","土"],["泰",10,"크다","水"]],
+  "택":[["澤",17,"연못","水"]],
+  "하":[["夏",10,"여름","火"],["河",8,"강","水"],["賀",12,"하례","金"],["霞",17,"노을","水"]],
+  "한":[["漢",14,"한수","水"],["翰",16,"깃","木"],["瀚",19,"넓다","水"]],
+  "혁":[["赫",14,"빛나다","火"],["爀",20,"빛나다","火"],["奕",9,"크다","土"]],
+  "현":[["賢",15,"어질다","金"],["鉉",13,"쇠","金"],["炫",9,"빛나다","火"],["顯",23,"나타나다","土"],["弦",8,"시위","木"],["晛",11,"햇빛","火"]],
+  "호":[["昊",8,"하늘","火"],["皓",12,"희다","金"],["浩",10,"넓다","水"],["豪",14,"호걸","土"],["虎",8,"범","土"],["晧",11,"희다","火"]],
+  "홍":[["洪",10,"넓다","水"],["弘",5,"크다","木"],["泓",8,"깊다","水"]],
+  "화":[["和",8,"화하다","土"],["花",7,"꽃","木"],["華",10,"빛나다","木"]],
+  "환":[["煥",13,"빛나다","火"],["桓",10,"굳세다","木"],["渙",12,"흩어지다","水"]],
+  "황":[["煌",13,"빛나다","火"],["晃",10,"밝다","火"],["璜",17,"반달옥","金"]],
+  "효":[["孝",7,"효도","土"],["曉",16,"새벽","火"]],
+  "훈":[["薰",17,"향기롭다","木"],["勳",16,"공훈","火"],["訓",10,"가르치다","金"]],
+  "희":[["熙",14,"빛나다","火"],["喜",12,"기쁘다","土"],["希",7,"바라다","木"],["羲",20,"복희씨","土"],["姬",10,"아름답다","土"],["熹",16,"빛나다","火"]]
 };
 
 // ── 입력 모드 ─────────────────────────────────────────────────────
 var currentMode = 'auto';
-var manualStrokes = {};   // { 'sur0':8, 'name0':5, 'name1':4 }
-var hanjaSelected = {};   // { 'sur':8, 'name0':11, 'name1':9 } — select 모드 선택 획수
-var hanjaManual   = {};   // select 모드에서 목록 없는 음절 수동 획수
+var manualStrokes = {};
+var hanjaSelected = {};
+var hanjaManual   = {};
 
 function setMode(m) {
   currentMode = m;
@@ -574,14 +559,12 @@ function onNameInput() {
   else if (currentMode === 'manual') renderStrokeArea();
 }
 
-// ── 한자 선택 렌더 ────────────────────────────────────────────────
 function renderHanjaSelect() {
   var surVal  = document.getElementById('inputSur').value.trim();
   var nameVal = document.getElementById('inputName').value.trim();
   var grid = document.getElementById('hanjaGrid');
   grid.innerHTML = '';
 
-  // 성 섹션
   var surSec = document.createElement('div');
   surSec.className = 'hanja-section';
   surSec.innerHTML = '<span class="hanja-section-label">성(姓) 한자 선택</span>';
@@ -591,22 +574,19 @@ function renderHanjaSelect() {
   var surList = surVal ? SURNAME_HANJA[surVal] : null;
   if (surList && surList.length > 0) {
     surList.forEach(function(item) {
-      var hj = item[0], st = item[1];
+      var hj = item[0], st = item[1], oh = item[2] || '';
       var btn = document.createElement('button');
       btn.className = 'hanja-btn' + (hanjaSelected['sur'] === st && hanjaSelected['sur_hj'] === hj ? ' selected' : '');
-      btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획</span>';
+      btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획 · '+oh+'</span>';
       btn.onclick = function() {
-        hanjaSelected['sur'] = st;
-        hanjaSelected['sur_hj'] = hj;
-        renderHanjaSelect();
-        tryAutoCalcHanja(nameVal);
+        hanjaSelected['sur'] = st; hanjaSelected['sur_hj'] = hj; hanjaSelected['sur_oh'] = oh;
+        renderHanjaSelect(); tryAutoCalcHanja(nameVal);
       };
       surBtns.appendChild(btn);
     });
   } else if (surVal) {
     surSec.innerHTML += '<span style="font-size:11px;color:var(--text-dim);">이 성씨는 목록에 없습니다. 직접 입력해주세요.</span>';
-    var mrow = makeHanjaManualRow('sur', surVal, surSec);
-    surSec.appendChild(mrow);
+    surSec.appendChild(makeHanjaManualRow('sur', surVal));
     surBtns = null;
   } else {
     surBtns.innerHTML = '<span style="font-size:11px;color:var(--text-dim);">성(姓)을 입력하면 한자 목록이 표시됩니다</span>';
@@ -614,46 +594,41 @@ function renderHanjaSelect() {
   if (surBtns) surSec.appendChild(surBtns);
   grid.appendChild(surSec);
 
-  // 이름 섹션 (음절별)
   if (nameVal) {
-    var nameChars = nameVal.split('');
-    nameChars.forEach(function(ch, idx) {
+    nameVal.split('').forEach(function(ch, idx) {
       var key = 'name' + idx;
       var sec = document.createElement('div');
       sec.className = 'hanja-section';
       sec.innerHTML = '<span class="hanja-section-label">'+ch+' 한자 선택</span>';
       var btns = document.createElement('div');
       btns.className = 'hanja-btns';
-
       var list = NAME_HANJA[ch];
       if (list && list.length > 0) {
         list.forEach(function(item) {
-          var hj = item[0], st = item[1], meaning = item[2] || '';
+          var hj = item[0], st = item[1], meaning = item[2]||'', oh = item[3]||'';
           var btn = document.createElement('button');
           var isSel = hanjaSelected[key] === st && hanjaSelected[key+'_hj'] === hj;
           btn.className = 'hanja-btn' + (isSel ? ' selected' : '');
-          btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획 '+meaning+'</span>';
+          btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획 '+meaning+' · '+oh+'</span>';
           btn.onclick = function() {
-            hanjaSelected[key] = st;
-            hanjaSelected[key+'_hj'] = hj;
-            renderHanjaSelect();
-            tryAutoCalcHanja(nameVal);
+            hanjaSelected[key] = st; hanjaSelected[key+'_hj'] = hj; hanjaSelected[key+'_oh'] = oh;
+            renderHanjaSelect(); tryAutoCalcHanja(nameVal);
           };
           btns.appendChild(btn);
         });
         sec.appendChild(btns);
       } else {
-        sec.innerHTML += '<span style="font-size:11px;color:var(--text-dim);">\''+ch+'\'는 목록에 없습니다. 직접 입력해주세요.</span>';
-        var mr = makeHanjaManualRow(key, ch, sec);
-        sec.appendChild(mr);
+        sec.innerHTML += '<span style="font-size:11px;color:var(--text-dim);">\''+ch+'\'는 목록에 없습니다.</span>';
+        sec.appendChild(makeHanjaManualRow(key, ch));
       }
       grid.appendChild(sec);
     });
   }
 }
 
-function makeHanjaManualRow(key, ch, container) {
+function makeHanjaManualRow(key, ch) {
   if (!(key in hanjaManual)) hanjaManual[key] = charStrokes(ch) || 1;
+  hanjaSelected[key] = hanjaManual[key];
   var row = document.createElement('div');
   row.className = 'hanja-manual-row';
   row.innerHTML =
@@ -663,37 +638,30 @@ function makeHanjaManualRow(key, ch, container) {
       '<div class="spin-val" id="hjm_'+key+'">'+hanjaManual[key]+'</div>' +
       '<button class="spin-btn" onclick="adjustHanjaManual(\''+key+'\',1)">+</button>' +
     '</div>';
-  // 수동 획수도 hanjaSelected에 반영
-  hanjaSelected[key] = hanjaManual[key];
   return row;
 }
 
 function adjustHanjaManual(key, delta) {
-  hanjaManual[key] = Math.max(1, (hanjaManual[key] || 1) + delta);
+  hanjaManual[key] = Math.max(1, (hanjaManual[key]||1) + delta);
   hanjaSelected[key] = hanjaManual[key];
   var el = document.getElementById('hjm_'+key);
   if (el) el.textContent = hanjaManual[key];
 }
 
 function tryAutoCalcHanja(nameVal) {
-  var nameChars = (nameVal || '').split('').filter(Boolean);
+  var nameChars = (nameVal||'').split('').filter(Boolean);
   var surOk  = hanjaSelected['sur'] !== undefined;
-  var nameOk = nameChars.every(function(_, i) { return hanjaSelected['name'+i] !== undefined; });
+  var nameOk = nameChars.every(function(_,i){ return hanjaSelected['name'+i] !== undefined; });
   if (surOk && nameOk && nameChars.length > 0) calcScore();
 }
 
 function renderStrokeArea() {
   var surVal  = document.getElementById('inputSur').value.trim();
   var nameVal = document.getElementById('inputName').value.trim();
-
-  var surChars  = surVal  ? surVal.split('')  : [];
-  var nameChars = nameVal ? nameVal.split('') : [];
-
   var grid = document.getElementById('strokeGrid');
   grid.innerHTML = '';
-
-  function makeRow(key, label, ch, defaultVal) {
-    if (!(key in manualStrokes)) manualStrokes[key] = defaultVal;
+  function makeRow(key, label, ch, def) {
+    if (!(key in manualStrokes)) manualStrokes[key] = def;
     var row = document.createElement('div');
     row.className = 'stroke-row';
     row.innerHTML =
@@ -706,33 +674,45 @@ function renderStrokeArea() {
       '</div>';
     grid.appendChild(row);
   }
-
-  surChars.forEach(function(ch, i) { makeRow('sur'+i, '성 '+i+'번째 획수', ch, charStrokes(ch)||1); });
-  nameChars.forEach(function(ch, i) { makeRow('name'+i, '이름 '+i+'번째 획수', ch, charStrokes(ch)||1); });
+  (surVal||'').split('').forEach(function(ch,i){ makeRow('sur'+i,'성 획수',ch,charStrokes(ch)||1); });
+  (nameVal||'').split('').forEach(function(ch,i){ makeRow('name'+i,'이름 '+(i+1)+'번째',ch,charStrokes(ch)||1); });
 }
 
 function adjustStroke(key, delta) {
-  manualStrokes[key] = Math.max(1, (manualStrokes[key] || 1) + delta);
+  manualStrokes[key] = Math.max(1, (manualStrokes[key]||1) + delta);
   var el = document.getElementById('sv_'+key);
   if (el) el.textContent = manualStrokes[key];
 }
 
-// ── 획수 가져오기 ─────────────────────────────────────────────────
 function getStrokesFor(prefix, chars) {
   return chars.map(function(ch, i) {
     var key = prefix + i;
-    if (currentMode === 'auto') return charStrokes(ch) || 0;
+    if (currentMode === 'auto') return charStrokes(ch)||0;
     if (currentMode === 'select') {
-      // 성(sur): hanjaSelected['sur'], 이름: hanjaSelected['name0'], ['name1']
-      var selKey = (prefix === 'sur') ? 'sur' : key;
-      return hanjaSelected[selKey] !== undefined ? hanjaSelected[selKey] : (charStrokes(ch) || 0);
+      var sk = (prefix==='sur') ? 'sur' : key;
+      return hanjaSelected[sk] !== undefined ? hanjaSelected[sk] : (charStrokes(ch)||0);
     }
     return manualStrokes[key] || charStrokes(ch) || 1;
   });
 }
 
-// ── 점수 계산 ─────────────────────────────────────────────────────
-var lastScores = null;
+function getJawonOhaeng(prefix, chars) {
+  if (currentMode !== 'select') return chars.map(function(){ return null; });
+  return chars.map(function(ch, i) {
+    var sk = (prefix==='sur') ? 'sur' : (prefix+i);
+    return hanjaSelected[sk+'_oh'] || null;
+  });
+}
+
+function getSelectedHanja(prefix, chars) {
+  if (currentMode !== 'select') return chars.slice();
+  return chars.map(function(ch, i) {
+    var sk = (prefix==='sur') ? 'sur' : (prefix+i);
+    return hanjaSelected[sk+'_hj'] || ch;
+  });
+}
+
+var lastScores = null, lastName = '';
 
 function calcScore() {
   var sur  = document.getElementById('inputSur').value.trim();
@@ -741,165 +721,179 @@ function calcScore() {
 
   var surChars  = sur.split('');
   var nameChars = name.split('');
+  var surSt  = getStrokesFor('sur', surChars);
+  var nameSt = getStrokesFor('name', nameChars);
 
-  // 성 총 획수
-  var surStrokes  = getStrokesFor('sur', surChars);
-  var nameStrokes = getStrokesFor('name', nameChars);
-
-  var A = surStrokes.reduce(function(a,b){return a+b;}, 0);
-  var B = nameStrokes[0] || 0;
-  var C = nameStrokes[1] || 0;
-
+  var A = surSt.reduce(function(a,b){return a+b;},0);
+  var B = nameSt[0]||0, C = nameSt[1]||0;
   var gyek = calcGyek(A, B, C);
-  lastScores = gyek;
-  lastName   = sur + name;
+  lastScores = gyek; lastName = sur + name;
 
-  renderResult(sur + name, gyek);
+  var allChars   = surChars.concat(nameChars);
+  var allStrokes = surSt.concat(nameSt);
+  var allJawon   = getJawonOhaeng('sur',surChars).concat(getJawonOhaeng('name',nameChars));
+  var allHanja   = getSelectedHanja('sur',surChars).concat(getSelectedHanja('name',nameChars));
+
+  renderResult(gyek, allChars, allStrokes, allJawon, allHanja);
 }
 
-var lastName = '';
-
-function renderResult(fullName, gyek) {
+function renderResult(gyek, allChars, allStrokes, allJawon, allHanja) {
+  // 4격 카드
   var cards = [
-    { key:'jung', label:'정격', val:gyek.jung, desc:'전체운' },
-    { key:'hyun', label:'형격', val:gyek.hyun, desc:'사회운' },
-    { key:'won',  label:'원격', val:gyek.won,  desc:'내면·재능' },
-    { key:'yi',   label:'이격', val:gyek.yi,   desc:'가정·말년' },
+    {label:'정격',val:gyek.jung,desc:'전체운'},
+    {label:'형격',val:gyek.hyun,desc:'사회운'},
+    {label:'원격',val:gyek.won, desc:'내면·재능'},
+    {label:'이격',val:gyek.yi,  desc:'가정·말년'},
   ];
-
   var grid = document.getElementById('scoreGrid');
   grid.innerHTML = '';
   cards.forEach(function(c) {
-    var grade = SURI_TABLE[c.val] || '흉';
-    var sname = SURI_NAME[c.val] || '';
+    var g = SURI_TABLE[c.val]||'흉', sn = SURI_NAME[c.val]||'';
     var el = document.createElement('div');
-    el.className = 'score-card grade-'+grade;
+    el.className = 'score-card grade-'+g;
     el.innerHTML =
       '<div class="score-gye">'+c.label+' · '+c.desc+'</div>' +
       '<div class="score-num">'+c.val+'</div>' +
-      '<span class="score-badge grade-'+grade+'">'+grade+'</span>' +
-      '<div class="score-name">'+sname+'</div>';
+      '<span class="score-badge grade-'+g+'">'+g+'</span>' +
+      '<div class="score-name">'+sn+'</div>';
     grid.appendChild(el);
   });
 
-  // 총평
-  var grades = [gyek.jung, gyek.hyun, gyek.won, gyek.yi].map(function(v){ return SURI_TABLE[v]||'흉'; });
-  var goodCount = grades.filter(function(g){ return g==='대길'||g==='길'; }).length;
-  var badCount  = grades.filter(function(g){ return g==='대흉'||g==='흉'; }).length;
-  var jungGrade = SURI_TABLE[gyek.jung]||'흉';
-  var summary = '';
-  if (goodCount >= 3) summary = '이 이름은 전반적으로 좋은 수리 배합을 이루고 있습니다. 특히 정격('+gyek.jung+'/'+jungGrade+')이 이름 전체의 운을 이끕니다.';
-  else if (badCount >= 3) summary = '이 이름은 수리 배합에 주의가 필요합니다. 정격('+gyek.jung+'/'+jungGrade+')을 중심으로 전문 작명가와 상담하시길 권합니다.';
-  else summary = '이 이름은 길흉이 혼재합니다. 정격('+gyek.jung+'/'+jungGrade+')이 핵심 운의 방향을 결정합니다. AI 분석으로 상세 해석을 받아보세요.';
+  var grades = [gyek.jung,gyek.hyun,gyek.won,gyek.yi].map(function(v){return SURI_TABLE[v]||'흉';});
+  var goodCnt = grades.filter(function(g){return g==='대길'||g==='길';}).length;
+  var badCnt  = grades.filter(function(g){return g==='대흉'||g==='흉';}).length;
+  var jg = SURI_TABLE[gyek.jung]||'흉';
+  var sumText = goodCnt>=3 ? '전반적으로 좋은 수리 배합입니다. 정격('+gyek.jung+'·'+jg+')이 이름 전체의 운을 이끕니다.'
+    : badCnt>=3 ? '수리 배합에 주의가 필요합니다. 정격('+gyek.jung+'·'+jg+')을 중심으로 검토하세요.'
+    : '길흉이 혼재합니다. 정격('+gyek.jung+'·'+jg+')이 핵심 운의 방향을 결정합니다.';
+  document.getElementById('summaryCard').textContent = sumText;
 
-  document.getElementById('summaryCard').textContent = summary;
-  document.getElementById('resultArea').classList.add('show');
-  document.getElementById('aiResult').classList.remove('show');
-  document.getElementById('aiResult').innerHTML = '';
-  document.getElementById('aiLoading').classList.remove('show');
-  document.getElementById('btnAi').style.display = '';
-}
+  // 음오행
+  var allEumOh = allChars.map(function(ch){ return getEumOhaeng(ch); });
+  var flowEl = document.getElementById('ohaengFlow');
+  flowEl.innerHTML = '';
+  allChars.forEach(function(ch, i) {
+    var oh = allEumOh[i];
+    var node = document.createElement('div');
+    node.className = 'oh-node';
+    node.innerHTML = '<span class="oh-char">'+ch+'</span><span class="oh-badge '+(oh||'')+'">'+( oh||'?' )+'</span>';
+    flowEl.appendChild(node);
+    if (i < allChars.length - 1) {
+      var rel = checkRelation(allEumOh[i], allEumOh[i+1]);
+      var arr = document.createElement('div');
+      arr.className = 'oh-arrow ' + rel;
+      arr.textContent = rel==='상생' ? '▶' : rel==='상극' ? '✕' : '→';
+      flowEl.appendChild(arr);
+    }
+  });
 
-// ── AI 분석 ───────────────────────────────────────────────────────
-async function requestAI() {
-  // 카카오 로그인 체크
-  var kakaoUser = null;
-  try { kakaoUser = JSON.parse(localStorage.getItem('fortuna_kakao_user') || 'null'); } catch(e) {}
-  if (!kakaoUser || !kakaoUser.id) {
-    showToast('카카오 로그인 후 이용 가능합니다', true);
-    return;
-  }
+  var rels = [];
+  for (var j=0; j<allEumOh.length-1; j++) rels.push(checkRelation(allEumOh[j], allEumOh[j+1]));
+  var hasGeuk  = rels.some(function(r){return r==='상극';});
+  var allSaeng = rels.every(function(r){return r==='상생'||r==='비화';});
+  var ohResEl = document.getElementById('ohaengResult');
+  if (allSaeng) { ohResEl.className='oh-result all-good'; ohResEl.textContent='발음 오행이 상생하여 기운이 원활하게 흐릅니다'; }
+  else if (hasGeuk) { ohResEl.className='oh-result has-bad'; ohResEl.textContent='발음 오행에 상극 관계가 있습니다 — 기운의 충돌이 발생합니다'; }
+  else { ohResEl.className='oh-result mixed'; ohResEl.textContent='발음 오행 흐름이 중화적입니다'; }
 
-  var userId = kakaoUser.id;
+  // 음양
+  var eyRow = document.getElementById('eumyangRow');
+  eyRow.innerHTML = '';
+  var eyPat = [];
+  allChars.forEach(function(ch, i) {
+    var st = allStrokes[i], ey = getEumyang(st);
+    eyPat.push(ey);
+    var node = document.createElement('div');
+    node.className = 'ey-node';
+    node.innerHTML = '<span class="ey-char">'+ch+'</span><span class="ey-badge '+ey+'">'+ey+' ('+st+'획)</span>';
+    eyRow.appendChild(node);
+  });
+  var allYang = eyPat.every(function(e){return e==='양';});
+  var allEum  = eyPat.every(function(e){return e==='음';});
+  var yangCnt = eyPat.filter(function(e){return e==='양';}).length;
+  var eyResEl = document.getElementById('eumyangResult');
+  if (allYang||allEum) { eyResEl.className='oh-result has-bad'; eyResEl.textContent=(allYang?'양':'음')+'으로 편중 — 균형 조정이 필요합니다'; }
+  else if (Math.abs(yangCnt-(eyPat.length-yangCnt))<=1) { eyResEl.className='oh-result all-good'; eyResEl.textContent='음양이 균형 있게 배합되어 있습니다'; }
+  else { eyResEl.className='oh-result mixed'; eyResEl.textContent='음양 배합이 다소 치우쳐 있습니다'; }
 
-  // orb 잔액 확인 (worker에서 차감하므로 먼저 표시 확인용)
-  document.getElementById('btnAi').disabled = true;
-  document.getElementById('aiLoading').classList.add('show');
-  document.getElementById('aiResult').classList.remove('show');
-
-  try {
-    var res = await fetch('https://fortuna.kkdmb7.workers.dev/name-score-ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: lastName,
-        scores: { 원격: lastScores.won, 형격: lastScores.hyun, 이격: lastScores.yi, 정격: lastScores.jung },
-        user_id: userId
-      })
+  // 자원오행
+  var jwCard = document.getElementById('jawonCard');
+  if (currentMode==='select' && allJawon.some(function(o){return o;})) {
+    jwCard.style.display = '';
+    var jwRow = document.getElementById('jawonRow');
+    jwRow.innerHTML = '';
+    allChars.forEach(function(ch, i) {
+      var hj = allHanja[i]||ch, oh = allJawon[i]||'?';
+      var node = document.createElement('div');
+      node.className = 'jw-node';
+      node.innerHTML = '<span class="jw-hanja">'+hj+'</span><span class="jw-badge oh-badge '+oh+'">'+oh+'</span>';
+      jwRow.appendChild(node);
     });
-
-    if (res.status === 402) {
-      var errData = await res.json();
-      document.getElementById('aiLoading').classList.remove('show');
-      document.getElementById('btnAi').disabled = false;
-      showToast('Orb가 부족합니다 (잔액: '+(errData.orb_balance||0)+')', true);
-      setTimeout(function() { window.location.href = '/payment.html'; }, 1500);
-      return;
-    }
-
-    if (!res.ok) {
-      throw new Error('서버 오류: ' + res.status);
-    }
-
-    // 스트리밍 읽기
-    var reader = res.body.getReader();
-    var decoder = new TextDecoder();
-    var fullText = '';
-
-    document.getElementById('aiLoading').classList.remove('show');
-    document.getElementById('aiResult').classList.add('show');
-    document.getElementById('btnAi').style.display = 'none';
-
-    while (true) {
-      var _ref = await reader.read();
-      var done = _ref.done, value = _ref.value;
-      if (done) break;
-
-      var chunk = decoder.decode(value, { stream: true });
-      var lines = chunk.split('\n');
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].trim();
-        if (!line.startsWith('data: ')) continue;
-        var data = line.slice(6);
-        if (data === '[DONE]') break;
-        try {
-          var parsed = JSON.parse(data);
-          var delta = parsed.delta && parsed.delta.type === 'text_delta' ? parsed.delta.text : '';
-          if (!delta && parsed.type === 'content_block_delta') {
-            delta = (parsed.delta && parsed.delta.text) || '';
-          }
-          if (delta) {
-            fullText += delta;
-            document.getElementById('aiResult').innerHTML = renderMarkdown(fullText);
-          }
-        } catch(e) {}
-      }
-    }
-
-    document.getElementById('aiResult').innerHTML = renderMarkdown(fullText);
-
-  } catch(e) {
-    document.getElementById('aiLoading').classList.remove('show');
-    document.getElementById('btnAi').disabled = false;
-    showToast('분석 중 오류가 발생했습니다', true);
-    console.error(e);
+  } else {
+    jwCard.style.display = 'none';
   }
+
+  // 종합 해석
+  renderInterpret(gyek, grades, rels, eyPat, allJawon, hasGeuk, allSaeng, allYang, allEum, yangCnt);
+  document.getElementById('resultArea').classList.add('show');
 }
 
-// ── renderMarkdown ────────────────────────────────────────────────
-function renderMarkdown(text) {
-  // # 헤더 → 볼드
-  var t = text.replace(/^#{1,3}\s+(.+)$/gm, '<strong style="color:#d4af37">$1</strong>');
-  // **볼드**
-  t = t.replace(/\*\*([^*]+)\*\*/g, '<strong style="color:#d4af37">$1</strong>');
-  // 빈줄 → 문단 간격
-  t = t.replace(/\n{2,}/g, '<br><br>');
-  // 단순 줄바꿈
-  t = t.replace(/\n/g, '<br>');
-  return t;
+function renderInterpret(gyek, grades, rels, eyPat, jawon, hasGeuk, allSaeng, allYang, allEum, yangCnt) {
+  var el = document.getElementById('interpretCard');
+  var jg = SURI_TABLE[gyek.jung]||'흉';
+  var goodCnt = grades.filter(function(g){return g==='대길'||g==='길';}).length;
+  var badCnt  = grades.filter(function(g){return g==='대흉'||g==='흉';}).length;
+
+  var suriText =
+    jg==='대길' ? '정격 '+gyek.jung+'수(대길) — 전체 운기가 매우 강합니다. 사회적으로 인정받고 리더십이 발휘되는 이름입니다.'
+    : jg==='길' ? '정격 '+gyek.jung+'수(길) — 안정적인 운기를 갖추고 있습니다. 꾸준한 성장과 성취가 기대됩니다.'
+    : jg==='반길' ? '정격 '+gyek.jung+'수(반길) — 길흉이 공존합니다. 전반적으로 무난하나 특정 시기 주의가 필요합니다.'
+    : jg==='대흉' ? '정격 '+gyek.jung+'수(대흉) — 전체 운기에 강한 주의가 필요합니다. 개명 또는 보완책을 적극 검토하세요.'
+    : '정격 '+gyek.jung+'수(흉) — 운기 보완이 필요합니다.';
+  if (goodCnt>=3) suriText += ' 4격 중 '+goodCnt+'개가 길수로 전반 균형이 좋습니다.';
+  else if (badCnt>=3) suriText += ' 4격 중 '+badCnt+'개가 흉수로 수리 조정이 필요합니다.';
+
+  var ohText = allSaeng
+    ? '발음 흐름이 상생으로 이어집니다. 이름을 부를 때마다 좋은 기운이 증폭됩니다.'
+    : hasGeuk
+    ? '상극 관계('+rels.filter(function(r){return r==='상극';}).length+'곳)가 있어 기운 충돌이 발생합니다. 이름을 자주 불릴수록 누적됩니다.'
+    : '발음 오행이 중화적으로 흘러 안정적입니다.';
+
+  var eyText = allYang ? '전체 양(陽) 편중 — 과잉 양기는 급함·충동성으로 발현될 수 있습니다.'
+    : allEum ? '전체 음(陰) 편중 — 과잉 음기는 소극성·우유부단함으로 나타날 수 있습니다.'
+    : Math.abs(yangCnt-(eyPat.length-yangCnt))<=1
+    ? '음양 배합(양 '+yangCnt+'·음 '+(eyPat.length-yangCnt)+') 균형 — 강함과 부드러움이 조화롭습니다.'
+    : '양 '+yangCnt+'·음 '+(eyPat.length-yangCnt)+'로 다소 치우쳐 있지만 큰 문제는 아닙니다.';
+
+  var jawonText = '';
+  if (currentMode==='select' && jawon.some(function(o){return o;})) {
+    var ohs = jawon.filter(Boolean);
+    var ohCnt = {};
+    ohs.forEach(function(o){ohCnt[o]=(ohCnt[o]||0)+1;});
+    var dom = Object.keys(ohCnt).sort(function(a,b){return ohCnt[b]-ohCnt[a];})[0];
+    jawonText = '한자 자원오행 '+ohs.join('·')+' — '+dom+'의 기운이 가장 강하게 작용합니다.';
+  }
+
+  var score = 0;
+  if (jg==='대길') score+=3; else if (jg==='길') score+=2; else if (jg==='반길') score+=1;
+  else if (jg==='흉') score-=1; else if (jg==='대흉') score-=3;
+  if (allSaeng) score+=2; else if (hasGeuk) score-=1;
+  if (!allYang && !allEum && Math.abs(yangCnt-(eyPat.length-yangCnt))<=1) score+=1;
+  else if (allYang||allEum) score-=1;
+
+  var overall = score>=5 ? '매우 뛰어난 이름입니다. 수리·음오행·음양 세 축이 고루 조화를 이루고 있습니다.'
+    : score>=3 ? '전반적으로 좋은 이름입니다. 강점을 살리면서 약한 부분을 보완하면 더욱 이상적입니다.'
+    : score>=1 ? '보통 수준입니다. 몇 가지 보완 요소가 있으며 검토 후 조정을 고려해볼 수 있습니다.'
+    : '여러 면에서 보완이 필요합니다. 전문 작명가와의 상담을 권합니다.';
+
+  var html = '<div class="interpret-section"><span class="interpret-label">수리 해석</span>'+suriText+'</div>';
+  html += '<div class="interpret-section"><span class="interpret-label">음오행 해석</span>'+ohText+'</div>';
+  html += '<div class="interpret-section"><span class="interpret-label">음양 해석</span>'+eyText+'</div>';
+  if (jawonText) html += '<div class="interpret-section"><span class="interpret-label">자원오행 해석</span>'+jawonText+'</div>';
+  html += '<div class="interpret-section" style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;"><span class="interpret-label">종합 판단</span>'+overall+'</div>';
+  el.innerHTML = html;
 }
 
-// ── 토스트 ────────────────────────────────────────────────────────
 var toastTimer = null;
 function showToast(msg, isError) {
   var el = document.getElementById('toast');
@@ -908,15 +902,14 @@ function showToast(msg, isError) {
   void el.offsetWidth;
   el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 2500);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
 
-// URL 파라미터로 성/이름 자동 채우기 (피코랩 위젯에서 이동 시)
 (function() {
   var p = new URLSearchParams(window.location.search);
   var sur = p.get('sur'), nm = p.get('name');
   if (!sur && !nm) return;
-  setMode('auto'); // 한글 자동 탭 선택
+  setMode('auto');
   if (sur) document.getElementById('inputSur').value = sur;
   if (nm)  document.getElementById('inputName').value = nm;
   if (sur && nm) setTimeout(calcScore, 150);
