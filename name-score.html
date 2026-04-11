@@ -665,9 +665,11 @@ function showToast(msg, isError) {
 (function() {
   var p = new URLSearchParams(window.location.search);
   var sur = p.get('sur'), nm = p.get('name');
+  if (!sur && !nm) return;
+  setMode('auto'); // 한글 자동 탭 선택
   if (sur) document.getElementById('inputSur').value = sur;
   if (nm)  document.getElementById('inputName').value = nm;
-  if (sur && nm) { renderStrokeArea(); setTimeout(calcScore, 100); }
+  if (sur && nm) setTimeout(calcScore, 150);
 })();
 </script>
 </body>
