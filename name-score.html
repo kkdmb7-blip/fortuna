@@ -102,6 +102,29 @@ nav {
 }
 .name-input:focus { border-color:var(--gold); background:rgba(212,175,55,0.04); }
 
+/* 한자 선택 버튼 */
+.hanja-section { margin-bottom:16px; }
+.hanja-section-label {
+  font-size:11px; color:var(--text-dim); letter-spacing:0.08em;
+  margin-bottom:8px; display:block;
+}
+.hanja-btns { display:flex; flex-wrap:wrap; gap:7px; }
+.hanja-btn {
+  background:rgba(255,255,255,0.04); border:1px solid var(--gold-border);
+  border-radius:10px; padding:8px 12px; cursor:pointer;
+  font-family:'Noto Serif KR',serif; text-align:center;
+  transition:all 0.2s; min-width:60px;
+}
+.hanja-btn:hover { border-color:var(--gold); background:var(--gold-dim); }
+.hanja-btn.selected {
+  background:var(--gold); border-color:var(--gold); color:#06020f;
+}
+.hanja-btn .hb-char { font-size:22px; display:block; line-height:1.2; }
+.hanja-btn .hb-info { font-size:10px; color:var(--text-dim); margin-top:3px; }
+.hanja-btn.selected .hb-info { color:rgba(6,2,15,0.6); }
+.hanja-manual-row { display:flex; align-items:center; gap:10px; margin-top:8px; }
+.hanja-manual-label { font-size:11px; color:var(--text-dim); flex:1; }
+
 /* 한자 수동: 획수 스피너 */
 .stroke-grid { display:grid; gap:10px; }
 .stroke-row { display:flex; align-items:center; gap:10px; }
@@ -247,8 +270,8 @@ nav {
   <!-- 입력 모드 탭 -->
   <div class="mode-tabs">
     <div class="mode-tab active" id="tabAuto" onclick="setMode('auto')">한글 자동</div>
+    <div class="mode-tab" id="tabSelect" onclick="setMode('select')">한자 선택</div>
     <div class="mode-tab" id="tabManual" onclick="setMode('manual')">한자 수동</div>
-    <div class="mode-tab" id="tabMix" onclick="setMode('mix')">혼용</div>
   </div>
 
   <!-- 입력 카드 -->
@@ -264,7 +287,12 @@ nav {
       </div>
     </div>
 
-    <!-- 한자 수동 스피너 (mode=manual or mix) -->
+    <!-- 한자 선택 (mode=select) -->
+    <div id="hanjaArea" style="display:none; margin-bottom:18px;">
+      <div id="hanjaGrid"></div>
+    </div>
+
+    <!-- 한자 수동 스피너 (mode=manual) -->
     <div id="strokeArea" style="display:none; margin-bottom:18px;">
       <div class="stroke-grid" id="strokeGrid"></div>
     </div>
@@ -399,49 +427,277 @@ function calcGyek(A, B, C) {
   return { won, hyun, yi, jung };
 }
 
+// ── 한자 데이터 ───────────────────────────────────────────────────
+var SURNAME_HANJA = {
+  "가":[["賈",13]],"강":[["姜",9],["康",11],["江",6],["剛",10]],"경":[["慶",15]],
+  "고":[["高",10]],"공":[["孔",4]],"곽":[["郭",10]],"구":[["具",8],["丘",5]],
+  "권":[["權",22]],"금":[["琴",13]],"기":[["奇",8]],"길":[["吉",6]],"김":[["金",8]],
+  "나":[["羅",20]],"남":[["南",9]],"노":[["盧",16],["魯",15]],"도":[["都",12]],
+  "두":[["杜",7]],"류":[["柳",9],["劉",15]],"마":[["馬",10]],"명":[["明",8]],
+  "모":[["牟",6]],"문":[["文",4]],"민":[["閔",12]],"박":[["朴",6]],"반":[["潘",15]],
+  "방":[["方",4],["房",8]],"배":[["裴",14]],"백":[["白",5]],"변":[["卞",5]],
+  "서":[["徐",10]],"석":[["石",5]],"선":[["宣",9]],"설":[["薛",17]],
+  "성":[["成",7],["盛",12]],"소":[["蘇",22],["邵",12]],"손":[["孫",10]],
+  "송":[["宋",7]],"신":[["申",5],["辛",7]],"심":[["沈",7]],"안":[["安",6]],
+  "양":[["梁",11],["楊",13]],"어":[["魚",11]],"엄":[["嚴",20]],
+  "여":[["呂",7],["余",7]],"염":[["廉",13]],"오":[["吳",7]],"왕":[["王",4]],
+  "우":[["禹",9]],"원":[["元",4],["袁",10]],"위":[["魏",18]],
+  "유":[["柳",9],["劉",15],["俞",9]],"윤":[["尹",4]],"은":[["殷",10]],
+  "이":[["李",7]],"임":[["林",8],["任",6]],"장":[["張",11],["章",11],["蔣",15]],
+  "전":[["全",6],["田",5],["錢",16]],"정":[["鄭",15],["丁",2],["程",13]],
+  "조":[["趙",14],["曹",11]],"주":[["朱",6],["周",8]],"지":[["池",6]],
+  "진":[["陳",16],["秦",10]],"차":[["車",7]],"채":[["蔡",17]],"천":[["千",3]],
+  "최":[["崔",11]],"추":[["秋",9]],"한":[["韓",17],["漢",14]],"함":[["咸",9]],
+  "허":[["許",11]],"현":[["玄",5]],"홍":[["洪",10]],"황":[["黃",12]]
+};
+
+var NAME_HANJA = {
+  "가":[["佳",8,"아름답다"],["嘉",14,"아름답다"],["珂",9,"옥"],["可",5,"옳다"]],
+  "강":[["剛",10,"굳세다"],["康",11,"편안하다"],["江",6,"강"],["綱",14,"벼리"],["强",12,"강하다"]],
+  "건":[["健",11,"건강하다"],["建",9,"세우다"],["乾",11,"하늘"]],
+  "경":[["慶",15,"경사"],["敬",13,"공경하다"],["景",12,"경치"],["璟",17,"옥빛"],["炅",9,"빛나다"],["暻",13,"빛나다"],["京",8,"서울"],["耕",10,"밭갈다"]],
+  "계":[["桂",10,"계수나무"],["溪",13,"시냇물"],["啓",11,"열다"]],
+  "관":[["寬",15,"너그럽다"],["管",14,"대롱"],["冠",9,"갓"]],
+  "광":[["光",6,"빛"],["廣",15,"넓다"]],
+  "국":[["國",11,"나라"],["菊",11,"국화"]],
+  "군":[["君",7,"임금"],["軍",9,"군사"]],
+  "규":[["奎",9,"별이름"],["圭",6,"홀"],["揆",13,"헤아리다"],["珪",10,"옥홀"]],
+  "근":[["根",10,"뿌리"],["謹",18,"삼가다"],["勤",13,"부지런하다"]],
+  "기":[["基",11,"터"],["祺",12,"복"],["琦",12,"옥"],["麒",19,"기린"],["起",10,"일어나다"]],
+  "길":[["吉",6,"길하다"],["佶",8,"건장하다"]],
+  "남":[["南",9,"남쪽"],["楠",13,"녹나무"]],
+  "단":[["丹",4,"붉다"],["端",14,"단정하다"]],
+  "대":[["大",3,"크다"],["戴",18,"받들다"]],
+  "덕":[["德",15,"덕"]],
+  "도":[["道",13,"길"],["導",16,"인도하다"],["燾",18,"덮다"]],
+  "동":[["東",8,"동쪽"],["棟",12,"마루대"],["童",12,"아이"],["銅",14,"구리"]],
+  "두":[["斗",4,"말"],["杜",7,"막다"]],
+  "란":[["蘭",23,"난초"]],"련":[["蓮",16,"연꽃"],["連",11,"잇다"]],
+  "령":[["令",5,"명령"],["嶺",17,"고개"]],"록":[["祿",13,"복록"]],
+  "룡":[["龍",16,"용"],["鏞",23,"큰종"]],
+  "만":[["萬",13,"일만"],["滿",14,"가득하다"],["曼",11,"아름답다"]],
+  "명":[["明",8,"밝다"],["命",8,"목숨"],["銘",14,"새기다"]],
+  "무":[["武",8,"무예"],["茂",8,"무성하다"]],
+  "문":[["文",4,"글"],["汶",7,"물이름"],["紋",10,"무늬"]],
+  "민":[["敏",11,"민첩하다"],["珉",10,"옥돌"],["旻",8,"하늘"],["民",5,"백성"],["玟",8,"옥"],["旼",8,"온화하다"]],
+  "박":[["博",12,"넓다"]],
+  "방":[["芳",7,"꽃답다"],["邦",7,"나라"],["昉",8,"새벽"]],
+  "범":[["範",15,"법"],["梵",11,"범어"]],
+  "보":[["寶",20,"보배"],["普",12,"넓다"],["甫",7,"클"],["輔",14,"돕다"]],
+  "봉":[["鳳",14,"봉황"],["奉",8,"받들다"],["峰",10,"봉우리"]],
+  "빈":[["彬",11,"빛나다"],["斌",12,"빛나다"],["賓",14,"손님"]],
+  "상":[["尙",8,"오히려"],["相",9,"서로"],["祥",11,"상서롭다"],["翔",12,"날다"],["湘",12,"강이름"]],
+  "서":[["瑞",14,"상서롭다"],["緖",14,"실마리"],["書",10,"글"],["曙",17,"새벽"]],
+  "석":[["錫",16,"주석"],["碩",14,"크다"],["石",5,"돌"]],
+  "선":[["善",12,"착하다"],["宣",9,"베풀다"],["仙",5,"신선"],["璿",19,"옥"],["瑄",13,"옥"]],
+  "성":[["成",7,"이루다"],["聖",13,"성스럽다"],["星",9,"별"],["誠",14,"정성"],["城",10,"성"]],
+  "세":[["世",5,"세상"],["歲",13,"해"]],
+  "수":[["秀",7,"빼어나다"],["修",10,"닦다"],["壽",14,"목숨"],["洙",9,"물이름"],["樹",16,"나무"],["粹",15,"순수하다"],["琇",11,"옥"]],
+  "숙":[["淑",11,"맑다"],["肅",13,"엄숙하다"]],
+  "순":[["順",12,"순하다"],["淳",11,"순박하다"],["舜",13,"순임금"],["珣",10,"옥"]],
+  "승":[["承",8,"받들다"],["昇",8,"오르다"],["勝",12,"이기다"]],
+  "시":[["始",8,"시작하다"],["時",10,"때"]],
+  "신":[["信",9,"믿다"],["晨",11,"새벽"],["辛",7,"맵다"]],
+  "아":[["雅",13,"우아하다"]],
+  "안":[["安",6,"편안하다"],["晏",10,"맑다"]],
+  "양":[["陽",12,"볕"],["楊",13,"버드나무"],["洋",9,"바다"],["亮",9,"밝다"],["良",7,"착하다"]],
+  "언":[["彦",9,"선비"]],
+  "연":[["妍",8,"예쁘다"],["淵",12,"못"],["延",7,"늘이다"],["硯",12,"벼루"],["燕",16,"제비"]],
+  "영":[["永",5,"길다"],["英",9,"꽃부리"],["瑛",13,"옥"],["映",9,"비치다"],["榮",14,"영화"],["泳",8,"헤엄치다"],["寧",14,"편안하다"],["瑩",15,"옥빛"],["穎",16,"이삭끝"]],
+  "예":[["叡",16,"밝다"],["銳",15,"날카롭다"],["睿",13,"밝다"]],
+  "오":[["悟",10,"깨닫다"]],
+  "옥":[["玉",5,"구슬"],["鈺",13,"보배"]],
+  "요":[["瑤",15,"아름다운옥"],["堯",12,"요임금"],["曜",18,"빛나다"]],
+  "우":[["宇",6,"집"],["佑",7,"돕다"],["祐",10,"복"],["雨",8,"비"],["羽",6,"깃"]],
+  "욱":[["旭",6,"아침해"],["昱",9,"빛나다"],["煜",13,"빛나다"],["彧",11,"문채"]],
+  "운":[["雲",12,"구름"],["運",13,"운수"]],
+  "웅":[["熊",14,"곰"],["雄",12,"수컷"]],
+  "원":[["元",4,"으뜸"],["源",13,"근원"],["遠",14,"멀다"]],
+  "유":[["裕",12,"넉넉하다"],["維",14,"맬"],["瑜",14,"아름다운옥"],["俞",9,"그렇다"]],
+  "윤":[["潤",15,"윤택하다"],["胤",9,"이을"],["倫",10,"인륜"]],
+  "은":[["銀",14,"은"],["恩",10,"은혜"],["垠",9,"언덕"]],
+  "의":[["義",13,"의롭다"],["儀",15,"거동"],["毅",15,"굳세다"],["宜",8,"마땅하다"]],
+  "인":[["仁",4,"어질다"],["寅",11,"범"],["麟",23,"기린"]],
+  "일":[["逸",12,"편안하다"],["溢",13,"넘치다"],["一",1,"하나"]],
+  "자":[["慈",14,"사랑"]],
+  "재":[["在",6,"있다"],["才",3,"재주"],["宰",10,"재상"],["載",13,"실다"],["材",7,"재목"],["財",10,"재물"],["哉",9,"어조사"],["栽",10,"심다"]],
+  "전":[["全",6,"온전하다"],["典",8,"법"],["展",10,"펼치다"]],
+  "정":[["正",5,"바르다"],["貞",9,"곧다"],["靖",13,"편안하다"],["定",8,"정하다"],["廷",7,"뜰"],["禎",13,"상서롭다"],["晶",12,"수정"],["精",14,"정밀하다"],["庭",10,"뜰"]],
+  "제":[["濟",18,"건너다"],["齊",14,"가지런하다"]],
+  "조":[["祚",10,"복"],["朝",12,"아침"],["照",13,"비추다"]],
+  "종":[["鍾",17,"쇠북"],["宗",8,"마루"]],
+  "주":[["柱",9,"기둥"],["珠",10,"구슬"],["周",8,"두루"]],
+  "준":[["俊",9,"뛰어나다"],["峻",10,"높다"],["晙",11,"밝다"],["浚",10,"깊다"],["駿",17,"준마"]],
+  "지":[["智",12,"지혜"],["志",7,"뜻"],["知",8,"알다"],["芝",7,"지초"],["池",6,"못"],["祉",9,"복"]],
+  "진":[["眞",10,"참"],["珍",9,"보배"],["振",10,"떨치다"],["辰",7,"별"],["晉",10,"나아가다"]],
+  "찬":[["燦",17,"빛나다"],["璨",17,"빛나다"],["粲",13,"빛나다"],["瓚",23,"옥잔"]],
+  "창":[["昌",8,"창성하다"],["彰",14,"드러나다"],["暢",14,"통하다"]],
+  "채":[["彩",11,"채색"],["採",11,"따다"]],
+  "천":[["天",4,"하늘"],["川",3,"내"]],
+  "철":[["哲",10,"밝다"],["喆",12,"밝다"]],
+  "청":[["淸",11,"맑다"],["晴",12,"갤"]],
+  "태":[["太",4,"크다"],["泰",10,"크다"]],"택":[["澤",17,"연못"]],
+  "하":[["夏",10,"여름"],["河",8,"강"],["賀",12,"하례"],["霞",17,"노을"]],
+  "한":[["漢",14,"한수"],["翰",16,"깃"],["瀚",19,"넓다"]],
+  "혁":[["赫",14,"빛나다"],["爀",20,"빛나다"],["奕",9,"크다"]],
+  "현":[["賢",15,"어질다"],["鉉",13,"쇠"],["炫",9,"빛나다"],["顯",23,"나타나다"],["弦",8,"시위"],["晛",11,"햇빛"]],
+  "호":[["昊",8,"하늘"],["皓",12,"희다"],["浩",10,"넓다"],["豪",14,"호걸"],["虎",8,"범"],["晧",11,"희다"]],
+  "홍":[["洪",10,"넓다"],["弘",5,"크다"],["泓",8,"깊다"]],
+  "화":[["和",8,"화하다"],["花",7,"꽃"],["華",10,"빛나다"]],
+  "환":[["煥",13,"빛나다"],["桓",10,"굳세다"],["渙",12,"흩어지다"]],
+  "황":[["煌",13,"빛나다"],["晃",10,"밝다"],["璜",17,"반달옥"]],
+  "효":[["孝",7,"효도"],["曉",16,"새벽"]],
+  "훈":[["薰",17,"향기롭다"],["勳",16,"공훈"],["訓",10,"가르치다"]],
+  "희":[["熙",14,"빛나다"],["喜",12,"기쁘다"],["希",7,"바라다"],["羲",20,"복희씨"],["姬",10,"아름답다"],["熹",16,"빛나다"]]
+};
+
 // ── 입력 모드 ─────────────────────────────────────────────────────
 var currentMode = 'auto';
-var manualStrokes = {}; // { 'sur0':8, 'name0':5, 'name1':4 }
+var manualStrokes = {};   // { 'sur0':8, 'name0':5, 'name1':4 }
+var hanjaSelected = {};   // { 'sur':8, 'name0':11, 'name1':9 } — select 모드 선택 획수
+var hanjaManual   = {};   // select 모드에서 목록 없는 음절 수동 획수
 
 function setMode(m) {
   currentMode = m;
-  ['auto','manual','mix'].forEach(function(id) {
-    document.getElementById('tab' + id.charAt(0).toUpperCase() + id.slice(1))
-      .classList.toggle('active', id === m);
+  ['auto','select','manual'].forEach(function(id) {
+    var el = document.getElementById('tab' + id.charAt(0).toUpperCase() + id.slice(1));
+    if (el) el.classList.toggle('active', id === m);
   });
-  renderStrokeArea();
+  document.getElementById('hanjaArea').style.display  = (m === 'select') ? 'block' : 'none';
+  document.getElementById('strokeArea').style.display = (m === 'manual') ? 'block' : 'none';
+  if (m === 'select') renderHanjaSelect();
+  if (m === 'manual') renderStrokeArea();
 }
 
 function onNameInput() {
-  renderStrokeArea();
+  if (currentMode === 'select') renderHanjaSelect();
+  else if (currentMode === 'manual') renderStrokeArea();
+}
+
+// ── 한자 선택 렌더 ────────────────────────────────────────────────
+function renderHanjaSelect() {
+  var surVal  = document.getElementById('inputSur').value.trim();
+  var nameVal = document.getElementById('inputName').value.trim();
+  var grid = document.getElementById('hanjaGrid');
+  grid.innerHTML = '';
+
+  // 성 섹션
+  var surSec = document.createElement('div');
+  surSec.className = 'hanja-section';
+  surSec.innerHTML = '<span class="hanja-section-label">성(姓) 한자 선택</span>';
+  var surBtns = document.createElement('div');
+  surBtns.className = 'hanja-btns';
+
+  var surList = surVal ? SURNAME_HANJA[surVal] : null;
+  if (surList && surList.length > 0) {
+    surList.forEach(function(item) {
+      var hj = item[0], st = item[1];
+      var btn = document.createElement('button');
+      btn.className = 'hanja-btn' + (hanjaSelected['sur'] === st && hanjaSelected['sur_hj'] === hj ? ' selected' : '');
+      btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획</span>';
+      btn.onclick = function() {
+        hanjaSelected['sur'] = st;
+        hanjaSelected['sur_hj'] = hj;
+        renderHanjaSelect();
+        tryAutoCalcHanja(nameVal);
+      };
+      surBtns.appendChild(btn);
+    });
+  } else if (surVal) {
+    surSec.innerHTML += '<span style="font-size:11px;color:var(--text-dim);">이 성씨는 목록에 없습니다. 직접 입력해주세요.</span>';
+    var mrow = makeHanjaManualRow('sur', surVal, surSec);
+    surSec.appendChild(mrow);
+    surBtns = null;
+  } else {
+    surBtns.innerHTML = '<span style="font-size:11px;color:var(--text-dim);">성(姓)을 입력하면 한자 목록이 표시됩니다</span>';
+  }
+  if (surBtns) surSec.appendChild(surBtns);
+  grid.appendChild(surSec);
+
+  // 이름 섹션 (음절별)
+  if (nameVal) {
+    var nameChars = nameVal.split('');
+    nameChars.forEach(function(ch, idx) {
+      var key = 'name' + idx;
+      var sec = document.createElement('div');
+      sec.className = 'hanja-section';
+      sec.innerHTML = '<span class="hanja-section-label">'+ch+' 한자 선택</span>';
+      var btns = document.createElement('div');
+      btns.className = 'hanja-btns';
+
+      var list = NAME_HANJA[ch];
+      if (list && list.length > 0) {
+        list.forEach(function(item) {
+          var hj = item[0], st = item[1], meaning = item[2] || '';
+          var btn = document.createElement('button');
+          var isSel = hanjaSelected[key] === st && hanjaSelected[key+'_hj'] === hj;
+          btn.className = 'hanja-btn' + (isSel ? ' selected' : '');
+          btn.innerHTML = '<span class="hb-char">'+hj+'</span><span class="hb-info">'+st+'획 '+meaning+'</span>';
+          btn.onclick = function() {
+            hanjaSelected[key] = st;
+            hanjaSelected[key+'_hj'] = hj;
+            renderHanjaSelect();
+            tryAutoCalcHanja(nameVal);
+          };
+          btns.appendChild(btn);
+        });
+        sec.appendChild(btns);
+      } else {
+        sec.innerHTML += '<span style="font-size:11px;color:var(--text-dim);">\''+ch+'\'는 목록에 없습니다. 직접 입력해주세요.</span>';
+        var mr = makeHanjaManualRow(key, ch, sec);
+        sec.appendChild(mr);
+      }
+      grid.appendChild(sec);
+    });
+  }
+}
+
+function makeHanjaManualRow(key, ch, container) {
+  if (!(key in hanjaManual)) hanjaManual[key] = charStrokes(ch) || 1;
+  var row = document.createElement('div');
+  row.className = 'hanja-manual-row';
+  row.innerHTML =
+    '<span class="hanja-manual-label">획수 직접 입력</span>' +
+    '<div class="stroke-spin">' +
+      '<button class="spin-btn" onclick="adjustHanjaManual(\''+key+'\',-1)">−</button>' +
+      '<div class="spin-val" id="hjm_'+key+'">'+hanjaManual[key]+'</div>' +
+      '<button class="spin-btn" onclick="adjustHanjaManual(\''+key+'\',1)">+</button>' +
+    '</div>';
+  // 수동 획수도 hanjaSelected에 반영
+  hanjaSelected[key] = hanjaManual[key];
+  return row;
+}
+
+function adjustHanjaManual(key, delta) {
+  hanjaManual[key] = Math.max(1, (hanjaManual[key] || 1) + delta);
+  hanjaSelected[key] = hanjaManual[key];
+  var el = document.getElementById('hjm_'+key);
+  if (el) el.textContent = hanjaManual[key];
+}
+
+function tryAutoCalcHanja(nameVal) {
+  var nameChars = (nameVal || '').split('').filter(Boolean);
+  var surOk  = hanjaSelected['sur'] !== undefined;
+  var nameOk = nameChars.every(function(_, i) { return hanjaSelected['name'+i] !== undefined; });
+  if (surOk && nameOk && nameChars.length > 0) calcScore();
 }
 
 function renderStrokeArea() {
   var surVal  = document.getElementById('inputSur').value.trim();
   var nameVal = document.getElementById('inputName').value.trim();
 
-  if (currentMode === 'auto') {
-    document.getElementById('strokeArea').style.display = 'none';
-    return;
-  }
-
-  var showSur  = currentMode === 'manual';  // manual: 성도 수동
-  var showName = true;                       // manual/mix: 이름 수동
-
-  // 글자 분리
-  var surChars  = surVal  ? surVal.split('')  : ['성'];
-  var nameChars = nameVal ? nameVal.split('') : (nameVal.length === 0 ? ['이름'] : nameVal.split(''));
+  var surChars  = surVal  ? surVal.split('')  : [];
+  var nameChars = nameVal ? nameVal.split('') : [];
 
   var grid = document.getElementById('strokeGrid');
   grid.innerHTML = '';
-  document.getElementById('strokeArea').style.display = 'block';
 
-  function makeRow(key, label, charDisp, defaultVal) {
+  function makeRow(key, label, ch, defaultVal) {
     if (!(key in manualStrokes)) manualStrokes[key] = defaultVal;
     var row = document.createElement('div');
     row.className = 'stroke-row';
     row.innerHTML =
-      '<span class="stroke-char">'+charDisp+'</span>' +
+      '<span class="stroke-char">'+(ch||'？')+'</span>' +
       '<span class="stroke-label">'+label+'</span>' +
       '<div class="stroke-spin">' +
         '<button class="spin-btn" onclick="adjustStroke(\''+key+'\',-1)">−</button>' +
@@ -451,16 +707,8 @@ function renderStrokeArea() {
     grid.appendChild(row);
   }
 
-  if (showSur) {
-    surChars.forEach(function(ch, i) {
-      makeRow('sur'+i, '성 '+i+'번째 획수', ch || '？', charStrokes(ch) || 1);
-    });
-  }
-  if (showName) {
-    nameChars.forEach(function(ch, i) {
-      makeRow('name'+i, '이름 '+i+'번째 획수', ch || '？', charStrokes(ch) || 1);
-    });
-  }
+  surChars.forEach(function(ch, i) { makeRow('sur'+i, '성 '+i+'번째 획수', ch, charStrokes(ch)||1); });
+  nameChars.forEach(function(ch, i) { makeRow('name'+i, '이름 '+i+'번째 획수', ch, charStrokes(ch)||1); });
 }
 
 function adjustStroke(key, delta) {
@@ -471,11 +719,13 @@ function adjustStroke(key, delta) {
 
 // ── 획수 가져오기 ─────────────────────────────────────────────────
 function getStrokesFor(prefix, chars) {
-  // auto: 자동 계산, manual/mix: 스피너 값
   return chars.map(function(ch, i) {
     var key = prefix + i;
-    if (currentMode === 'auto' || (currentMode === 'mix' && prefix === 'sur')) {
-      return charStrokes(ch) || 0;
+    if (currentMode === 'auto') return charStrokes(ch) || 0;
+    if (currentMode === 'select') {
+      // 성(sur): hanjaSelected['sur'], 이름: hanjaSelected['name0'], ['name1']
+      var selKey = (prefix === 'sur') ? 'sur' : key;
+      return hanjaSelected[selKey] !== undefined ? hanjaSelected[selKey] : (charStrokes(ch) || 0);
     }
     return manualStrokes[key] || charStrokes(ch) || 1;
   });
