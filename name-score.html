@@ -44,9 +44,10 @@ nav {
 .nav-brand {
   display:flex; align-items:center; gap:8px;
   text-decoration:none; color:var(--gold);
-  font-size:14px; letter-spacing:0.2em; font-weight:300;
+  font-size:14px; letter-spacing:0.2em; font-weight:700;
+  font-family:'Noto Serif KR',serif;
 }
-.nav-brand svg { width:28px; height:28px; flex-shrink:0; }
+.nav-brand img { height:44px; object-fit:contain; flex-shrink:0; }
 .nav-back {
   font-size:11px; color:var(--text-dim); text-decoration:none;
   letter-spacing:0.1em; transition:color 0.2s; cursor:pointer;
@@ -248,10 +249,7 @@ nav {
 
 <nav>
   <a href="https://picolab.kr" class="nav-brand">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-      <circle cx="256" cy="240" r="210" fill="none" stroke="#c9a84c" stroke-width="2" opacity="0.3"/>
-      <polygon points="256,80 284,186 396,186 308,252 340,360 256,292 172,360 204,252 116,186 228,186" fill="#c9a84c"/>
-    </svg>
+    <img src="https://raw.githubusercontent.com/kkdmb7-blip/pico/main/img/goddess.png" alt="FORTUNA">
     FORTUNA
   </a>
   <a href="https://picolab.kr" class="nav-back">← 피코랩</a>
