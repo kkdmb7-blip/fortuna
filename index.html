@@ -292,6 +292,48 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
   .free-main{grid-template-columns:1fr;}
   .products-grid{grid-template-columns:1fr;}
   .biz-grid{grid-template-columns:1fr;}
+  .memox-entry-banner{padding:12px 16px;}
+  .memox-entry-new{font-size:9px;}
+  .memox-entry-title{font-size:12px;}
+  .memox-entry-desc{display:none;}
+  .memox-entry-btn{font-size:11px;padding:5px 10px;}
+}
+.memox-entry-banner{
+  background:linear-gradient(135deg,rgba(138,100,255,0.12),rgba(201,168,76,0.08));
+  border-bottom:1px solid rgba(138,100,255,0.3);
+  padding:14px 40px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+  position:relative;
+  z-index:99;
+  margin-top:56px;
+}
+.memox-entry-banner:hover{background:linear-gradient(135deg,rgba(138,100,255,0.18),rgba(201,168,76,0.12));}
+.memox-entry-left{display:flex;align-items:center;gap:12px;}
+.memox-entry-new{
+  background:rgba(138,100,255,0.2);
+  border:1px solid rgba(138,100,255,0.4);
+  color:#a07fd4;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.08em;
+  padding:3px 8px;
+  border-radius:20px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.memox-entry-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;}
+.memox-entry-desc{font-size:11px;color:var(--dim);}
+.memox-entry-btn{
+  font-size:12px;
+  color:var(--gold);
+  border:1px solid var(--golddim);
+  border-radius:20px;
+  padding:6px 14px;
+  white-space:nowrap;
+  flex-shrink:0;
 }
 </style>
 </head>
@@ -313,6 +355,18 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
     <a href="light.html" class="nav-cta" id="applyBtn">신청하기</a>
   </div>
 </nav>
+
+<!-- 메목스 유입 배너 -->
+<div class="memox-entry-banner" onclick="window.open('https://kkdmb7-blip.github.io/memox/', '_blank')">
+  <div class="memox-entry-left">
+    <span class="memox-entry-new">NEW</span>
+    <div class="memox-entry-text">
+      <div class="memox-entry-title">AI 실시간 사주 상담 오픈</div>
+      <div class="memox-entry-desc">사주+베딕+기문+자미두수 — 지금 바로 무료로 시작해보세요</div>
+    </div>
+  </div>
+  <div class="memox-entry-btn">무료 상담 →</div>
+</div>
 
 <!-- ① 히어로 -->
 <section class="hero">
