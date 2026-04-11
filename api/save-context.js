@@ -3,10 +3,20 @@
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
+const ALLOWED_ORIGINS = [
+  'https://kkdmb7-blip.github.io',
+  'https://picolab.kr',
+  'https://www.picolab.kr',
+  'http://localhost:3000'
+];
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '*';
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const SB_KEY = process.env.SB_SERVICE_KEY;
@@ -31,9 +41,6 @@ export default async function handler(req, res) {
 
   const { user_id, people, situations, concerns, last_topics, emotion_pattern } = req.body;
   if (!user_id) return res.status(400).json({ error: 'user_id required' });
-
-  const SB_KEY = process.env.SB_SERVICE_KEY;
-  if (!SB_KEY) return res.status(500).json({ error: 'Server config error' });
 
   try {
     const resp = await fetch(`${SB_URL}/rest/v1/user_context`, {
