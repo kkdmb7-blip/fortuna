@@ -202,6 +202,7 @@ nav {
 .jawon-row { display:flex; gap:8px; justify-content:center; margin-bottom:8px; }
 .jw-node { text-align:center; flex:1; }
 .jw-hanja { font-size:24px; color:var(--gold); display:block; margin-bottom:6px; }
+.jawon-notice { font-size:11px; color:var(--text-dim); line-height:1.7; margin-bottom:12px; padding:8px 10px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(212,175,55,0.3); }
 .summary-card {
   background:var(--gold-dim); border:1px solid var(--gold-border);
   border-radius:14px; padding:18px 16px; margin-bottom:20px;
@@ -290,7 +291,8 @@ nav {
     </div>
 
     <div class="analysis-card" id="jawonCard" style="display:none;">
-      <div class="analysis-title">자원오행 · 한자 기운</div>
+      <div class="analysis-title" id="jawonTitle">자원오행 · 한자 기운</div>
+      <div class="jawon-notice" id="jawonNotice"></div>
       <div class="jawon-row" id="jawonRow"></div>
     </div>
 
@@ -697,10 +699,12 @@ function getStrokesFor(prefix, chars) {
 }
 
 function getJawonOhaeng(prefix, chars) {
-  if (currentMode !== 'select') return chars.map(function(){ return null; });
   return chars.map(function(ch, i) {
-    var sk = (prefix==='sur') ? 'sur' : (prefix+i);
-    return hanjaSelected[sk+'_oh'] || null;
+    if (currentMode === 'select') {
+      var sk = (prefix==='sur') ? 'sur' : (prefix+i);
+      return hanjaSelected[sk+'_oh'] || getEumOhaeng(ch);
+    }
+    return getEumOhaeng(ch);
   });
 }
 
@@ -816,22 +820,27 @@ function renderResult(gyek, allChars, allStrokes, allJawon, allHanja) {
   else if (Math.abs(yangCnt-(eyPat.length-yangCnt))<=1) { eyResEl.className='oh-result all-good'; eyResEl.textContent='음양이 균형 있게 배합되어 있습니다'; }
   else { eyResEl.className='oh-result mixed'; eyResEl.textContent='음양 배합이 다소 치우쳐 있습니다'; }
 
-  // 자원오행
+  // 자원오행 / 음오행 카드 (항상 표시)
   var jwCard = document.getElementById('jawonCard');
-  if (currentMode==='select' && allJawon.some(function(o){return o;})) {
-    jwCard.style.display = '';
-    var jwRow = document.getElementById('jawonRow');
-    jwRow.innerHTML = '';
-    allChars.forEach(function(ch, i) {
-      var hj = allHanja[i]||ch, oh = allJawon[i]||'?';
-      var node = document.createElement('div');
-      node.className = 'jw-node';
-      node.innerHTML = '<span class="jw-hanja">'+hj+'</span><span class="jw-badge oh-badge '+oh+'">'+oh+'</span>';
-      jwRow.appendChild(node);
-    });
+  jwCard.style.display = '';
+  var jwTitle = document.getElementById('jawonTitle');
+  var jwNotice = document.getElementById('jawonNotice');
+  var jwRow = document.getElementById('jawonRow');
+  if (currentMode === 'select') {
+    jwTitle.textContent = '자원오행 · 한자 기운';
+    jwNotice.textContent = '자원오행은 한자의 부수(部首) 기준입니다. 학파에 따라 해석이 다를 수 있으며 참고용으로 활용하세요.';
   } else {
-    jwCard.style.display = 'none';
+    jwTitle.textContent = '음오행 · 자음 오행';
+    jwNotice.textContent = '한글 자동 모드는 음오행(音五行) 기준입니다. 정확한 작명은 한자 기준을 권장합니다.';
   }
+  jwRow.innerHTML = '';
+  allChars.forEach(function(ch, i) {
+    var hj = allHanja[i]||ch, oh = allJawon[i]||'?';
+    var node = document.createElement('div');
+    node.className = 'jw-node';
+    node.innerHTML = '<span class="jw-hanja">'+hj+'</span><span class="jw-badge oh-badge '+oh+'">'+oh+'</span>';
+    jwRow.appendChild(node);
+  });
 
   // 종합 해석
   renderInterpret(gyek, grades, rels, eyPat, allJawon, hasGeuk, allSaeng, allYang, allEum, yangCnt);
@@ -866,12 +875,13 @@ function renderInterpret(gyek, grades, rels, eyPat, jawon, hasGeuk, allSaeng, al
     : '양 '+yangCnt+'·음 '+(eyPat.length-yangCnt)+'로 다소 치우쳐 있지만 큰 문제는 아닙니다.';
 
   var jawonText = '';
-  if (currentMode==='select' && jawon.some(function(o){return o;})) {
+  if (jawon.some(function(o){return o;})) {
     var ohs = jawon.filter(Boolean);
     var ohCnt = {};
     ohs.forEach(function(o){ohCnt[o]=(ohCnt[o]||0)+1;});
     var dom = Object.keys(ohCnt).sort(function(a,b){return ohCnt[b]-ohCnt[a];})[0];
-    jawonText = '한자 자원오행 '+ohs.join('·')+' — '+dom+'의 기운이 가장 강하게 작용합니다.';
+    var label = (currentMode==='select') ? '한자 자원오행' : '음오행';
+    jawonText = label+' '+ohs.join('·')+' — '+dom+'의 기운이 가장 강하게 작용합니다.';
   }
 
   var score = 0;
