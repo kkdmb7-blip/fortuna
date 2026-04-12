@@ -41,7 +41,8 @@ body{background:var(--void);color:var(--text);font-family:var(--fn);overflow-x:h
 
 /* ── 네비 ── */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(5,2,14,0.6);backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
-.nav-brand{font-size:18px;font-weight:700;letter-spacing:0.22em;color:var(--gold);}
+.nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
+.nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
 .nav-links{display:flex;gap:22px;align-items:center;}
 .nav-link{font-size:11px;letter-spacing:0.14em;color:var(--dim);text-decoration:none;transition:color 0.2s;text-transform:uppercase;}
 .nav-link:hover{color:var(--gold);}
@@ -346,7 +347,10 @@ footer{position:relative;z-index:1;text-align:center;padding:40px 24px 0;border-
 
 <!-- 네비 -->
 <nav>
-  <div class="nav-brand">FORTUNA</div>
+  <a href="https://picolab.kr" class="nav-brand">
+    <img src="https://raw.githubusercontent.com/kkdmb7-blip/pico/main/img/goddess.png" alt="FORTUNA">
+    FORTUNA
+  </a>
   <div class="nav-links">
     <a href="#products" class="nav-link">리포트</a>
     <a href="#sample" class="nav-link">샘플</a>
