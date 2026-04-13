@@ -214,6 +214,49 @@ nav {
   border-radius:14px; padding:18px 16px; margin-bottom:20px;
   font-size:13px; line-height:1.9; color:var(--text);
 }
+.total-score-card {
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.total-score-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.total-score-num {
+  font-size: 56px;
+  font-weight: 700;
+  color: #d4af37;
+  line-height: 1;
+}
+.total-score-max {
+  font-size: 14px;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 12px;
+}
+.total-score-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+.total-score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #d4af37, #f5d87a);
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+.total-score-comment {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
 .interpret-card {
   background:var(--card); border:1px solid var(--border);
   border-radius:16px; padding:22px 18px; margin-bottom:16px;
@@ -316,6 +359,7 @@ nav {
   <div class="result-area" id="resultArea">
     <div class="section-label">4격 수리 결과</div>
     <div class="score-grid" id="scoreGrid"></div>
+    <div class="total-score-card" id="totalScoreCard"></div>
     <div class="summary-card" id="summaryCard"></div>
 
     <div class="analysis-card">
@@ -352,6 +396,16 @@ nav {
     c.appendChild(s);
   }
 })();
+
+var GRADE_SCORE = { '대길': 100, '길': 75, '반길': 50, '흉': 25, '대흉': 0 };
+
+function getScoreComment(score) {
+  if (score >= 90) return '매우 좋은 이름입니다. 강한 길운을 가진 이름이에요.';
+  if (score >= 75) return '좋은 이름입니다. 전반적으로 길한 기운이 흐릅니다.';
+  if (score >= 60) return '무난한 이름입니다. 일부 보완이 도움될 수 있어요.';
+  if (score >= 40) return '주의가 필요한 이름입니다. 개명을 고려해볼 수 있어요.';
+  return '흉한 기운이 강한 이름입니다. 전문 작명가 상담을 권장합니다.';
+}
 
 var SURI_TABLE = {
   1:"대길",2:"흉",3:"길",4:"대흉",5:"길",6:"길",7:"길",8:"길",9:"흉",10:"흉",
@@ -945,6 +999,17 @@ function renderResult(gyek, allChars, allStrokes, allJawon, allHanja) {
     : badCnt>=3 ? '수리 배합에 주의가 필요합니다. 정격('+gyek.jung+'·'+jg+')을 중심으로 검토하세요.'
     : '길흉이 혼재합니다. 정격('+gyek.jung+'·'+jg+')이 핵심 운의 방향을 결정합니다.';
   document.getElementById('summaryCard').textContent = sumText;
+
+  // 종합 점수 카드
+  var scores = grades.map(function(g){ return GRADE_SCORE[g] || 0; });
+  var totalScore = Math.round(scores.reduce(function(a,b){return a+b;},0) / 4);
+  document.getElementById('totalScoreCard').innerHTML =
+    '<div class="total-score-label">이름 종합 점수</div>' +
+    '<div class="total-score-num">' + totalScore + '</div>' +
+    '<div class="total-score-max">/ 100점</div>' +
+    '<div class="total-score-bar"><div class="total-score-fill" style="width:0%;" id="totalScoreFill"></div></div>' +
+    '<div class="total-score-comment">' + getScoreComment(totalScore) + '</div>';
+  setTimeout(function(){ var f=document.getElementById('totalScoreFill'); if(f) f.style.width=totalScore+'%'; }, 50);
 
   // 음오행
   var allEumOh = allChars.map(function(ch){ return getEumOhaeng(ch); });
