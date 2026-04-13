@@ -237,6 +237,30 @@ nav {
 .toast.show { transform:translateX(-50%) translateY(0); }
 .toast.error { border-color:#f44336; color:#f44336; background:rgba(244,67,54,0.1); }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
+.yongsin-match-box {
+  border:1px solid var(--gold); background:rgba(212,175,55,0.08);
+  border-radius:16px; padding:20px; margin-top:16px;
+  font-size:13px; line-height:1.9; color:var(--text);
+}
+.yongsin-match-title {
+  font-size:10px; letter-spacing:0.3em; color:var(--gold);
+  margin-bottom:16px; opacity:0.7; text-transform:uppercase;
+}
+.yongsin-match-item { margin-bottom:6px; }
+.yongsin-ok  { color:#4caf7a; }
+.yongsin-warn { color:#ff9800; }
+.yongsin-bad  { color:#f44336; }
+.yongsin-login-banner {
+  text-align:center; padding:10px 0 4px;
+  color:var(--text-dim); font-size:13px; line-height:1.9;
+}
+.btn-login-small {
+  display:inline-block; margin-top:10px; padding:10px 24px;
+  background:var(--gold-dim); border:1px solid var(--gold-border);
+  border-radius:10px; color:var(--gold); font-size:12px;
+  font-family:'Noto Serif KR',serif; cursor:pointer;
+  letter-spacing:0.08em; text-decoration:none;
+}
 </style>
 </head>
 <body>
@@ -306,6 +330,7 @@ nav {
     </div>
 
     <div class="interpret-card" id="interpretCard"></div>
+    <div id="yongsinMatchBox"></div>
   </div>
 </div>
 
@@ -726,6 +751,108 @@ function getSelectedHanja(prefix, chars) {
 }
 
 var lastScores = null, lastName = '';
+var _yongsin = null, _geokguk = null;
+
+function getYongsinOhaeng(yongsin) {
+  if (!yongsin) return null;
+  if (yongsin.includes('목') || yongsin.includes('木')) return '목';
+  if (yongsin.includes('화') || yongsin.includes('火')) return '화';
+  if (yongsin.includes('토') || yongsin.includes('土')) return '토';
+  if (yongsin.includes('금') || yongsin.includes('金')) return '금';
+  if (yongsin.includes('수') || yongsin.includes('水')) return '수';
+  return null;
+}
+
+function loadSajuData() {
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem('pico_user')); } catch(e) {}
+  if (!user) return;
+  var profile = null;
+  try { profile = JSON.parse(localStorage.getItem('pico_profile')); } catch(e) {}
+  if (!profile) return;
+  fetch('https://fortuna.kkdmb7.workers.dev/saju-report', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      name: profile.name,
+      gender: profile.gender,
+      year: profile.year,
+      month: profile.month,
+      day: profile.day,
+      hour: profile.hour !== undefined ? profile.hour : -1
+    })
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    _yongsin = data.yongshin || data.yongsin || null;
+    _geokguk = data.geokguk || null;
+  })
+  .catch(function(){});
+}
+
+function renderYongsinMatch(allChars, allJawon, allEumOh) {
+  var box = document.getElementById('yongsinMatchBox');
+  if (!box) return;
+  var user = null;
+  try { user = JSON.parse(localStorage.getItem('pico_user')); } catch(e) {}
+  if (!user) {
+    box.innerHTML =
+      '<div class="yongsin-match-box">' +
+        '<div class="yongsin-match-title">용신 매칭 분석</div>' +
+        '<div class="yongsin-login-banner">로그인하면 내 사주 용신과 이름 오행 매칭을 확인할 수 있어요' +
+          '<br><a class="btn-login-small" href="https://picolab.kr">로그인하러 가기</a>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+  if (!_yongsin) { box.innerHTML = ''; return; }
+  var yongsinOh = getYongsinOhaeng(_yongsin);
+  if (!yongsinOh) { box.innerHTML = ''; return; }
+  var KO_OH   = {'목':'木','화':'火','토':'土','금':'金','수':'水'};
+  var HAN_OH  = {'木':'목','火':'화','土':'토','金':'금','水':'수'};
+  var KIJIN   = {'木':'金','火':'水','土':'木','金':'火','水':'土'};
+  var yongsinHan = KO_OH[yongsinOh];
+  var kijinHan   = KIJIN[yongsinHan];
+  var ohaengList = (currentMode === 'select') ? allJawon : allEumOh;
+  var matchChars = [], kijinChars = [];
+  allChars.forEach(function(ch, i) {
+    var oh = ohaengList[i];
+    if (oh === yongsinHan) matchChars.push(ch);
+    else if (oh === kijinHan) kijinChars.push(ch);
+  });
+  var charDesc = allChars.map(function(ch, i) {
+    var oh = ohaengList[i];
+    return ch + '=' + (HAN_OH[oh] || oh || '?') + '오행';
+  }).join(', ');
+  var matchCount = matchChars.length;
+  var overall = matchCount >= 2
+    ? '이름의 오행이 용신과 잘 맞습니다. 운을 보완하는 좋은 이름입니다.'
+    : matchCount === 1
+    ? '부분적으로 용신 오행이 반영되어 있습니다.'
+    : '이름 오행이 용신과 다릅니다. 개명 시 용신 오행 반영을 권장합니다.';
+  var recList = [];
+  if (NAME_HANJA) {
+    Object.keys(NAME_HANJA).forEach(function(key) {
+      NAME_HANJA[key].forEach(function(item) {
+        if (item[3] === yongsinHan) recList.push(item[0] + '(' + key + ')');
+      });
+    });
+  }
+  var recText = recList.slice(0, 8).join(' ');
+  var html = '<div class="yongsin-match-box">';
+  html += '<div class="yongsin-match-title">용신 매칭 분석</div>';
+  html += '<div class="yongsin-match-item">당신의 용신은 <b>' + _yongsin + '(' + yongsinOh + ')</b>입니다.' + (_geokguk ? '&nbsp; 격국: ' + _geokguk : '') + '</div>';
+  html += '<div class="yongsin-match-item">이름 ' + allChars.join('') + '의 오행 구성: ' + charDesc + '</div>';
+  if (matchChars.length > 0)
+    html += '<div class="yongsin-match-item yongsin-ok">✅ 용신 일치: ' + matchChars.join(', ') + '</div>';
+  if (kijinChars.length > 0)
+    html += '<div class="yongsin-match-item yongsin-warn">⚠️ 기신 주의: ' + kijinChars.join(', ') + '</div>';
+  html += '<div class="yongsin-match-item" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,55,0.2);">' + overall + '</div>';
+  if (recText)
+    html += '<div class="yongsin-match-item" style="margin-top:8px;font-size:12px;color:var(--text-dim);">용신 오행(' + yongsinOh + ') 추천 한자: ' + recText + '</div>';
+  html += '</div>';
+  box.innerHTML = html;
+}
 
 function calcScore() {
   var sur  = document.getElementById('inputSur').value.trim();
@@ -853,6 +980,7 @@ function renderResult(gyek, allChars, allStrokes, allJawon, allHanja) {
 
   // 종합 해석
   renderInterpret(gyek, grades, rels, eyPat, allJawon, hasGeuk, allSaeng, allYang, allEum, yangCnt);
+  renderYongsinMatch(allChars, allJawon, allEumOh);
   document.getElementById('resultArea').classList.add('show');
 }
 
@@ -923,6 +1051,8 @@ function showToast(msg, isError) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2500);
 }
+
+loadSajuData();
 
 (function() {
   var p = new URLSearchParams(window.location.search);
