@@ -114,9 +114,59 @@ export default async function handler(req, res) {
     })
   );
 
+  // ── 오늘의 명언 푸시 ──────────────────────────────────────────
+  let quotePayload = null;
+  try {
+    const MAKE_API_KEY = process.env.MAKE_API_KEY;
+    if (MAKE_API_KEY) {
+      const kst = new Date(Date.now() + 9 * 3600000);
+      const dateNum = kst.getUTCFullYear() * 10000 + (kst.getUTCMonth() + 1) * 100 + kst.getUTCDate();
+      const quoteIndex = dateNum % 50;
+
+      const makeRes = await fetch(
+        'https://us2.make.com/api/v2/data-store-records?dataStoreId=85063&pg[limit]=100',
+        { headers: { Authorization: `Token ${MAKE_API_KEY}` } }
+      );
+      if (makeRes.ok) {
+        const makeData = await makeRes.json();
+        const records = makeData.records || makeData.dataStoreRecords || [];
+        let quotes = null;
+        const mainRecord = records.find(r => r.key === 'fortuna_quotes_db');
+        if (mainRecord) {
+          const d = mainRecord.data;
+          quotes = Array.isArray(d) ? d : (d && Array.isArray(d.items) ? d.items : null);
+        }
+        if (!quotes && records.length > 1) {
+          quotes = records.map(r => r.data || r).filter(d => d && d.quote).sort((a, b) => a.id - b.id);
+        }
+        if (quotes && quotes.length > 0) {
+          const item = quotes[quoteIndex % quotes.length];
+          quotePayload = JSON.stringify({
+            title: '오늘의 우주 메시지 ✨',
+            body: item.message || item.quote || '',
+            url: '/memox/'
+          });
+        }
+      }
+    }
+  } catch (e) { console.error('[quote push] 명언 조회 실패:', e.message); }
+
+  if (quotePayload) {
+    await Promise.allSettled(
+      subscriptions.map(async (row) => {
+        const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
+        if (!sub || !sub.endpoint) return;
+        try {
+          await webpush.sendNotification(sub, quotePayload);
+        } catch (e) { /* 만료 구독은 앞선 루프에서 이미 처리됨 */ }
+      })
+    );
+  }
+
   return res.status(200).json({
     ok: true,
     total: subscriptions.length,
+    quotesSent: quotePayload ? subscriptions.length : 0,
     ...results
   });
 }
