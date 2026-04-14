@@ -1,5 +1,5 @@
 // fortuna-silk.vercel.app/api/quote-push.js
-// Worker 크론에서 호출: 피코랩 사용자에게 오늘의 명언 푸시 발송 (매일 오전 8시 KST)
+// Worker 크론에서 호출: 피코랩 사용자에게 일진 맞춤 명언 푸시 (매일 07:30 KST)
 // 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY, CRON_SECRET
 
 import webpush from 'web-push';
@@ -9,10 +9,68 @@ const quotes = require('./quotes.json');
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
-function getTodayQuote() {
-  const kst = new Date(Date.now() + 9 * 3600000);
-  const idx = (kst.getUTCFullYear() * 365 + kst.getUTCMonth() * 30 + kst.getUTCDate()) % quotes.length;
-  return quotes[idx];
+// ── 오늘 일진 천간 인덱스 계산 (Julian Day Number 기반) ──────────
+// 기준: 2000-01-01 = JDN 2451545 = 경(庚) = 인덱스 6
+function getTodayDayStemIdx(kstDate) {
+  const y = kstDate.getUTCFullYear();
+  const m = kstDate.getUTCMonth() + 1;
+  const d = kstDate.getUTCDate();
+  const a  = Math.floor((14 - m) / 12);
+  const yr = y + 4800 - a;
+  const mo = m + 12 * a - 3;
+  const jdn = d + Math.floor((153 * mo + 2) / 5) + 365 * yr
+            + Math.floor(yr / 4) - Math.floor(yr / 100)
+            + Math.floor(yr / 400) - 32045;
+  return ((jdn - 2451545 + 6) % 10 + 10) % 10;
+  // 0=갑 1=을 2=병 3=정 4=무 5=기 6=경 7=신 8=임 9=계
+}
+
+// 천간 인덱스 → 오행
+function stemIdxToOhang(idx) {
+  return ['목','목','화','화','토','토','금','금','수','수'][idx];
+}
+
+// 천간 한자/한글 이름 → 인덱스
+const STEM_NAMES = ['갑','을','병','정','무','기','경','신','임','계'];
+function stemNameToIdx(name) {
+  if (!name) return -1;
+  // 한글 직접 매칭
+  const idx = STEM_NAMES.indexOf(name);
+  if (idx >= 0) return idx;
+  // 천간 한자 첫 글자 매칭 (甲乙丙丁戊己庚辛壬癸)
+  const hanja = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  const h = hanja.indexOf(name[0]);
+  if (h >= 0) return h;
+  return -1;
+}
+
+// 오늘 일진이 용신에 미치는 영향 → 길(good)/평(neutral)/흉(caution)
+// 오행 상생: 목→화→토→금→수→목
+// 오행 상극: 목克토, 화克금, 토克수, 금克목, 수克화
+function getDayTone(todayOhang, yongshin) {
+  if (!yongshin || !todayOhang) return 'neutral';
+  const 生Map = { 목:'화', 화:'토', 토:'금', 금:'수', 수:'목' };
+  const 克Map = { 목:'토', 화:'금', 토:'수', 금:'목', 수:'화' };
+  // 오늘 오행이 용신과 같거나 용신을 생함 → 길
+  if (todayOhang === yongshin || 生Map[todayOhang] === yongshin) return 'good';
+  // 오늘 오행이 용신을 극함 → 흉
+  if (克Map[todayOhang] === yongshin) return 'caution';
+  return 'neutral';
+}
+
+// 일간별 오늘 명언 선택 (10종 ilgan × 날짜 오프셋 → 각 유저마다 다른 명언)
+function selectPersonalizedQuote(ilgan, baseDay) {
+  const ilganIdx = stemNameToIdx(ilgan);
+  const offset   = ilganIdx >= 0 ? ilganIdx * 10 : 0;
+  return quotes[(baseDay + offset) % quotes.length];
+}
+
+// 일진 톤에 따른 알림 타이틀
+function buildTitle(name, tone) {
+  const n = name || '너';
+  if (tone === 'good')    return `✨ ${n}아, 오늘 기운이 맞아`;
+  if (tone === 'caution') return `🌙 ${n}아, 오늘은 신중하게`;
+  return `✨ ${n}의 오늘 우주 메시지`;
 }
 
 export default async function handler(req, res) {
@@ -44,8 +102,13 @@ export default async function handler(req, res) {
 
   webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-  const quoteItem = getTodayQuote();
+  // 오늘 일진 계산 (KST 기준)
+  const kst          = new Date(Date.now() + 9 * 3600000);
+  const todayStemIdx = getTodayDayStemIdx(kst);
+  const todayOhang   = stemIdxToOhang(todayStemIdx);
+  const baseDay      = kst.getUTCFullYear() * 365 + kst.getUTCMonth() * 30 + kst.getUTCDate();
 
+  // 구독 엔드포인트 조회
   const userIds = users.map(u => u.user_id).filter(Boolean);
   let subMap = {};
   try {
@@ -68,12 +131,17 @@ export default async function handler(req, res) {
       const sub = subMap[u.user_id];
       if (!sub) { results.skipped++; return; }
 
+      // ── 개인화 처리 ──
+      // 1. 오늘 일진 × 용신 → 길/평/흉 판정
+      const tone  = getDayTone(todayOhang, u.yongshin);
+      // 2. 일간 기반 오늘의 명언 선택 (같은 날 ilgan별로 다른 명언)
+      const quote = selectPersonalizedQuote(u.ilgan, baseDay);
+      // 3. 타이틀 + 본문 구성
+      const title = buildTitle(u.name, tone);
+      const body  = quote.message;
+
       const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
-      const payload = JSON.stringify({
-        title: '✨ 오늘의 우주 메시지',
-        body: quoteItem.message,
-        url: 'https://picolab.kr'
-      });
+      const payload = JSON.stringify({ title, body, url: 'https://picolab.kr' });
 
       try {
         await webpush.sendNotification(parsedSub, payload);
