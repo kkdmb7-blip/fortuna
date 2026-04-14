@@ -135,6 +135,43 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, total: user_ids.length, ...r2 });
   }
 
+  // ── 기문둔갑 대길 푸시 모드 (qimen-push 통합): users[].next_shi 존재 시 ──
+  if (Array.isArray(body.users) && body.users.length > 0 && body.users[0].next_shi !== undefined) {
+    const { users: qUsers } = body;
+    const VAPID_PUBLIC_KEY  = process.env.VAPID_PUBLIC_KEY;
+    const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
+    const VAPID_EMAIL       = process.env.VAPID_EMAIL || 'mailto:kkdmb@naver.com';
+    const SB_KEY            = process.env.SB_SERVICE_KEY;
+    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !SB_KEY) return res.status(500).json({ error: 'Missing env vars' });
+    webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    const qIds = qUsers.map(u => u.user_id).filter(Boolean);
+    let qSubMap = {};
+    try {
+      const qr = await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=in.(${qIds.join(',')})&select=user_id,subscription`,
+        { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } });
+      const qSubs = await qr.json();
+      if (Array.isArray(qSubs)) qSubs.forEach(s => { if (s.user_id) qSubMap[s.user_id] = s.subscription; });
+    } catch(e) { return res.status(500).json({ error: 'Supabase 조회 실패', detail: e.message }); }
+    const qRes = { sent:0, failed:0, skipped:0, expired:[] };
+    await Promise.allSettled(qUsers.map(async (u) => {
+      const sub = qSubMap[u.user_id];
+      if (!sub) { qRes.skipped++; return; }
+      const ps = typeof sub === 'string' ? JSON.parse(sub) : sub;
+      const name = u.name || '', shiName = u.next_shi || '다음 시간', keyword = u.keyword || '대길의 기운';
+      const payload = JSON.stringify({ title:'🔯 기문둔갑 대길 알림', body: name ? `${name}님, 30분 후 ${shiName}이 대길입니다 ✨ ${keyword}` : `30분 후 ${shiName}이 대길입니다 ✨ ${keyword}`, url:'/memox/' });
+      try { await webpush.sendNotification(ps, payload); qRes.sent++; }
+      catch(e) {
+        qRes.failed++;
+        if (e.statusCode === 410 || e.statusCode === 404) {
+          qRes.expired.push(u.user_id);
+          await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${u.user_id}`,
+            { method:'DELETE', headers:{ apikey:SB_KEY, Authorization:`Bearer ${SB_KEY}` } }).catch(()=>{});
+        }
+      }
+    }));
+    return res.status(200).json({ ok:true, total:qUsers.length, ...qRes });
+  }
+
   const { users } = body;
   if (!Array.isArray(users) || users.length === 0) {
     return res.status(400).json({ error: 'users 배열 필요' });
