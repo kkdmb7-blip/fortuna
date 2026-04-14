@@ -1,9 +1,9 @@
 // fortuna-silk.vercel.app/api/daily-quote.js
-// 오늘의 명언 반환 (날짜 기반, 로컬 quotes.json 사용)
+// 오늘의 명언 반환 (날짜 기반)
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const quotes = require('../data/quotes.json');
+const quotes = require('./quotes.json');
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

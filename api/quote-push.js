@@ -5,7 +5,7 @@
 import webpush from 'web-push';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const quotes = require('../data/quotes.json');
+const quotes = require('./quotes.json');
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
