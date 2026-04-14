@@ -1,37 +1,21 @@
 // fortuna-silk.vercel.app/api/quote-push.js
 // Worker 크론에서 호출: 피코랩 사용자에게 오늘의 명언 푸시 발송 (매일 오전 8시 KST)
-// 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY, CRON_SECRET, MAKE_API_KEY
+// 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY, CRON_SECRET
 
 import webpush from 'web-push';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const quotes = JSON.parse(readFileSync(join(__dirname, '../data/quotes.json'), 'utf8'));
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
-async function getTodayQuote(MAKE_API_KEY) {
+function getTodayQuote() {
   const kst = new Date(Date.now() + 9 * 3600000);
-  const dateNum = kst.getUTCFullYear() * 10000 + (kst.getUTCMonth() + 1) * 100 + kst.getUTCDate();
-  const quoteIndex = dateNum % 50;
-
-  const makeRes = await fetch(
-    'https://us2.make.com/api/v2/data-store-records?dataStoreId=85063&pg[limit]=100',
-    { headers: { Authorization: `Token ${MAKE_API_KEY}` } }
-  );
-  if (!makeRes.ok) throw new Error('Make API error');
-
-  const makeData = await makeRes.json();
-  const records = makeData.records || makeData.dataStoreRecords || [];
-
-  let quotes = null;
-  const mainRecord = records.find(r => r.key === 'fortuna_quotes_db');
-  if (mainRecord) {
-    const d = mainRecord.data;
-    quotes = Array.isArray(d) ? d : (d && Array.isArray(d.items) ? d.items : null);
-  }
-  if (!quotes && records.length > 1) {
-    quotes = records.map(r => r.data || r).filter(d => d && d.quote).sort((a, b) => a.id - b.id);
-  }
-  if (!quotes || quotes.length === 0) throw new Error('quotes empty');
-
-  return quotes[quoteIndex % quotes.length];
+  const idx = (kst.getUTCFullYear() * 365 + kst.getUTCMonth() * 30 + kst.getUTCDate()) % quotes.length;
+  return quotes[idx];
 }
 
 export default async function handler(req, res) {
@@ -56,21 +40,14 @@ export default async function handler(req, res) {
   const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
   const VAPID_EMAIL       = process.env.VAPID_EMAIL || 'mailto:kkdmb@naver.com';
   const SB_KEY            = process.env.SB_SERVICE_KEY;
-  const MAKE_API_KEY      = process.env.MAKE_API_KEY;
 
-  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !SB_KEY || !MAKE_API_KEY) {
+  if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !SB_KEY) {
     return res.status(500).json({ error: 'Missing env vars' });
   }
 
   webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-  // 오늘의 명언 조회
-  let quoteItem;
-  try {
-    quoteItem = await getTodayQuote(MAKE_API_KEY);
-  } catch (e) {
-    return res.status(502).json({ error: '명언 조회 실패', detail: e.message });
-  }
+  const quoteItem = getTodayQuote();
 
   // pico_push_subscriptions 조회
   const userIds = users.map(u => u.user_id).filter(Boolean);
@@ -96,11 +73,9 @@ export default async function handler(req, res) {
       if (!sub) { results.skipped++; return; }
 
       const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
-      const name = u.name || '';
-
       const payload = JSON.stringify({
-        title: '오늘의 우주 메시지 ✨',
-        body: quoteItem.message || quoteItem.quote || '',
+        title: '✨ 오늘의 우주 메시지',
+        body: quoteItem.message,
         url: 'https://picolab.kr'
       });
 
