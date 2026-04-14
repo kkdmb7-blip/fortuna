@@ -86,7 +86,56 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { users } = req.body || {};
+  const body = req.body || {};
+
+  // ── 범용 커스텀 푸시 모드 (pico-push 통합): user_ids + title + body ──
+  if (Array.isArray(body.user_ids)) {
+    const { user_ids, title: pushTitle, body: pushBody, url: pushUrl } = body;
+    if (!pushTitle || !pushBody) {
+      return res.status(400).json({ error: 'title, body 필요' });
+    }
+    const VAPID_PUBLIC_KEY  = process.env.VAPID_PUBLIC_KEY;
+    const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
+    const VAPID_EMAIL       = process.env.VAPID_EMAIL || 'mailto:kkdmb@naver.com';
+    const SB_KEY            = process.env.SB_SERVICE_KEY;
+    if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !SB_KEY) {
+      return res.status(500).json({ error: 'Missing env vars' });
+    }
+    webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    const sbH = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
+    let subMap2 = {};
+    try {
+      const sr = await fetch(
+        `${SB_URL}/rest/v1/pico_push_subscriptions?user_id=in.(${user_ids.join(',')})&select=user_id,subscription`,
+        { headers: sbH }
+      );
+      const subs2 = await sr.json();
+      if (Array.isArray(subs2)) subs2.forEach(s => { if (s.user_id) subMap2[s.user_id] = s.subscription; });
+    } catch (e) {
+      return res.status(500).json({ error: 'Supabase 조회 실패', detail: e.message });
+    }
+    const payload2 = JSON.stringify({ title: pushTitle, body: pushBody, url: pushUrl || 'https://picolab.kr' });
+    const r2 = { sent: 0, failed: 0, skipped: 0, expired: [] };
+    await Promise.allSettled(user_ids.map(async (uid) => {
+      const sub = subMap2[uid];
+      if (!sub) { r2.skipped++; return; }
+      const ps = typeof sub === 'string' ? JSON.parse(sub) : sub;
+      try {
+        await webpush.sendNotification(ps, payload2);
+        r2.sent++;
+      } catch (e) {
+        r2.failed++;
+        if (e.statusCode === 410 || e.statusCode === 404) {
+          r2.expired.push(uid);
+          await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?user_id=eq.${uid}`,
+            { method: 'DELETE', headers: sbH }).catch(() => {});
+        }
+      }
+    }));
+    return res.status(200).json({ ok: true, total: user_ids.length, ...r2 });
+  }
+
+  const { users } = body;
   if (!Array.isArray(users) || users.length === 0) {
     return res.status(400).json({ error: 'users 배열 필요' });
   }
