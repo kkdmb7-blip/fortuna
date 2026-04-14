@@ -3,12 +3,9 @@
 // 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY, CRON_SECRET
 
 import webpush from 'web-push';
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const quotes = JSON.parse(readFileSync(join(__dirname, '../data/quotes.json'), 'utf8'));
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const quotes = require('../data/quotes.json');
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 
@@ -49,7 +46,6 @@ export default async function handler(req, res) {
 
   const quoteItem = getTodayQuote();
 
-  // pico_push_subscriptions 조회
   const userIds = users.map(u => u.user_id).filter(Boolean);
   let subMap = {};
   try {
