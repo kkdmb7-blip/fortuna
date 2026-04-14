@@ -22,6 +22,11 @@ export default async function handler(req, res) {
     const { user_id, id, role, content, created_at, session_id } = req.body || {};
     const { error } = await sb.from('chat_messages').insert({ id, user_id, role, content, created_at, session_id });
     if (error) return res.status(500).json({ error: error.message });
+    // 사용자 메시지일 때 오늘 날짜(KST)로 daily_reset_at 업데이트 → 오늘 접속자 통계용
+    if (role === 'user' && user_id) {
+      const todayKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      await sb.from('chat_users').update({ daily_reset_at: todayKST }).eq('id', user_id);
+    }
     return res.json({ ok: true });
   }
 
