@@ -72,10 +72,9 @@ function selectPersonalizedQuote(ilgan, baseDay) {
 
 // 일진 톤에 따른 알림 타이틀
 function buildTitle(name, tone) {
-  const n = name || '너';
-  if (tone === 'good')    return `✨ ${n}아, 오늘 기운이 맞아`;
-  if (tone === 'caution') return `🌙 ${n}아, 오늘은 신중하게`;
-  return `✨ ${n}의 오늘 우주 메시지`;
+  if (tone === 'good')    return '오늘 기운이 딱 맞아요';
+  if (tone === 'caution') return '오늘은 조금 신중하게';
+  return '오늘의 우주 메시지';
 }
 
 export default async function handler(req, res) {
