@@ -328,13 +328,16 @@ export default async function handler(req, res) {
     const ORB_COST = skipOrb ? 0 : ((body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20);
     let orbBalance = 0;
 
+    let orbFreeBalance = 0;
+    let orbPaidBalance = 0;
+
     if (!skipOrb) {
       const sbCtrl1 = new AbortController();
       const sbTid1 = setTimeout(() => sbCtrl1.abort(), 8000);
       let orbRows;
       try {
         const orbRes = await fetch(
-          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
+          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance,free_balance,paid_balance`,
           { signal: sbCtrl1.signal, headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
         );
         orbRows = await orbRes.json();
@@ -355,6 +358,8 @@ export default async function handler(req, res) {
         orbBalance = 0;
       } else {
         orbBalance = orbRow.balance || 0;
+        orbFreeBalance = orbRow.free_balance || 0;
+        orbPaidBalance = orbRow.paid_balance || 0;
       }
 
       if (orbBalance < ORB_COST) {
@@ -456,10 +461,16 @@ export default async function handler(req, res) {
     const claudeData = await claudeRes.json();
     const reply = claudeData.content?.[0]?.text || '';
 
-    // ── Orb 차감 ──
+    // ── Orb 차감 (free → paid 순으로 차감, 모든 필드 동시 업데이트) ──
     let newOrbBalance = orbBalance;
+    let newOrbFree = orbFreeBalance;
+    let newOrbPaid = orbPaidBalance;
     if (!skipOrb && ORB_COST > 0) {
-      newOrbBalance = orbBalance - ORB_COST;
+      const freeUsed = Math.min(orbFreeBalance, ORB_COST);
+      const paidUsed = ORB_COST - freeUsed;
+      newOrbFree = Math.max(0, orbFreeBalance - freeUsed);
+      newOrbPaid = Math.max(0, orbPaidBalance - paidUsed);
+      newOrbBalance = newOrbFree + newOrbPaid;
       const sbCtrlA = new AbortController();
       const sbTidA = setTimeout(() => sbCtrlA.abort(), 8000);
       const sbCtrlB = new AbortController();
@@ -470,7 +481,7 @@ export default async function handler(req, res) {
             signal: sbCtrlA.signal,
             method: 'PATCH',
             headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
+            body: JSON.stringify({ balance: newOrbBalance, free_balance: newOrbFree, paid_balance: newOrbPaid, updated_at: new Date().toISOString() })
           }),
           fetch(`${SB_URL}/rest/v1/orb_transactions`, {
             signal: sbCtrlB.signal,
