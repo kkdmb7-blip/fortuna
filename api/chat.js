@@ -340,7 +340,7 @@ export default async function handler(req, res) {
         await fetch(`${SB_URL}/rest/v1/orb_balance`, {
           method: 'POST',
           headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ user_id, balance: 0 })
+          body: JSON.stringify({ user_id, balance: 0, free_balance: 0, paid_balance: 0 })
         });
         orbBalance = 0;
       } else {
@@ -458,7 +458,7 @@ export default async function handler(req, res) {
       await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
         method: 'POST',
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: '궁합 정밀분석', balance_after: newOrbBalance, created_at: new Date().toISOString() })
+        body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
       });
     }
 
