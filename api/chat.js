@@ -329,19 +329,29 @@ export default async function handler(req, res) {
     let orbBalance = 0;
 
     if (!skipOrb) {
-      const orbRes = await fetch(
-        `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
-        { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
-      );
-      const orbRows = await orbRes.json();
+      const sbCtrl1 = new AbortController();
+      const sbTid1 = setTimeout(() => sbCtrl1.abort(), 8000);
+      let orbRows;
+      try {
+        const orbRes = await fetch(
+          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`,
+          { signal: sbCtrl1.signal, headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+        );
+        orbRows = await orbRes.json();
+      } finally { clearTimeout(sbTid1); }
       const orbRow = orbRows && orbRows[0];
 
       if (!orbRow) {
-        await fetch(`${SB_URL}/rest/v1/orb_balance`, {
-          method: 'POST',
-          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-          body: JSON.stringify({ user_id, balance: 0, free_balance: 0, paid_balance: 0 })
-        });
+        const sbCtrl2 = new AbortController();
+        const sbTid2 = setTimeout(() => sbCtrl2.abort(), 8000);
+        try {
+          await fetch(`${SB_URL}/rest/v1/orb_balance`, {
+            signal: sbCtrl2.signal,
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ user_id, balance: 0, free_balance: 0, paid_balance: 0 })
+          });
+        } finally { clearTimeout(sbTid2); }
         orbBalance = 0;
       } else {
         orbBalance = orbRow.balance || 0;
@@ -450,16 +460,29 @@ export default async function handler(req, res) {
     let newOrbBalance = orbBalance;
     if (!skipOrb && ORB_COST > 0) {
       newOrbBalance = orbBalance - ORB_COST;
-      await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
-        method: 'PATCH',
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
-      });
-      await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
-        method: 'POST',
-        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
-      });
+      const sbCtrlA = new AbortController();
+      const sbTidA = setTimeout(() => sbCtrlA.abort(), 8000);
+      const sbCtrlB = new AbortController();
+      const sbTidB = setTimeout(() => sbCtrlB.abort(), 8000);
+      try {
+        await Promise.allSettled([
+          fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
+            signal: sbCtrlA.signal,
+            method: 'PATCH',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ balance: newOrbBalance, updated_at: new Date().toISOString() })
+          }),
+          fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+            signal: sbCtrlB.signal,
+            method: 'POST',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
+          })
+        ]);
+      } finally {
+        clearTimeout(sbTidA);
+        clearTimeout(sbTidB);
+      }
     }
 
     return res.status(200).json({
