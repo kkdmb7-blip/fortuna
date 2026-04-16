@@ -4,29 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORTUNA — 강아지 궁합</title>
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --void:#06030f;--gold:#c9a84c;--gold-light:#e8cc7a;
-    --text:#ede6f8;--text-dim:#8a7fa0;--border:rgba(201,168,76,0.18);
-    --warm:#f5e6c8;--paw:rgba(201,168,76,0.08);
+    --bg:#0a0a0f;--gold:#d4af37;--gold-light:#e8cc7a;
+    --text:#ede6f8;--text-dim:#8a7fa0;--border:rgba(212,175,55,0.18);
+    --warm:#f5e6c8;--paw:rgba(212,175,55,0.08);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{background:var(--void);color:var(--text);font-family:'Pretendard',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
 
   /* 배경 */
   .bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
   .bg-glow{position:absolute;inset:0;background:
     radial-gradient(ellipse 50% 40% at 10% 15%,rgba(80,40,120,0.4) 0%,transparent 60%),
     radial-gradient(ellipse 60% 50% at 90% 85%,rgba(40,20,80,0.5) 0%,transparent 60%),
-    radial-gradient(ellipse 100% 80% at 50% 50%,rgba(6,3,15,0.97) 0%,transparent 100%);}
+    radial-gradient(ellipse 100% 80% at 50% 50%,rgba(10,10,15,0.97) 0%,transparent 100%);}
 
   /* 별똥별 효과 */
   .paw-bg{position:absolute;inset:0;overflow:hidden;}
   .paw{position:absolute;font-size:20px;opacity:0.04;animation:floatPaw linear infinite;}
   @keyframes floatPaw{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:0.04;}90%{opacity:0.04;}100%{transform:translateY(-100px) rotate(360deg);opacity:0;}}
 
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(24px);border-bottom:1px solid rgba(201,168,76,0.07);}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 28px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(24px);border-bottom:1px solid rgba(212,175,55,0.07);}
     .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
   .nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
   .nav-back{font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:0.1em;transition:color 0.2s;}
@@ -44,18 +44,18 @@
 
   /* 입력 카드 */
   .cards-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-  .input-card{background:linear-gradient(135deg,rgba(45,25,75,0.45),rgba(10,5,20,0.65));border:1px solid var(--border);border-radius:18px;padding:24px 20px;backdrop-filter:blur(10px);}
+  .input-card{background:linear-gradient(135deg,rgba(45,25,75,0.45),rgba(10,5,20,0.65));border:1px solid var(--border);border-radius:14px;padding:24px 20px;backdrop-filter:blur(10px);}
   .card-icon{font-size:28px;margin-bottom:10px;display:block;}
   .card-who{font-size:10px;letter-spacing:0.35em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
   .field{margin-bottom:14px;}
   .label{display:block;font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:0.06em;}
-  .input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:9px;padding:11px 13px;color:var(--text);font-family:'Pretendard',sans-serif;font-size:13px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
+  .input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.15);border-radius:9px;padding:11px 13px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
   .input:focus{border-color:var(--gold);}
 
-  .btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8cc7a,#c9a84c);background-size:200%;border:none;border-radius:12px;padding:15px;color:#06020f;font-family:'Pretendard',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s;animation:shimmer 3s ease infinite;letter-spacing:0.05em;}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(201,168,76,0.35);}
+  .btn{width:100%;background:linear-gradient(135deg,#7b5ea7,#a07fd4);border:none;border-radius:12px;padding:15px;color:#06020f;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s;letter-spacing:0.05em;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(212,175,55,0.35);}
   .btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;}
-  @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+  
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   @keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
@@ -64,33 +64,33 @@
   .result{display:none;margin-top:24px;animation:fadeUp 0.7s ease;}
 
   /* 점수 카드 */
-  .score-card{background:linear-gradient(135deg,rgba(45,25,75,0.5),rgba(10,5,20,0.7));border:1px solid var(--gold);border-radius:20px;padding:36px 28px;text-align:center;margin-bottom:16px;backdrop-filter:blur(10px);}
+  .score-card{background:linear-gradient(135deg,rgba(45,25,75,0.5),rgba(10,5,20,0.7));border:1px solid var(--gold);border-radius:16px;padding:36px 28px;text-align:center;margin-bottom:16px;backdrop-filter:blur(10px);}
   .pair-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:24px;font-size:13px;color:var(--text-dim);}
   .pair-sign{font-size:28px;}
   .pair-x{font-size:18px;color:var(--gold);}
-  .score-circle{width:130px;height:130px;border-radius:50%;border:2px solid var(--gold);display:flex;flex-direction:column;justify-content:center;align-items:center;margin:0 auto 16px;background:rgba(201,168,76,0.04);position:relative;}
-  .score-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(201,168,76,0.15);}
+  .score-circle{width:130px;height:130px;border-radius:50%;border:2px solid var(--gold);display:flex;flex-direction:column;justify-content:center;align-items:center;margin:0 auto 16px;background:rgba(212,175,55,0.04);position:relative;}
+  .score-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;border:1px solid rgba(212,175,55,0.15);}
   .score-num{font-size:44px;font-weight:300;color:var(--gold);line-height:1;}
   .score-unit{font-size:11px;color:var(--text-dim);margin-top:2px;}
   .score-title{font-size:19px;font-weight:300;margin-bottom:8px;}
   .score-desc{font-size:13px;color:var(--text-dim);line-height:1.9;}
 
   /* 상세 카드 */
-  .detail-card{background:linear-gradient(135deg,rgba(35,20,60,0.4),rgba(10,5,20,0.6));border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:12px;backdrop-filter:blur(10px);}
+  .detail-card{background:linear-gradient(135deg,rgba(35,20,60,0.4),rgba(10,5,20,0.6));border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:12px;backdrop-filter:blur(10px);}
   .detail-title{font-size:11px;letter-spacing:0.3em;color:var(--gold);margin-bottom:16px;text-transform:uppercase;}
-  .detail-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(201,168,76,0.07);}
+  .detail-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(212,175,55,0.07);}
   .detail-item:last-child{border-bottom:none;}
   .detail-emoji{font-size:18px;min-width:24px;}
   .detail-text{font-size:13px;color:var(--text-dim);line-height:1.8;}
   .detail-text strong{color:var(--text);font-weight:500;}
 
   /* 업셀 */
-  .upsell{background:linear-gradient(135deg,rgba(45,25,75,0.35),rgba(10,5,20,0.55));border:1px solid var(--border);border-radius:18px;padding:24px;text-align:center;margin-top:4px;}
+  .upsell{background:linear-gradient(135deg,rgba(45,25,75,0.35),rgba(10,5,20,0.55));border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;margin-top:4px;}
   .upsell-text{font-size:13px;color:var(--text-dim);line-height:1.9;margin-bottom:16px;}
-  .upsell-btn{display:inline-block;background:linear-gradient(135deg,#c9a84c,#e8cc7a);border-radius:50px;padding:12px 28px;color:#06020f;font-family:'Pretendard',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.3s;}
-  .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,0.35);}
+  .upsell-btn{display:inline-block;background:linear-gradient(135deg,#d4af37,#e8cc7a);border-radius:50px;padding:12px 28px;color:#06020f;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.3s;}
+  .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,175,55,0.35);}
 
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(201,168,76,0.12);border:1px solid var(--gold);border-radius:50px;padding:11px 24px;color:var(--gold);font-size:12px;z-index:999;transition:transform 0.3s;backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(212,175,55,0.12);border:1px solid var(--gold);border-radius:50px;padding:11px 24px;color:var(--gold);font-size:12px;z-index:999;transition:transform 0.3s;backdrop-filter:blur(10px);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
 
   @media(max-width:480px){

@@ -12,41 +12,41 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap');
-:root{--gold:#c9a84c;--purple:#b482ff;--bg:#140b0b;--card:#16132a;--text:#e8e0f0;--dim:#8a7fa0;--planet:#ff6b6b;}
+:root{--gold:#d4af37;--purple:#b482ff;--bg:#140b0b;--card:#13131a;--text:#e8e0f0;--muted:#8a7fa0;--planet:#ff6b6b;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
-.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
 .container{position:relative;z-index:1;width:100%;max-width:480px;}
 .logo{font-family:'Noto Serif KR',serif;letter-spacing:0.3em;color:var(--gold);font-size:14px;text-align:center;margin-bottom:32px;opacity:0.8;}
-.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:20px;padding:32px 24px;text-align:center;margin-bottom:20px;}
-.hook-pill{display:inline-block;background:rgba(180,130,255,0.1);border:1px solid rgba(180,130,255,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:var(--purple);letter-spacing:0.1em;margin-bottom:20px;}
+.hook-card{background:var(--card);border:1px solid rgba(180,130,255,0.2);border-radius:16px;padding:32px 24px;text-align:center;margin-bottom:20px;}
+.hook-pill{display:inline-block;background:rgba(180,130,255,0.1);border:1px solid rgba(180,130,255,0.3);border-radius:16px;padding:6px 16px;font-size:12px;color:var(--purple);letter-spacing:0.1em;margin-bottom:20px;}
 .planet-icon{font-size:64px;margin:16px 0;}
 .hook-pillar{font-size:26px;font-weight:600;color:var(--planet);margin:8px 0;}
 .hook-pct{font-size:48px;font-weight:700;color:var(--planet);margin:4px 0;}
 .hook-planet{font-size:18px;color:var(--text);margin-bottom:12px;}
 .divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:20px 0;}
-.traits-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:24px;margin-bottom:20px;}
+.traits-card{background:var(--card);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:24px;margin-bottom:20px;}
 .traits-title{font-family:'Noto Serif KR',serif;font-size:16px;color:var(--planet);margin-bottom:6px;}
-.traits-keyword{font-size:11px;color:var(--dim);letter-spacing:0.15em;margin-bottom:20px;}
-.cta-box{background:rgba(180,130,255,0.06);border:1px solid rgba(180,130,255,0.2);border-radius:14px;padding:18px;margin-top:20px;font-size:13px;color:var(--dim);line-height:1.8;text-align:center;}
-.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#6c3fa0,#b482ff);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:16px;text-decoration:none;transition:opacity 0.2s;text-align:center;}
+.traits-keyword{font-size:11px;color:var(--muted);letter-spacing:0.15em;margin-bottom:20px;}
+.cta-box{background:rgba(180,130,255,0.06);border:1px solid rgba(180,130,255,0.2);border-radius:14px;padding:18px;margin-top:20px;font-size:13px;color:var(--muted);line-height:1.8;text-align:center;}
+.cta-btn{display:block;width:100%;padding:18px;background:linear-gradient(135deg,#7b5ea7,#a07fd4);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.05em;margin-top:16px;text-decoration:none;transition:opacity 0.2s;text-align:center;}
 .cta-btn:hover{opacity:0.85;}
 .copy-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);border-radius:14px;color:var(--text);font-size:14px;cursor:pointer;margin-top:10px;transition:opacity 0.2s;}
 .copy-btn:hover{opacity:0.75;}
-.stats-card{background:var(--card);border:1px solid rgba(201,168,76,0.15);border-radius:16px;padding:20px;margin-top:16px;}
-.stats-title{font-size:12px;color:var(--dim);letter-spacing:0.1em;margin-bottom:16px;text-align:center;}
+.stats-card{background:var(--card);border:1px solid rgba(212,175,55,0.15);border-radius:16px;padding:20px;margin-top:16px;}
+.stats-title{font-size:12px;color:var(--muted);letter-spacing:0.1em;margin-bottom:16px;text-align:center;}
 .stat-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
 .stat-planet{font-size:13px;color:var(--text);width:40px;}
 .stat-bar-wrap{flex:1;background:rgba(255,255,255,0.05);border-radius:4px;height:8px;overflow:hidden;}
 .stat-bar{height:100%;border-radius:4px;}
 .stat-pct{font-size:12px;color:var(--gold);width:36px;text-align:right;}
-.stat-count{font-size:11px;color:var(--dim);width:40px;text-align:right;}
-.data-note{font-size:11px;color:var(--dim);text-align:center;margin-top:12px;line-height:1.6;}
+.stat-count{font-size:11px;color:var(--muted);width:40px;text-align:right;}
+.data-note{font-size:11px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6;}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
 </style>
 </head>
 <body>
-<div class="stars" id="stars"></div>
+
 <div class="toast" id="toast"></div>
 <div class="container">
   <div class="logo">✦ FORTUNA ✦</div>
@@ -54,12 +54,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-seri
     <div class="hook-pill">일주 × 도미넌트 행성</div>
     <div class="planet-icon">🔴</div>
     <div class="hook-pillar">정묘일주</div>
-    <div style="font-size:14px;color:var(--dim);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:4px;">도미넌트 행성 추정 확률</div>
     <div class="hook-pct">62%</div>
     <div class="hook-planet">화성(Mars)</div>
-    <div style="font-size:13px;color:var(--dim);line-height:1.7;">정묘일주를 가진 사람 중 <strong style="color:#ff6b6b">62%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.7;">정묘일주를 가진 사람 중 <strong style="color:#ff6b6b">62%</strong>가<br>화성이 도미넌트 행성으로 나옵니다.</div>
     <hr class="divider">
-    <div style="font-size:12px;color:var(--dim);line-height:1.7;">이건 사주 일주 기반 추정이에요.<br>실제 출생 시간으로 정확히 확인하면 달라질 수 있어요.</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.7;">이건 사주 일주 기반 추정이에요.<br>실제 출생 시간으로 정확히 확인하면 달라질 수 있어요.</div>
   </div>
   <div class="traits-card">
     <div class="traits-title">화성(Mars) 도미넌트의 특징</div>
@@ -116,8 +116,7 @@ async function loadStats(){
     document.getElementById('dataNote').textContent=`실제 분석 ${total.toLocaleString()}건 기반 데이터`;
   }catch(e){}
 }
-const starsEl=document.getElementById('stars');
-for(let i=0;i<80;i++){const s=document.createElement('div');s.style.cssText=`position:absolute;background:#fff;border-radius:50%;width:${Math.random()*2}px;height:${Math.random()*2}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.1+Math.random()*0.4}`;starsEl.appendChild(s);}
+
 loadStats();
 </script>
 </body>

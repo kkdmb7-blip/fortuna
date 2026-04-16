@@ -1,0 +1,15 @@
+/* pico-theme.css — fortuna 공통 테마 */
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c28;
+  --border: #2a2a3d;
+  --accent: #7b5ea7;
+  --gold: #d4af37;
+  --golddim: rgba(212,175,55,0.18);
+  --text: #f0f0f5;
+  --muted: #8b8ba8;
+  --radius: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; }

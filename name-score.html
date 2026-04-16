@@ -8,32 +8,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --void: #0a0a1a;
+  --bg:#0a0a0f;
   --gold: #d4af37;
   --gold-dim: rgba(212,175,55,0.15);
   --gold-border: rgba(212,175,55,0.25);
   --text: #ede6f8;
-  --text-dim: #9b8fb0;
+  --text-dim: #8b8ba8;
   --card: rgba(255,255,255,0.03);
   --border: rgba(255,255,255,0.07);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
-  background: var(--void);
+  background: var(--bg);
   color: var(--text);
   font-family: 'Noto Serif KR', serif;
   min-height: 100vh;
   overflow-x: hidden;
 }
 .bg { position:fixed; inset:0; z-index:0; pointer-events:none; }
-.bg-nebula {
-  position:absolute; inset:0;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 20%, rgba(60,20,100,0.5) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 70% at 85% 80%, rgba(20,8,50,0.65) 0%, transparent 65%);
-}
-.star { position:absolute; border-radius:50%; background:#fff; animation:twinkle var(--d,3s) ease-in-out infinite; }
-@keyframes twinkle { 0%,100%{opacity:var(--o,0.3)}50%{opacity:calc(var(--o,0.3)*0.2)} }
+
+
+50%{opacity:calc(var(--o,0.3)*0.2)} }
 nav {
   position: fixed; top:0; left:0; right:0; z-index:100;
   padding: 14px 20px;
@@ -78,7 +73,7 @@ nav {
 .mode-tab.active { background:var(--gold-dim); border-color:var(--gold); color:var(--gold); }
 .input-card {
   background: var(--card); border:1px solid var(--border);
-  border-radius:18px; padding:24px; margin-bottom:14px;
+  border-radius:14px; padding:24px; margin-bottom:14px;
   backdrop-filter:blur(10px);
 }
 .name-row { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:18px; }
@@ -129,16 +124,15 @@ nav {
 .btn-gold {
   width:100%; padding:15px;
   background:linear-gradient(135deg,#d4af37 0%,#f0d060 50%,#d4af37 100%);
-  background-size:200% 200%;
+  200%;
   border:none; border-radius:12px;
   color:#06020f; font-family:'Noto Serif KR',serif;
   font-size:14px; font-weight:600; letter-spacing:0.1em;
   cursor:pointer; transition:all 0.3s;
-  animation:shimmer 3s ease infinite;
-}
+  }
 .btn-gold:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(212,175,55,0.35); }
 .btn-gold:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
-@keyframes shimmer { 0%,100%{background-position:0% 50%}50%{background-position:100% 50%} }
+
 .result-area { display:none; margin-top:24px; }
 .result-area.show { display:block; animation:fadeUp 0.5s ease; }
 .score-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
@@ -150,7 +144,7 @@ nav {
 .score-num { font-size:40px; font-weight:300; line-height:1; margin-bottom:8px; }
 .score-badge {
   display:inline-block; font-size:11px; font-weight:600;
-  padding:3px 10px; border-radius:20px; margin-bottom:6px; letter-spacing:0.06em;
+  padding:3px 10px; border-radius:16px; margin-bottom:6px; letter-spacing:0.06em;
 }
 .score-name { font-size:11px; color:var(--text-dim); }
 .grade-대길 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
@@ -179,7 +173,7 @@ nav {
 .oh-char { font-size:18px; color:var(--text); display:block; margin-bottom:4px; }
 .oh-badge {
   display:inline-block; font-size:11px; font-weight:600;
-  padding:3px 10px; border-radius:20px; letter-spacing:0.06em;
+  padding:3px 10px; border-radius:16px; letter-spacing:0.06em;
 }
 .oh-badge.木 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
 .oh-badge.火 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.1); }
@@ -201,7 +195,7 @@ nav {
 .ey-char { font-size:16px; color:var(--text); display:block; margin-bottom:4px; }
 .ey-badge {
   display:inline-block; font-size:11px; font-weight:600;
-  padding:4px 6px; border-radius:20px; letter-spacing:0.04em; width:100%;
+  padding:4px 6px; border-radius:16px; letter-spacing:0.04em; width:100%;
 }
 .ey-badge.양 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.08); }
 .ey-badge.음 { color:#2196f3; border:1px solid rgba(33,150,243,0.5); background:rgba(33,150,243,0.1); }

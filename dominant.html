@@ -6,57 +6,57 @@
 <title>FORTUNA — 내 도미넌트 행성 찾기</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0b14;--gold:#c9a84c;--text:#e8e0f0;--dim:#8a7fa0;--border:rgba(201,168,76,0.18);--planet:#b482ff;--planet-rgb:180,130,255;}
+:root{--bg:#0a0a0f;--gold:#d4af37;--text:#e8e0f0;--muted:#8a7fa0;--border:rgba(212,175,55,0.18);--planet:#b482ff;--planet-rgb:180,130,255;}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
 .cosmos{position:fixed;inset:0;z-index:0;pointer-events:none;}
 .cosmos-glow{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 20%,rgba(60,30,100,0.45) 0%,transparent 65%),radial-gradient(ellipse 50% 60% at 85% 80%,rgba(30,15,60,0.35) 0%,transparent 65%),radial-gradient(ellipse 100% 80% at 50% 50%,rgba(10,6,20,0.95) 0%,transparent 100%);}
 .stars-bg{position:absolute;inset:0;}
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.07);}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.07);}
   .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
   .nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
-.nav-back{font-size:12px;color:var(--dim);text-decoration:none;transition:color 0.2s;}
+.nav-back{font-size:12px;color:var(--muted);text-decoration:none;transition:color 0.2s;}
 .nav-back:hover{color:var(--gold);}
 .wrap{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:110px 20px 80px;}
 .hero{text-align:center;margin-bottom:44px;}
-.hero-badge{display:inline-block;font-size:11px;letter-spacing:0.35em;color:var(--gold);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:5px 16px;margin-bottom:20px;text-transform:uppercase;}
+.hero-badge{display:inline-block;font-size:11px;letter-spacing:0.35em;color:var(--gold);border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:5px 16px;margin-bottom:20px;text-transform:uppercase;}
 .hero-title{font-family:'Noto Serif KR',serif;font-size:30px;font-weight:300;line-height:1.5;margin-bottom:12px;}
-.hero-sub{font-size:13px;color:var(--dim);line-height:1.9;}
-.form-card{background:linear-gradient(135deg,rgba(40,28,70,0.5),rgba(13,11,20,0.7));border:1px solid var(--border);border-radius:22px;padding:30px 26px;margin-bottom:20px;backdrop-filter:blur(10px);}
+.hero-sub{font-size:13px;color:var(--muted);line-height:1.9;}
+.form-card{background:linear-gradient(135deg,rgba(40,28,70,0.5),rgba(10,10,15,0.7));border:1px solid var(--border);border-radius:16px;padding:30px 26px;margin-bottom:20px;backdrop-filter:blur(10px);}
 .field{margin-bottom:16px;}
-.label{display:block;font-size:12px;color:var(--dim);margin-bottom:8px;letter-spacing:0.08em;}
-.input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.18);border-radius:11px;padding:13px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
-.input:focus{border-color:rgba(201,168,76,0.6);background:rgba(255,255,255,0.06);}
+.label{display:block;font-size:12px;color:var(--muted);margin-bottom:8px;letter-spacing:0.08em;}
+.input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.18);border-radius:11px;padding:13px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
+.input:focus{border-color:rgba(212,175,55,0.6);background:rgba(255,255,255,0.06);}
 select.input option{background:#1a1030;}
-.calc-btn{width:100%;background:linear-gradient(135deg,#a07828,#c9a84c,#e8cc7a,#c9a84c,#a07828);background-size:300% 300%;border:none;border-radius:13px;padding:17px;color:#0a0612;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;animation:shimmer 4s ease infinite;margin-top:6px;letter-spacing:0.05em;}
-.calc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(201,168,76,0.35);}
+.calc-btn{width:100%;background:linear-gradient(135deg,#7b5ea7,#a07fd4);border:none;border-radius:13px;padding:17px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:6px;letter-spacing:0.05em;}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px rgba(212,175,55,0.35);}
 .calc-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
-@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.loading{display:inline-block;width:13px;height:13px;border:2px solid rgba(10,6,18,0.3);border-top-color:#0a0612;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
+.loading{display:inline-block;width:13px;height:13px;border:2px solid rgba(10,6,18,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
 .result{display:none;animation:fadeUp 0.7s ease;margin-top:24px;}
-.result-hero{background:linear-gradient(135deg,rgba(40,28,70,0.6),rgba(13,11,20,0.8));border:1px solid var(--planet);border-radius:22px;padding:36px 28px;text-align:center;margin-bottom:16px;transition:border-color 0.5s;}
+.result-hero{background:linear-gradient(135deg,rgba(40,28,70,0.6),rgba(10,10,15,0.8));border:1px solid var(--planet);border-radius:16px;padding:36px 28px;text-align:center;margin-bottom:16px;transition:border-color 0.5s;}
 .result-icon{font-size:72px;margin-bottom:8px;display:block;}
-.result-pill{display:inline-block;font-size:11px;letter-spacing:0.25em;color:var(--planet);border:1px solid rgba(var(--planet-rgb),0.4);border-radius:20px;padding:5px 16px;margin-bottom:16px;transition:all 0.5s;}
+.result-pill{display:inline-block;font-size:11px;letter-spacing:0.25em;color:var(--planet);border:1px solid rgba(var(--planet-rgb),0.4);border-radius:16px;padding:5px 16px;margin-bottom:16px;transition:all 0.5s;}
 .result-planet{font-family:'Noto Serif KR',serif;font-size:38px;font-weight:600;color:var(--planet);letter-spacing:0.05em;margin-bottom:4px;transition:color 0.5s;}
-.result-planet-en{font-size:14px;color:var(--dim);letter-spacing:0.2em;margin-bottom:20px;}
+.result-planet-en{font-size:14px;color:var(--muted);letter-spacing:0.2em;margin-bottom:20px;}
 .result-divider{border:none;border-top:1px solid rgba(255,255,255,0.07);margin:20px 0;}
 .result-desc{font-size:14px;line-height:2;color:var(--text);text-align:left;}
-.traits-card{background:linear-gradient(135deg,rgba(40,28,70,0.4),rgba(13,11,20,0.6));border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:26px;margin-bottom:16px;}
+.traits-card{background:linear-gradient(135deg,rgba(40,28,70,0.4),rgba(10,10,15,0.6));border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:26px;margin-bottom:16px;}
 .traits-header-title{font-family:'Noto Serif KR',serif;font-size:15px;color:var(--planet);margin-bottom:4px;transition:color 0.5s;}
-.traits-keyword{font-size:11px;color:var(--dim);letter-spacing:0.15em;margin-bottom:20px;}
+.traits-keyword{font-size:11px;color:var(--muted);letter-spacing:0.15em;margin-bottom:20px;}
 .trait-item{text-align:left;margin-bottom:16px;padding:14px 16px;background:rgba(255,255,255,0.02);border-left:3px solid var(--planet);border-radius:0 10px 10px 0;transition:border-color 0.5s;}
 .trait-title{font-size:13px;font-weight:600;color:var(--planet);margin-bottom:5px;transition:color 0.5s;}
 .trait-desc{font-size:13px;color:var(--text);line-height:1.85;}
-.traits-cta{border-radius:12px;padding:16px;font-size:13px;color:var(--dim);line-height:1.8;text-align:center;margin-top:4px;transition:all 0.5s;}
-.share-card{background:linear-gradient(135deg,rgba(40,28,70,0.4),rgba(13,11,20,0.6));border:1px solid rgba(255,255,255,0.07);border-radius:22px;padding:24px 26px;margin-bottom:16px;}
-.share-label{font-size:12px;color:var(--dim);letter-spacing:0.1em;margin-bottom:14px;text-align:center;}
-.share-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.22);border-radius:13px;color:var(--gold);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;}
-.share-btn:hover{background:rgba(201,168,76,0.14);transform:translateY(-1px);}
-.upsell-card{background:linear-gradient(135deg,rgba(60,35,100,0.4),rgba(13,11,20,0.7));border:1px solid rgba(180,130,255,0.25);border-radius:22px;padding:28px 26px;text-align:center;}
-.upsell-text{font-size:13px;color:var(--dim);line-height:1.9;margin-bottom:20px;}
-.upsell-btn{display:inline-block;background:linear-gradient(135deg,#6c3fa0,#b482ff);border-radius:50px;padding:14px 36px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;text-decoration:none;transition:all 0.3s;letter-spacing:0.05em;}
+.traits-cta{border-radius:12px;padding:16px;font-size:13px;color:var(--muted);line-height:1.8;text-align:center;margin-top:4px;transition:all 0.5s;}
+.share-card{background:linear-gradient(135deg,rgba(40,28,70,0.4),rgba(10,10,15,0.6));border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:24px 26px;margin-bottom:16px;}
+.share-label{font-size:12px;color:var(--muted);letter-spacing:0.1em;margin-bottom:14px;text-align:center;}
+.share-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;background:rgba(212,175,55,0.07);border:1px solid rgba(212,175,55,0.22);border-radius:13px;color:var(--gold);font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.share-btn:hover{background:rgba(212,175,55,0.14);transform:translateY(-1px);}
+.upsell-card{background:linear-gradient(135deg,rgba(60,35,100,0.4),rgba(10,10,15,0.7));border:1px solid rgba(180,130,255,0.25);border-radius:16px;padding:28px 26px;text-align:center;}
+.upsell-text{font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:20px;}
+.upsell-btn{display:inline-block;background:linear-gradient(135deg,#7b5ea7,#a07fd4);border-radius:50px;padding:14px 36px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;text-decoration:none;transition:all 0.3s;letter-spacing:0.05em;}
 .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(180,130,255,0.35);}
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(30,20,50,0.95);border:1px solid var(--gold);border-radius:50px;padding:12px 26px;color:var(--gold);font-size:13px;z-index:999;opacity:0;transition:opacity 0.3s;backdrop-filter:blur(10px);white-space:nowrap;pointer-events:none;}
 </style>
@@ -76,7 +76,7 @@ select.input option{background:#1a1030;}
   </div>
   <div class="form-card">
     <div class="field"><label class="label">생년월일 *</label><input type="text" id="calcBirth" class="input" placeholder="예: 1990.03.15"></div>
-    <div class="field"><label class="label">출생 시간 <span style="font-size:11px;color:var(--dim)">(모르면 공란)</span></label><input type="text" id="calcTime" class="input" placeholder="예: 14:30"></div>
+    <div class="field"><label class="label">출생 시간 <span style="font-size:11px;color:var(--muted)">(모르면 공란)</span></label><input type="text" id="calcTime" class="input" placeholder="예: 14:30"></div>
     <div class="field">
       <label class="label">태어난 지역 *</label>
       <select id="calcPlace" class="input">
@@ -122,7 +122,7 @@ const PI={
   Venus:{emoji:'💫',name:'금성',en:'Venus',color:'#ff9eb5',rgb:'255,158,181',keyword:'아름다움 · 관계 · 조화 · 가치',desc:'관계와 아름다움에서 에너지를 얻습니다. 조화로운 환경에서 가장 잘 작동하는 사람이에요.',traits:[['뛰어난 심미안','색, 소리, 공간, 사람에서 아름다움을 찾아내는 감각이 있어요. 디자인, 패션, 음악, 인테리어 쪽에서 두각을 나타내요.'],['관계에서 행복을 찾음','혼자보다 함께일 때 에너지가 살아나요. 주변 사람들을 편안하게 만드는 능력이 있어서 자연스럽게 중심이 돼요.'],['갈등을 피하려는 성향','조화를 중시하다 보니 불편한 말을 못 하고 넘어가는 경향이 있어요. 속으로 쌓다가 한꺼번에 터지는 패턴이 생길 수 있어요.'],['소비 감각이 예민함','좋은 것에 끌리는 감각이 뛰어나서 지갑이 열리기 쉬워요. 이건 가져야 해라는 느낌이 자주 와요.'],['의존과 집착이 그림자','관계가 중요한 만큼 관계에서 상처도 깊게 받아요. 상대방에 대한 기대가 높아서 실망도 커요.']],cta:'금성이 어느 하우스에 있느냐에 따라 어떤 관계 패턴이 반복되는지, 어디서 아름다움을 찾는지 정확히 알 수 있어요.',repr:'경신'},
   Mars:{emoji:'🔴',name:'화성',en:'Mars',color:'#ff6b6b',rgb:'255,107,107',keyword:'행동 · 에너지 · 경쟁 · 추진력',desc:'행동이 먼저인 사람입니다. 목표가 생기면 바로 움직이는 강력한 추진력을 가졌어요.',traits:[['일단 움직이는 사람','생각보다 행동이 먼저예요. 다른 사람들이 아직 고민하는 동안 이미 시작해버리는 타입이에요.'],['경쟁에서 살아나는 에너지','목표가 생기면 집중력이 극대화돼요. 운동, 영업, 스타트업처럼 성과가 눈에 보이는 분야에서 빛나요.'],['직선적인 소통','돌려말하는 걸 답답해하고 직접적으로 표현해요. 솔직하다는 말을 자주 듣지만 가끔 너무 직설적이라 상처를 주기도 해요.'],['빠른 분노, 빠른 회복','화가 나면 바로 티가 나요. 하지만 오래 담아두지 않아요. 금방 털고 다시 앞으로 가는 편이에요.'],['번아웃이 그림자','에너지를 폭발적으로 쓰고 나서 갑자기 방전되는 패턴이 있어요. 쉬는 것도 전략이에요.']],cta:'화성이 어느 하우스에 있느냐에 따라 에너지를 가장 잘 쓰는 영역이 어딘지, 어떤 상황에서 전투 모드가 켜지는지 알 수 있어요.',repr:'병오'},
   Jupiter:{emoji:'🪐',name:'목성',en:'Jupiter',color:'#b482ff',rgb:'180,130,255',keyword:'확장 · 풍요 · 낙관 · 철학',desc:'가능성을 먼저 보는 사람입니다. 크게 생각하고 주변에 자연스럽게 희망을 전달해요.',traits:[['타고난 긍정주의자','어떤 상황에서도 이게 기회가 될 수 있지 않을까라는 생각이 먼저 들어요. 방 안에 들어오면 분위기가 밝아지는 사람이에요.'],['지식과 의미에 대한 갈망','단순히 아는 것에 그치지 않고 왜를 파고드는 성향이에요. 철학, 종교, 여행처럼 스케일이 큰 주제에 끌려요.'],['큰 그림을 보는 눈','디테일보다 방향을 잡는 역할이 잘 맞아요. 사업, 교육, 미디어 분야에서 두각을 나타내는 경우가 많아요.'],['넘치는 관대함','자기가 가진 것을 나누는 게 자연스러워요. 돈이든 시간이든 지식이든 아끼지 않아서 주변에 사람이 많이 모여요.'],['과잉이 그림자','좋은 것도 너무 많으면 문제가 돼요. 과식, 과소비, 과약속이 반복되는 패턴이 있을 수 있어요.']],cta:'목성이 어느 하우스에 있느냐에 따라 삶의 어떤 영역에서 행운이 집중되는지, 어디서 확장이 일어나는지 정확히 알 수 있어요.',repr:'갑인'},
-  Saturn:{emoji:'🪐',name:'토성',en:'Saturn',color:'#c9a84c',rgb:'201,168,76',keyword:'책임 · 구조 · 시간 · 훈련',desc:'기준이 높고 책임감이 강합니다. 한 번 맡은 일은 반드시 끝내는 신뢰의 사람이에요.',traits:[['믿을 수 있는 사람','맡은 일은 반드시 해내는 사람이에요. 저 사람한테 맡기면 된다는 신뢰를 받아요.'],['늦게 피는 꽃','20대보다 30~40대에 더 빛나는 경향이 있어요. 시간이 지날수록 내공이 쌓이는 타입이에요.'],['계획과 구조를 좋아함','즉흥보다는 준비된 상황에서 훨씬 잘 돌아가요. 체계적인 환경에서 최고의 퍼포먼스가 나와요.'],['스스로에게 엄격함','자기 자신에게 더 가혹한 경향이 있어요. 완벽하지 않으면 공개하기 싫어하는 마음이 있어요.'],['고독과 무거움이 그림자','내가 다 해야 해라는 생각이 강해서 혼자 짊어지다 지치는 패턴이 있어요. 도움을 받는 것도 능력이에요.']],cta:'토성이 어느 하우스에 있느냐에 따라 삶의 어떤 영역에서 시험이 오는지, 어디서 가장 큰 성장이 일어나는지 알 수 있어요.',repr:'기미'},
+  Saturn:{emoji:'🪐',name:'토성',en:'Saturn',color:'#d4af37',rgb:'201,168,76',keyword:'책임 · 구조 · 시간 · 훈련',desc:'기준이 높고 책임감이 강합니다. 한 번 맡은 일은 반드시 끝내는 신뢰의 사람이에요.',traits:[['믿을 수 있는 사람','맡은 일은 반드시 해내는 사람이에요. 저 사람한테 맡기면 된다는 신뢰를 받아요.'],['늦게 피는 꽃','20대보다 30~40대에 더 빛나는 경향이 있어요. 시간이 지날수록 내공이 쌓이는 타입이에요.'],['계획과 구조를 좋아함','즉흥보다는 준비된 상황에서 훨씬 잘 돌아가요. 체계적인 환경에서 최고의 퍼포먼스가 나와요.'],['스스로에게 엄격함','자기 자신에게 더 가혹한 경향이 있어요. 완벽하지 않으면 공개하기 싫어하는 마음이 있어요.'],['고독과 무거움이 그림자','내가 다 해야 해라는 생각이 강해서 혼자 짊어지다 지치는 패턴이 있어요. 도움을 받는 것도 능력이에요.']],cta:'토성이 어느 하우스에 있느냐에 따라 삶의 어떤 영역에서 시험이 오는지, 어디서 가장 큰 성장이 일어나는지 알 수 있어요.',repr:'기미'},
   Uranus:{emoji:'♅',name:'천왕성',en:'Uranus',color:'#7ecbff',rgb:'126,203,255',keyword:'혁신 · 자유 · 독창성 · 반란',desc:'틀을 깨는 에너지가 핵심입니다. 남들이 당연하게 여기는 것에 의문을 품어요.',traits:[['규칙 밖에서 사는 사람','정해진 틀보다 자신만의 방식을 선호해요. 다른 방법을 찾는 걸 즐겨요.'],['시대를 앞서가는 감각','지금은 이상하게 보이지만 나중에는 당연해지는 아이디어들이 먼저 떠올라요.'],['강한 독립심','자유롭게 움직일 때 가장 창의적이에요. 통제받는 환경에서는 반발심이 올라와요.'],['관계에서도 독특함','일반적인 관계 방식을 따르지 않아요. 독특하고 색다른 연결을 만드는 편이에요.'],['불안정이 그림자','변화를 좋아하다 보니 한 곳에 오래 머무르는 게 힘들 수 있어요. 지속성이 도전 과제예요.']],cta:'천왕성이 어느 하우스에 있느냐에 따라 삶의 어떤 영역에서 갑작스러운 변화와 혁신이 일어나는지 알 수 있어요.',repr:null},
   Neptune:{emoji:'♆',name:'해왕성',en:'Neptune',color:'#7ecbff',rgb:'126,203,255',keyword:'직관 · 감수성 · 꿈 · 초월',desc:'직관과 감수성이 탁월합니다. 눈에 보이지 않는 것들을 예민하게 감지해요.',traits:[['깊은 공감 능력','상대방이 말하지 않아도 느낌으로 알아채는 경우가 많아요. 이 공감 능력이 관계에서 가장 큰 선물이에요.'],['예술적 감수성','음악, 영화, 글에서 남들보다 훨씬 깊게 반응해요. 감동을 잘 받는 만큼 창작 능력도 뛰어난 편이에요.'],['현실과 이상의 경계','꿈꾸는 능력이 탁월하고, 가능성을 상상하는 힘이 강해요.'],['초월적인 것에 끌림','종교, 명상, 신비로운 것에 자연스럽게 관심이 가요.'],['경계 흐림이 그림자','공감을 너무 잘 하다 보니 자신과 타인의 감정을 구분하지 못하는 경우가 생겨요.']],cta:'해왕성이 어느 하우스에 있느냐에 따라 어디서 이상과 현실의 충돌이 일어나는지 알 수 있어요.',repr:null},
   Pluto:{emoji:'♇',name:'명왕성',en:'Pluto',color:'#b482ff',rgb:'180,130,255',keyword:'변화 · 깊이 · 집념 · 재생',desc:'변화와 깊이가 핵심 에너지입니다. 표면에 머무르지 않고 본질을 파고드는 성향이에요.',traits:[['본질을 파고드는 성향','표면에 머무르지 않아요. 사람이든 상황이든 그 아래에 무엇이 있는지 알고 싶어 하는 강렬한 욕구가 있어요.'],['강렬한 집념','한 번 꽂히면 끝까지 가요. 이 집념이 엄청난 성취를 만들어내는 동력이 됩니다.'],['변환의 삶','삶에서 몇 번의 큰 변환점을 경험하는 타입이에요. 끝나면 완전히 다른 사람이 되어 있어요.'],['권력 구조를 읽는 눈','눈에 보이지 않는 권력 관계와 숨겨진 의도를 감지하는 능력이 탁월해요.'],['강도가 그림자','모든 것을 깊고 강하게 경험하다 보니 소진되기 쉬워요. 가끔은 얕게 즐기는 법도 배울 필요가 있어요.']],cta:'명왕성이 어느 하우스에 있느냐에 따라 어떤 영역에서 큰 변환이 일어나는지, 어디서 집착이 나타나는지 알 수 있어요.',repr:null},
@@ -210,8 +210,7 @@ async function calcDominant(){
   btn.disabled=false;btn.textContent='✦ 내 도미넌트 행성 확인하기';
 }
 
-const starsEl=document.getElementById('stars');
-for(let i=0;i<120;i++){const s=document.createElement('div');const sz=Math.random()*2+0.3;s.style.cssText=`position:absolute;border-radius:50%;background:white;width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${0.08+Math.random()*0.35};`;starsEl.appendChild(s);}
+
 </script>
 </body>
 </html>
