@@ -44,10 +44,15 @@ function stemNameToIdx(name) {
   return -1;
 }
 
+// yongshin 영어→한국어 정규화 (DB에 'metal'/'wood' 등으로 저장된 경우)
+const YS_KO = { metal:'금', wood:'목', fire:'화', water:'수', earth:'토' };
+function toKoEl(v) { return YS_KO[v] || v; }
+
 // 오늘 일진이 용신에 미치는 영향 → 길(good)/평(neutral)/흉(caution)
 // 오행 상생: 목→화→토→금→수→목
 // 오행 상극: 목克토, 화克금, 토克수, 금克목, 수克화
-function getDayTone(todayOhang, yongshin) {
+function getDayTone(todayOhang, yongshinRaw) {
+  const yongshin = toKoEl(yongshinRaw);
   if (!yongshin || !todayOhang) return 'neutral';
   const 生Map = { 목:'화', 화:'토', 토:'금', 금:'수', 수:'목' };
   const 克Map = { 목:'토', 화:'금', 토:'수', 금:'목', 수:'화' };
@@ -202,6 +207,11 @@ export default async function handler(req, res) {
       `${SB_URL}/rest/v1/pico_push_subscriptions?user_id=in.(${userIds.join(',')})&select=user_id,subscription`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     );
+    if (!sbRes.ok) {
+      const errText = await sbRes.text();
+      console.error('[quote-push] pico_push_subscriptions 조회 실패:', sbRes.status, errText);
+      return res.status(500).json({ error: 'Supabase 조회 실패', detail: errText });
+    }
     const subs = await sbRes.json();
     if (Array.isArray(subs)) {
       subs.forEach(s => { if (s.user_id) subMap[s.user_id] = s.subscription; });
