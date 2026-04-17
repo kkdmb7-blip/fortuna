@@ -437,6 +437,17 @@ export default async function handler(req, res) {
       + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
       + modeAppend;
 
+    // 프롬프트 캐싱: system + 마지막 user 메시지에 cache_control 적용
+    const systemForAPI = [
+      { type: 'text', text: enrichedSystem, cache_control: { type: 'ephemeral' } }
+    ];
+    const messagesForAPI = trimmedMessages.map((m, idx) => {
+      if (idx === trimmedMessages.length - 1 && m.role === 'user' && typeof m.content === 'string' && m.content.length > 500) {
+        return { role: m.role, content: [{ type: 'text', text: m.content, cache_control: { type: 'ephemeral' } }] };
+      }
+      return m;
+    });
+
     const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -447,8 +458,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: (body.max_tokens && Number(body.max_tokens) > 0 && Number(body.max_tokens) <= 4000) ? Number(body.max_tokens) : 2000,
-        system: enrichedSystem,
-        messages: trimmedMessages,
+        system: systemForAPI,
+        messages: messagesForAPI,
       })
     });
 
