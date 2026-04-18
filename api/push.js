@@ -1,6 +1,7 @@
 // fortuna-silk.vercel.app/api/push.js
-// Vercel Serverless Function + Cron Job (매일 UTC 22:30 = KST 07:30)
-// 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY
+// Vercel Serverless Function + Cron Job
+// 개인화 AI 푸시: chat_users.saju_data로 one-liner 생성 → 메모x 시드 채팅 진입
+// 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY, ANTHROPIC_KEY
 
 import webpush from 'web-push';
 import { createRequire } from 'module';
@@ -8,6 +9,7 @@ const require = createRequire(import.meta.url);
 const quotes = require('./quotes.json');
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
+const DEDUP_HOURS = 44; // 하루 한 번 미만 보장 (오차 허용)
 
 function getDailyQuote() {
   const kst = new Date(Date.now() + 9 * 3600000);
@@ -15,20 +17,109 @@ function getDailyQuote() {
   return quotes[baseDay % quotes.length];
 }
 
+function buildPersonalPrompt(name, saju) {
+  const kst = new Date(Date.now() + 9 * 3600000);
+  const dateStr = `${kst.getUTCFullYear()}-${String(kst.getUTCMonth()+1).padStart(2,'0')}-${String(kst.getUTCDate()).padStart(2,'0')}`;
+  const dow = ['일','월','화','수','목','금','토'][kst.getUTCDay()];
+  const pillars = typeof saju.saju_pillars === 'string' ? saju.saju_pillars : JSON.stringify(saju.saju_pillars || {});
+  const facts = [
+    pillars ? `사주기둥: ${pillars}` : null,
+    saju.saju_strength ? `신강도: ${saju.saju_strength}` : null,
+    saju.saju_geokguk ? `격국: ${saju.saju_geokguk}` : null,
+    saju.saju_yongshin_primary ? `용신: ${saju.saju_yongshin_primary}` : null,
+    saju.saju_twelve_growth ? `12운성 키워드: ${Array.isArray(saju.saju_twelve_growth) ? saju.saju_twelve_growth.slice(0,4).join(', ') : ''}` : null,
+  ].filter(Boolean).join('\n');
+
+  return {
+    system: [
+      '당신은 개인 운세 코치입니다.',
+      '유저에게 오늘 한 줄 메시지를 보내세요.',
+      '규칙:',
+      '- 공백 포함 60~110자 사이',
+      '- 이모지 1개 이내, 맨 앞엔 금지',
+      '- 구체적 행동 1가지 제안 포함',
+      '- 해시태그·목록·따옴표 금지',
+      '- "안녕하세요" 인사말 금지',
+      '- 용신/격국 직접 노출 금지 (내부 참고만)',
+      '- 과도한 확정 예언 금지',
+      '- 유저 이름을 자연스럽게 1회 호출'
+    ].join('\n'),
+    user: [
+      `오늘 날짜: ${dateStr} (${dow}요일)`,
+      `유저 이름: ${name || '당신'}`,
+      facts || '(사주 데이터 미보유)',
+      '',
+      '오늘 이 유저에게 보낼 짧은 메시지를 한 줄로 만들어주세요. 앞 줄바꿈이나 라벨 없이 메시지만.'
+    ].join('\n')
+  };
+}
+
+async function generatePersonalMessage(apiKey, name, saju) {
+  const prompt = buildPersonalPrompt(name, saju);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: prompt.system,
+        messages: [{ role: 'user', content: prompt.user }],
+      }),
+    });
+    const data = await res.json();
+    const text = (data && data.content && data.content[0] && data.content[0].text || '').trim();
+    if (!text) return null;
+    // 앞뒤 따옴표 방어
+    return text.replace(/^["'「『]+|["'」』]+$/g, '').slice(0, 140);
+  } catch (e) {
+    console.warn('[push] personalize fail', e.message);
+    return null;
+  }
+}
+
+async function fetchRecentLogUserIds(SB_KEY) {
+  const cutoff = new Date(Date.now() - DEDUP_HOURS * 3600 * 1000).toISOString();
+  try {
+    const r = await fetch(`${SB_URL}/rest/v1/push_logs?select=user_id&created_at=gte.${encodeURIComponent(cutoff)}`, {
+      headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+    });
+    const rows = await r.json();
+    return new Set((Array.isArray(rows) ? rows : []).map(x => x.user_id));
+  } catch { return new Set(); }
+}
+
+async function insertLog(SB_KEY, user_id, message, meta) {
+  const r = await fetch(`${SB_URL}/rest/v1/push_logs`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify({ user_id, message, meta: meta || {} })
+  });
+  if (!r.ok) return null;
+  const rows = await r.json();
+  return Array.isArray(rows) ? rows[0] : rows;
+}
+
 export default async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // POST: 구독 저장 (save-push-sub 통합)
+  // POST: 구독 저장
   if (req.method === 'POST') {
     const { user_id, subscription } = req.body || {};
     if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
     const headers0 = { 'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`, 'Content-Type': 'application/json' };
-    // 기존 구독 삭제 후 새로 삽입 (unique 제약 없어도 동작)
     await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${user_id}`, { method: 'DELETE', headers: headers0 });
     const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
       method: 'POST',
@@ -39,7 +130,7 @@ export default async function handler(req, res) {
     return res.json({ ok: true });
   }
 
-  // Cron 인증: Authorization 헤더 또는 ?secret= 쿼리파라미터 둘 다 허용
+  // Cron 인증
   const authHeader = req.headers['authorization'];
   const querySecret = req.query.secret;
   const cronSecret = process.env.CRON_SECRET;
@@ -53,14 +144,13 @@ export default async function handler(req, res) {
   const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
   const VAPID_EMAIL       = process.env.VAPID_EMAIL || 'mailto:kkdmb@naver.com';
   const SB_KEY            = process.env.SB_SERVICE_KEY;
-
+  const ANTHROPIC_KEY     = process.env.ANTHROPIC_KEY;
   if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY || !SB_KEY) {
     return res.status(500).json({ error: 'Missing env vars' });
   }
-
   webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-  // Supabase에서 구독 + 프로필 이름 함께 조회
+  // 구독 조회
   let subscriptions = [];
   try {
     const sbRes = await fetch(
@@ -73,62 +163,78 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Supabase 조회 실패', detail: e.message });
   }
 
-  // 사용자 이름 일괄 조회 (user_id 목록으로)
-  const userIds = subscriptions.map(s => s.user_id).filter(Boolean);
-  let nameMap = {};
+  // 유저 프로필 조회 (이름 + 사주)
+  const userIds = [...new Set(subscriptions.map(s => s.user_id).filter(Boolean))];
+  const userMap = {};
   if (userIds.length > 0) {
     try {
       const profileRes = await fetch(
-        `${SB_URL}/rest/v1/chat_users?select=id,name&id=in.(${userIds.join(',')})`,
+        `${SB_URL}/rest/v1/chat_users?select=id,name,saju_data&id=in.(${userIds.join(',')})`,
         { headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
       );
       const profiles = await profileRes.json();
-      if (Array.isArray(profiles)) {
-        profiles.forEach(p => { if (p.id && p.name) nameMap[p.id] = p.name; });
-      }
-    } catch (e) { /* 이름 조회 실패해도 발송은 계속 */ }
+      if (Array.isArray(profiles)) profiles.forEach(p => { userMap[p.id] = p; });
+    } catch {}
   }
 
-  const results = { sent: 0, failed: 0, expired: [] };
-  const todayQuote = getDailyQuote();
+  // 최근 발송 유저 제외
+  const recentUids = await fetchRecentLogUserIds(SB_KEY);
 
-  await Promise.allSettled(
-    subscriptions.map(async (row) => {
+  const todayQuote = getDailyQuote();
+  const results = { total: subscriptions.length, sent: 0, skipped_recent: 0, skipped_expired: 0, failed: 0, personalized: 0, fallback: 0 };
+
+  for (const row of subscriptions) {
+    try {
+      if (recentUids.has(row.user_id)) { results.skipped_recent++; continue; }
+
       const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
-      if (!sub || !sub.endpoint) return;
-      const name = nameMap[row.user_id];
-      const greet = name ? `${name}님의 오늘 운세가 도착했어요 ✨` : '오늘의 운세가 도착했어요 ✨';
-      const quoteLine = todayQuote && todayQuote.message ? `\n\n💡 ${todayQuote.message}` : '';
+      if (!sub || !sub.endpoint) { results.skipped_expired++; continue; }
+
+      const prof = userMap[row.user_id];
+      const name = (prof && prof.name) || '';
+      const saju = (prof && prof.saju_data) || null;
+
+      // 메시지 생성
+      let message = null;
+      let meta = { model: null, fallback: false };
+      if (saju && ANTHROPIC_KEY) {
+        message = await generatePersonalMessage(ANTHROPIC_KEY, name, saju);
+        if (message) { meta.model = 'claude-haiku-4-5'; results.personalized++; }
+      }
+      if (!message) {
+        message = name ? `${name}님, ${todayQuote.message}` : todayQuote.message;
+        meta.fallback = true;
+        results.fallback++;
+      }
+
+      // 로그 먼저 저장해서 id 확보
+      const logRow = await insertLog(SB_KEY, row.user_id, message, meta);
+      const seedId = logRow && logRow.id ? logRow.id : '';
+
       const payload = JSON.stringify({
         title: '🔮 포르투나',
-        body: greet + quoteLine,
-        url: '/memox/'
+        body: message,
+        url: seedId ? `/memox/?seed=${seedId}` : '/memox/'
       });
+
       try {
-        const parsedSub = typeof sub === 'string' ? JSON.parse(sub) : sub;
-        await webpush.sendNotification(parsedSub, payload);
+        await webpush.sendNotification(sub, payload);
         results.sent++;
       } catch (e) {
         results.failed++;
-        console.error('푸시 실패 상세:', e.statusCode, e.message, JSON.stringify(e.body));
-        // 410 Gone = 구독 만료 → 삭제 처리
+        console.error('push 실패', e.statusCode, e.message);
         if (e.statusCode === 410 || e.statusCode === 404) {
-          results.expired.push(row.user_id);
           await fetch(
             `${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${row.user_id}`,
-            {
-              method: 'DELETE',
-              headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
-            }
+            { method: 'DELETE', headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
           ).catch(() => {});
         }
       }
-    })
-  );
+    } catch (e) {
+      results.failed++;
+      console.error('[push] row fail', e.message);
+    }
+  }
 
-  return res.status(200).json({
-    ok: true,
-    total: subscriptions.length,
-    ...results
-  });
+  return res.status(200).json({ ok: true, ...results });
 }
