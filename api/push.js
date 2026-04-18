@@ -3,8 +3,17 @@
 // 환경변수: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_EMAIL, SB_SERVICE_KEY
 
 import webpush from 'web-push';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const quotes = require('./quotes.json');
 
 const SB_URL = 'https://ymghmfkqctckxxysxkvy.supabase.co';
+
+function getDailyQuote() {
+  const kst = new Date(Date.now() + 9 * 3600000);
+  const baseDay = kst.getUTCFullYear() * 365 + kst.getUTCMonth() * 30 + kst.getUTCDate();
+  return quotes[baseDay % quotes.length];
+}
 
 export default async function handler(req, res) {
   // CORS
@@ -81,15 +90,18 @@ export default async function handler(req, res) {
   }
 
   const results = { sent: 0, failed: 0, expired: [] };
+  const todayQuote = getDailyQuote();
 
   await Promise.allSettled(
     subscriptions.map(async (row) => {
       const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
       if (!sub || !sub.endpoint) return;
       const name = nameMap[row.user_id];
+      const greet = name ? `${name}님의 오늘 운세가 도착했어요 ✨` : '오늘의 운세가 도착했어요 ✨';
+      const quoteLine = todayQuote && todayQuote.message ? `\n\n💡 ${todayQuote.message}` : '';
       const payload = JSON.stringify({
         title: '🔮 포르투나',
-        body: name ? `${name}님의 오늘 운세가 도착했어요 ✨` : '오늘의 운세가 도착했어요. 확인해보세요!',
+        body: greet + quoteLine,
         url: '/memox/'
       });
       try {
