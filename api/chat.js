@@ -471,6 +471,14 @@ export default async function handler(req, res) {
 
     const claudeData = await claudeRes.json();
     const reply = claudeData.content?.[0]?.text || '';
+    const usage = claudeData.usage || null;
+    if (usage) {
+      console.log('[claude usage]',
+        'input=', usage.input_tokens,
+        'output=', usage.output_tokens,
+        'cache_create=', usage.cache_creation_input_tokens || 0,
+        'cache_read=', usage.cache_read_input_tokens || 0);
+    }
 
     // ── Orb 차감 (free → paid 순으로 차감, 모든 필드 동시 업데이트) ──
     let newOrbBalance = orbBalance;
@@ -509,7 +517,13 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       reply,
-      orb_balance: newOrbBalance
+      orb_balance: newOrbBalance,
+      usage: usage ? {
+        input: usage.input_tokens,
+        output: usage.output_tokens,
+        cache_create: usage.cache_creation_input_tokens || 0,
+        cache_read: usage.cache_read_input_tokens || 0
+      } : null
     });
 
   } catch (e) {
