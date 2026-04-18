@@ -114,12 +114,56 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // POST: 구독 저장
+  // GET ?seed=<log_id>&user_id=<uid>: push_logs 시드 조회 + opened_at 기록
+  if (req.method === 'GET' && req.query.seed) {
+    const SB_KEY0 = process.env.SB_SERVICE_KEY;
+    if (!SB_KEY0) return res.status(500).json({ error: 'no service key' });
+    const headers0 = { 'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`, 'Content-Type': 'application/json' };
+    const seedId = req.query.seed;
+    const reqUid = req.query.user_id;
+    try {
+      const r = await fetch(
+        `${SB_URL}/rest/v1/push_logs?id=eq.${encodeURIComponent(seedId)}&select=*&limit=1`,
+        { headers: headers0 }
+      );
+      const rows = await r.json();
+      const row = Array.isArray(rows) && rows[0];
+      if (!row) return res.status(404).json({ error: 'not found' });
+      if (reqUid && row.user_id !== reqUid) return res.status(403).json({ error: 'forbidden' });
+      if (!row.opened_at) {
+        await fetch(
+          `${SB_URL}/rest/v1/push_logs?id=eq.${encodeURIComponent(seedId)}`,
+          { method: 'PATCH', headers: headers0, body: JSON.stringify({ opened_at: new Date().toISOString() }) }
+        ).catch(() => {});
+      }
+      return res.status(200).json({ ok: true, row });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  // POST
   if (req.method === 'POST') {
-    const { user_id, subscription } = req.body || {};
-    if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
+    const body = req.body || {};
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
     const headers0 = { 'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`, 'Content-Type': 'application/json' };
+
+    // dismiss 액션: push_logs.dismissed_at 기록
+    if (body.action === 'dismissed' && body.id) {
+      try {
+        await fetch(
+          `${SB_URL}/rest/v1/push_logs?id=eq.${encodeURIComponent(body.id)}`,
+          { method: 'PATCH', headers: headers0, body: JSON.stringify({ dismissed_at: new Date().toISOString() }) }
+        );
+        return res.status(200).json({ ok: true });
+      } catch (e) {
+        return res.status(500).json({ error: e.message });
+      }
+    }
+
+    // 구독 저장
+    const { user_id, subscription } = body;
+    if (!user_id || !subscription) return res.status(400).json({ error: 'missing fields' });
     await fetch(`${SB_URL}/rest/v1/push_subscriptions?user_id=eq.${user_id}`, { method: 'DELETE', headers: headers0 });
     const resp = await fetch(`${SB_URL}/rest/v1/push_subscriptions`, {
       method: 'POST',
