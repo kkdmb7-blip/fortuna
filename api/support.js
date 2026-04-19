@@ -66,16 +66,21 @@ export default async function handler(req, res) {
     const { data: inserted, error: e1 } = await sb.from('referrals').insert({ referrer_id, referee_id, rewarded: true, created_at: Date.now() }).select('id').single();
     if (e1) return res.status(500).json({ error: e1.message });
     const now = new Date().toISOString();
-    const { data: refData } = await sb.from('orb_balance').select('balance,paid_balance').eq('user_id', referrer_id).maybeSingle();
+    // 3필드 동시 읽기/쓰기: balance = free_balance + paid_balance 불변 유지
+    const { data: refData } = await sb.from('orb_balance').select('balance,free_balance,paid_balance').eq('user_id', referrer_id).maybeSingle();
     if (!refData) { await sb.from('referrals').delete().eq('id', inserted.id); return res.status(404).json({ error: 'referrer_not_found' }); }
-    const refNewPaid = (refData.paid_balance || 0) + 50, refNewBal = (refData.balance || 0) + 50;
-    const { error: e2 } = await sb.from('orb_balance').update({ balance: refNewBal, paid_balance: refNewPaid, updated_at: now }).eq('user_id', referrer_id);
+    const refFree = refData.free_balance || 0;
+    const refNewPaid = (refData.paid_balance || 0) + 50;
+    const refNewBal = refFree + refNewPaid;
+    const { error: e2 } = await sb.from('orb_balance').update({ balance: refNewBal, free_balance: refFree, paid_balance: refNewPaid, updated_at: now }).eq('user_id', referrer_id);
     if (e2) { await sb.from('referrals').delete().eq('id', inserted.id); return res.status(500).json({ error: e2.message }); }
     await sb.from('orb_transactions').insert({ user_id: referrer_id, type: 'referral_reward', amount: 50, description: '친구 초대 보상', balance_after: refNewBal, created_at: now });
-    const { data: eeData } = await sb.from('orb_balance').select('balance,paid_balance').eq('user_id', referee_id).maybeSingle();
+    const { data: eeData } = await sb.from('orb_balance').select('balance,free_balance,paid_balance').eq('user_id', referee_id).maybeSingle();
     if (eeData) {
-      const eeNewPaid = (eeData.paid_balance || 0) + 50, eeNewBal = (eeData.balance || 0) + 50;
-      await sb.from('orb_balance').update({ balance: eeNewBal, paid_balance: eeNewPaid, updated_at: now }).eq('user_id', referee_id);
+      const eeFree = eeData.free_balance || 0;
+      const eeNewPaid = (eeData.paid_balance || 0) + 50;
+      const eeNewBal = eeFree + eeNewPaid;
+      await sb.from('orb_balance').update({ balance: eeNewBal, free_balance: eeFree, paid_balance: eeNewPaid, updated_at: now }).eq('user_id', referee_id);
       await sb.from('orb_transactions').insert({ user_id: referee_id, type: 'referral_bonus', amount: 50, description: '초대받기 보상', balance_after: eeNewBal, created_at: now });
     }
     return res.json({ ok: true, added: 50 });
