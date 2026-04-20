@@ -55,7 +55,13 @@ export default async function handler(req, res) {
     const data = await resp.json();
     const text = data?.content?.[0]?.text || '{}';
     let parsed;
-    try { parsed = JSON.parse(text); } catch(e) { parsed = { advice: text, keyword: '용신', lucky: '' }; }
+    try {
+      const clean = text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      const m = text.match(/"advice"\s*:\s*"([^"]+)"/);
+      parsed = { advice: m ? m[1] : text.slice(0,100), keyword: '용신', lucky: '' };
+    }
     return res.status(200).json(parsed);
   } catch (e) {
     return res.status(500).json({ error: e.message });
