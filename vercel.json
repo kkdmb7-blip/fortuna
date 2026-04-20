@@ -4,12 +4,7 @@
       "maxDuration": 60
     }
   },
-  "crons": [
-    {
-      "path": "/api/push",
-      "schedule": "30 22 * * *"
-    }
-  ],
+  "crons": [],
   "rewrites": [
     { "source": "/api/referral", "destination": "/api/support" }
   ]
