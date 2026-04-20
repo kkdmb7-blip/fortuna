@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         sb.from('chat_users').select('*', { count: 'exact', head: true }),
         sb.from('chat_users').select('*', { count: 'exact', head: true }).eq('daily_reset_at', todayKST),
         sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user'),
-        sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user').gte('created_at', new Date(todayKST + 'T00:00:00+09:00').toISOString()),
+        sb.from('chat_messages').select('*', { count: 'exact', head: true }).eq('role', 'user').gte('created_at', new Date(todayKST + 'T00:00:00+09:00').getTime()),
         sb.from('orb_balance').select('*', { count: 'exact', head: true }).gt('total_charged', 0)
       ]);
       return res.json({ totalUsers, todayUsers, totalMessages, todayMessages, totalPayers });
