@@ -433,9 +433,12 @@ export default async function handler(req, res) {
       trimmedMessages = [summaryMsg, summaryAck, ...recent];
     }
 
-    const enrichedSystem = (system_prompt || '')
-      + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
-      + modeAppend;
+    // mode: 'raw' → 일진/표 자동 주입 생략 (정밀 해석·구조화 출력용)
+    const enrichedSystem = (mode === 'raw')
+      ? (system_prompt || '')
+      : ((system_prompt || '')
+          + `\n\n[시스템 자동 주입 - 현재 기준값]\n오늘: ${todayKST}\n내일: ${tomorrowKST} (향후 일진 표 첫 번째 줄)\n오늘 일진은 위 【절대 규칙】의 값을 사용, 표의 첫 줄과 혼동 금지`
+          + modeAppend);
 
     // 프롬프트 캐싱: system + 마지막 user 메시지에 cache_control 적용
     const systemForAPI = [
