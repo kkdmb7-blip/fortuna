@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포르투나 — 관리자</title>
+<title>FORTUNA — 관리자</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--bg:#0a0a0f;--gold:#d4af37;--gold-light:#e8cc7a;--text:#ede6f8;--text-dim:#8b8ba8;--border:rgba(212,175,55,0.2);}
+  :root{--bg:#f4ede0;--gold:#8a6a15;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--border:rgba(154,122,38,0.3);}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
   
   .login-wrap{position:relative;z-index:1;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
-  .login-box{background:linear-gradient(135deg,rgba(28,28,40,0.9),rgba(10,6,18,0.95));border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:360px;text-align:center;}
+  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:100%;max-width:360px;text-align:center;}
   .login-brand{font-size:12px;letter-spacing:0.4em;color:var(--gold);margin-bottom:8px;}
   .login-title{font-size:20px;font-weight:300;margin-bottom:32px;}
-  .login-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.1em;}
+  .login-input{width:100%;background:#fff;border:1px solid rgba(154,122,38,0.3);border-radius:10px;padding:14px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;margin-bottom:12px;text-align:center;letter-spacing:0.1em;}
   .login-input:focus{border-color:var(--gold);}
-  .login-btn{width:100%;background:linear-gradient(135deg,#d4af37,#e8cc7a);border:none;border-radius:10px;padding:14px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
+  .login-btn{width:100%;background:rgba(184,144,72,0.18);border:none;border-radius:10px;padding:14px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
   .login-error{font-size:12px;color:rgba(255,100,100,0.8);margin-top:10px;display:none;}
   .dashboard{display:none;position:relative;z-index:1;max-width:960px;margin:0 auto;padding:32px 20px 80px;}
   .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:1px solid var(--border);}
@@ -28,21 +28,21 @@
   .nav-btn:hover{border-color:var(--gold);color:var(--gold);}
   .logout-btn{background:none;border:1px solid rgba(255,100,100,0.3);border-radius:16px;padding:8px 16px;color:rgba(255,100,100,0.6);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;}
   .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-  .stat{background:linear-gradient(135deg,rgba(28,28,40,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
   .stat-num{font-size:26px;color:var(--gold);}
   .stat-label{font-size:11px;color:var(--text-dim);margin-top:4px;}
   .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
   .tab{background:none;border:1px solid var(--border);border-radius:8px;padding:10px 20px;color:var(--text-dim);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;position:relative;}
-  .tab.active{background:rgba(212,175,55,0.1);border-color:var(--gold);color:var(--gold);}
+  .tab.active{background:rgba(154,122,38,0.15);border-color:var(--gold);color:var(--gold);}
   .tab .badge{position:absolute;top:-6px;right:-6px;background:var(--gold);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:600;display:none;align-items:center;justify-content:center;}
   .tab-content{display:none;}
   .tab-content.active{display:block;}
   .filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
   .filter-btn{background:none;border:1px solid var(--border);border-radius:16px;padding:6px 14px;color:var(--text-dim);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
-  .filter-btn.active{background:rgba(212,175,55,0.1);border-color:var(--gold);color:var(--gold);}
-  .search-input{background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:16px;padding:6px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:12px;outline:none;width:180px;}
+  .filter-btn.active{background:rgba(154,122,38,0.15);border-color:var(--gold);color:var(--gold);}
+  .search-input{background:#fff;border:1px solid rgba(154,122,38,0.3);border-radius:16px;padding:6px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:12px;outline:none;width:180px;}
   .search-input:focus{border-color:var(--gold);}
-  .order-card{background:linear-gradient(135deg,rgba(28,28,40,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
+  .order-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
   .order-card.light{border-left:3px solid rgba(100,150,220,0.5);}
   .order-card.premium{border-left:3px solid var(--gold);}
   .order-card.saju_premium{border-left:3px solid rgba(180,100,255,0.7);}
@@ -53,7 +53,7 @@
   .order-name{font-size:16px;}
   .order-type{font-size:10px;letter-spacing:0.15em;padding:3px 10px;border-radius:16px;margin-left:8px;}
   .type-light{background:rgba(100,150,220,0.15);color:#c4a7f0;border:1px solid rgba(100,150,220,0.3);}
-  .type-premium{background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid var(--border);}
+  .type-premium{background:rgba(154,122,38,0.2);color:var(--gold);border:1px solid var(--border);}
   .type-saju{background:rgba(180,100,255,0.15);color:#b482ff;border:1px solid rgba(180,100,255,0.3);}
   .type-dog{background:rgba(244,162,97,0.15);color:#f4a261;border:1px solid rgba(244,162,97,0.3);}
   .type-cat{background:rgba(180,130,255,0.15);color:#b482ff;border:1px solid rgba(180,130,255,0.3);}
@@ -61,7 +61,7 @@
   .order-info{display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:14px;}
   .order-info span{color:var(--text);}
   .order-actions{display:flex;gap:8px;flex-wrap:wrap;}
-  .confirm-btn{flex:1;background:linear-gradient(135deg,#d4af37,#e8cc7a);border:none;border-radius:8px;padding:10px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .confirm-btn{flex:1;background:rgba(184,144,72,0.18);border:none;border-radius:8px;padding:10px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
   .confirm-btn:disabled{opacity:0.4;cursor:not-allowed;background:#444;color:#888;}
   /* ✦ 강제 즉시 발송 버튼 스타일 */
   .force-send-btn{background:rgba(255,150,50,0.12);border:1px solid rgba(255,150,50,0.4);border-radius:8px;padding:10px 14px;color:#ffaa44;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
@@ -75,23 +75,23 @@
   /* ✦ 입금 대기 정보 박스 */
   .bank-pending-box{background:rgba(232,204,122,0.06);border:1px solid rgba(232,204,122,0.25);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--text-dim);line-height:1.9;}
   .bank-pending-box span{color:#e8cc7a;}
-  .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(212,175,55,0.1);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
+  .report-preview{background:rgba(255,255,255,0.03);border:1px solid rgba(154,122,38,0.15);border-radius:8px;padding:12px;margin-top:8px;font-size:12px;color:var(--text-dim);line-height:1.8;max-height:220px;overflow-y:auto;white-space:pre-wrap;display:none;}
   .rv-form-box{background:rgba(28,28,40,0.3);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:none;}
   .rv-form-box.show{display:block;}
   .add-rv-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:12px;padding:14px;color:var(--gold);font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;margin-bottom:16px;}
   .form-field{margin-bottom:12px;}
   .form-label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:6px;}
-  .form-input,.form-textarea,.form-select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;-webkit-appearance:none;}
+  .form-input,.form-textarea,.form-select{width:100%;background:#fff;border:1px solid rgba(154,122,38,0.3);border-radius:8px;padding:10px 14px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;outline:none;-webkit-appearance:none;}
   .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--gold);}
   .form-select option{background:#1a1030;}
   .form-textarea{min-height:80px;resize:vertical;}
   .star-row{display:flex;gap:6px;margin-top:4px;}
-  .star-btn{font-size:20px;cursor:pointer;color:rgba(212,175,55,0.2);background:none;border:none;padding:0;}
+  .star-btn{font-size:20px;cursor:pointer;color:rgba(154,122,38,0.3);background:none;border:none;padding:0;}
   .star-btn.on{color:var(--gold);}
   .form-btns{display:flex;gap:8px;margin-top:16px;}
-  .btn-save{flex:1;background:linear-gradient(135deg,#d4af37,#e8cc7a);border:none;border-radius:8px;padding:12px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .btn-save{flex:1;background:rgba(184,144,72,0.18);border:none;border-radius:8px;padding:12px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
   .btn-cancel-form{background:none;border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text-dim);font-family:'Noto Sans KR',sans-serif;font-size:12px;cursor:pointer;}
-  .rv-card{background:linear-gradient(135deg,rgba(28,28,40,0.3),rgba(10,6,18,0.5));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
+  .rv-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:12px;}
   .rv-header{display:flex;justify-content:space-between;margin-bottom:8px;}
   .rv-stars{color:var(--gold);font-size:14px;}
   .rv-badge{font-size:10px;padding:2px 8px;border-radius:16px;border:1px solid var(--border);color:var(--gold);margin-left:8px;}
@@ -100,7 +100,7 @@
   .rv-date{font-size:11px;color:rgba(155,143,176,0.4);margin-top:8px;}
   .empty-msg{text-align:center;padding:40px;color:var(--text-dim);font-size:13px;line-height:2;}
   .loading-msg{text-align:center;padding:20px;color:var(--text-dim);font-size:13px;}
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(212,175,55,0.15);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(154,122,38,0.2);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
   .loading{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,6,18,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}

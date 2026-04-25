@@ -8,12 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0a0a0f;
-  --gold: #d4af37;
-  --gold-dim: rgba(212,175,55,0.15);
-  --gold-border: rgba(212,175,55,0.25);
-  --text: #ede6f8;
-  --text-dim: #8b8ba8;
+  --bg:#f4ede0;
+  --gold:#8a6a15;
+  --gold-dim: rgba(154,122,38,0.2);
+  --gold-border: rgba(154,122,38,0.35);
+  --text:#1a120a;
+  --text-dim:#5a4830;
   --card: rgba(255,255,255,0.03);
   --border: rgba(255,255,255,0.07);
 }
@@ -76,7 +76,7 @@ nav {
 .name-row { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-bottom:18px; }
 .field-label { font-size:11px; color:var(--text-dim); margin-bottom:8px; letter-spacing:0.08em; display:block; }
 .name-input {
-  width:100%; background:rgba(255,255,255,0.04);
+  width:100%; background:#fff;
   border:1px solid var(--gold-border); border-radius:10px;
   padding:12px 14px; color:var(--text);
   font-family:'Noto Serif KR',serif; font-size:16px;
@@ -87,7 +87,7 @@ nav {
 .hanja-section-label { font-size:11px; color:var(--text-dim); letter-spacing:0.08em; margin-bottom:8px; display:block; }
 .hanja-btns { display:flex; flex-wrap:wrap; gap:7px; }
 .hanja-btn {
-  background:rgba(255,255,255,0.04); border:1px solid var(--gold-border);
+  background:#fff; border:1px solid var(--gold-border);
   border-radius:10px; padding:8px 12px; cursor:pointer;
   font-family:'Noto Serif KR',serif; text-align:center;
   transition:all 0.2s; min-width:60px;
@@ -111,10 +111,10 @@ nav {
   display:flex; align-items:center; justify-content:center;
   transition:background 0.2s;
 }
-.spin-btn:hover { background:rgba(212,175,55,0.25); }
+.spin-btn:hover { background:rgba(154,122,38,0.35); }
 .spin-val {
   width:36px; text-align:center; font-size:15px;
-  background:rgba(255,255,255,0.04); border:1px solid var(--border);
+  background:#fff; border:1px solid var(--border);
   border-radius:8px; padding:4px 0; color:var(--text);
   font-family:'Noto Serif KR',serif;
 }
@@ -143,7 +143,7 @@ nav {
   padding:3px 10px; border-radius:16px; margin-bottom:6px; letter-spacing:0.06em;
 }
 .score-name { font-size:11px; color:var(--text-dim); }
-.grade-대길 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
+.grade-대길 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(154,122,38,0.18); }
 .score-card.grade-대길 .score-num { color:#d4af37; }
 .grade-길 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
 .score-card.grade-길 .score-num { color:#4caf7a; }
@@ -174,7 +174,7 @@ nav {
 .oh-badge.木 { color:#4caf7a; border:1px solid rgba(76,175,122,0.5); background:rgba(76,175,122,0.12); }
 .oh-badge.火 { color:#f44336; border:1px solid rgba(244,67,54,0.4); background:rgba(244,67,54,0.1); }
 .oh-badge.土 { color:#ff9800; border:1px solid rgba(255,152,0,0.5); background:rgba(255,152,0,0.12); }
-.oh-badge.金 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(212,175,55,0.12); }
+.oh-badge.金 { color:#d4af37; border:1px solid rgba(212,175,55,0.5); background:rgba(154,122,38,0.18); }
 .oh-badge.水 { color:#2196f3; border:1px solid rgba(33,150,243,0.5); background:rgba(33,150,243,0.12); }
 .oh-arrow { font-size:16px; color:var(--text-dim); line-height:1; margin-top:8px; }
 .oh-arrow.상생 { color:#4caf7a; }
@@ -198,15 +198,15 @@ nav {
 .jawon-row { display:flex; gap:8px; justify-content:center; margin-bottom:8px; }
 .jw-node { text-align:center; flex:1; }
 .jw-hanja { font-size:24px; color:var(--gold); display:block; margin-bottom:6px; }
-.jawon-notice { font-size:11px; color:var(--text-dim); line-height:1.7; margin-bottom:12px; padding:8px 10px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(212,175,55,0.3); }
+.jawon-notice { font-size:11px; color:var(--text-dim); line-height:1.7; margin-bottom:12px; padding:8px 10px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid rgba(154,122,38,0.4); }
 .summary-card {
   background:var(--gold-dim); border:1px solid var(--gold-border);
   border-radius:14px; padding:18px 16px; margin-bottom:20px;
   font-size:13px; line-height:1.9; color:var(--text);
 }
 .total-score-card {
-  background: rgba(212,175,55,0.08);
-  border: 1px solid rgba(212,175,55,0.3);
+  background: rgba(154,122,38,0.13);
+  border: 1px solid rgba(154,122,38,0.4);
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -261,7 +261,7 @@ nav {
 .toast {
   position:fixed; top:20px; left:50%;
   transform:translateX(-50%) translateY(-80px);
-  background:rgba(212,175,55,0.12); border:1px solid var(--gold);
+  background:rgba(154,122,38,0.18); border:1px solid var(--gold);
   border-radius:50px; padding:11px 24px;
   color:var(--gold); font-size:12px; z-index:9999;
   transition:transform 0.3s; backdrop-filter:blur(10px);
@@ -278,7 +278,7 @@ nav {
 }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)} }
 .yongsin-match-box {
-  border:1px solid var(--gold); background:rgba(212,175,55,0.08);
+  border:1px solid var(--gold); background:rgba(154,122,38,0.13);
   border-radius:16px; padding:20px; margin-top:16px;
   font-size:13px; line-height:1.9; color:var(--text);
 }
@@ -928,7 +928,7 @@ function renderYongsinMatch(allChars, allJawon, allEumOh) {
     html += '<div class="yongsin-match-item yongsin-ok">✅ 용신 일치: ' + matchChars.join(', ') + '</div>';
   if (kijinChars.length > 0)
     html += '<div class="yongsin-match-item yongsin-warn">⚠️ 기신 주의: ' + kijinChars.join(', ') + '</div>';
-  html += '<div class="yongsin-match-item" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,55,0.2);">' + overall + '</div>';
+  html += '<div class="yongsin-match-item" style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(154,122,38,0.3);">' + overall + '</div>';
   if (recText)
     html += '<div class="yongsin-match-item" style="margin-top:8px;font-size:12px;color:var(--text-dim);">용신 오행(' + yongsinOh + ') 추천 한자: ' + recText + '</div>';
   html += '</div>';

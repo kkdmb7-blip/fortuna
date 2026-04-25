@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포르투나 — 사주+점성 통합 리포트</title>
+<title>FORTUNA — 사주+점성 통합 리포트</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0a0f;--gold:#d4af37;--gold-light:#e8cc7a;--text:#e8e0f0;--text-dim:#8b8ba8;--border:rgba(212,175,55,0.25);--font-display:'Noto Sans KR',sans-serif;}
+  :root{--bg:#f4ede0;--gold:#8a6a15;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--border:rgba(154,122,38,0.35);--font-display:'Noto Sans KR',sans-serif;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:var(--font-display);min-height:100vh;overflow-x:hidden;}
   .container{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:40px 24px 80px;}
@@ -15,47 +15,47 @@
   .title{font-size:34px;font-weight:300;line-height:1.55;letter-spacing:0.02em;margin-bottom:14px;opacity:0;animation:fadeUp 0.8s ease forwards 0.4s;}
   .subtitle{font-size:16px;font-weight:300;color:var(--text-dim);line-height:2.0;letter-spacing:0.03em;opacity:0;animation:fadeUp 0.8s ease forwards 0.6s;}
   .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:24px auto;opacity:0;animation:fadeUp 0.8s ease forwards 0.5s;}
-  .badge-new{display:inline-block;background:linear-gradient(135deg,#d4af37,#e8cc7a);color:#fff;font-size:10px;font-weight:800;letter-spacing:0.12em;padding:4px 12px;border-radius:16px;margin-bottom:16px;opacity:0;animation:fadeUp 0.8s ease forwards 0.1s;}
-  .card{background:linear-gradient(135deg,rgba(28,28,40,0.4) 0%,rgba(10,6,18,0.6) 100%);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;backdrop-filter:blur(10px);opacity:0;animation:fadeUp 0.8s ease forwards;}
+  .badge-new{display:inline-block;background:rgba(184,144,72,0.18);color:#fff;font-size:10px;font-weight:800;letter-spacing:0.12em;padding:4px 12px;border-radius:16px;margin-bottom:16px;opacity:0;animation:fadeUp 0.8s ease forwards 0.1s;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;backdrop-filter:blur(10px);opacity:0;animation:fadeUp 0.8s ease forwards;}
   .card:nth-child(1){animation-delay:0.7s}.card:nth-child(2){animation-delay:0.9s}.card:nth-child(3){animation-delay:1.1s}.card:nth-child(4){animation-delay:1.2s}
   .card-title{font-size:13px;font-weight:500;letter-spacing:0.40em;color:var(--gold);text-transform:uppercase;margin-bottom:20px;}
-  .card-saju{border-color:rgba(212,175,55,0.4);background:linear-gradient(135deg,rgba(55,35,90,0.45) 0%,rgba(10,6,18,0.65) 100%);}
+  .card-saju{border-color:rgba(154,122,38,0.45);background:linear-gradient(135deg,rgba(55,35,90,0.45) 0%,rgba(10,6,18,0.65) 100%);}
   .card-saju .card-title{color:#e8cc7a;}
   .field{margin-bottom:18px;}
   label{display:block;font-size:15px;font-weight:400;color:var(--text-dim);letter-spacing:0.08em;margin-bottom:8px;}
   label span.req{color:var(--gold);margin-left:3px;}
-  input,select{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:8px;padding:13px 16px;color:var(--text);font-family:var(--font-display);font-size:16px;letter-spacing:0.02em;outline:none;transition:border-color 0.3s,background 0.3s;-webkit-appearance:none;}
-  input:focus,select:focus{border-color:var(--gold);background:rgba(212,175,55,0.05);}
-  select option{background:#1a1030;color:var(--text);}
+  input,select{width:100%;background:#fff;border:1px solid rgba(154,122,38,0.3);border-radius:8px;padding:13px 16px;color:var(--text);font-family:var(--font-display);font-size:16px;letter-spacing:0.02em;outline:none;transition:border-color 0.3s,background 0.3s;-webkit-appearance:none;}
+  input:focus,select:focus{border-color:var(--gold);background:rgba(154,122,38,0.08);}
+  select option{background:#fff;color:var(--text);}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .hint{font-size:13px;color:var(--text-dim);margin-top:6px;line-height:1.7;letter-spacing:0.02em;}
-  .feature-box{background:linear-gradient(135deg,rgba(28,28,40,0.5),rgba(10,6,18,0.7));border:1px solid rgba(212,175,55,0.3);border-radius:16px;padding:24px;margin-bottom:32px;opacity:0;animation:fadeUp 0.8s ease forwards 0.7s;}
+  .feature-box{background:var(--surface);border:1px solid rgba(154,122,38,0.4);border-radius:16px;padding:24px;margin-bottom:32px;opacity:0;animation:fadeUp 0.8s ease forwards 0.7s;}
   .feature-col{font-size:15px;line-height:2.2;color:var(--text-dim);}
-  .feature-divider{height:1px;background:rgba(212,175,55,0.15);margin:16px 0;}
+  .feature-divider{height:1px;background:rgba(154,122,38,0.2);margin:16px 0;}
   .feature-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
   .feature-tag{font-size:11px;letter-spacing:0.1em;padding:4px 12px;border-radius:16px;border:1px solid var(--border);color:var(--text-dim);}
-  .feature-tag.gold{border-color:rgba(212,175,55,0.4);color:var(--gold);}
-  .price-box{background:rgba(212,175,55,0.06);border:1px solid rgba(212,175,55,0.3);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
+  .feature-tag.gold{border-color:rgba(154,122,38,0.45);color:var(--gold);}
+  .price-box{background:rgba(154,122,38,0.1);border:1px solid rgba(154,122,38,0.4);border-radius:12px;padding:20px 24px;margin-bottom:16px;}
   .price-row{display:flex;justify-content:space-between;align-items:center;}
   .price-label{color:var(--text-dim);font-size:16px;}
   .amount{font-size:30px;color:var(--gold);font-weight:300;}
   .price-sub{font-size:12px;color:var(--text-dim);margin-top:6px;letter-spacing:0.04em;}
   .pay-btns{display:flex;gap:10px;margin-top:8px;}
-  .submit-btn{flex:1;background:linear-gradient(135deg,#d4af37 0%,#e8cc7a 50%,#d4af37 100%);border:none;border-radius:12px;padding:18px 8px;color:#fff;font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.04em;cursor:pointer;transition:all 0.3s;white-space:nowrap;min-width:0;}
-  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,175,55,0.4);}
+  .submit-btn{flex:1;background:rgba(184,144,72,0.18);border:none;border-radius:12px;padding:18px 8px;color:#fff;font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.04em;cursor:pointer;transition:all 0.3s;white-space:nowrap;min-width:0;}
+  .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(154,122,38,0.45);}
   .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;animation:none;}
-  .btn-bank-confirm{width:100%;background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.4);border-radius:12px;padding:16px;color:var(--gold);font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s;margin-top:12px;}
-  .btn-bank-confirm:hover{background:rgba(212,175,55,0.15);}
+  .btn-bank-confirm{width:100%;background:rgba(154,122,38,0.13);border:1px solid rgba(154,122,38,0.45);border-radius:12px;padding:16px;color:var(--gold);font-family:var(--font-display);font-size:15px;font-weight:500;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s;margin-top:12px;}
+  .btn-bank-confirm:hover{background:rgba(154,122,38,0.2);}
   .btn-bank-confirm:disabled{opacity:0.5;cursor:not-allowed;}
   
   .pay-methods{display:flex;gap:6px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
   .pay-method{font-size:11px;color:var(--text-dim);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:3px 10px;}
   .notice{font-size:14px;color:var(--text-dim);line-height:2.1;text-align:center;margin-top:16px;letter-spacing:0.03em;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(212,175,55,0.15);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:14px;letter-spacing:0.04em;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(154,122,38,0.2);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:14px;letter-spacing:0.04em;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
   .loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(10,6,18,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;}
-  .loading-gold{border:2px solid rgba(212,175,55,0.2);border-top-color:var(--gold);}
+  .loading-gold{border:2px solid rgba(154,122,38,0.3);border-top-color:var(--gold);}
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -107,7 +107,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
       <span class="feature-tag">48시간 내 발송</span>
       <span class="feature-tag">이메일 전송</span>
     </div>
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(212,175,55,0.15);display:flex;justify-content:space-between;align-items:center;gap:8px;">
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(154,122,38,0.2);display:flex;justify-content:space-between;align-items:center;gap:8px;">
       <span style="font-size:13px;color:var(--text-dim);">점성만 원하신다면?</span>
       <a href="premium.html" style="font-size:12px;color:var(--gold);text-decoration:none;border:1px solid var(--border);border-radius:16px;padding:5px 12px;">프리미엄 보기 →</a>
     </div>
@@ -204,7 +204,7 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
       <span class="pay-method">카카오페이</span><span class="pay-method">네이버페이</span>
       <span class="pay-method">삼성페이</span></div>
     <div style="text-align:center;margin-top:10px;font-size:12px;color:rgba(155,143,176,0.5);">🔒 KG이니시스 보안 결제</div>
-    <div style="margin-top:20px;padding:16px 18px;background:rgba(212,175,55,0.06);border:1px dashed rgba(212,175,55,0.3);border-radius:10px;text-align:center;">
+    <div style="margin-top:20px;padding:16px 18px;background:rgba(154,122,38,0.1);border:1px dashed rgba(154,122,38,0.4);border-radius:10px;text-align:center;">
       <div style="font-size:12px;letter-spacing:0.22em;color:var(--gold);margin-bottom:8px;">✦ 무통장 입금 안내</div>
       <div style="font-size:16px;color:var(--text);letter-spacing:0.04em;margin-bottom:4px;">국민은행 013-21-0780-866</div>
       <div style="font-size:13px;color:var(--text-dim);">예금주 오주영 · 29,000원</div>
@@ -317,7 +317,7 @@ async function submitBankOrder(){
       const wrap = document.getElementById('bankConfirmBtn').parentElement;
       const goBtn = document.createElement('a');
       goBtn.href='mypage.html';
-      goBtn.style.cssText='display:block;margin-top:12px;text-align:center;font-size:13px;color:#d4af37;border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:12px;text-decoration:none;';
+      goBtn.style.cssText='display:block;margin-top:12px;text-align:center;font-size:13px;color:#d4af37;border:1px solid rgba(154,122,38,0.4);border-radius:10px;padding:12px;text-decoration:none;';
       goBtn.textContent='📋 마이페이지에서 주문 확인하기';
       wrap.appendChild(goBtn);
     }, 500);

@@ -6,12 +6,12 @@
 <title>FORTUNA — 궁합 점수 보기</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0a0f;--gold:#d4af37;--gold-light:#e8cc7a;--text:#ede6f8;--text-dim:#8b8ba8;--border:rgba(212,175,55,0.2);}
+  :root{--bg:#f4ede0;--gold:#8a6a15;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--border:rgba(154,122,38,0.3);}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
   
   
-  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.08);}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(20px);border-bottom:1px solid rgba(154,122,38,0.13);}
     .nav-brand{display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--gold);font-size:14px;letter-spacing:0.2em;font-weight:700;font-family:'Noto Serif KR',serif;}
   .nav-brand img{height:44px;object-fit:contain;flex-shrink:0;}
   .nav-back{font-size:12px;color:var(--text-dim);text-decoration:none;transition:color 0.2s;}
@@ -21,23 +21,23 @@
   .eyebrow{font-size:11px;letter-spacing:0.4em;color:var(--gold);text-transform:uppercase;margin-bottom:16px;}
   .title{font-size:32px;font-weight:300;line-height:1.4;margin-bottom:12px;}
   .subtitle{font-size:14px;color:var(--text-dim);line-height:1.8;}
-  .card{background:linear-gradient(135deg,rgba(28,28,40,0.4),rgba(10,6,18,0.6));border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:20px;}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
   .col-label{font-size:11px;letter-spacing:0.3em;color:var(--gold);text-align:center;margin-bottom:16px;text-transform:uppercase;}
   .field{margin-bottom:16px;}
   .label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:8px;letter-spacing:0.05em;}
-  .input{width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(212,175,55,0.2);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
+  .input{width:100%;background:#fff;border:1px solid rgba(154,122,38,0.3);border-radius:10px;padding:13px 16px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:border-color 0.3s;-webkit-appearance:none;}
   .input:focus{border-color:var(--gold);}
   select.input option{background:#1a1030;}
-  .btn{width:100%;background:linear-gradient(135deg,#7b5ea7,#a07fd4);border:none;border-radius:12px;padding:16px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px;}
-  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,175,55,0.4);}
+  .btn{width:100%;background:rgba(122,36,24,0.13);border:none;border-radius:12px;padding:16px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s;margin-top:8px;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(154,122,38,0.45);}
   .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
   
   @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,6,18,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:6px;}
-  .result{background:linear-gradient(135deg,rgba(28,28,40,0.5),rgba(10,6,18,0.7));border:1px solid var(--gold);border-radius:16px;padding:40px 32px;margin-top:24px;animation:fadeUp 0.6s ease;display:none;}
-  .score-circle{width:140px;height:140px;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;justify-content:center;align-items:center;margin:0 auto 20px;background:rgba(212,175,55,0.05);}
+  .result{background:var(--surface);border:1px solid var(--gold);border-radius:16px;padding:40px 32px;margin-top:24px;animation:fadeUp 0.6s ease;display:none;}
+  .score-circle{width:140px;height:140px;border-radius:50%;border:3px solid var(--gold);display:flex;flex-direction:column;justify-content:center;align-items:center;margin:0 auto 20px;background:rgba(154,122,38,0.08);}
   .score-num{font-size:48px;font-weight:300;color:var(--gold);line-height:1;}
   .score-label{font-size:11px;color:var(--text-dim);margin-top:4px;letter-spacing:0.1em;}
   .score-title{font-size:20px;font-weight:300;text-align:center;margin-bottom:8px;}
@@ -45,15 +45,15 @@
   .signs-row{font-size:13px;letter-spacing:0.15em;color:var(--text-dim);text-align:center;margin-bottom:24px;}
   .aspect-section{margin-bottom:8px;}
   .aspect-label{font-size:11px;letter-spacing:0.2em;color:var(--gold);margin-bottom:10px;display:block;}
-  .aspect-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(212,175,55,0.08);font-size:13px;}
+  .aspect-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(154,122,38,0.13);font-size:13px;}
   .aspect-item:last-child{border-bottom:none;}
   .aspect-good{color:#88cc88;}
   .aspect-tense{color:#cc8888;}
   .upsell{border-top:1px solid var(--border);padding-top:28px;margin-top:24px;text-align:center;}
   .upsell-text{font-size:14px;color:var(--text-dim);line-height:1.9;margin-bottom:20px;}
-  .upsell-btn{display:inline-block;background:linear-gradient(135deg,#d4af37,#e8cc7a);border-radius:50px;padding:14px 32px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;text-decoration:none;transition:all 0.3s;}
-  .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(212,175,55,0.4);}
-  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(212,175,55,0.15);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
+  .upsell-btn{display:inline-block;background:rgba(184,144,72,0.18);border-radius:50px;padding:14px 32px;color:#fff;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;text-decoration:none;transition:all 0.3s;}
+  .upsell-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(154,122,38,0.45);}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(154,122,38,0.2);border:1px solid var(--gold);border-radius:50px;padding:12px 24px;color:var(--gold);font-size:13px;z-index:999;transition:transform 0.3s ease;backdrop-filter:blur(10px);white-space:nowrap;}
   .toast.show{transform:translateX(-50%) translateY(0);}
   @media(max-width:500px){.two-col{gap:10px;} .input{padding:10px 12px;font-size:13px;}}
 </style>

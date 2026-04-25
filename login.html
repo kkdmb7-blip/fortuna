@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>포르투나 — 관리자 로그인</title>
+<title>FORTUNA — 관리자 로그인</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --bg:#0a0a0f;
-    --gold:#d4af37;
-    --gold-light: #e8cc7a;
-    --text: #ede6f8;
-    --text-dim: #8b8ba8;
-    --border: rgba(212,175,55,0.2);
+    --bg:#f4ede0;
+    --gold:#8a6a15;
+    --gold-light:#b89048;
+    --text:#1a120a;
+    --text-dim:#5a4830;
+    --border: rgba(154,122,38,0.3);
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -43,7 +43,7 @@
     border-radius:16px;
     padding: 48px 40px;
     backdrop-filter: blur(20px);
-    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.05);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(154,122,38,0.08);
     opacity:0;
     animation: fadeUp 0.8s ease forwards 0.2s;
   }
@@ -104,7 +104,7 @@
   .field-input {
     width: 100%;
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(212,175,55,0.15);
+    border: 1px solid rgba(154,122,38,0.2);
     border-radius: 12px;
     padding: 14px 18px;
     color: var(--text);
@@ -118,13 +118,13 @@
   .field-input:focus {
     border-color: var(--gold);
     background: rgba(212,175,55,0.04);
-    box-shadow: 0 0 0 3px rgba(212,175,55,0.08);
+    box-shadow: 0 0 0 3px rgba(154,122,38,0.13);
   }
   .field-input::placeholder { color: rgba(155,143,176,0.4); letter-spacing: 0.05em; }
 
   .login-btn {
     width: 100%;
-    background:linear-gradient(135deg,#7b5ea7,#a07fd4);
+    background:rgba(122,36,24,0.13);
     border: none;
     border-radius: 12px;
     padding: 15px;
