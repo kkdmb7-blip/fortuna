@@ -114,6 +114,11 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // GET ?action=vapid-key: VAPID 공개키 반환 (picolab 프론트용)
+  if (req.method === 'GET' && req.query.action === 'vapid-key') {
+    return res.status(200).json({ key: process.env.VAPID_PUBLIC_KEY || '' });
+  }
+
   // GET ?seed=<log_id>&user_id=<uid>: push_logs 시드 조회 + opened_at 기록
   if (req.method === 'GET' && req.query.seed) {
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
@@ -147,6 +152,86 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const SB_KEY0 = process.env.SB_SERVICE_KEY;
     const headers0 = { 'apikey': SB_KEY0, 'Authorization': `Bearer ${SB_KEY0}`, 'Content-Type': 'application/json' };
+
+    // picolab 웹 푸시 (Worker 크론 → Authorization: Bearer FORTUNA_CONTEXT_TOKEN)
+    if (body.action === 'pico-push' || body.action === 'quote-push') {
+      const ctxSecret = process.env.FORTUNA_CONTEXT_TOKEN;
+      if (ctxSecret && req.headers['authorization'] !== `Bearer ${ctxSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const VAPID_PUBLIC_KEY  = process.env.VAPID_PUBLIC_KEY;
+      const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
+      const VAPID_EMAIL       = process.env.VAPID_EMAIL || 'mailto:kkdmb@naver.com';
+      if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) return res.status(500).json({ error: 'VAPID not set' });
+      webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+      const sbH = { apikey: SB_KEY0, Authorization: `Bearer ${SB_KEY0}` };
+
+      let rows = [];
+      if (body.action === 'pico-push') {
+        // 단순 푸시: user_ids + title/body/url
+        const ids = (body.user_ids || []).map(id => `"${id}"`).join(',');
+        if (!ids) return res.status(400).json({ error: 'user_ids required' });
+        const r = await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?select=user_id,subscription&user_id=in.(${ids})`, { headers: sbH });
+        rows = await r.json().catch(() => []);
+        let sent = 0;
+        for (const row of (Array.isArray(rows) ? rows : [])) {
+          try {
+            const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
+            if (!sub || !sub.endpoint) continue;
+            await webpush.sendNotification(sub, JSON.stringify({ title: body.title || '✦ 피코랩', body: body.body || '오늘의 운세가 도착했어요.', url: body.url || 'https://picolab.kr' }));
+            sent++;
+          } catch (e) {
+            if (e.statusCode === 410 || e.statusCode === 404) {
+              await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?user_id=eq.${encodeURIComponent(row.user_id)}`, { method: 'DELETE', headers: sbH }).catch(() => {});
+            }
+          }
+        }
+        return res.status(200).json({ sent });
+      }
+
+      if (body.action === 'quote-push') {
+        // 개인화 푸시: users [{user_id, name, ilgan, geokguk, yongshin}]
+        const users = body.users || [];
+        if (!users.length) return res.status(400).json({ error: 'users required' });
+        const ids2 = users.map(u => `"${u.user_id}"`).join(',');
+        const r2 = await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?select=user_id,subscription&user_id=in.(${ids2})`, { headers: sbH });
+        const rows2 = await r2.json().catch(() => []);
+        const FALLBACK = ['오늘 하루도 내 흐름을 믿어봐.', '서두르지 않아도 돼. 때가 되면 온다.', '지금 한 가지만 집중해봐.'];
+        const AKEY = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY;
+        const dow = ['일','월','화','수','목','금','토'][new Date(Date.now()+9*3600000).getUTCDay()];
+        const userMap = {};
+        users.forEach(u => { userMap[u.user_id] = u; });
+        let sent = 0;
+        for (const row of (Array.isArray(rows2) ? rows2 : [])) {
+          try {
+            const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
+            if (!sub || !sub.endpoint) continue;
+            const u = userMap[row.user_id] || {};
+            let msg = null;
+            if (AKEY) {
+              try {
+                const ar = await fetch('https://api.anthropic.com/v1/messages', {
+                  method: 'POST', headers: { 'x-api-key': AKEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+                  body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 120,
+                    system: '사주 운세 코치. 60~100자 한 줄만 반환. 이모지 1개 이내. 확정 예언 금지.',
+                    messages: [{ role: 'user', content: `오늘:${dow}요일 이름:${u.name||'유저'} 일간:${u.ilgan||''} 격국:${u.geokguk||''} 용신:${u.yongshin||''}\n한 줄 메시지:` }] })
+                });
+                const ad = await ar.json();
+                msg = (ad?.content?.[0]?.text || '').trim().replace(/^["'「]+|["'」]+$/g, '').slice(0, 120) || null;
+              } catch {}
+            }
+            if (!msg) msg = (u.name ? `${u.name}님, ` : '') + FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
+            await webpush.sendNotification(sub, JSON.stringify({ title: '✦ 오늘의 운세', body: msg, url: 'https://picolab.kr' }));
+            sent++;
+          } catch (e) {
+            if (e.statusCode === 410 || e.statusCode === 404) {
+              await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?user_id=eq.${encodeURIComponent(row.user_id)}`, { method: 'DELETE', headers: sbH }).catch(() => {});
+            }
+          }
+        }
+        return res.status(200).json({ sent });
+      }
+    }
 
     // dismiss 액션: push_logs.dismissed_at 기록
     if (body.action === 'dismissed' && body.id) {
