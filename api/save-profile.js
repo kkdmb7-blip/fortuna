@@ -32,9 +32,6 @@ export default async function handler(req, res) {
   const profile = req.body;
   if (!profile || !profile.id) return res.status(400).json({ error: 'profile.id required' });
 
-  const SB_KEY = process.env.SB_SERVICE_KEY;
-  if (!SB_KEY) return res.status(500).json({ error: 'Server config error' });
-
   try {
     const resp = await fetch(`${SB_URL}/rest/v1/chat_users`, {
       method: 'POST',
