@@ -367,8 +367,7 @@ export default async function handler(req, res) {
       }
     }
 
-    // ── Orb 선차감: AI 호출 전 원자적 낙관적 잠금 ────────────────
-    // balance=eq.${orbBalance} 조건: 다른 요청이 먼저 차감했으면 0 rows → 429 반환
+    // ── Orb 선차감: AI 호출 전 차감 (동시 요청 방지는 잔액 체크로 충분) ──
     let newOrbBalance = orbBalance;
     let newOrbFree = orbFreeBalance;
     let newOrbPaid = orbPaidBalance;
@@ -380,19 +379,17 @@ export default async function handler(req, res) {
       newOrbBalance = newOrbFree + newOrbPaid;
       const sbCtrlD = new AbortController();
       const sbTidD = setTimeout(() => sbCtrlD.abort(), 8000);
-      let deducted;
       try {
         const deductRes = await fetch(
-          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&balance=eq.${orbBalance}`,
+          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`,
           { signal: sbCtrlD.signal, method: 'PATCH',
-            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
             body: JSON.stringify({ balance: newOrbBalance, free_balance: newOrbFree, paid_balance: newOrbPaid, updated_at: new Date().toISOString() }) }
         );
-        deducted = await deductRes.json();
+        if (!deductRes.ok) {
+          return res.status(429).json({ error: 'orb_insufficient', orb_balance: orbBalance, orb_cost: ORB_COST });
+        }
       } finally { clearTimeout(sbTidD); }
-      if (!Array.isArray(deducted) || deducted.length === 0) {
-        return res.status(429).json({ error: 'orb_insufficient', orb_balance: 0, orb_cost: ORB_COST });
-      }
       // 거래 기록 (비동기, 실패 무시)
       fetch(`${SB_URL}/rest/v1/orb_transactions`, {
         method: 'POST',
