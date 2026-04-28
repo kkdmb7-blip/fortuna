@@ -367,6 +367,40 @@ export default async function handler(req, res) {
       }
     }
 
+    // ── Orb 선차감: AI 호출 전 원자적 낙관적 잠금 ────────────────
+    // balance=eq.${orbBalance} 조건: 다른 요청이 먼저 차감했으면 0 rows → 429 반환
+    let newOrbBalance = orbBalance;
+    let newOrbFree = orbFreeBalance;
+    let newOrbPaid = orbPaidBalance;
+    if (!skipOrb && ORB_COST > 0) {
+      const freeUsed = Math.min(orbFreeBalance, ORB_COST);
+      const paidUsed = ORB_COST - freeUsed;
+      newOrbFree = Math.max(0, orbFreeBalance - freeUsed);
+      newOrbPaid = Math.max(0, orbPaidBalance - paidUsed);
+      newOrbBalance = newOrbFree + newOrbPaid;
+      const sbCtrlD = new AbortController();
+      const sbTidD = setTimeout(() => sbCtrlD.abort(), 8000);
+      let deducted;
+      try {
+        const deductRes = await fetch(
+          `${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&balance=eq.${orbBalance}`,
+          { signal: sbCtrlD.signal, method: 'PATCH',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+            body: JSON.stringify({ balance: newOrbBalance, free_balance: newOrbFree, paid_balance: newOrbPaid, updated_at: new Date().toISOString() }) }
+        );
+        deducted = await deductRes.json();
+      } finally { clearTimeout(sbTidD); }
+      if (!Array.isArray(deducted) || deducted.length === 0) {
+        return res.status(429).json({ error: 'orb_insufficient', orb_balance: 0, orb_cost: ORB_COST });
+      }
+      // 거래 기록 (비동기, 실패 무시)
+      fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
+      }).catch(() => {});
+    }
+
     // ── RAG: 전체 조회 병렬 실행 (비활성화) ──────────────────
     // const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
     // const queryText   = lastUserMsg ? lastUserMsg.content : '';
@@ -481,41 +515,6 @@ export default async function handler(req, res) {
         'output=', usage.output_tokens,
         'cache_create=', usage.cache_creation_input_tokens || 0,
         'cache_read=', usage.cache_read_input_tokens || 0);
-    }
-
-    // ── Orb 차감 (free → paid 순으로 차감, 모든 필드 동시 업데이트) ──
-    let newOrbBalance = orbBalance;
-    let newOrbFree = orbFreeBalance;
-    let newOrbPaid = orbPaidBalance;
-    if (!skipOrb && ORB_COST > 0) {
-      const freeUsed = Math.min(orbFreeBalance, ORB_COST);
-      const paidUsed = ORB_COST - freeUsed;
-      newOrbFree = Math.max(0, orbFreeBalance - freeUsed);
-      newOrbPaid = Math.max(0, orbPaidBalance - paidUsed);
-      newOrbBalance = newOrbFree + newOrbPaid;
-      const sbCtrlA = new AbortController();
-      const sbTidA = setTimeout(() => sbCtrlA.abort(), 8000);
-      const sbCtrlB = new AbortController();
-      const sbTidB = setTimeout(() => sbCtrlB.abort(), 8000);
-      try {
-        await Promise.allSettled([
-          fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}`, {
-            signal: sbCtrlA.signal,
-            method: 'PATCH',
-            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ balance: newOrbBalance, free_balance: newOrbFree, paid_balance: newOrbPaid, updated_at: new Date().toISOString() })
-          }),
-          fetch(`${SB_URL}/rest/v1/orb_transactions`, {
-            signal: sbCtrlB.signal,
-            method: 'POST',
-            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-            body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
-          })
-        ]);
-      } finally {
-        clearTimeout(sbTidA);
-        clearTimeout(sbTidB);
-      }
     }
 
     return res.status(200).json({
