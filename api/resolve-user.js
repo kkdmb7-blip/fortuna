@@ -108,7 +108,29 @@ export default async function handler(req, res) {
     }
 
     const newProfile = Array.isArray(inserted) ? inserted[0] : inserted;
-    return res.status(200).json(newProfile || newRecord);
+    const finalId = (newProfile && newProfile.id) || newId;
+
+    // 신규가입 보너스 500 Orb (balance/free/paid 동시)
+    let bonusGranted = false;
+    try {
+      const obResp = await fetch(`${SB_URL}/rest/v1/orb_balance`, {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=ignore-duplicates' },
+        body: JSON.stringify({ user_id: finalId, balance: 500, free_balance: 500, paid_balance: 0 })
+      });
+      if (obResp.ok) {
+        bonusGranted = true;
+        await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ user_id: finalId, type: 'bonus', amount: 500, description: '신규가입 축하 보너스', balance_after: 500, created_at: new Date().toISOString() })
+        });
+      }
+    } catch(e) {}
+
+    const responseProfile = newProfile || newRecord;
+    if (bonusGranted) responseProfile.signup_bonus = 500;
+    return res.status(200).json(responseProfile);
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
