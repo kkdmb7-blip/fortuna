@@ -202,10 +202,12 @@ export default async function handler(req, res) {
         const userMap = {};
         users.forEach(u => { userMap[u.user_id] = u; });
         let sent = 0;
+        const errors = [];
+        const fetched = Array.isArray(rows2) ? rows2.length : 0;
         for (const row of (Array.isArray(rows2) ? rows2 : [])) {
           try {
             const sub = typeof row.subscription === 'string' ? JSON.parse(row.subscription) : row.subscription;
-            if (!sub || !sub.endpoint) continue;
+            if (!sub || !sub.endpoint) { errors.push({ uid: row.user_id, reason: 'no_endpoint' }); continue; }
             const u = userMap[row.user_id] || {};
             let msg = null;
             if (AKEY) {
@@ -224,12 +226,14 @@ export default async function handler(req, res) {
             await webpush.sendNotification(sub, JSON.stringify({ title: '✦ 오늘의 운세', body: msg, url: 'https://picolab.kr' }));
             sent++;
           } catch (e) {
-            if (e.statusCode === 410 || e.statusCode === 404) {
+            const errInfo = { uid: row.user_id, status: e && e.statusCode, msg: String(e && (e.body || e.message || e)).slice(0, 300) };
+            errors.push(errInfo);
+            if (e && (e.statusCode === 410 || e.statusCode === 404)) {
               await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?user_id=eq.${encodeURIComponent(row.user_id)}`, { method: 'DELETE', headers: sbH }).catch(() => {});
             }
           }
         }
-        return res.status(200).json({ sent });
+        return res.status(200).json({ sent, fetched, errors });
       }
     }
 
