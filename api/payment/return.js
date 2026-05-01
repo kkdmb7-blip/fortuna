@@ -5,7 +5,7 @@
 
 const PORTONE_SECRET = process.env.PORTONE_SECRET; // Vercel 환경변수에 설정 필요
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   const { paymentId, txId, code, message, type } = req.query;
   const reportType = type || 'light';
 
@@ -45,4 +45,4 @@ module.exports = async function handler(req, res) {
     console.error('[payment/return] verify error:', e);
     return res.redirect(`/success.html?error=${encodeURIComponent('결제 검증 중 오류가 발생했습니다')}&type=${reportType}`);
   }
-};
+}
