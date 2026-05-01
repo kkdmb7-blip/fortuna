@@ -64,7 +64,8 @@ export default async function handler(req, res) {
     const pack = PACKS_CHARGE[pack_id];
     if (!pack) return res.status(400).json({ error: 'invalid_pack' });
 
-    const PORTONE_SECRET = process.env.PORTONE_SECRET;
+    // env 이름이 PORTONE_SECRET_KEY 로 등록된 경우 (기존 구독 부분과 통일) + 호환 fallback
+    const PORTONE_SECRET = process.env.PORTONE_SECRET_KEY || process.env.PORTONE_SECRET;
     if (!PORTONE_SECRET) return res.status(500).json({ error: 'portone_not_configured' });
     try {
       const verifyRes = await fetch(`${PO_API}/payments/${encodeURIComponent(payment_id)}`, {

@@ -20,7 +20,7 @@ async function _getPortoneWebhook() {
   }
 }
 
-const PORTONE_SECRET = process.env.PORTONE_SECRET; // PortOne API 인증 키
+const PORTONE_SECRET = process.env.PORTONE_SECRET_KEY || process.env.PORTONE_SECRET; // PortOne API 인증 키
 const PORTONE_WEBHOOK_SECRET = process.env.PORTONE_WEBHOOK_SECRET; // PortOne webhook 시그니처 검증용
 const SB_URL = 'https://afktkixkbcirsknahbmx.supabase.co';
 const SB_KEY = process.env.SB_SERVICE_KEY;

@@ -3,7 +3,7 @@
 // PortOne이 redirect 시 전달: paymentId, txId, code(에러시), message
 // 팝업 성공 후 클라이언트가 직접 이 URL로 redirect하기도 함
 
-const PORTONE_SECRET = process.env.PORTONE_SECRET; // Vercel 환경변수에 설정 필요
+const PORTONE_SECRET = process.env.PORTONE_SECRET_KEY || process.env.PORTONE_SECRET;
 
 export default async function handler(req, res) {
   const { paymentId, txId, code, message, type } = req.query;
