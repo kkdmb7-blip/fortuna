@@ -3,6 +3,24 @@ import { createClient } from '@supabase/supabase-js';
 const sb = createClient(process.env.SUPABASE_URL, process.env.SB_SERVICE_KEY);
 const ADMIN_ID = '99f9f77a-2f2a-4055-ab44-421d1c070341';
 
+// Admin 인증 헬퍼: Bearer ADMIN_SECRET 우선, 없으면 backwards-compat 으로 admin_id 검증.
+// 운영자가 Vercel env 에 ADMIN_SECRET 등록 시 즉시 강화 (admin_id 평문 노출 우회 차단).
+function _isSupportAdmin(req) {
+  try {
+    const adminSecret = process.env.ADMIN_SECRET;
+    if (adminSecret) {
+      const auth = req.headers.authorization || req.headers.Authorization || '';
+      if (auth.startsWith('Bearer ') && auth.slice(7) === adminSecret) return true;
+      const xs = req.headers['x-admin-secret'] || '';
+      if (xs && xs === adminSecret) return true;
+    }
+    // backwards-compat (ADMIN_SECRET 미설정 시) — 운영자 등록 후 이 라인 제거 권장
+    const adminId = (req.query && req.query.admin_id) || '';
+    if (adminId === ADMIN_ID) return true;
+  } catch(e) {}
+  return false;
+}
+
 const _CORS_ALLOWED = ['https://picolab.kr','https://www.picolab.kr','https://kkdmb7-blip.github.io','https://fortuna-silk.vercel.app'];
 export default async function handler(req, res) {
   const _origin = req.headers.origin || '';
@@ -24,7 +42,7 @@ export default async function handler(req, res) {
     }
 
     // 관리자 통계
-    if (action === 'stats' && admin_id === ADMIN_ID) {
+    if (action === 'stats' && _isSupportAdmin(req)) {
       const todayKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
       const [
         { count: totalUsers },
@@ -43,7 +61,7 @@ export default async function handler(req, res) {
     }
 
     // 관리자 문의 목록
-    if (admin_id === ADMIN_ID) {
+    if (_isSupportAdmin(req)) {
       const { data, error } = await sb.from('support_tickets').select('*').order('created_at', { ascending: false }).limit(50);
       if (error) return res.status(500).json({ error: error.message });
       return res.json({ tickets: data });
@@ -127,8 +145,10 @@ export default async function handler(req, res) {
 
   // PATCH: 관리자 답변
   if (req.method === 'PATCH') {
-    const { admin_id, ticket_id, admin_reply, status } = req.body || {};
-    if (admin_id !== ADMIN_ID) return res.status(403).json({ error: 'forbidden' });
+    const { ticket_id, admin_reply, status } = req.body || {};
+    // PATCH 는 body 의 admin_id 를 query 로 옮겨 _isSupportAdmin 헬퍼와 일치시킴
+    const fakeReq = { headers: req.headers, query: { admin_id: (req.body || {}).admin_id || '' } };
+    if (!_isSupportAdmin(fakeReq)) return res.status(403).json({ error: 'forbidden' });
 
     const update = { updated_at: new Date().toISOString() };
     if (admin_reply) update.admin_reply = admin_reply;
