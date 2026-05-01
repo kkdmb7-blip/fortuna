@@ -6,7 +6,19 @@
 //   1) PortOne webhook signature 검증 (env.PORTONE_WEBHOOK_SECRET) — 위조 차단
 //   2) PortOne API 재조회로 status:PAID 확인 — webhook 우회 시도 차단
 
-import { Webhook } from '@portone/server-sdk';
+// @portone/server-sdk 는 dynamic import (빌드 실패 회피 + 미사용 시 부담 0)
+let _portoneWebhook = null;
+async function _getPortoneWebhook() {
+  if (_portoneWebhook) return _portoneWebhook;
+  try {
+    const mod = await import('@portone/server-sdk');
+    _portoneWebhook = mod.Webhook || (mod.default && mod.default.Webhook);
+    return _portoneWebhook;
+  } catch(e) {
+    console.warn('[notify] @portone/server-sdk load failed, signature 검증 skip:', e.message);
+    return null;
+  }
+}
 
 const PORTONE_SECRET = process.env.PORTONE_SECRET; // PortOne API 인증 키
 const PORTONE_WEBHOOK_SECRET = process.env.PORTONE_WEBHOOK_SECRET; // PortOne webhook 시그니처 검증용
@@ -41,16 +53,19 @@ export default async function handler(req, res) {
     // PORTONE_WEBHOOK_SECRET 환경변수 미설정 시 검증 skip (PortOne 콘솔 등록 후
     // Vercel env 추가하면 자동 활성화 — 그 전까지는 PortOne API 재조회만으로 보호).
     if (PORTONE_WEBHOOK_SECRET) {
-      const headers = {
-        'webhook-id':        req.headers['webhook-id'],
-        'webhook-timestamp': req.headers['webhook-timestamp'],
-        'webhook-signature': req.headers['webhook-signature'],
-      };
-      try {
-        await Webhook.verify(PORTONE_WEBHOOK_SECRET, rawBody, headers);
-      } catch (vErr) {
-        console.warn('[notify] signature verify failed:', vErr && vErr.message);
-        return res.status(401).json({ error: 'invalid_signature' });
+      const Webhook = await _getPortoneWebhook();
+      if (Webhook) {
+        const headers = {
+          'webhook-id':        req.headers['webhook-id'],
+          'webhook-timestamp': req.headers['webhook-timestamp'],
+          'webhook-signature': req.headers['webhook-signature'],
+        };
+        try {
+          await Webhook.verify(PORTONE_WEBHOOK_SECRET, rawBody, headers);
+        } catch (vErr) {
+          console.warn('[notify] signature verify failed:', vErr && vErr.message);
+          return res.status(401).json({ error: 'invalid_signature' });
+        }
       }
     }
 
