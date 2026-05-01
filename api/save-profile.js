@@ -45,6 +45,78 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // ── POST ?action=charge: PortOne 영수증 검증 + Orb 안전 충전 ──
+  // (charge.html 의 anon UPSERT 위협 차단 — Vercel 12 함수 한도 내 통합)
+  if (req.query.action === 'charge') {
+    const PACKS_CHARGE = {
+      'pack_first_1plus1': { price: 5500,  orb: 500,   bonus: 500, firstOnly: true },
+      'pack_950':          { price: 9900,  orb: 950 },
+      'pack_1650':         { price: 16500, orb: 1650 },
+      'pack_2200':         { price: 22000, orb: 2200 },
+      'pack_3300':         { price: 33000, orb: 3300 },
+      'pack_5500':         { price: 49900, orb: 5500 },
+      'pack_10000':        { price: 79900, orb: 10000 },
+    };
+    const UUID_RE_C = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const { user_id, payment_id, pack_id } = req.body || {};
+    if (!user_id || !payment_id || !pack_id) return res.status(400).json({ error: 'missing_params' });
+    if (!UUID_RE_C.test(user_id)) return res.status(400).json({ error: 'invalid_user_id' });
+    const pack = PACKS_CHARGE[pack_id];
+    if (!pack) return res.status(400).json({ error: 'invalid_pack' });
+
+    const PORTONE_SECRET = process.env.PORTONE_SECRET;
+    if (!PORTONE_SECRET) return res.status(500).json({ error: 'portone_not_configured' });
+    try {
+      const verifyRes = await fetch(`${PO_API}/payments/${encodeURIComponent(payment_id)}`, {
+        headers: { 'Authorization': `PortOne ${PORTONE_SECRET}` }
+      });
+      if (!verifyRes.ok) return res.status(402).json({ error: 'portone_verify_failed' });
+      const payment = await verifyRes.json();
+      if (payment.status !== 'PAID') return res.status(402).json({ error: 'payment_not_paid', portone_status: payment.status });
+      const paidAmount = (payment.amount && (payment.amount.total || payment.amount.paid)) || 0;
+      if (paidAmount !== pack.price) return res.status(402).json({ error: 'amount_mismatch', expected: pack.price, got: paidAmount });
+
+      // 중복 체크
+      const dupRes = await fetch(`${SB_URL}/rest/v1/orb_transactions?user_id=eq.${user_id}&description=ilike.*${encodeURIComponent(payment_id)}*&select=id&limit=1`, { headers: sbH });
+      const dupData = await dupRes.json();
+      if (Array.isArray(dupData) && dupData.length > 0) {
+        const balR = await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance`, { headers: sbH });
+        const b = await balR.json();
+        return res.status(200).json({ ok: true, duplicate: true, balance: (b && b[0] && b[0].balance) || 0 });
+      }
+
+      // 잔액 조회 + 갱신
+      const balRes = await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${user_id}&select=balance,free_balance,paid_balance,total_charged,is_first_charge`, { headers: sbH });
+      const balData = await balRes.json();
+      const oldBal = (Array.isArray(balData) && balData[0]) || { balance: 0, free_balance: 0, paid_balance: 0, total_charged: 0, is_first_charge: true };
+      const isFirstChargeApplied = !!(pack.firstOnly && (oldBal.is_first_charge !== false));
+      const totalOrb = pack.orb + (isFirstChargeApplied ? (pack.bonus || 0) : 0);
+      const newBalance = (oldBal.balance || 0) + totalOrb;
+      const newPaid = (oldBal.paid_balance || 0) + totalOrb;
+      const newTotalCharged = (oldBal.total_charged || 0) + totalOrb;
+      const now = new Date().toISOString();
+
+      const upRes = await fetch(`${SB_URL}/rest/v1/orb_balance`, {
+        method: 'POST',
+        headers: { ...sbH, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ user_id, balance: newBalance, free_balance: oldBal.free_balance || 0, paid_balance: newPaid, total_charged: newTotalCharged, is_first_charge: false, updated_at: now })
+      });
+      if (!upRes.ok) {
+        const txt = await upRes.text();
+        return res.status(500).json({ error: 'upsert_failed', detail: txt.slice(0,200) });
+      }
+      await fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+        method: 'POST',
+        headers: { ...sbH, 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id, type: 'charge', amount: totalOrb, description: (isFirstChargeApplied ? '첫충전 1+1 ' : '') + pack_id + ' imp:' + payment_id, balance_after: newBalance, created_at: now })
+      });
+      return res.status(200).json({ ok: true, total_orb: totalOrb, new_balance: newBalance });
+    } catch (e) {
+      console.error('[save-profile charge] error:', e);
+      return res.status(500).json({ error: 'server_error', detail: e.message });
+    }
+  }
+
   // ── POST ?action=log: 이벤트 로깅 ──
   if (req.query.action === 'log') {
     const { user_id, event_type, properties } = req.body || {};
