@@ -309,8 +309,18 @@ function buildRulesBlock(baziRules, astroRules, exceptions) {
 // ─────────────────────────────────────────────────────────────
 // 메인 핸들러
 // ─────────────────────────────────────────────────────────────
+const CHAT_ALLOWED_ORIGINS = [
+  'https://picolab.kr',
+  'https://www.picolab.kr',
+  'https://kkdmb7-blip.github.io',
+  'https://fortuna-silk.vercel.app',
+];
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '';
+  const allowOrigin = CHAT_ALLOWED_ORIGINS.includes(origin) ? origin : CHAT_ALLOWED_ORIGINS[0];
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();

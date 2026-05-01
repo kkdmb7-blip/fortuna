@@ -12,8 +12,10 @@ const ALLOWED_ORIGINS = [
 
 export default async function handler(req, res) {
   const origin = req.headers.origin || '';
-  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : '*';
+  // fallback 을 와일드카드 → 첫 화이트리스트로. 비-허용 origin 은 브라우저가 자동 차단.
+  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   res.setHeader('Access-Control-Allow-Origin', allowOrigin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Max-Age', '86400');
