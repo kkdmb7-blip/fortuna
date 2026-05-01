@@ -108,8 +108,11 @@ async function insertLog(SB_KEY, user_id, message, meta) {
   return Array.isArray(rows) ? rows[0] : rows;
 }
 
+const _CORS_ALLOWED = ['https://picolab.kr','https://www.picolab.kr','https://kkdmb7-blip.github.io','https://fortuna-silk.vercel.app'];
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const _origin = req.headers.origin || '';
+  res.setHeader('Access-Control-Allow-Origin', _CORS_ALLOWED.includes(_origin) ? _origin : _CORS_ALLOWED[0]);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
