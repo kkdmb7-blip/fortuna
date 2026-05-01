@@ -317,15 +317,44 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const body = req.body || {};
-  const { user_id, messages, system_prompt, sb_key, mode } = body;
+  const { user_id, messages, system_prompt, mode } = body;
   if (!user_id || !messages) return res.status(400).json({ error: 'missing params' });
 
-  const SB_KEY = sb_key || process.env.SB_SERVICE_KEY;
+  // ── 보안: user_id 형식 화이트리스트 (UUID v4 / kakao_숫자 / anonymous 만 허용) ──
+  const _uid = String(user_id || '');
+  const UID_OK = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(_uid)
+              || /^kakao_\d+$/.test(_uid)
+              || _uid === 'anonymous';
+  if (!UID_OK) return res.status(400).json({ error: 'invalid_user_id' });
+
+  // ── 보안: messages 크기/형식 검증 (token 비용 폭주 방지) ──
+  if (!Array.isArray(messages) || messages.length === 0 || messages.length > 50) {
+    return res.status(400).json({ error: 'invalid_messages' });
+  }
+  for (const m of messages) {
+    if (!m || typeof m !== 'object') return res.status(400).json({ error: 'invalid_message_shape' });
+    const c = typeof m.content === 'string' ? m.content : (Array.isArray(m.content) ? JSON.stringify(m.content) : '');
+    if (c.length > 8000) return res.status(400).json({ error: 'message_too_long' });
+  }
+
+  // ── 보안: sb_key 클라이언트 주입 폐기 — 서버 환경변수만 ──
+  const SB_KEY = process.env.SB_SERVICE_KEY;
 
   try {
     // ── Orb 잔액 체크 ────────────────────────────────────────
+    // skip_orb: 다단계 호출 중 후속 단계 무료화 흐름 (memox/report/gunghap 등에서 사용 중)
+    // orb_override: 리포트별 비용(_config.orb)이 다양해 클라이언트가 지정. [1, 5000] 정수만 허용.
     const skipOrb = body.skip_orb === true;
-    const ORB_COST = skipOrb ? 0 : ((body.orb_override && Number(body.orb_override) > 0) ? Number(body.orb_override) : 20);
+    let ORB_COST = 20;
+    if (skipOrb) {
+      ORB_COST = 0;
+    } else if (body.orb_override !== undefined) {
+      const ov = Number(body.orb_override);
+      if (!Number.isFinite(ov) || ov < 1 || ov > 5000 || Math.floor(ov) !== ov) {
+        return res.status(400).json({ error: 'invalid_orb_override' });
+      }
+      ORB_COST = ov;
+    }
     let orbBalance = 0;
 
     let orbFreeBalance = 0;
