@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f4ede0;--gold:#8a6a15;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--border:rgba(154,122,38,0.35);--font-display:'Noto Sans KR',sans-serif;--font-serif:'Noto Sans KR',sans-serif;--font-sans:'Noto Sans KR',sans-serif;}
+  :root{--bg:#f4ede0;--surface:#fdf8eb;--surface2:#f9efd5;--gold:#8a6a15;--gold-deep:#6a4f0c;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--muted:#7a6840;--border:rgba(154,122,38,0.32);--border-soft:rgba(154,122,38,0.18);--font-display:'Noto Serif KR',serif;--font-serif:'Noto Serif KR',serif;--font-sans:'Noto Sans KR',sans-serif;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;overflow-x:hidden;}
   .container{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:40px 24px 80px;}
@@ -83,8 +83,7 @@
   .rv-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--text-dim);font-family:var(--font-display);font-size:14px;cursor:pointer;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
-<script>IMP.init('imp63718155');</script>
+<script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
 <script>
 const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
 const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
@@ -330,32 +329,51 @@ async function startPayment(method){
     birthtime_raw:birthtime||'모름',birthplace,email,
     year:bd.year,month:bd.month,day:bd.day,
     hour:bt.hour,min:bt.min,lat:city.lat,lon:city.lon,
-    place_en:city.en,tzone:9.0,report_type:'light',status:'pending'
+    place_en:city.en,tzone:9.0,report_type:'light',status:'pending',payment_amount:9900
   }));
   const btnCard=document.getElementById('payBtnCard');
   const btnBank=document.getElementById('payBtnBank');
   btnCard.disabled=true;btnBank.disabled=true;
   if(method==='CARD'){btnCard.innerHTML='<span class="loading"></span>결제창 여는 중...';}
   else{btnBank.innerHTML='<span class="loading"></span>결제창 여는 중...';}
-  IMP.request_pay({
-    pg: 'html5_inicis.MOI3302087',
-    pay_method: 'card',
-    merchant_uid: orderId,
-    name: '포르투나 점성 라이트 리포트',
-    amount: 9900,
-    buyer_name: name,
-    buyer_email: email,
-    m_redirect_url: 'https://fortuna-silk.vercel.app/api/payment/return?type=light'
-  }, function(rsp) {
-    if (rsp.success) {
-      window.location.href = '/success.html?MOID=' + encodeURIComponent(rsp.merchant_uid)
-        + '&TID=' + encodeURIComponent(rsp.imp_uid || '')
-        + '&resultCode=0000&type=light';
-    } else {
+
+  if(typeof PortOne === 'undefined'){
+    showToast('결제 모듈 로드 중이에요. 잠시 후 다시 시도해주세요.');
     resetPayBtns();
-      if (rsp.error_msg && !rsp.error_msg.includes('취소')) showToast('결제 실패: ' + rsp.error_msg);
+    return;
+  }
+
+  try {
+    const rsp = await PortOne.requestPayment({
+      storeId: 'store-1139f195-d75f-44ca-bed6-c2c89c59e913',
+      channelKey: 'channel-key-c7608d6b-f758-4bbb-a0ad-252c5141c50c',
+      paymentId: orderId,
+      orderName: '포르투나 점성 라이트 리포트',
+      totalAmount: 9900,
+      currency: 'KRW',
+      payMethod: 'CARD',
+      customer: {
+        fullName: name,
+        email: email,
+        phoneNumber: '01000000000',
+      },
+      redirectUrl: 'https://fortuna-silk.vercel.app/api/payment/return?type=light',
+    });
+    if (rsp && rsp.code) {
+      resetPayBtns();
+      const msg = rsp.message || rsp.code;
+      if (String(msg).indexOf('취소') === -1) showToast('결제 실패: ' + msg);
+      return;
     }
-  });
+    // 팝업 모드 성공 — success.html 로 이동
+    window.location.href = '/success.html?MOID=' + encodeURIComponent(orderId)
+      + '&TID=' + encodeURIComponent(rsp.txId || rsp.paymentId || orderId)
+      + '&resultCode=0000&type=light';
+  } catch(e) {
+    resetPayBtns();
+    showToast('결제 오류: ' + (e.message || e));
+    console.warn('[결제 오류]', e);
+  }
 }
 if(location.search.includes('fail=1')){
   setTimeout(()=>showToast('결제가 취소되었습니다'),500);
