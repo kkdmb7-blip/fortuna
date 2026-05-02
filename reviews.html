@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORTUNA — 리포트 후기</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#f4ede0;--surface:#fdf8eb;--surface2:#f9efd5;--gold:#8a6a15;--gold-deep:#6a4f0c;--gold-light:#b89048;--text:#1a120a;--text-dim:#5a4830;--muted:#7a6840;--border:rgba(154,122,38,0.32);--border-soft:rgba(154,122,38,0.18);--font-display:'Noto Serif KR',serif;--font-sans:'Noto Sans KR',sans-serif;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;}
+  .container{max-width:560px;margin:0 auto;padding:40px 24px 80px;}
+  .header{text-align:center;margin-bottom:36px;}
+  .brand{font-family:var(--font-display);font-size:12px;letter-spacing:0.58em;color:var(--gold);text-transform:uppercase;margin-bottom:14px;}
+  .title{font-family:var(--font-display);font-size:26px;font-weight:700;line-height:1.4;color:var(--text);margin-bottom:8px;}
+  .subtitle{font-size:13px;color:var(--muted);line-height:1.7;}
+  .divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+  .stat-num{font-family:var(--font-display);font-size:24px;color:var(--gold);font-weight:700;}
+  .stat-lbl{font-size:11.5px;color:var(--muted);margin-top:4px;letter-spacing:0.04em;}
+  .review-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all 0.2s;}
+  .review-card:hover{border-color:var(--gold-light);}
+  .rv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;}
+  .rv-name{font-size:14px;font-weight:600;color:var(--text);}
+  .rv-badge{display:inline-block;font-size:10.5px;letter-spacing:0.1em;padding:3px 9px;border-radius:12px;border:1px solid var(--border);color:var(--gold);margin-top:4px;}
+  .rv-stars{color:var(--gold);font-size:13px;letter-spacing:1.5px;flex-shrink:0;}
+  .rv-title{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.5;color:var(--text);}
+  .rv-content{font-size:13.5px;color:var(--text-dim);line-height:1.85;}
+  .rv-date{font-size:11px;color:rgba(122,104,64,0.5);margin-top:10px;text-align:right;}
+  .write-btn{width:100%;background:rgba(154,122,38,0.10);border:1px solid var(--border);border-radius:50px;padding:15px;color:var(--gold);font-family:var(--font-display);font-size:14px;letter-spacing:0.18em;cursor:pointer;transition:all 0.3s;margin-top:14px;}
+  .write-btn:hover{background:rgba(154,122,38,0.18);}
+  .empty{text-align:center;padding:60px 20px;color:var(--muted);font-size:13.5px;line-height:2;}
+  .empty .empty-ico{font-size:36px;margin-bottom:14px;opacity:0.5;}
+  .home-btn{display:block;text-align:center;margin-top:24px;font-size:13px;color:var(--muted);text-decoration:none;letter-spacing:0.06em;padding:10px;}
+  .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:rgba(154,122,38,0.92);border:1px solid var(--gold);border-radius:50px;padding:11px 22px;color:#fdf7e0;font-size:13px;letter-spacing:0.04em;z-index:999;transition:transform 0.3s ease;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .rv-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;backdrop-filter:blur(6px);justify-content:center;align-items:center;padding:20px;}
+  .rv-overlay.show{display:flex;}
+  .rv-form{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:26px 22px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;}
+  .rv-form-title{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--gold);margin-bottom:18px;letter-spacing:0.1em;}
+  .rv-field{margin-bottom:14px;}
+  .rv-label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px;}
+  .rv-input,.rv-textarea,.rv-select{width:100%;background:#fff;border:1px solid var(--border);border-radius:8px;padding:11px 13px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none;font-family:var(--font-sans);}
+  .rv-input:focus,.rv-textarea:focus,.rv-select:focus{border-color:var(--gold);}
+  .rv-textarea{resize:vertical;min-height:90px;line-height:1.6;}
+  .star-row{display:flex;gap:6px;margin-top:4px;}
+  .star-pick{font-size:24px;cursor:pointer;color:rgba(154,122,38,0.3);background:none;border:none;padding:0;transition:color 0.15s;}
+  .star-pick.on{color:var(--gold);}
+  .rv-btns{display:flex;gap:10px;margin-top:20px;}
+  .rv-submit{flex:1;background:var(--gold);border:none;border-radius:10px;padding:13px;color:#fdf7e0;font-family:var(--font-display);font-size:14px;font-weight:600;letter-spacing:0.06em;cursor:pointer;}
+  .rv-cancel{background:none;border:1px solid var(--border);border-radius:10px;padding:13px 18px;color:var(--muted);font-size:14px;cursor:pointer;}
+  .rv-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;backdrop-filter:blur(6px);align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+  .rv-modal-bg.show{display:flex;}
+  .rv-modal-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;max-width:480px;width:100%;padding:26px 22px;position:relative;margin:auto;}
+  .loading-state{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
+  .spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(154,122,38,0.3);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:10px;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://afktkixkbcirsknahbmx.supabase.co';
+const SUPABASE_KEY='sb_publishable_zlR9CE2qi5cK2ap4_Bxyqw_LU-Zgr11';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+</script>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="brand">FORTUNA</div>
+    <div class="divider"></div>
+    <h1 class="title">리포트 후기</h1>
+    <p class="subtitle">실제 리포트를 받아 보신 분들의<br>솔직한 이야기예요.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="rvTotal">-</div><div class="stat-lbl">총 후기</div></div>
+    <div class="stat-card"><div class="stat-num" id="rvAvg">-</div><div class="stat-lbl">평균 별점</div></div>
+    <div class="stat-card"><div class="stat-num" id="rvFive">-</div><div class="stat-lbl">5점 비율</div></div>
+  </div>
+
+  <div id="rvGrid">
+    <div class="loading-state"><div class="spinner"></div><br>후기를 불러오는 중...</div>
+  </div>
+
+  <button class="write-btn" onclick="openRvForm()">✦ 후기 작성하기</button>
+
+  <a href="index.html" class="home-btn">← 메인으로 돌아가기</a>
+</div>
+
+<div class="rv-overlay" id="rvOverlay">
+  <div class="rv-form">
+    <div class="rv-form-title">✦ 후기 작성</div>
+    <div class="rv-field"><label class="rv-label">별점 *</label>
+      <div class="star-row">
+        <button class="star-pick" onclick="pickStar(1)">★</button>
+        <button class="star-pick" onclick="pickStar(2)">★</button>
+        <button class="star-pick" onclick="pickStar(3)">★</button>
+        <button class="star-pick" onclick="pickStar(4)">★</button>
+        <button class="star-pick" onclick="pickStar(5)">★</button>
+      </div>
+    </div>
+    <div class="rv-field"><label class="rv-label">닉네임 *</label><input type="text" class="rv-input" id="rvName" placeholder="예: 30대 직장인 / 물고기자리"></div>
+    <div class="rv-field"><label class="rv-label">리포트 종류 *</label>
+      <select class="rv-select" id="rvType">
+        <option value="">선택해주세요</option>
+        <option value="light">점성 라이트</option>
+        <option value="premium">점성 프리미엄</option>
+        <option value="saju">사주</option>
+        <option value="saju_premium">사주+점성 통합</option>
+      </select>
+    </div>
+    <div class="rv-field"><label class="rv-label">한 줄 제목 *</label><input type="text" class="rv-input" id="rvTitle" placeholder="예: 읽으며 마음이 정리됐어요"></div>
+    <div class="rv-field"><label class="rv-label">상세 후기 *</label><textarea class="rv-textarea" id="rvContent" placeholder="리포트를 받고 느낀 점을 자유롭게 적어주세요"></textarea></div>
+    <div class="rv-btns">
+      <button class="rv-cancel" onclick="closeRvForm()">취소</button>
+      <button class="rv-submit" onclick="submitRv()">후기 등록</button>
+    </div>
+  </div>
+</div>
+
+<div class="rv-modal-bg" id="rvModal" onclick="if(event.target===this)closeRvModal()">
+  <div class="rv-modal-box">
+    <button onclick="closeRvModal()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;">✕</button>
+    <div id="rvModalContent"></div>
+  </div>
+</div>
+
+<script>
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+const TYPE_LABEL={light:'라이트',premium:'프리미엄',saju:'사주',saju_premium:'사주+점성'};
+
+function fmtDt(iso){
+  if(!iso)return '';
+  const d=new Date(iso);
+  if(isNaN(d.getTime()))return '';
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+let rvStar=0;
+function pickStar(n){
+  rvStar=n;
+  document.querySelectorAll('.star-pick').forEach((b,i)=>b.classList.toggle('on',i<n));
+}
+
+function openRvForm(){
+  document.getElementById('rvOverlay').classList.add('show');
+}
+
+function closeRvForm(){
+  document.getElementById('rvOverlay').classList.remove('show');
+  rvStar=0;
+  document.querySelectorAll('.star-pick').forEach(b=>b.classList.remove('on'));
+  ['rvName','rvTitle','rvContent'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rvType').value='';
+}
+
+let rvList=[];
+
+async function submitRv(){
+  const name=document.getElementById('rvName').value.trim();
+  const type=document.getElementById('rvType').value;
+  const title=document.getElementById('rvTitle').value.trim();
+  const content=document.getElementById('rvContent').value.trim();
+  if(!rvStar||!name||!type||!title||!content){
+    showToast('모든 항목을 입력해주세요');
+    return;
+  }
+  try{
+    const {error}=await sb.from('reviews').insert([{
+      name, type, title, content, star:rvStar,
+      date:new Date().toLocaleDateString('ko-KR'),
+      source:'customer', approved:false,
+    }]);
+    if(error)throw error;
+    showToast('후기가 등록되었어요. 검토 후 공개됩니다.');
+    closeRvForm();
+    // 운영자 알림 (실패 무시)
+    try{
+      fetch('https://fortuna.kkdmb7.workers.dev/notify-admin',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({type:'review',user_name:name,title:`${TYPE_LABEL[type]||type} · ★${rvStar}`,message:title})
+      }).catch(()=>{});
+    }catch(e){}
+  }catch(e){
+    console.error(e);
+    showToast('등록에 실패했어요. 잠시 후 다시 시도해주세요.');
+  }
+}
+
+function openRvModal(i){
+  const r=rvList[i];
+  if(!r)return;
+  const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
+  const badge=TYPE_LABEL[r.type]||r.type||'';
+  document.getElementById('rvModalContent').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;">
+      <div style="color:var(--gold);font-size:17px;letter-spacing:2px;">${stars}</div>
+      <span style="font-size:11px;padding:3px 10px;border-radius:10px;border:1px solid var(--border);color:var(--gold);white-space:nowrap;">${badge}</span>
+    </div>
+    ${r.title?`<div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.5;">"${r.title}"</div>`:''}
+    <p style="font-size:14px;color:var(--text-dim);line-height:1.95;margin-bottom:18px;white-space:pre-wrap;">${(r.content||'').replace(/</g,'&lt;')}</p>
+    <div style="font-size:12.5px;color:var(--muted);">${r.name||''}</div>
+    ${r.created_at?`<div style="font-size:11px;color:rgba(122,104,64,0.5);margin-top:3px;">${fmtDt(r.created_at)}</div>`:''}
+  `;
+  document.getElementById('rvModal').classList.add('show');
+}
+
+function closeRvModal(){
+  document.getElementById('rvModal').classList.remove('show');
+}
+
+async function renderReviews(){
+  const grid=document.getElementById('rvGrid');
+  try{
+    const {data:reviews,error}=await sb.from('reviews').select('*').eq('approved',true).order('created_at',{ascending:false}).limit(50);
+    if(error)throw error;
+    if(!reviews||reviews.length===0){
+      grid.innerHTML=`
+        <div class="empty">
+          <div class="empty-ico">✦</div>
+          아직 후기가 없습니다<br>
+          <span style="font-size:12px;color:rgba(122,104,64,0.7);">첫 번째 후기를 남겨 주세요</span>
+        </div>
+      `;
+      document.getElementById('rvTotal').textContent='0';
+      document.getElementById('rvAvg').textContent='-';
+      document.getElementById('rvFive').textContent='0%';
+      return;
+    }
+    rvList=reviews;
+    grid.innerHTML=reviews.map((r,i)=>{
+      const stars='★'.repeat(r.star)+'☆'.repeat(5-r.star);
+      const badge=TYPE_LABEL[r.type]||r.type||'';
+      const safeContent=(r.content||'').replace(/</g,'&lt;').slice(0,180)+(r.content&&r.content.length>180?'...':'');
+      return `
+        <div class="review-card" onclick="openRvModal(${i})">
+          <div class="rv-header">
+            <div>
+              <div class="rv-name">${r.name||'-'}</div>
+              <span class="rv-badge">${badge}</span>
+            </div>
+            <div class="rv-stars">${stars}</div>
+          </div>
+          ${r.title?`<div class="rv-title">${r.title}</div>`:''}
+          <div class="rv-content">${safeContent}</div>
+          <div class="rv-date">${fmtDt(r.created_at)}</div>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('rvTotal').textContent=reviews.length;
+    const avg=(reviews.reduce((s,r)=>s+r.star,0)/reviews.length).toFixed(1);
+    const five=reviews.filter(r=>r.star===5).length;
+    document.getElementById('rvAvg').textContent=avg+'★';
+    document.getElementById('rvFive').textContent=Math.round(five/reviews.length*100)+'%';
+  }catch(e){
+    console.error(e);
+    grid.innerHTML='<div class="empty"><div class="empty-ico">⚠</div>후기를 불러오는 중 오류가 발생했어요</div>';
+  }
+}
+
+renderReviews();
+</script>
+</body>
+</html>
