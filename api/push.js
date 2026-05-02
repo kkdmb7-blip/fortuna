@@ -199,28 +199,43 @@ export default async function handler(req, res) {
         const ids2 = users.map(u => `"${u.user_id}"`).join(',');
         const r2 = await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?select=user_id,subscription&user_id=in.(${ids2})`, { headers: sbH });
         const rows2 = await r2.json().catch(() => []);
+        // 톤: 권유·여지·정신 케어 (명령·단정·압박 X)
         const FALLBACK = [
-          '오늘 하루도 내 흐름을 믿어봐.',
-          '서두르지 않아도 돼. 때가 되면 온다.',
-          '지금 한 가지만 집중해봐.',
-          '작은 결정이 큰 길을 만든다.',
-          '예전과 다른 선택을 시도해봐도 좋은 날.',
-          '내가 먼저 한 발짝, 그게 오늘의 답.',
-          '잘 안 되는 날은 잠시 멈춰도 괜찮아.',
-          '주변 한 사람에게 마음의 인사 한 마디.',
-          '오늘은 결정을 미루지 말고 매듭을.',
-          '내 안의 직관을 가볍게 따라가도 돼.'
+          '오늘 하루도 내 흐름을 믿어봐도 괜찮아요.',
+          '서두르지 않아도 돼요. 때가 되면 자연스럽게 와요.',
+          '지금 한 가지만 가볍게 들여다봐도 좋아요.',
+          '작은 발걸음 하나가 오늘의 충분한 답이에요.',
+          '예전과 다른 선택, 부담 없이 시도해봐도 좋은 결.',
+          '내가 먼저 한 마디 — 그것만으로도 오늘은 충분해요.',
+          '잘 안 풀리는 날은 잠시 멈춰가도 괜찮아요.',
+          '주변 한 사람에게 마음의 인사 한 마디, 가볍게.',
+          '오늘은 매듭이 떠오른다면 살짝 정리해보세요.',
+          '내 안의 작은 신호를 가볍게 따라가도 좋은 날.',
+          '아무것도 안 해도 괜찮아요. 잘 쉬는 것도 흐름이에요.',
+          '오늘은 답을 내리지 않아도 되는 날이에요.'
         ];
         const AKEY = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY;
-        const dow = ['일','월','화','수','목','금','토'][new Date(Date.now()+9*3600000).getUTCDay()];
-        // 요일별 title 다양화 (단조로움 방지) — 동일 시간 매일 푸시 시 가시 변화
+        const nowKstDt = new Date(Date.now()+9*3600000);
+        const dow = ['일','월','화','수','목','금','토'][nowKstDt.getUTCDay()];
+        const hourKst = nowKstDt.getUTCHours();
+        // 요일별 title — 권유·동행 톤 (명령·단정 X)
         const TITLE_BY_DOW = {
-          '월':'✦ 새 한 주의 기운', '화':'✦ 흐름이 잡히는 날',
-          '수':'✦ 중심을 잡는 화요일'.replace('화요일','수요일'),
-          '목':'✦ 결정을 매듭짓는 날', '금':'✦ 한 주를 마무리하며',
-          '토':'✦ 비우고 쉬는 날', '일':'✦ 다음 주를 준비하며'
+          '월':'✦ 새 한 주, 가볍게 시작해요',
+          '화':'✦ 결이 잡혀가는 화요일',
+          '수':'✦ 중심을 잡는 수요일',
+          '목':'✦ 매듭을 정리해도 좋은 날',
+          '금':'✦ 한 주를 부드럽게 마무리',
+          '토':'✦ 비우고 쉬어가는 날',
+          '일':'✦ 다음 주를 천천히 준비'
         };
-        const titleForDow = TITLE_BY_DOW[dow] || '✦ 오늘의 운세';
+        // 시간대별 인사 (저녁 푸시 22:30 기준이지만 안전 분기)
+        const TITLE_BY_HOUR = (hourKst >= 21 || hourKst < 4)
+          ? '✦ 하루를 정리하며'
+          : (hourKst < 11 ? '✦ 오늘 아침의 결' : (hourKst < 18 ? '✦ 오늘 오후의 결' : '✦ 오늘 저녁의 결'));
+        // 요일과 시간 둘 다 고려 (저녁이면 요일 우선, 그 외는 시간대)
+        const titleForDow = (hourKst >= 21 || hourKst < 4)
+          ? (TITLE_BY_DOW[dow] || '✦ 하루를 정리하며')
+          : TITLE_BY_HOUR;
         const userMap = {};
         users.forEach(u => { userMap[u.user_id] = u; });
         let sent = 0;
@@ -237,8 +252,8 @@ export default async function handler(req, res) {
                 const ar = await fetch('https://api.anthropic.com/v1/messages', {
                   method: 'POST', headers: { 'x-api-key': AKEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
                   body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 120,
-                    system: '사주 운세 코치. 60~100자 한 줄만 반환. 이모지 1개 이내. 확정 예언 금지.',
-                    messages: [{ role: 'user', content: `오늘:${dow}요일 이름:${u.name||'유저'} 일간:${u.ilgan||''} 격국:${u.geokguk||''} 용신:${u.yongshin||''}\n한 줄 메시지:` }] })
+                    system: '운세 앱의 정신 케어 동행 메시지 작성자. 60~100자 한 줄만 반환.\n\n[톤 규칙]\n- 단정·예언·명령 금지: "~할 것이다" "~하세요" 같은 단정·명령 X\n- 권유·여지: "~해보셔도 좋아요" "~여도 괜찮아요" 톤\n- 압박·불안 자극 금지. 황금기·대박 같은 과장 표현 절대 X\n- 사용자가 못 따라도 되는 여지가 어딘가에 묻어있어야 함\n- 운세는 점치는 답이 아니라 마음의 결을 알아두는 도구\n- 이모지 1개 이내. 부드럽고 짧게.',
+                    messages: [{ role: 'user', content: `오늘:${dow}요일 이름:${u.name||'유저'} 일간:${u.ilgan||''} 격국:${u.geokguk||''} 용신:${u.yongshin||''}\n한 줄 메시지 (60~100자):` }] })
                 });
                 const ad = await ar.json();
                 msg = (ad?.content?.[0]?.text || '').trim().replace(/^["'「]+|["'」]+$/g, '').slice(0, 120) || null;
