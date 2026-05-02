@@ -94,7 +94,8 @@ const TYPE_AMOUNT={
 };
 
 function statusBadge(s){
-  if(s==='paid')return ['결제 완료','status-paid'];
+  if(s==='paid')return ['결제 완료 · 제작 중','status-paid'];
+  if(s==='paid_make_failed')return ['결제 완료 · 제작 지연','status-pending'];
   if(s==='completed'||s==='sent')return ['리포트 발송 완료','status-completed'];
   if(s==='bank_transfer_pending')return ['입금 확인 대기','status-bank'];
   if(s==='pending')return ['결제 진행 중','status-pending'];
@@ -143,6 +144,11 @@ function renderOrders(orders){
         ${(o.status==='completed'||o.status==='sent')?`
           <div class="order-actions">
             <div style="flex:1;font-size:11.5px;color:var(--muted);line-height:1.7;padding:8px 4px;">📧 ${o.email||'이메일'}로 발송 완료. 스팸함도 확인해 주세요.</div>
+          </div>
+        `:''}
+        ${o.status==='paid_make_failed'?`
+          <div class="order-actions">
+            <div style="flex:1;font-size:11.5px;color:var(--muted);line-height:1.7;padding:8px 4px;">결제는 정상 처리됐어요. 제작 시스템 점검 중이라 평소보다 발송이 지연될 수 있어요. 24시간 내 ${o.email||'이메일'}로 보내드릴게요.</div>
           </div>
         `:''}
       </div>

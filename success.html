@@ -39,8 +39,43 @@ const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 const MAKE_LIGHT='https://hook.us2.make.com/b62293azhh6ivviyvbakvmoqulpw5756';
 const MAKE_PREMIUM='https://hook.us2.make.com/eayso51sps46i7ig1dlyt3t1yw6q1tqu';
+// saju_premium 웹훅은 410 Gone — Make 콘솔에서 새 URL 발급 후 아래 교체. 그동안은 운영자 텔레그램 수동 트리거
 const MAKE_SAJU_PREMIUM='https://hook.us2.make.com/9wo35lf465ek74mlgifaank1wdvs9mnh';
-// SAJU_API_KEY 는 보안상 클라이언트 노출 폐기. 사주 API 호출은 fortuna-worker /saju 엔드포인트가 환경변수로 처리.
+
+// 웹훅 호출 + 실패 시 운영자 알림 + DB 플래그
+async function callMakeHook(url, payload, orderId, reportType){
+  try{
+    const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    if(r.ok) return { ok:true };
+    // 2xx 외 응답 — 웹훅 죽었거나 시나리오 비활성화
+    console.warn('[Make webhook] non-OK:', r.status);
+    await reportMakeFailure(orderId, reportType, payload, `HTTP ${r.status}`);
+    return { ok:false, error:`HTTP ${r.status}` };
+  }catch(e){
+    console.error('[Make webhook] error:', e);
+    await reportMakeFailure(orderId, reportType, payload, e.message || String(e));
+    return { ok:false, error:e.message };
+  }
+}
+
+async function reportMakeFailure(orderId, reportType, payload, errorMsg){
+  // 1) DB 에 make_failed 플래그 (mypage 에서 보임)
+  try{
+    await sb.from('orders').update({ status: 'paid_make_failed' }).eq('order_id', orderId);
+  }catch(e){}
+  // 2) 운영자 텔레그램 — Worker /notify-admin
+  try{
+    fetch('https://fortuna.kkdmb7.workers.dev/notify-admin', {
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        type:'error',
+        user_name: payload.client_name || '주문자',
+        title: `Make 웹훅 실패 [${reportType}]`,
+        message: `주문 ${orderId} | ${payload.recipient_email || '이메일'} | ${errorMsg} | 수동 처리 필요`
+      })
+    }).catch(()=>{});
+  }catch(e){}
+}
 </script>
 </head>
 <body>
@@ -303,66 +338,58 @@ async function processPayment(){
           if (sajuData.error) { console.error('사주 API 오류:', sajuData); sajuData = {}; }
         }catch(e){ console.error('사주 API 호출 오류:',e); }
 
-        // 4a. 통합 웹훅
+        // 4a. 통합 웹훅 — callMakeHook 으로 안전하게 (실패 시 운영자 알림 + DB 플래그)
         updateLoadingText('리포트 제작을 시작합니다...');
-        await fetch(MAKE_SAJU_PREMIUM,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            request_id:         dbData.order_id,
-            client_name:        order.name,
-            recipient_email:    order.email,
-            birth_info_raw:     `${order.birthdate_raw} (${order.calendar}) ${order.hour}시 ${order.min}분 ${order.birthplace}`,
-            birth_place_text:   order.birthplace,
-            place:              order.place_en,
-            year:order.year, month:order.month, day:order.day,
-            hour:order.hour, min:order.min,
-            lat:order.lat, lon:order.lon, tzone:9.0,
-            report_type:        'saju_premium',
-            doc_name:           `포르투나_${order.name}`,
-            dominant_planet:    dominant,
-            aspects_summary:    aspects,
-            planets_json:       JSON.stringify(planets),
-            saju_pillars:       sajuData.summary?.pillars||'',
-            saju_strength:      sajuData.summary?.strength||'',
-            saju_zodiac:        sajuData.summary?.zodiac||'',
-            saju_yongshin_primary:   sajuData.yongshin?.primary_kor||'',
-            saju_yongshin_secondary: sajuData.yongshin?.secondary_kor||'',
-            saju_five_pct:      JSON.stringify(sajuData.five_pct||{}),
-            saju_geokguk:       JSON.stringify(sajuData.geokguk||{}),
-            saju_big_luck:      JSON.stringify((sajuData.big_luck||[]).slice(0,5)),
-            saju_data_full:     JSON.stringify(sajuData),
-            payment_key:        tid||orderId,
-            status:             'paid'
-          })
-        });
+        await callMakeHook(MAKE_SAJU_PREMIUM, {
+          request_id:         dbData.order_id,
+          client_name:        order.name,
+          recipient_email:    order.email,
+          birth_info_raw:     `${order.birthdate_raw} (${order.calendar}) ${order.hour}시 ${order.min}분 ${order.birthplace}`,
+          birth_place_text:   order.birthplace,
+          place:              order.place_en,
+          year:order.year, month:order.month, day:order.day,
+          hour:order.hour, min:order.min,
+          lat:order.lat, lon:order.lon, tzone:9.0,
+          report_type:        'saju_premium',
+          doc_name:           `포르투나_${order.name}`,
+          dominant_planet:    dominant,
+          aspects_summary:    aspects,
+          planets_json:       JSON.stringify(planets),
+          saju_pillars:       sajuData.summary?.pillars||'',
+          saju_strength:      sajuData.summary?.strength||'',
+          saju_zodiac:        sajuData.summary?.zodiac||'',
+          saju_yongshin_primary:   sajuData.yongshin?.primary_kor||'',
+          saju_yongshin_secondary: sajuData.yongshin?.secondary_kor||'',
+          saju_five_pct:      JSON.stringify(sajuData.five_pct||{}),
+          saju_geokguk:       JSON.stringify(sajuData.geokguk||{}),
+          saju_big_luck:      JSON.stringify((sajuData.big_luck||[]).slice(0,5)),
+          saju_data_full:     JSON.stringify(sajuData),
+          payment_key:        tid||orderId,
+          status:             'paid'
+        }, dbData.order_id, 'saju_premium');
 
       } else {
         // 3b. 라이트/프리미엄 웹훅
         updateLoadingText('리포트 제작을 시작합니다...');
         const webhookUrl = reportType==='premium' ? MAKE_PREMIUM : MAKE_LIGHT;
-        await fetch(webhookUrl,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            request_id:       dbData.order_id,
-            client_name:      order.name,
-            recipient_email:  order.email,
-            birth_info_raw:   `${order.birthdate_raw} (${order.calendar}) ${order.hour}시 ${order.min}분 ${order.birthplace}`,
-            birth_place_text: order.birthplace,
-            place:            order.place_en,
-            year:order.year, month:order.month, day:order.day,
-            hour:order.hour, min:order.min,
-            lat:order.lat, lon:order.lon, tzone:9.0,
-            report_type:      reportType,
-            doc_name:         `포르투나_${order.name}`,
-            dominant_planet:  dominant,
-            aspects_summary:  aspects,
-            planets_json:     JSON.stringify(planets),
-            payment_key:      tid||orderId,
-            status:           'paid'
-          })
-        });
+        await callMakeHook(webhookUrl, {
+          request_id:       dbData.order_id,
+          client_name:      order.name,
+          recipient_email:  order.email,
+          birth_info_raw:   `${order.birthdate_raw} (${order.calendar}) ${order.hour}시 ${order.min}분 ${order.birthplace}`,
+          birth_place_text: order.birthplace,
+          place:            order.place_en,
+          year:order.year, month:order.month, day:order.day,
+          hour:order.hour, min:order.min,
+          lat:order.lat, lon:order.lon, tzone:9.0,
+          report_type:      reportType,
+          doc_name:         `포르투나_${order.name}`,
+          dominant_planet:  dominant,
+          aspects_summary:  aspects,
+          planets_json:     JSON.stringify(planets),
+          payment_key:      tid||orderId,
+          status:           'paid'
+        }, dbData.order_id, reportType);
       }
     }
 
