@@ -288,16 +288,19 @@ async function processPayment(){
           );
           const sajuGender = order.saju_gender || (order.gender==='남성'?'male':'female');
           const sajuCity   = order.saju_city || '서울특별시';
-          // Worker 경유 (x-api-key 헤더, CORS 우회)
-          const sajuRes = await fetch('https://fortuna.kkdmb7.workers.dev/saju', {
+          // Worker /saju-test 경유 (현재 활성 엔드포인트)
+          const sajuRes = await fetch('https://fortuna.kkdmb7.workers.dev/saju-test', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({birth:sajuBirth, gender:sajuGender, city:sajuCity})
+            body:JSON.stringify({
+              birth: sajuBirth,
+              gender: sajuGender === 'male' ? 'M' : 'F',
+              calendar: 'solar'
+            })
           });
-          const sajuJson = await sajuRes.json();
-          console.log('[사주API 응답]', sajuJson);
-          if(sajuJson.status==='success') sajuData = sajuJson.data;
-          else console.error('사주 API 오류:', sajuJson);
+          sajuData = await sajuRes.json();
+          console.log('[사주API 응답]', sajuData);
+          if (sajuData.error) { console.error('사주 API 오류:', sajuData); sajuData = {}; }
         }catch(e){ console.error('사주 API 호출 오류:',e); }
 
         // 4a. 통합 웹훅
