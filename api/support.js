@@ -9,12 +9,14 @@ function _isSupportAdmin(req) {
   try {
     const adminSecret = process.env.ADMIN_SECRET;
     if (adminSecret) {
+      // secret 등록되어 있으면 secret 검증으로만 통과 — admin_id 우회 차단
       const auth = req.headers.authorization || req.headers.Authorization || '';
       if (auth.startsWith('Bearer ') && auth.slice(7) === adminSecret) return true;
       const xs = req.headers['x-admin-secret'] || '';
       if (xs && xs === adminSecret) return true;
+      return false;
     }
-    // backwards-compat (ADMIN_SECRET 미설정 시) — 운영자 등록 후 이 라인 제거 권장
+    // secret 미등록 시에만 backwards-compat (점진 마이그레이션용)
     const adminId = (req.query && req.query.admin_id) || '';
     if (adminId === ADMIN_ID) return true;
   } catch(e) {}
