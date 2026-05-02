@@ -199,9 +199,28 @@ export default async function handler(req, res) {
         const ids2 = users.map(u => `"${u.user_id}"`).join(',');
         const r2 = await fetch(`${SB_URL}/rest/v1/pico_push_subscriptions?select=user_id,subscription&user_id=in.(${ids2})`, { headers: sbH });
         const rows2 = await r2.json().catch(() => []);
-        const FALLBACK = ['오늘 하루도 내 흐름을 믿어봐.', '서두르지 않아도 돼. 때가 되면 온다.', '지금 한 가지만 집중해봐.'];
+        const FALLBACK = [
+          '오늘 하루도 내 흐름을 믿어봐.',
+          '서두르지 않아도 돼. 때가 되면 온다.',
+          '지금 한 가지만 집중해봐.',
+          '작은 결정이 큰 길을 만든다.',
+          '예전과 다른 선택을 시도해봐도 좋은 날.',
+          '내가 먼저 한 발짝, 그게 오늘의 답.',
+          '잘 안 되는 날은 잠시 멈춰도 괜찮아.',
+          '주변 한 사람에게 마음의 인사 한 마디.',
+          '오늘은 결정을 미루지 말고 매듭을.',
+          '내 안의 직관을 가볍게 따라가도 돼.'
+        ];
         const AKEY = process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_KEY;
         const dow = ['일','월','화','수','목','금','토'][new Date(Date.now()+9*3600000).getUTCDay()];
+        // 요일별 title 다양화 (단조로움 방지) — 동일 시간 매일 푸시 시 가시 변화
+        const TITLE_BY_DOW = {
+          '월':'✦ 새 한 주의 기운', '화':'✦ 흐름이 잡히는 날',
+          '수':'✦ 중심을 잡는 화요일'.replace('화요일','수요일'),
+          '목':'✦ 결정을 매듭짓는 날', '금':'✦ 한 주를 마무리하며',
+          '토':'✦ 비우고 쉬는 날', '일':'✦ 다음 주를 준비하며'
+        };
+        const titleForDow = TITLE_BY_DOW[dow] || '✦ 오늘의 운세';
         const userMap = {};
         users.forEach(u => { userMap[u.user_id] = u; });
         let sent = 0;
@@ -226,7 +245,7 @@ export default async function handler(req, res) {
               } catch {}
             }
             if (!msg) msg = (u.name ? `${u.name}님, ` : '') + FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
-            await webpush.sendNotification(sub, JSON.stringify({ title: '✦ 오늘의 운세', body: msg, url: 'https://picolab.kr' }));
+            await webpush.sendNotification(sub, JSON.stringify({ title: titleForDow, body: msg, url: 'https://picolab.kr' }));
             sent++;
           } catch (e) {
             const errInfo = { uid: row.user_id, status: e && e.statusCode, msg: String(e && (e.body || e.message || e)).slice(0, 300) };
