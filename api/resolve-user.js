@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email, name, kakao_id } = req.body || {};
+  const { email, name, kakao_id, source } = req.body || {};
   if (!email && !kakao_id) return res.status(400).json({ error: 'email or kakao_id required' });
 
   const SB_KEY = process.env.SB_SERVICE_KEY;
@@ -82,6 +82,8 @@ export default async function handler(req, res) {
     const newId = randomUUID();
     const newRecord = { id: newId, email: email || null, name: name || '포르투나 회원' };
     if (kakao_id) newRecord.kakao_id = String(kakao_id);
+    // 유입 경로 저장 (direct/kakao_share/referral/pico_report/memox 등)
+    if (source) newRecord.source = String(source).slice(0, 50);
 
     const insertResp = await fetch(`${SB_URL}/rest/v1/chat_users`, {
       method: 'POST',
