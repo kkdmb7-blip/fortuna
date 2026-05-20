@@ -45,13 +45,17 @@ export default async function handler(req, res) {
       const d1 = await r1.json();
       const byKakao = Array.isArray(d1) && d1[0];
       if (byKakao) {
-        // kakao_id로 찾음 — 이메일 불일치 시 업데이트
-        if (email && byKakao.email !== email) {
+        const patch = {};
+        if (email && byKakao.email !== email) patch.email = email;
+        // source가 null인 경우에만 채움 (이미 있는 값 덮어쓰지 않음)
+        if (source && !byKakao.source) patch.source = String(source).slice(0, 50);
+        if (Object.keys(patch).length > 0) {
           await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${byKakao.id}`, {
             method: 'PATCH',
             headers: { ...headers, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
+            body: JSON.stringify(patch)
           });
+          Object.assign(byKakao, patch);
         }
         return res.status(200).json(byKakao);
       }
@@ -66,13 +70,16 @@ export default async function handler(req, res) {
       const d2 = await r2.json();
       const byEmail = Array.isArray(d2) && d2[0];
       if (byEmail) {
-        // 이메일로 찾음 — kakao_id가 있으면 업데이트 (향후 조회 안정화)
-        if (kakao_id && !byEmail.kakao_id) {
+        const patch2 = {};
+        if (kakao_id && !byEmail.kakao_id) patch2.kakao_id = String(kakao_id);
+        if (source && !byEmail.source) patch2.source = String(source).slice(0, 50);
+        if (Object.keys(patch2).length > 0) {
           await fetch(`${SB_URL}/rest/v1/chat_users?id=eq.${byEmail.id}`, {
             method: 'PATCH',
             headers: { ...headers, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ kakao_id: String(kakao_id) })
+            body: JSON.stringify(patch2)
           });
+          Object.assign(byEmail, patch2);
         }
         return res.status(200).json(byEmail);
       }
