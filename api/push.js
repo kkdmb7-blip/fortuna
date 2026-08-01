@@ -274,6 +274,35 @@ export default async function handler(req, res) {
       }
     }
 
+    // 까꿍 육아수첩(baby-tracker) 웹 푸시 — Worker 크론 → Authorization: Bearer FORTUNA_CONTEXT_TOKEN
+    // body: { action:'kkbaby-push', items: [{ subscription:{endpoint,keys:{p256dh,auth}}, title, body, url }, ...] }
+    if (body.action === 'kkbaby-push') {
+      const ctxSecret = process.env.FORTUNA_CONTEXT_TOKEN;
+      if (ctxSecret && req.headers['authorization'] !== `Bearer ${ctxSecret}`) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      const KB_PUB = process.env.KKBABY_VAPID_PUBLIC_KEY;
+      const KB_PRIV = process.env.KKBABY_VAPID_PRIVATE_KEY;
+      if (!KB_PUB || !KB_PRIV) return res.status(500).json({ error: 'KKBABY VAPID not set' });
+      webpush.setVapidDetails('mailto:kkdmb@naver.com', KB_PUB, KB_PRIV);
+      const items = Array.isArray(body.items) ? body.items : [];
+      let sent = 0;
+      const expiredEndpoints = [];
+      for (const item of items) {
+        try {
+          const sub = item.subscription;
+          if (!sub || !sub.endpoint) continue;
+          await webpush.sendNotification(sub, JSON.stringify({ title: item.title || '까꿍 육아수첩', body: item.body || '', url: item.url || 'https://kkakung-book.picolab.kr' }));
+          sent++;
+        } catch (e) {
+          if (e && (e.statusCode === 410 || e.statusCode === 404)) {
+            expiredEndpoints.push(item.subscription && item.subscription.endpoint);
+          }
+        }
+      }
+      return res.status(200).json({ sent, total: items.length, expiredEndpoints });
+    }
+
     // dismiss 액션: push_logs.dismissed_at 기록
     if (body.action === 'dismissed' && body.id) {
       try {
