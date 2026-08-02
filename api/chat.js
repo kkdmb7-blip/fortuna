@@ -7,6 +7,33 @@ const SB_URL        = 'https://ymghmfkqctckxxysxkvy.supabase.co';
 const FREE_DAILY    = parseInt(process.env.FREE_DAILY || '3', 10);
 
 // ─────────────────────────────────────────────────────────────
+// 매일 무료 대화 N회 (FREE_DAILY) — 이미 haiku 모델 + 프롬프트 캐싱을 쓰고 있어 메시지당
+// 실비용이 작으므로, 하루 단위로 리셋되는 소량 무료를 줘도 유저당 비용이 예측 가능한 선에서
+// 막혀있음(무제한 누적되는 큰 목돈을 한 번에 주는 것보다 안전). FREE_DAILY 상수는 예전부터
+// 선언만 돼있고 실제로 쓰인 적이 없었음 — 여기서 orb_transactions을 세어 실제로 적용한다.
+async function getTodayFreeChatCount(user_id, SB_KEY) {
+  const kstNow = new Date(Date.now() + 9 * 3600000);
+  const todayKST = kstNow.toISOString().slice(0, 10);
+  const startOfDayUTC = new Date(`${todayKST}T00:00:00+09:00`).toISOString();
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 5000);
+    let r;
+    try {
+      r = await fetch(
+        `${SB_URL}/rest/v1/orb_transactions?user_id=eq.${user_id}&type=eq.chat_free&created_at=gte.${encodeURIComponent(startOfDayUTC)}&select=id`,
+        { signal: ctrl.signal, headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+      );
+    } finally { clearTimeout(tid); }
+    const rows = await r.json();
+    return Array.isArray(rows) ? rows.length : FREE_DAILY; // 형식 이상하면 안전하게 "다 씀"으로 간주
+  } catch (e) {
+    console.warn('[free-daily] 조회 실패, 이번 요청은 무료 미적용:', e.message);
+    return FREE_DAILY; // 조회 실패 시 무료 미적용(다 쓴 것으로 간주) — 무제한 무료가 새는 것 방지
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
 // 카테고리 감지 → 한국어 도메인명으로 변경
 // ─────────────────────────────────────────────────────────────
 /* RAG 비활성화 - memox 프롬프트만 적용
@@ -356,6 +383,7 @@ export default async function handler(req, res) {
     // orb_override: 리포트별 비용(_config.orb)이 다양해 클라이언트가 지정. [1, 5000] 정수만 허용.
     const skipOrb = body.skip_orb === true;
     let ORB_COST = 20;
+    let isFreeDaily = false;
     if (skipOrb) {
       ORB_COST = 0;
     } else if (body.orb_override !== undefined) {
@@ -364,6 +392,14 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'invalid_orb_override' });
       }
       ORB_COST = ov;
+    } else {
+      // 기본 채팅(20 orb)에만 하루 무료 횟수 적용 — orb_override가 붙는 리포트·궁합 정밀분석
+      // 등 프리미엄 기능은 대상 아님(위 else if에서 이미 갈렸으므로 여기 안 옴).
+      const freeUsedToday = await getTodayFreeChatCount(user_id, SB_KEY);
+      if (freeUsedToday < FREE_DAILY) {
+        ORB_COST = 0;
+        isFreeDaily = true;
+      }
     }
     let orbBalance = 0;
 
@@ -434,6 +470,15 @@ export default async function handler(req, res) {
         method: 'POST',
         headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify({ user_id, type: 'chat', amount: -ORB_COST, description: mode === 'gunghap' ? '궁합 정밀분석' : 'AI 채팅', balance_after: newOrbBalance, created_at: new Date().toISOString() })
+      }).catch(() => {});
+    } else if (isFreeDaily) {
+      // ⚠️ ORB_COST가 0이라 위 if(ORB_COST>0) 분기를 안 타서 잔액 변화는 없지만, 그렇다고 기록을
+      // 아예 안 남기면 getTodayFreeChatCount()가 항상 0을 세게 돼 "하루 무료 횟수 제한" 자체가
+      // 무의미해짐(매번 무제한 무료로 새는 구멍) — 잔액과 무관하게 이 사용 자체는 반드시 기록한다.
+      fetch(`${SB_URL}/rest/v1/orb_transactions`, {
+        method: 'POST',
+        headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ user_id, type: 'chat_free', amount: 0, description: '무료 일일 대화', balance_after: newOrbBalance, created_at: new Date().toISOString() })
       }).catch(() => {});
     }
 
@@ -556,6 +601,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       reply,
       orb_balance: newOrbBalance,
+      is_free_daily: isFreeDaily,
       usage: usage ? {
         input: usage.input_tokens,
         output: usage.output_tokens,
