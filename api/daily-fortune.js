@@ -27,8 +27,8 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 600,
-        system: '당신은 사주명리학과 서양 점성술 전문가입니다. 반드시 요청된 JSON 형식으로만 답하세요. keyword 필드는 절대 비워두지 마세요. 마크다운 없이 순수 JSON만 출력하세요.',
+        max_tokens: 1000,
+        system: '당신은 사주명리학과 서양 점성술 전문가입니다. 반드시 요청된 JSON 형식으로만 답하세요. keyword 필드는 절대 비워두지 마세요. 각 필드는 요청된 글자수 제한을 반드시 지켜 간결하게 쓰세요(제한 초과 금지). 마크다운 코드블록 없이 순수 JSON 객체 하나만 출력하세요.',
         messages: [{ role: 'user', content: prompt }],
       }),
     });
