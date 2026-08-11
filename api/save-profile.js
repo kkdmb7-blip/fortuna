@@ -148,7 +148,7 @@ export default async function handler(req, res) {
 
     await fetch(`${SB_URL}/rest/v1/subscriptions?user_id=eq.${encodeURIComponent(user_id)}&status=eq.active`, { method: 'PATCH', headers: sbH, body: JSON.stringify({ status: 'cancelled', cancelled_at: new Date().toISOString() }) });
     const nextBilling = new Date(); nextBilling.setMonth(nextBilling.getMonth() + 1);
-    await fetch(`${SB_URL}/rest/v1/subscriptions`, { method: 'POST', headers: { ...sbH, 'Prefer': 'return=minimal' }, body: JSON.stringify({ user_id, plan, billing_key, status: 'active', price: planInfo.price, orb_per_month: planInfo.orb, next_billing_at: nextBilling.toISOString(), created_at: new Date().toISOString() }) });
+    await fetch(`${SB_URL}/rest/v1/subscriptions`, { method: 'POST', headers: { ...sbH, 'Prefer': 'return=minimal' }, body: JSON.stringify({ user_id, plan, billing_key, status: 'active', price: planInfo.price, orb_per_month: planInfo.orb, next_billing_at: nextBilling.toISOString(), created_at: Date.now() }) });
 
     try {
       const orbR = await fetch(`${SB_URL}/rest/v1/orb_balance?user_id=eq.${encodeURIComponent(user_id)}&select=balance,free_balance,paid_balance`, { headers: sbH });
